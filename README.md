@@ -13,7 +13,7 @@ A web app that serves as a catalog management system tailored for anyone with pr
 - Bootstrap
 
 #### Backend
-- Django (Python)
+- Express (JavaScript)
 - PostgreSQL
 
 
