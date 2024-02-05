@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    volumes:
+      - /backend/node_modules
+      - ./backend:/backend
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    volumes:
+      - /frontend/node_modules
+      - ./frontend:/frontend
+    ports:
+      - "8080:8080"

@@ -10,6 +10,7 @@ export default defineConfig({
     setupFiles: './tests/setup.js',
   },
   server: {
+    port: 8080,
     proxy: {
       // Proxy requests matching /hello to the backend
       '/hello': 'http://localhost:3000',
