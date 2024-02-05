@@ -53,7 +53,7 @@ jobs:
       - name: Start Compiled Server & Kill 
         working-directory: ./backend
         run: |
-          node server.js & 
+          npm start & 
           SERVER_PID=$!
           sleep 5
           kill $SERVER_PID
