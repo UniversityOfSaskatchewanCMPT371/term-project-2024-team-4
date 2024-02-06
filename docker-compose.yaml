@@ -1,4 +1,5 @@
 # docker-compose exec <service-name> /bin/bash
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' term-project-2024-team-4-postgres-1
 version: "3.9"
 
 services:
