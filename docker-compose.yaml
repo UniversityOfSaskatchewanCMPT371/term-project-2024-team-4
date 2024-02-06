@@ -1,15 +1,22 @@
+# docker-compose exec <service-name> /bin/bash
 version: "3.9"
 
 services:
+  # set up db
   postgres:
     image: postgres:latest
     ports:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: mypassword
+
+    # hold database data (persistent data)
+    # run initial database queries on first time
     volumes:
       - ./postgresql/data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
+  # set up backend
   backend:
     build:
       context: ./backend
@@ -20,6 +27,17 @@ services:
     ports:
       - "3000:3000"
 
+    # check if database is initialized
+    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; npm start'
+    environment:
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASS: mypassword
+      DB_NAME: my_database
+    depends_on:
+      - postgres
+
+  # set up frontend
   frontend:
     build:
       context: ./frontend
