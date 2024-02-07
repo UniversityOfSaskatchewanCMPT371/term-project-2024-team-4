@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node ./bin/www",
+    "start":  "npm run build && node ./bin/www",
     "devstart": "npm run build && nodemon --legacy-watch ./bin/www",
     "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart"
   },
