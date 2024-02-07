@@ -10,6 +10,11 @@ export default defineConfig({
     setupFiles: "./tests/setup.js",
   },
   server: {
+    watch: {
+      // to support frontend hot reload in docker container
+      // should only be used in development environment
+      usePolling: true,
+    },
     host: "0.0.0.0",
     port: 8080,
     proxy: {
