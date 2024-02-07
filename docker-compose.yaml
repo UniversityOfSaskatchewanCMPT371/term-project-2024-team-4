@@ -39,7 +39,7 @@ services:
       - "3000:3000"
 
     # check if database is initialized
-    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; npm start'
+    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; npm run devstart'
     environment:
       DB_HOST: postgres
       DB_USER: postgres
