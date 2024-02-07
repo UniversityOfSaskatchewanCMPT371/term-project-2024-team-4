@@ -20,6 +20,7 @@ jobs:
           POSTGRES_DB: testdb
           POSTGRES_USER: test-user
           POSTGRES_PASSWORD: password
+          
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -48,6 +49,7 @@ jobs:
           echo "POSTGRES_DB=testdb" >> $GITHUB_ENV
           echo "POSTGRES_USER=test-user" >> $GITHUB_ENV
           echo "POSTGRES_PASSWORD=password" >> $GITHUB_ENV
+          echo "DB_DIALECT=postgres" >> $GITHUB_ENV
           
         # starts server to check for basic compilation issues
       - name: Start Compiled Server & Kill 
