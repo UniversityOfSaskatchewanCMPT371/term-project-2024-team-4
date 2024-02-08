@@ -25,6 +25,7 @@ const cultureRouter = require("./routes/cultures");
 
 const artifactTypeRouter = require("./routes/artifactTypes");
 const artifactRouter = require("./routes/artifacts");
+const materialRouter = require("./routes/materials");
 
 const app = express();
 
@@ -65,6 +66,7 @@ app.use("/cultures", cultureRouter);
 
 app.use("/artifacttypes", artifactTypeRouter);
 app.use("/artifacts", artifactRouter);
+app.use("/materials", materialRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
