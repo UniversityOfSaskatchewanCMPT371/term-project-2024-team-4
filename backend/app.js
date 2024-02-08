@@ -1,10 +1,12 @@
+require('reflect-metadata');
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
-const { synchModels } = require("./models");
+// const { synchModels } = require("./models");
+const dataSource = require('./config/db');
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
@@ -23,13 +25,13 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(cors());
 
 // Synchronize models with the database
-synchModels()
-  .then(() => {
-    console.log("Database synchronization complete. Starting server...");
-  })
-  .catch((error) => {
-    console.error("Database synchronization failed:", error);
-  });
+// synchModels()
+//   .then(() => {
+//     console.log("Database synchronization complete. Starting server...");
+//   })
+//   .catch((error) => {
+//     console.error("Database synchronization failed:", error);
+//   });
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
