@@ -24,6 +24,7 @@ const crossSectionRouter = require("./routes/crossSections");
 const cultureRouter = require("./routes/cultures");
 
 const artifactTypeRouter = require("./routes/artifactTypes");
+const artifactRouter = require("./routes/artifacts");
 
 const app = express();
 
@@ -63,6 +64,7 @@ app.use("/cultures", cultureRouter);
 
 
 app.use("/artifacttypes", artifactTypeRouter);
+app.use("/artifacts", artifactRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

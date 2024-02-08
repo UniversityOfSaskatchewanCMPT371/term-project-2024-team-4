@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 const myDatabase = require("../config/db");
 
+// POST: Create a new ArtifactType
 router.post("/", async (req, res) => {
   const { id } = req.body; // 'Lithic', 'Ceramic', or 'Faunal'
   try {
@@ -25,6 +26,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// GET: Fetch all ArtifactTypes
 router.get("/", async (req, res) => {
   try {
     const artifactTypeRepository = await myDatabase.getRepository(ArtifactType);
@@ -38,6 +40,7 @@ router.get("/", async (req, res) => {
   }
 });
 
+// GET: Fetch a single ArtifactType
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -57,6 +60,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+// DELETE: Delete a single ArtifactType
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
   try {
