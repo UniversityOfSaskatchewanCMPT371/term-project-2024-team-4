@@ -21,10 +21,14 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const CrossSectionRepository = await myDatabase.getRepository(CrossSection);
-    const CrossSections = await CrossSectionRepository.find({
-      // relations: ["cultures", "projectilePoints"],
+    const crossSection = await CrossSectionRepository.find({
+      relations: ["cultures", "projectilePoints"],
     });
-    res.json(CrossSections);
+    if (crossSection) {
+      res.json(crossSection);
+    } else {
+      res.status(404).send("CrossSection not found");
+    }
   } catch (error) {
     console.error("Error fetching CrossSections:", error);
     res.status(500).json({ error: error.message });
@@ -36,8 +40,8 @@ router.get("/:id", async (req, res) => {
   try {
     const crossSectionRepository = await myDatabase.getRepository(CrossSection);
     const crossSections = await crossSectionRepository.findOne({
-      where: { id: parseInt(req.params.id) }
-      // relations: ["cultures", "projectilePoints"],
+      where: { id: parseInt(req.params.id) },
+      relations: ["cultures", "projectilePoints"],
     });
     if (crossSections) {
       res.json(crossSections);

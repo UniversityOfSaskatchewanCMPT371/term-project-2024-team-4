@@ -22,9 +22,13 @@ router.get("/", async (req, res) => {
   try {
     const BaseShapeRepository = await myDatabase.getRepository(BaseShape);
     const BaseShapes = await BaseShapeRepository.find({
-      // relations: ["cultures", "projectilePoints"],
+      relations: ["cultures", "projectilePoints"],
     });
-    res.json(BaseShapes);
+    if (BaseShapes) {
+      res.json(BaseShapes);
+    } else {
+      res.status(404).send("BaseShapes not found");
+    }
   } catch (error) {
     console.error("Error fetching BaseShapes:", error);
     res.status(500).json({ error: error.message });
@@ -36,8 +40,8 @@ router.get("/:id", async (req, res) => {
   try {
     const baseShapeRepository = await myDatabase.getRepository(BaseShape);
     const baseShape = await baseShapeRepository.findOne({
-      where: { id: parseInt(req.params.id) }
-      // relations: ["cultures", "projectilePoints"],
+      where: { id: parseInt(req.params.id) },
+      relations: ["cultures", "projectilePoints"],
     });
     if (baseShape) {
       res.json(baseShape);

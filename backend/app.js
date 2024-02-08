@@ -21,6 +21,7 @@ const bladeShapeRouter = require("./routes/bladeShapes");
 const baseShapeRouter = require("./routes/baseShapes");
 const haftingShapeRouter = require("./routes/haftingShapes");
 const crossSectionRouter = require("./routes/crossSections");
+const cultureRouter = require("./routes/cultures");
 
 const app = express();
 
@@ -56,6 +57,7 @@ app.use("/bladeshapes", bladeShapeRouter);
 app.use("/baseshapes", baseShapeRouter);
 app.use("/haftingshapes", haftingShapeRouter);
 app.use("/crosssections", crossSectionRouter);
+app.use("/cultures", cultureRouter);
 
 
 // catch 404 and forward to error handler
