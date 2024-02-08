@@ -1,0 +1,13 @@
+.sidebar {
+    background-color: #f0f0f0;
+}
+
+.sidebar a, .sidebar hr {
+    color: #000000;
+}
+
+.nav-pills li a:hover {
+    /* background-color: #f2d5cd; */
+    background-color: #a2a2a2;
+    color: #000000;
+}
