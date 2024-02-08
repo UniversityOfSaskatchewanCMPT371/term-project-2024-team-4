@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start":  "npm run build && node ./bin/www",
+    "start": "npm run build && node ./bin/www",
     "devstart": "npm run build && nodemon --legacy-watch ./bin/www",
     "serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart"
   },
@@ -22,7 +22,9 @@
     "pug": "^3.0.2",
     "reflect-metadata": "^0.2.1",
     "sequelize": "^6.36.0",
-    "typeorm": "^0.3.20"
+    "typeorm": "^0.3.20",
+    "winston": "^3.11.0",
+    "winston-daily-rotate-file": "^4.7.1"
   },
   "devDependencies": {
     "nodemon": "^3.0.3",
