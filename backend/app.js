@@ -20,6 +20,7 @@ const periodRouter = require("./routes/periods");
 const bladeShapeRouter = require("./routes/bladeShapes");
 const baseShapeRouter = require("./routes/baseShapes");
 const haftingShapeRouter = require("./routes/haftingShapes");
+const crossSectionRouter = require("./routes/crossSections");
 
 const app = express();
 
@@ -54,6 +55,7 @@ app.use("/periods", periodRouter);
 app.use("/bladeshapes", bladeShapeRouter);
 app.use("/baseshapes", baseShapeRouter);
 app.use("/haftingshapes", haftingShapeRouter);
+app.use("/crosssections", crossSectionRouter);
 
 
 // catch 404 and forward to error handler
