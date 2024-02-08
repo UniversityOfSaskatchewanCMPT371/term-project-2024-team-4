@@ -5,7 +5,7 @@ const myDatabase = require("../config/db");
 
 // POST: Create a new Artifact
 router.post("/", async (req, res) => {
-    // Extract the information from the request body
+  // Extract the information from the request body
   const {
     name,
     location,
@@ -25,8 +25,7 @@ router.post("/", async (req, res) => {
       .findOneBy({ id: artifactTypeId });
     // If the site or artifactType is not found, return a 404
     if (!site || !artifactType) {
-      return res
-        .json({ message: "Site or ArtifactType not found" });
+      return res.json({ message: "Site or ArtifactType not found" });
     }
 
     // If the site and artifactType exist, creates a new Artifact entity with the given information
@@ -56,7 +55,11 @@ router.get("/", async (req, res) => {
     const artifacts = await artifactRepository.find({
       relations: ["site", "artifactType"],
     });
-    res.json(artifacts);
+    if (Artifact) {
+      res.json(artifacts);
+    } else {
+      res.send("Artifacts not found");
+    }
   } catch (error) {
     console.error("Error fetching Artifacts:", error);
     res.json({ error: error.message });
@@ -64,6 +67,25 @@ router.get("/", async (req, res) => {
 });
 
 // GET: Fetch a single Artifact
+router.get("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const artifact = await myDatabase.getRepository(Artifact).findOne({
+      where: { id },
+      relations: ["site", "artifactType"],
+    });
+    if (!artifact) {
+      res.json({ message: "Artifact not found" });
+    } else {
+      res.json(artifact);
+    }
+  } catch (error) {
+    console.error("Error fetching Artifact:", error);
+    res.json({ error: error.message });
+  }
+});
+
+// PUT: Update an existing Artifact
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const {
