@@ -21,8 +21,14 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
   try {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
+    /**
+     * bladeShapeRepository.createQueryBuilder(BladeShape)
+    .leftJoinAndSelect("culture.bladeShapes", "culture")
+    .getMany();
+     */
     const bladeShapes = await bladeShapeRepository.find({
-      relations: ["cultures", "projectilePoints"],
+      // relations: ["cultures", "projectilePoints"]
+      relations: ["projectilePoints"],
     });
     res.json(bladeShapes);
   } catch (error) {
@@ -37,7 +43,7 @@ router.get("/:id", async (req, res) => {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
     const bladeShape = await bladeShapeRepository.findOne({
       where: { id: parseInt(req.params.id) },
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     if (bladeShape) {
       res.json(bladeShape);

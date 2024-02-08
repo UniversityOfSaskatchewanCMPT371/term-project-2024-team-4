@@ -26,7 +26,7 @@ router.get("/", async (req, res) => {
   try {
     const CrossSectionRepository = await myDatabase.getRepository(CrossSection);
     const crossSections = await CrossSectionRepository.find({
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     res.json(crossSections);
   } catch (error) {
@@ -41,7 +41,7 @@ router.get("/:id", async (req, res) => {
     const crossSectionRepository = await myDatabase.getRepository(CrossSection);
     const crossSections = await crossSectionRepository.findOne({
       where: { id: parseInt(req.params.id) },
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     if (crossSections) {
       res.json(crossSections);

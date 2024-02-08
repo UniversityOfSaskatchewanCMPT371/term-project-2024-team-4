@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
   try {
     const BaseShapeRepository = await myDatabase.getRepository(BaseShape);
     const BaseShapes = await BaseShapeRepository.find({
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     if (BaseShapes) {
       res.json(BaseShapes);
@@ -41,7 +41,7 @@ router.get("/:id", async (req, res) => {
     const baseShapeRepository = await myDatabase.getRepository(BaseShape);
     const baseShape = await baseShapeRepository.findOne({
       where: { id: parseInt(req.params.id) },
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     if (baseShape) {
       res.json(baseShape);

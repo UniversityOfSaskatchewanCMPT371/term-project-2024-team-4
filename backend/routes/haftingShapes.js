@@ -22,7 +22,7 @@ router.get("/", async (req, res) => {
   try {
     const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
     const HaftingShapes = await HaftingShapeRepository.find({
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     res.json(HaftingShapes);
   } catch (error) {
@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
     const haftingShapeRepository = await myDatabase.getRepository(HaftingShape);
     const haftingShape = await haftingShapeRepository.findOne({
       where: { id: parseInt(req.params.id) },
-      relations: ["cultures", "projectilePoints"],
+      relations: ["projectilePoints"],
     });
     if (haftingShape) {
       res.json(haftingShape);
