@@ -80,4 +80,21 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+// DELETE: Remove a catalogue
+router.delete("/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  try {
+    const catalogueRepository = await myDatabase.getRepository(Catalogue);
+    const deleteResult = await catalogueRepository.delete(id);
+    if (deleteResult.affected > 0) {
+      res.status(204).send();
+    } else {
+      res.status(404).json({ message: "Catalogue not found" });
+    }
+  } catch (error) {
+    console.error("Error deleting catalogue:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 module.exports = router;
