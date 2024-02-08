@@ -23,6 +23,8 @@ const haftingShapeRouter = require("./routes/haftingShapes");
 const crossSectionRouter = require("./routes/crossSections");
 const cultureRouter = require("./routes/cultures");
 
+const artifactTypeRouter = require("./routes/artifactTypes");
+
 const app = express();
 
 // view engine setup
@@ -59,6 +61,8 @@ app.use("/haftingshapes", haftingShapeRouter);
 app.use("/crosssections", crossSectionRouter);
 app.use("/cultures", cultureRouter);
 
+
+app.use("/artifacttypes", artifactTypeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
