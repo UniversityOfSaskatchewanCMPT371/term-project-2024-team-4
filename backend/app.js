@@ -16,6 +16,9 @@ const regionRouter = require("./routes/regions");
 const siteRouter = require("./routes/sites");
 const periodRouter = require("./routes/periods");
 
+
+const bladeShapeRouter = require("./routes/bladeShapes");
+
 const app = express();
 
 // view engine setup
@@ -45,6 +48,8 @@ app.use("/catalogues", catalogueRouter);
 app.use("/regions", regionRouter);
 app.use("/sites", siteRouter);
 app.use("/periods", periodRouter);
+
+app.use("/bladeshapes", bladeShapeRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
