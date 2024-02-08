@@ -3,16 +3,7 @@ const express = require("express");
 const router = express.Router();
 const myDatabase = require("../config/db");
 
-myDatabase
-  .initialize()
-  .then(() => {
-    console.log("Database has been initialized.");
-  })
-  .catch((error) => {
-    console.error("Database initialization failed:", error);
-  });
-
-  // POST: Create a New Site
+// POST: Create a New Site
 router.post("/", async (req, res) => {
   const { name, description, location, catalogueId, regionId } = req.body;
   try {

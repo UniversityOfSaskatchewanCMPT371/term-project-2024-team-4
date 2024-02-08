@@ -3,15 +3,6 @@ const express = require("express");
 const router = express.Router();
 const myDatabase = require("../config/db");
 
-myDatabase
-  .initialize()
-  .then(() => {
-    console.log("Database has been initialized.");
-  })
-  .catch((error) => {
-    console.error("Database initialization failed:", error);
-  });
-
 // GET: Fetch all Regions
 router.get("/", async (req, res) => {
   try {

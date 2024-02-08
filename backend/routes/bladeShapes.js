@@ -3,16 +3,7 @@ const express = require("express");
 const router = express.Router();
 const myDatabase = require("../config/db");
 
-myDatabase
-  .initialize()
-  .then(() => {
-    console.log("Database has been initialized.");
-  })
-  .catch((error) => {
-    console.error("Database initialization failed:", error);
-  });
-
-// GET: Fetch all BladeShapes
+// POST: Create a new BladeShape
 router.post("/", async (req, res) => {
   const { name } = req.body;
   try {
@@ -26,7 +17,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-// GET: Fetch all BladeShapes by ID
+// GET: Fetch all BladeShapes
 router.get("/", async (req, res) => {
   try {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
@@ -40,7 +31,7 @@ router.get("/", async (req, res) => {
   }
 });
 
-// POST: Create a new BladeShape
+// GET: Fetch all BladeShapes by ID
 router.get("/:id", async (req, res) => {
   try {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
