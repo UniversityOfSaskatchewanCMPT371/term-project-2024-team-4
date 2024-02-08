@@ -13,7 +13,7 @@ router.post("/", async (req, res) => {
         .getRepository(ArtifactType)
         .findOneBy({ id: artifactTypeId });
       if (!artifactType) {
-        return res.status(404).json({ message: "ArtifactType not found" });
+        return res.json({ message: "ArtifactType not found" });
       }
     }
 
@@ -24,10 +24,10 @@ router.post("/", async (req, res) => {
     });
 
     await myDatabase.getRepository(Material).save(newMaterial);
-    res.status(201).json(newMaterial);
+    res.json(newMaterial);
   } catch (error) {
     console.error("Error creating Material:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
     res.json(materials);
   } catch (error) {
     console.error("Error fetching Materials:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -53,13 +53,13 @@ router.get("/:id", async (req, res) => {
       relations: ["artifactType", "artifacts"],
     });
     if (!material) {
-      res.status(404).json({ message: "Material not found" });
+      res.json({ message: "Material not found" });
     } else {
       res.json(material);
     }
   } catch (error) {
     console.error("Error fetching Material:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -71,7 +71,7 @@ router.put("/:id", async (req, res) => {
     let material = await myDatabase.getRepository(Material).findOneBy({ id });
 
     if (!material) {
-      return res.status(404).json({ message: "Material not found" });
+      return res.json({ message: "Material not found" });
     }
 
     if (artifactTypeId) {
@@ -79,7 +79,7 @@ router.put("/:id", async (req, res) => {
         .getRepository(ArtifactType)
         .findOneBy({ id: artifactTypeId });
       if (!artifactType) {
-        return res.status(404).json({ message: "ArtifactType not found" });
+        return res.json({ message: "ArtifactType not found" });
       }
       material.artifactType = artifactType;
     }
@@ -91,7 +91,7 @@ router.put("/:id", async (req, res) => {
     res.json(material);
   } catch (error) {
     console.error("Error updating Material:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -101,13 +101,13 @@ router.delete("/:id", async (req, res) => {
   try {
     const deleteResult = await myDatabase.getRepository(Material).delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "Material not found" });
+      res.json({ message: "Material not found" });
     }
   } catch (error) {
     console.error("Error deleting Material:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

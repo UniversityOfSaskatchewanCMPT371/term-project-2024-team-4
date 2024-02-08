@@ -10,10 +10,10 @@ router.post("/", async (req, res) => {
     const CrossSectionRepository = await myDatabase.getRepository(CrossSection);
     const newCrossSection = CrossSectionRepository.create({ name });
     await CrossSectionRepository.save(newCrossSection);
-    res.status(201).json(newCrossSection);
+    res.json(newCrossSection);
   } catch (error) {
     console.error("Error creating new CrossSection:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -27,11 +27,11 @@ router.get("/", async (req, res) => {
     if (crossSection) {
       res.json(crossSection);
     } else {
-      res.status(404).send("CrossSection not found");
+      res.send("CrossSection not found");
     }
   } catch (error) {
     console.error("Error fetching CrossSections:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -46,11 +46,11 @@ router.get("/:id", async (req, res) => {
     if (crossSections) {
       res.json(crossSections);
     } else {
-      res.status(404).send("CrossSection not found");
+      res.send("CrossSection not found");
     }
   } catch (error) {
     console.error("Error fetching BasCrossSectioneShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -68,11 +68,11 @@ router.put("/:id", async (req, res) => {
       await CrossSectionRepository.save(CrossSectionToUpdate);
       res.json(CrossSectionToUpdate);
     } else {
-      res.status(404).json({ message: "CrossSection not found" });
+      res.json({ message: "CrossSection not found" });
     }
   } catch (error) {
     console.error("Error updating CrossSection:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -83,13 +83,13 @@ router.delete("/:id", async (req, res) => {
     const CrossSectionRepository = await myDatabase.getRepository(CrossSection);
     const deleteResult = await CrossSectionRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "CrossSection not found" });
+      res.json({ message: "CrossSection not found" });
     }
   } catch (error) {
     console.error("Error deleting CrossSection:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

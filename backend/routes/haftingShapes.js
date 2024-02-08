@@ -10,10 +10,10 @@ router.post("/", async (req, res) => {
     const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
     const newHaftingShape = HaftingShapeRepository.create({ name });
     await HaftingShapeRepository.save(newHaftingShape);
-    res.status(201).json(newHaftingShape);
+    res.json(newHaftingShape);
   } catch (error) {
     console.error("Error creating new HaftingShape:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
     res.json(HaftingShapes);
   } catch (error) {
     console.error("Error fetching HaftingShapes:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -42,11 +42,11 @@ router.get("/:id", async (req, res) => {
     if (haftingShape) {
       res.json(haftingShape);
     } else {
-      res.status(404).send("HaftingShape not found");
+      res.send("HaftingShape not found");
     }
   } catch (error) {
     console.error("Error fetching HaftingShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -64,11 +64,11 @@ router.put("/:id", async (req, res) => {
       await HaftingShapeRepository.save(HaftingShapeToUpdate);
       res.json(HaftingShapeToUpdate);
     } else {
-      res.status(404).json({ message: "HaftingShape not found" });
+      res.json({ message: "HaftingShape not found" });
     }
   } catch (error) {
     console.error("Error updating HaftingShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -79,13 +79,13 @@ router.delete("/:id", async (req, res) => {
     const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
     const deleteResult = await HaftingShapeRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "HaftingShape not found" });
+      res.json({ message: "HaftingShape not found" });
     }
   } catch (error) {
     console.error("Error deleting HaftingShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

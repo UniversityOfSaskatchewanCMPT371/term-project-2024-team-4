@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     res.json(regions);
   } catch (error) {
     console.error("Error fetching Regions:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -22,10 +22,10 @@ router.post("/", async (req, res) => {
     const regionRepository = await myDatabase.getRepository(Region);
     const newRegion = regionRepository.create({ name, description });
     await regionRepository.save(newRegion);
-    res.status(201).json(newRegion);
+    res.json(newRegion);
   } catch (error) {
     console.error("Error creating new Region:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -42,11 +42,11 @@ router.get("/:id", async (req, res) => {
     if (region) {
       res.json(region);
     } else {
-      res.status(404).send("Region not found");
+      res.send("Region not found");
     }
   } catch (error) {
     console.error("Error fetching Region:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -65,11 +65,11 @@ router.put("/:id", async (req, res) => {
       await regionRepository.save(RegionToUpdate);
       res.json(RegionToUpdate);
     } else {
-      res.status(404).json({ message: "Region not found" });
+      res.json({ message: "Region not found" });
     }
   } catch (error) {
     console.error("Error updating Region:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -80,13 +80,13 @@ router.delete("/:id", async (req, res) => {
     const regionRepository = await myDatabase.getRepository(Region);
     const deleteResult = await regionRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "Region not found" });
+      res.json({ message: "Region not found" });
     }
   } catch (error) {
     console.error("Error deleting Region:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

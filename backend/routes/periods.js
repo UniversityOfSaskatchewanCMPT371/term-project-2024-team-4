@@ -10,10 +10,10 @@ router.post("/", async (req, res) => {
     const periodRepository = await myDatabase.getRepository(Period);
     const newPeriod = periodRepository.create({ name, start, end });
     await periodRepository.save(newPeriod);
-    res.status(201).json(newPeriod);
+    res.json(newPeriod);
   } catch (error) {
     console.error("Error creating new Period:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
     res.json(periods);
   } catch (error) {
     console.error("Error fetching Periods:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -40,11 +40,11 @@ router.get("/:id", async (req, res) => {
     if (period) {
       res.json(period);
     } else {
-      res.status(404).send("Period not found");
+      res.send("Period not found");
     }
   } catch (error) {
     console.error("Error fetching Period:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -62,11 +62,11 @@ router.put("/:id", async (req, res) => {
       await periodRepository.save(periodToUpdate);
       res.json(periodToUpdate);
     } else {
-      res.status(404).json({ message: "Period not found" });
+      res.json({ message: "Period not found" });
     }
   } catch (error) {
     console.error("Error updating Period:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -77,13 +77,13 @@ router.delete("/:id", async (req, res) => {
     const periodRepository = await myDatabase.getRepository(Period);
     const deleteResult = await periodRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "Period not found" });
+      res.json({ message: "Period not found" });
     }
   } catch (error) {
     console.error("Error deleting Period:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

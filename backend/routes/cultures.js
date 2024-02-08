@@ -40,7 +40,7 @@ router.get("/", async (req, res) => {
     res.json(cultures);
   } catch (error) {
     console.error("Error fetching Cultures:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -62,11 +62,11 @@ router.get("/:id", async (req, res) => {
     if (culture) {
       res.json(culture);
     } else {
-      res.status(404).send("Culture not found");
+      res.send("Culture not found");
     }
   } catch (error) {
     console.error("Error fetching Culture:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -88,11 +88,11 @@ router.get("/:id", async (req, res) => {
     if (culture) {
       res.json(culture);
     } else {
-      res.status(404).send("Culture not found");
+      res.send("Culture not found");
     }
   } catch (error) {
     console.error("Error fetching Culture:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -106,14 +106,14 @@ router.put("/:id", async (req, res) => {
       id: parseInt(id),
     });
     if (!cultureToUpdate) {
-      return res.status(404).json({ message: "Culture not found" });
+      return res.json({ message: "Culture not found" });
     }
     if (periodId) {
       const period = await myDatabase
         .getRepository(Period)
         .findOneBy({ id: periodId });
       if (!period) {
-        return res.status(404).json({ message: "Period not found" });
+        return res.json({ message: "Period not found" });
       }
       cultureToUpdate.period = period;
     }
@@ -122,7 +122,7 @@ router.put("/:id", async (req, res) => {
     res.json(cultureToUpdate);
   } catch (error) {
     console.error("Error updating Culture:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -133,13 +133,13 @@ router.delete("/:id", async (req, res) => {
     const cultureRepository = await myDatabase.getRepository(Culture);
     const deleteResult = await cultureRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "Culture not found" });
+      res.json({ message: "Culture not found" });
     }
   } catch (error) {
     console.error("Error deleting Culture:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

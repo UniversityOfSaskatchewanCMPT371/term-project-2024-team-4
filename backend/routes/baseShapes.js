@@ -10,10 +10,10 @@ router.post("/", async (req, res) => {
     const BaseShapeRepository = await myDatabase.getRepository(BaseShape);
     const newBaseShape = BaseShapeRepository.create({ name });
     await BaseShapeRepository.save(newBaseShape);
-    res.status(201).json(newBaseShape);
+    res.json(newBaseShape);
   } catch (error) {
     console.error("Error creating new BaseShape:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -27,11 +27,11 @@ router.get("/", async (req, res) => {
     if (BaseShapes) {
       res.json(BaseShapes);
     } else {
-      res.status(404).send("BaseShapes not found");
+      res.send("BaseShapes not found");
     }
   } catch (error) {
     console.error("Error fetching BaseShapes:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -46,11 +46,11 @@ router.get("/:id", async (req, res) => {
     if (baseShape) {
       res.json(baseShape);
     } else {
-      res.status(404).send("BaseShape not found");
+      res.send("BaseShape not found");
     }
   } catch (error) {
     console.error("Error fetching BaseShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -69,11 +69,11 @@ router.put("/:id", async (req, res) => {
       await BaseShapeRepository.save(BaseShapeToUpdate);
       res.json(BaseShapeToUpdate);
     } else {
-      res.status(404).json({ message: "BaseShape not found" });
+      res.json({ message: "BaseShape not found" });
     }
   } catch (error) {
     console.error("Error updating BaseShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -84,13 +84,13 @@ router.delete("/:id", async (req, res) => {
     const BaseShapeRepository = await myDatabase.getRepository(BaseShape);
     const deleteResult = await BaseShapeRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "BaseShape not found" });
+      res.json({ message: "BaseShape not found" });
     }
   } catch (error) {
     console.error("Error deleting BaseShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

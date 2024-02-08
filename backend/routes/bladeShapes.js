@@ -10,10 +10,10 @@ router.post("/", async (req, res) => {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
     const newBladeShape = bladeShapeRepository.create({ name });
     await bladeShapeRepository.save(newBladeShape);
-    res.status(201).json(newBladeShape);
+    res.json(newBladeShape);
   } catch (error) {
     console.error("Error creating new BladeShape:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
     res.json(bladeShapes);
   } catch (error) {
     console.error("Error fetching BladeShapes:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -42,11 +42,11 @@ router.get("/:id", async (req, res) => {
     if (bladeShape) {
       res.json(bladeShape);
     } else {
-      res.status(404).send("BladeShape not found");
+      res.send("BladeShape not found");
     }
   } catch (error) {
     console.error("Error fetching BladeShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -64,11 +64,11 @@ router.put("/:id", async (req, res) => {
       await bladeShapeRepository.save(bladeShapeToUpdate);
       res.json(bladeShapeToUpdate);
     } else {
-      res.status(404).json({ message: "BladeShape not found" });
+      res.json({ message: "BladeShape not found" });
     }
   } catch (error) {
     console.error("Error updating BladeShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -79,13 +79,13 @@ router.delete("/:id", async (req, res) => {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
     const deleteResult = await bladeShapeRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "BladeShape not found" });
+      res.json({ message: "BladeShape not found" });
     }
   } catch (error) {
     console.error("Error deleting BladeShape:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

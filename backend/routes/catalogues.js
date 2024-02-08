@@ -11,7 +11,7 @@ router.get("/", async (req, res) => {
     res.json(catalogues);
   } catch (error) {
     console.error("Error fetching catalogues:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -22,10 +22,10 @@ router.post("/", async (req, res) => {
     const catalogueRepository = await myDatabase.getRepository(Catalogue);
     const newCatalogue = catalogueRepository.create({ name, description });
     await catalogueRepository.save(newCatalogue);
-    res.status(201).json(newCatalogue);
+    res.json(newCatalogue);
   } catch (error) {
     console.error("Error creating new catalogue:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -41,11 +41,11 @@ router.get("/:id", async (req, res) => {
     if (catalogue) {
       res.json(catalogue);
     } else {
-      res.status(404).send("Catalogue not found");
+      res.send("Catalogue not found");
     }
   } catch (error) {
     console.error("Error fetching catalogue:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -64,11 +64,11 @@ router.put("/:id", async (req, res) => {
       await catalogueRepository.save(catalogueToUpdate);
       res.json(catalogueToUpdate);
     } else {
-      res.status(404).json({ message: "Catalogue not found" });
+      res.json({ message: "Catalogue not found" });
     }
   } catch (error) {
     console.error("Error updating catalogue:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -79,13 +79,13 @@ router.delete("/:id", async (req, res) => {
     const catalogueRepository = await myDatabase.getRepository(Catalogue);
     const deleteResult = await catalogueRepository.delete(id);
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "Catalogue not found" });
+      res.json({ message: "Catalogue not found" });
     }
   } catch (error) {
     console.error("Error deleting catalogue:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 

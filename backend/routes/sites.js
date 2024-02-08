@@ -16,10 +16,10 @@ router.post("/", async (req, res) => {
       region: { id: regionId },
     });
     await siteRepository.save(newSite);
-    res.status(201).json(newSite);
+    res.json(newSite);
   } catch (error) {
     console.error("Error creating new Site:", error);
-    res.status(400).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -33,7 +33,7 @@ router.get("/", async (req, res) => {
     res.json(sites);
   } catch (error) {
     console.error("Error fetching Sites:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -48,11 +48,11 @@ router.get("/:id", async (req, res) => {
     if (site) {
       res.json(site);
     } else {
-      res.status(404).send("Site not found");
+      res.send("Site not found");
     }
   } catch (error) {
     console.error("Error fetching Site:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -73,11 +73,11 @@ router.put("/:id", async (req, res) => {
       await siteRepository.save(siteToUpdate);
       res.json(siteToUpdate);
     } else {
-      res.status(404).json({ message: "Site not found" });
+      res.json({ message: "Site not found" });
     }
   } catch (error) {
     console.error("Error updating Site:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
@@ -87,13 +87,13 @@ router.delete("/:id", async (req, res) => {
     const siteRepository = await myDatabase.getRepository(Site);
     const deleteResult = await siteRepository.delete(parseInt(req.params.id));
     if (deleteResult.affected > 0) {
-      res.status(204).send();
+      res.send();
     } else {
-      res.status(404).json({ message: "Site not found" });
+      res.json({ message: "Site not found" });
     }
   } catch (error) {
     console.error("Error deleting Site:", error);
-    res.status(500).json({ error: error.message });
+    res.json({ error: error.message });
   }
 });
 
