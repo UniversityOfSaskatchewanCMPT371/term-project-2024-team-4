@@ -42,8 +42,9 @@ router.post("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const catalogueRepository = await myDatabase.getRepository(Catalogue);
-    const catalogue = await catalogueRepository.findOneBy({
-      id: parseInt(req.params.id),
+    const catalogue = await catalogueRepository.findOne({
+        where: { id: parseInt(req.params.id) },
+        relations: ["sites"],
     });
 
     if (catalogue) {
