@@ -15,19 +15,40 @@ function App() {
         <div className='col-3'>
           <Sidebar />
         </div>
-        <div className='col-9'>
-          <h1>Projectile</h1>
-          {/* <HelloWorld />
-          <Link to="helloworld">Say Hi!</Link> */}
-          <div>
-            <Button variant="primary" onClick={() => setModalShow(true)}>
-              Login
-            </Button>
+        <div className='col'>
+          <div className='container'>
+            <h2>&lt; Catalogue &lt;Museum of Anthropology&gt; / X Farm</h2>
+            {/* <HelloWorld />
+            <Link to="helloworld">Say Hi!</Link> */}
+            <div>
+              {/* <Button variant="primary" onClick={() => setModalShow(true)}>
+                Login
+              </Button> */}
 
-            <LoginModal
-              show={modalShow}
-              onHide={() => setModalShow(false)}
-            />
+              <LoginModal
+                show={modalShow}
+                onHide={() => setModalShow(false)}
+              />
+            </div>
+            <div class="row">
+              <div class="col">
+                1 of 2
+              </div>
+              <div class="col">
+                2 of 2
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
+                1 of 3
+              </div>
+              <div class="col">
+                2 of 3
+              </div>
+              <div class="col">
+                3 of 3
+              </div>
+            </div>
           </div>
         </div>
       </div>
