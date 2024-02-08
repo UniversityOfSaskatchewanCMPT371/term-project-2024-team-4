@@ -20,7 +20,6 @@ jobs:
           POSTGRES_DB: testdb
           POSTGRES_USER: test-user
           POSTGRES_PASSWORD: password
-          
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -46,16 +45,17 @@ jobs:
       - name: Set up PostgreSQL
         working-directory: ./backend
         run: |
-          echo "POSTGRES_DB=testdb" >> $GITHUB_ENV
-          echo "POSTGRES_USER=test-user" >> $GITHUB_ENV
-          echo "POSTGRES_PASSWORD=password" >> $GITHUB_ENV
           echo "DB_DIALECT=postgres" >> $GITHUB_ENV
+          echo "DB_HOST=localhost" >> $GITHUB_ENV
+          echo "DB_USER=test-user" >> $GITHUB_ENV
+          echo "DB_PASS=password" >> $GITHUB_ENV
+          echo "DB_NAME=testdb" >> $GITHUB_ENV
           
         # starts server to check for basic compilation issues
       - name: Start Compiled Server & Kill 
         working-directory: ./backend
         run: |
-          node server.js & 
+          npm start & 
           SERVER_PID=$!
           sleep 5
           kill $SERVER_PID
