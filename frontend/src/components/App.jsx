@@ -4,9 +4,12 @@ import reactLogo from '../assets/react.svg'
 import viteLogo from '/vite.svg'
 import HelloWorld from './HelloWorld/'
 import './App.css'
+import LoginModal from './LoginModal';
+import Button from 'react-bootstrap/Button';
 
 function App() {
   const [count, setCount] = useState(0)
+  const [modalShow, setModalShow] = useState(false);
 
   return (
     <>
@@ -21,7 +24,17 @@ function App() {
       <h1>Vite + React</h1>
       <HelloWorld />
       <Link to="helloworld">Say Hi!</Link>
-      <div className="card">
+      <div>
+        <Button variant="primary" onClick={() => setModalShow(true)}>
+          Launch vertically centered modal
+        </Button>
+
+        <LoginModal
+          show={modalShow}
+          onHide={() => setModalShow(false)}
+        />
+      </div>
+      <div className="">
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
