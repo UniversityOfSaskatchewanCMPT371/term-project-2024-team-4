@@ -38,7 +38,7 @@ const logLevels = {
     debug: 4,
   },
   colors: {
-    fatal: "pink",
+    fatal: "bold red",
     error: "red",
     warn: "yellow",
     info: "green",
@@ -48,6 +48,7 @@ const logLevels = {
 
 // Winston configuration settings
 const logger = winston.createLogger({
+  level: "debug",
   levels: logLevels.levels,
 
   // defines how the log lines will look like
