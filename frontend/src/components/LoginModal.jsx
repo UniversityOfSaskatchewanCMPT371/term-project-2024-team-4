@@ -27,6 +27,9 @@ class LoginModal extends Component {
       password: "",
     };
     
+    /**
+     * These are to make sure the functions are defined for the component
+     */
     this.handleSubmit=this.handleSubmit.bind(this);
     this.userNameChanged=this.userNameChanged.bind(this);
     this.passwordChanged=this.passwordChanged.bind(this);
@@ -42,6 +45,7 @@ class LoginModal extends Component {
 
     /***
      * These loggers are for testing to make sure that the information is properly passed
+     * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
      */
     logger.info("Username entered:" + this.state.userName);
     logger.info("Password entered:" + this.state.password);
@@ -62,11 +66,17 @@ class LoginModal extends Component {
     // }
   }
 
+  /**
+   * This is for when the username is entered into the textbox to update the state of the component
+   */
   userNameChanged(e){
     this.setState((state)=>({...state,
       userName:e.target.value}));
   }
 
+  /**
+   * For when the password is entered into the texbox to update the state of the component
+   */
   passwordChanged(e){
     this.setState((state)=>({...state,
       password: e.target.value}));
