@@ -15,13 +15,16 @@ class Sidebar extends Component {
 
         this.setModalShow = this.setModalShow.bind(this);
         this.setModalHidden = this.setModalHidden.bind(this);
+
+        logger.info("Sidebar component rendered.");
     }
 
     handleClick(e) {
         logger.info(e.target.innerText + " Sidebar navigation clicked.");
     }
 
-    setModalShow() {
+    setModalShow(e) {
+        this.handleClick(e);
         this.setState({ modalShow: true }, () => {
             logger.info("LoginModal shown.");
         });
@@ -34,8 +37,6 @@ class Sidebar extends Component {
     }
 
     render() {
-        logger.info("Sidebar component rendered.");
-        
         return (
             <div className="container-fluid">
                 <div className="sidebar col-auto min-vh-100 d-flex justify-content-between flex-column">
@@ -68,7 +69,7 @@ class Sidebar extends Component {
                             </li>
                             <li className="nav-item fs-4 my-1 py-2 py-sm-0">
                                 <a href="#" onClick={this.handleClick} className="nav-link fs-5" aria-current="page">
-                                    <i className="bi bi-clipboard2-data-fill"></i>
+                                    <i className="bi bi-database-fill"></i>
                                     <span className="ms-3 d-none d-sm-inline">Data Management</span>
                                 </a>
                             </li>

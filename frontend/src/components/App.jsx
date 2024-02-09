@@ -1,54 +1,52 @@
-import { useState } from 'react'
-// import { Link } from "react-router-dom";
-// import HelloWorld from './HelloWorld/'
-// import './App.css'
+import { Component } from 'react';
 import Sidebar from './Sidebar';
-import LoginModal from './LoginModal';
-import Button from 'react-bootstrap/Button';
 
-function App() {
-  const [modalShow, setModalShow] = useState(false);
+class App extends Component {
+  constructor(props) {
+      super(props);
 
-  return (
-    <>
-      <div className="row">
-        <div className='col-3'>
-          <Sidebar />
-        </div>
-        <div className='col'>
-          <div className='container'>
-            <h2>&lt; Catalogue &lt;Museum of Anthropology&gt; / X Farm</h2>
-            {/* <HelloWorld />
-            <Link to="helloworld">Say Hi!</Link> */}
-            <div>
-              {/* <Button variant="primary" onClick={() => setModalShow(true)}>
-                Login
-              </Button> */}
-            </div>
-            <div class="row">
-              <div class="col">
-                1 of 2
+      this.state = {
+          modalShow: false
+      };
+  }
+
+  render() {
+      return (
+        <>
+        <div className="row">
+          <div className='col-3'>
+            <Sidebar />
+          </div>
+          <div className='col'>
+            <div className='container'>
+              <h2>&lt; Catalogue &lt;Museum of Anthropology&gt; / X Farm</h2>
+              <div>
               </div>
-              <div class="col">
-                2 of 2
+              <div className="row">
+                <div className="col">
+                  Row 2 Col 1
+                </div>
+                <div className="col">
+                  Row 2 Col 2
+                </div>
               </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                1 of 3
-              </div>
-              <div class="col">
-                2 of 3
-              </div>
-              <div class="col">
-                3 of 3
+              <div className="row">
+                <div className="col">
+                  Row 3 Col 1
+                </div>
+                <div className="col">
+                  Row 3 Col 2
+                </div>
+                <div className="col">
+                  Row 3 Col 3
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </>
-  )
+      </>
+      )
+  }
 }
 
-export default App
+export default App;
