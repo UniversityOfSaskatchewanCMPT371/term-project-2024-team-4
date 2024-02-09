@@ -24,11 +24,6 @@ function App() {
               {/* <Button variant="primary" onClick={() => setModalShow(true)}>
                 Login
               </Button> */}
-
-              <LoginModal
-                show={modalShow}
-                onHide={() => setModalShow(false)}
-              />
             </div>
             <div class="row">
               <div class="col">
