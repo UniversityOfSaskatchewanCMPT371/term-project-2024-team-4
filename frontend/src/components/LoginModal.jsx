@@ -1,31 +1,30 @@
-import { useState, Component } from 'react'
+import { Component } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 import Form from 'react-bootstrap/Form';
 import './LoginModal.css';
-import logger from '../logger.js'
+import logger from '../logger.js';
 
 async function loginUser(credentials) {
-  logger.info("Login button clicked");
-    return fetch('URL', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(credentials)
-    })
-      .then(data => data.json())
-   }
+	logger.info("Login button clicked.");
+
+	return fetch('URL', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(credentials)
+	}).then(data => data.json());
+}
 
 class LoginModal extends Component {
+  	constructor(props){
+    	super(props);
 
-  constructor(props){
-    super(props);
-
-    this.state={
-      userName: "",
-      password: "",
-    };
+    	this.state={
+      		userName: "",
+      		password: "",
+    	};
     
     /**
      * These are to make sure the functions are defined for the component
@@ -35,13 +34,14 @@ class LoginModal extends Component {
     this.passwordChanged=this.passwordChanged.bind(this);
   }
 
-  async handleSubmit(e) {
-    e.preventDefault();
-    //**Not needed yet */
-    // const response = await loginUser({
-    //   username,
-    //   password
-    // });
+  	async handleSubmit(e) {
+    	e.preventDefault();
+
+    	//**Not needed yet */
+    	// const response = await loginUser({
+    	//   username,
+    	//   password
+    	// });
 
     /***
      * These loggers are for testing to make sure that the information is properly passed
@@ -50,21 +50,21 @@ class LoginModal extends Component {
     logger.info("Username entered:" + this.state.userName);
     logger.info("Password entered:" + this.state.password);
 
-    //**Not needed yet */
-    // if ('accessToken' in response) {
-    //   swal("Success", response.message, "success", {
-    //     buttons: false,
-    //     timer: 2000,
-    //   })
-    //   .then((value) => {
-    //     localStorage.setItem('accessToken', response['accessToken']);
-    //     localStorage.setItem('user', JSON.stringify(response['user']));
-    //     window.location.href = "/profile";
-    //   });
-    // } else {
-    //   // Login failed alert message
-    // }
-  }
+		//**Not needed yet */
+		// if ('accessToken' in response) {
+		//   swal("Success", response.message, "success", {
+		//     buttons: false,
+		//     timer: 2000,
+		//   })
+		//   .then((value) => {
+		//     localStorage.setItem('accessToken', response['accessToken']);
+		//     localStorage.setItem('user', JSON.stringify(response['user']));
+		//     window.location.href = "/profile";
+		//   });
+		// } else {
+		//   // Login failed alert message
+		// }
+  	}
 
   /**
    * This is for when the username is entered into the textbox to update the state of the component
@@ -82,58 +82,52 @@ class LoginModal extends Component {
       password: e.target.value}));
   }
 
-  componentDidUpdate(){
-    logger.info("LoginModal mounted properly.");
-  }
+	componentDidUpdate() {
+		logger.info("LoginModal mounted properly.");
+	}
 
-  render(){
-  return (
-    <div>
-    <Modal
-      {...this.props}
-      size="md"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-      animation={false}
-    >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Login
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-      <Form>
-        <Form.Group className="mb-3" controlId="loginFormUsername">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="email"
-              placeholder="Username"
-              autoFocus
-              onChange={this.userNameChanged}
-            />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="loginFormPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              onChange={this.passwordChanged}
-              />
-        </Form.Group>
-        </Form>
-      </Modal.Body>
-      <Modal.Footer>
-        <Button variant="secondary" onClick={this.props.onHide}>
-          Close
-        </Button>
-        <Button variant="primary" onClick={this.handleSubmit}>
-          Login
-        </Button>
-      </Modal.Footer>
-    </Modal>
-    </div>
-  );
-  }
+  	render() {
+		return (
+			<div>
+				<Modal
+				{...this.props}
+				size="md"
+				aria-labelledby="contained-modal-title-vcenter"
+				centered
+				animation={false}
+				>
+					<Modal.Header closeButton>
+						<Modal.Title id="contained-modal-title-vcenter">Login</Modal.Title>
+					</Modal.Header>
+					<Modal.Body>
+						<Form>
+							<Form.Group className="mb-3" controlId="loginFormUsername">
+								<Form.Label>Username</Form.Label>
+								<Form.Control
+								type="email"
+								placeholder="Username"
+								autoFocus
+								onChange={this.userNameChanged}
+								/>
+							</Form.Group>
+							<Form.Group className="mb-3" controlId="loginFormPassword">
+								<Form.Label>Password</Form.Label>
+								<Form.Control
+								type="password"
+								placeholder="Password"
+								onChange={this.passwordChanged}
+								/>
+							</Form.Group>
+						</Form>
+					</Modal.Body>
+					<Modal.Footer>
+						<Button variant="secondary" onClick={this.props.onHide}>Close</Button>
+						<Button variant="primary" onClick={this.handleSubmit}>Login</Button>
+					</Modal.Footer>
+				</Modal>
+			</div>
+		);
+	}
 }
 
-export default LoginModal
+export default LoginModal;
