@@ -34,7 +34,7 @@ router.get("/", async (req, res) => {
         "bladeShapes",
         "baseShapes",
         "haftingShapes",
-        "CrossSections",
+        "crossSections",
       ],
     });
     res.json(cultures);
@@ -56,7 +56,7 @@ router.get("/:id", async (req, res) => {
         "bladeShapes",
         "baseShapes",
         "haftingShapes",
-        "CrossSections",
+        "crossSections",
       ],
     });
     if (culture) {
