@@ -1,4 +1,4 @@
-import logger from "../../src/logger";
+import logger from "../src/logger";
 import { it, describe, expect, beforeAll, afterAll, vi } from "vitest";
 
 describe("Logging Methods in Frontend", () => {
