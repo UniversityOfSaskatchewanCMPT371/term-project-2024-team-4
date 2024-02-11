@@ -167,6 +167,7 @@ jobs:
   ### Run Frontend Unit Tests ###
   unit-test-frontend:
     runs-on: ubuntu-latest
+    needs: build-frontend
     steps:
       - uses: actions/checkout@v3
 
