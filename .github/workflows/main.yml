@@ -190,7 +190,7 @@ jobs:
           path: frontend/
 
       - name: Unzip Frontend Artifact
-        run: unzip frontend/release.zip
+        run: unzip -o frontend/release.zip
 
         # run frontend unit tests
       - name: Run Frontend Unit Tests
