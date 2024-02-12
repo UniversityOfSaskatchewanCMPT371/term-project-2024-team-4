@@ -3,8 +3,9 @@ Logger Utility Usage:
 
 import logger from `here`;
 
-logger.info("text");
+logger.trace("text");
 logger.debug("text");
+logger.info("text");
 logger.warn("text");
 logger.error("text");
 
