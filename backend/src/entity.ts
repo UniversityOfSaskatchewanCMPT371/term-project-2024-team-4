@@ -95,21 +95,21 @@ period: Period;
 @OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.culture)
  projectilePoints: ProjectilePoint[]; 
 
-@ManyToMany(() => BladeShape)
+@ManyToMany(() => BladeShape, bladeShape => bladeShape.cultures)
 @JoinTable()
 bladeShapes: BladeShape[];
 
-@ManyToMany(() => BaseShape)
+@ManyToMany(() => BaseShape, baseShape => baseShape.cultures)
 @JoinTable()
 baseShapes: BaseShape[];
 
-@ManyToMany(() => HaftingShape)
+@ManyToMany(() => HaftingShape, haftingShape => haftingShape.cultures)
 @JoinTable()
 haftingShapes: HaftingShape[];
 
-@ManyToMany(() => CrossSection)
+@ManyToMany(() => CrossSection, crossSection => crossSection.cultures)
 @JoinTable()
-CrossSections: CrossSection[];
+crossSections: CrossSection[];
 
 }
 
@@ -154,7 +154,7 @@ export class HaftingShape {
  @Column()
  name: string;
 
- @ManyToMany(() => Culture, culture => culture.baseShapes)
+ @ManyToMany(() => Culture, culture => culture.haftingShapes)
  cultures: Culture[];
  
  @OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.haftingShape)
@@ -170,7 +170,7 @@ export class CrossSection {
  @Column()
  name: string;
 
- @ManyToMany(() => Culture, culture => culture.baseShapes)
+ @ManyToMany(() => Culture, culture => culture.crossSections)
  cultures: Culture[];
  
  @OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.crossSection)
