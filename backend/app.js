@@ -11,6 +11,24 @@ const dataSource = require("./config/db");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 
+const catalogueRouter = require("./routes/catalogues");
+const regionRouter = require("./routes/regions");
+const siteRouter = require("./routes/sites");
+const periodRouter = require("./routes/periods");
+
+
+const bladeShapeRouter = require("./routes/bladeShapes");
+const baseShapeRouter = require("./routes/baseShapes");
+const haftingShapeRouter = require("./routes/haftingShapes");
+const crossSectionRouter = require("./routes/crossSections");
+const cultureRouter = require("./routes/cultures");
+
+const artifactTypeRouter = require("./routes/artifactTypes");
+const artifactRouter = require("./routes/artifacts");
+const materialRouter = require("./routes/materials");
+
+const projectilePointsRouter = require("./routes/projectilePoints");
+
 const app = express();
 
 // view engine setup
@@ -35,6 +53,24 @@ app.use(cors());
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
+
+app.use("/catalogues", catalogueRouter);
+app.use("/regions", regionRouter);
+app.use("/sites", siteRouter);
+app.use("/periods", periodRouter);
+
+app.use("/bladeshapes", bladeShapeRouter);
+app.use("/baseshapes", baseShapeRouter);
+app.use("/haftingshapes", haftingShapeRouter);
+app.use("/crosssections", crossSectionRouter);
+app.use("/cultures", cultureRouter);
+
+
+app.use("/artifacttypes", artifactTypeRouter);
+app.use("/artifacts", artifactRouter);
+app.use("/materials", materialRouter);
+
+app.use("/projectilepoints", projectilePointsRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
