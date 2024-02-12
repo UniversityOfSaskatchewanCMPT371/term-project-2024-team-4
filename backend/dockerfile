@@ -1,0 +1,18 @@
+FROM node:18
+
+# expose backend port
+EXPOSE 3000
+
+# create necessary work directory
+RUN mkdir -p /backend/bin 
+WORKDIR /backend 
+
+# copy local files to container
+COPY package.json /backend/package.json
+COPY package-lock.json /backend/package-lock.json
+
+
+# install packages
+RUN npm install 
+
+CMD ["npm", "run", "devstart"]

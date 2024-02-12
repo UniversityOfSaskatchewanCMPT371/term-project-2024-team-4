@@ -1,15 +1,22 @@
 require("dotenv").config();
-const { Sequelize } = require("sequelize");
+const { DataSource } = require('typeorm');
+const { User } = require('../dist/user.entity');
+const {Catalogue, Site, Region, Period, Culture,BladeShape, BaseShape, HaftingShape,
+  CrossSection, Artifact, Material, ArtifactType, ProjectilePoint} = require('../dist/entity');
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME, 
-  process.env.DB_USER, 
-  process.env.DB_PASSWORD, 
-  {
-      host: process.env.DB_HOST,
-      dialect: "postgres",
-      logging: false, // or console.log to see it all, probably have something to handle this
-  }
-);
 
-  module.exports = { sequelize};
+const dataSource = new DataSource({
+  type: process.env.DB_DIALECT,
+  host: process.env.DB_HOST,
+  port: 5432,
+  username: process.env.DB_USER,
+  password: process.env.DB_PASS, 
+  database: process.env.DB_NAME,
+  synchronize: true,
+  entities: [ User, Catalogue, Site, Region, Period, Culture,BladeShape, BaseShape, HaftingShape,
+  CrossSection, Artifact, Material, ArtifactType, ProjectilePoint ],
+});
+
+dataSource.initialize().then(() => console.log('connected to DB succesfully!'));
+
+module.exports = dataSource;

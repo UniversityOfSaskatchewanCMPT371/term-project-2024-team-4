@@ -1,0 +1,61 @@
+# docker-compose exec <service-name> /bin/bash
+# docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' term-project-2024-team-4-postgres-1
+version: "3.9"
+
+services:
+  # set up db
+  postgres:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: mypassword
+
+    # hold database data (persistent data)
+    # run initial database queries on first time
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  # to use pgadmin
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    ports:
+      - "5050:80"
+
+  # set up backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    volumes:
+      - /backend/node_modules
+      - ./backend:/backend
+    ports:
+      - "3000:3000"
+
+    # check if database is initialized
+    command: bash -c 'while !</dev/tcp/postgres/5432; do sleep 1; done; npm run devstart'
+    environment:
+      DB_DIALECT: postgres
+      DB_HOST: postgres
+      DB_USER: postgres
+      DB_PASS: mypassword
+      DB_NAME: my_database
+    depends_on:
+      - postgres
+
+  # set up frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    volumes:
+      - /frontend/node_modules
+      - ./frontend:/frontend
+    ports:
+      - "8080:8080"
