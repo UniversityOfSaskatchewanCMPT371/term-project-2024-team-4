@@ -6,7 +6,7 @@
 ### What the Application Does
 A web app that serves as a catalog management system tailored for anyone with private collections of archaeological artifacts. The primary focus is on creating a user-friendly platform for managing, maintaining, and growing personal collections of projectile points and other artifacts. It addresses the need for a more modern software option in this domain.
 
-### Tech Stack
+### Main Tech Stack
 
 #### Frontend
 - React.js (JavaScript)
@@ -15,7 +15,6 @@ A web app that serves as a catalog management system tailored for anyone with pr
 #### Backend
 - Express (JavaScript)
 - PostgreSQL
-
 
 ### Planned Features
 1. **Admin Account Privileges:** Ability for admins to add, modify, and delete points, and potentially add new admin/user accounts.
@@ -26,20 +25,13 @@ A web app that serves as a catalog management system tailored for anyone with pr
 6. **Search and Filter Functionality:** Allowing users to search and filter projectile points by attributes like material, site, and culture (planned as a stretch feature).
 
 
-## Table of Contents
-1. [Project Description](#project-description)
-2. [How to Install and Run the Project](#how-to-install-and-run-the-project)
-3. [How to Use the Project](#how-to-use-the-project)
-4. [Credits](#credits)
-5. [License](#license)
-
-## How to Install and Run the Project
-*Step-by-step instructions on how to set up and run the project, including any necessary dependencies.*
-
-- ...
-
-## How to Use the Project
-*Basic usage instructions:*
+## Github Wiki - Table of Contents
+1. [How to Install and Run the Project](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-4/wiki/Developers-Guide:-Getting-Started)
+2. [Tech Stack & Tools](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-4/wiki/Documentation:-Tech-Stack-&-Tools)
+3. [Project Architecture & Workflow](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-4/wiki/Documentation:-Architecture)
+4. [FAQs & Troubleshooting](https://github.com/UniversityOfSaskatchewanCMPT371/term-project-2024-team-4/wiki/FAQ-&-Troubleshooting)
+5. [Credits](#credits)
+6. [License](#license)
 
 ## Credits
 - [Team Member, Stakeholder]
