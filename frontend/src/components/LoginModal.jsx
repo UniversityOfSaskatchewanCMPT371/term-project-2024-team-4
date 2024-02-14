@@ -1,9 +1,15 @@
-import { Component } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
+import React, { Component } from 'react';
 import './LoginModal.css';
 import logger from '../logger.js';
+
+// MUI
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 async function loginUser(credentials) {
 	logger.info("Login button clicked.");
@@ -24,6 +30,7 @@ class LoginModal extends Component {
     	this.state={
       		userName: "",
       		password: "",
+			modalShow: this.props.isOpen
     	};
     
     /**
@@ -32,6 +39,8 @@ class LoginModal extends Component {
     this.handleSubmit=this.handleSubmit.bind(this);
     this.userNameChanged=this.userNameChanged.bind(this);
     this.passwordChanged=this.passwordChanged.bind(this);
+
+	console.log(this.props.isOpen);
   }
 
   	async handleSubmit(e) {
@@ -66,66 +75,78 @@ class LoginModal extends Component {
 		// }
   	}
 
-  /**
-   * This is for when the username is entered into the textbox to update the state of the component
-   */
-  userNameChanged(e){
-    this.setState((state)=>({...state,
-      userName:e.target.value}));
-  }
+	/**
+	 * This is for when the username is entered into the textbox to update the state of the component
+	 */
+	userNameChanged(e){
+		this.setState((state)=>({...state,
+		userName:e.target.value}));
+	}
 
-  /**
-   * For when the password is entered into the texbox to update the state of the component
-   */
-  passwordChanged(e){
-    this.setState((state)=>({...state,
-      password: e.target.value}));
-  }
+	/**
+	 * For when the password is entered into the texbox to update the state of the component
+	 */
+	passwordChanged(e){
+		this.setState((state)=>({...state,
+		password: e.target.value}));
+	}
 
 	componentDidUpdate() {
 		logger.info("LoginModal mounted properly.");
 	}
 
   	render() {
+
+		console.log(this.state.modalShow);
 		return (
-			<div>
-				<Modal
-				{...this.props}
-				size="md"
-				aria-labelledby="contained-modal-title-vcenter"
-				centered
-				animation={false}
+			<>
+				<Dialog
+				open={this.state.modalShow}
+				onClose={this.setModalHidden}
+				PaperProps={{
+				component: 'form',
+				onSubmit: (event) => {
+					event.preventDefault();
+					const formData = new FormData(event.currentTarget);
+					const formJson = Object.fromEntries(formData.entries());
+					const email = formJson.email;
+					console.log(email);
+					this.handleClose();
+				},
+				}}
 				>
-					<Modal.Header closeButton>
-						<Modal.Title id="contained-modal-title-vcenter">Login</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form>
-							<Form.Group className="mb-3" controlId="loginFormUsername">
-								<Form.Label>Username</Form.Label>
-								<Form.Control
-								type="email"
-								placeholder="Username"
-								autoFocus
-								onChange={this.userNameChanged}
-								/>
-							</Form.Group>
-							<Form.Group className="mb-3" controlId="loginFormPassword">
-								<Form.Label>Password</Form.Label>
-								<Form.Control
-								type="password"
-								placeholder="Password"
-								onChange={this.passwordChanged}
-								/>
-							</Form.Group>
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button variant="secondary" onClick={this.props.onHide}>Close</Button>
-						<Button variant="primary" onClick={this.handleSubmit}>Login</Button>
-					</Modal.Footer>
-				</Modal>
-			</div>
+					<DialogTitle>Admin</DialogTitle>
+					<DialogContent>
+					<DialogContentText>
+                        Lorem ipsum dolor sit amet.
+					</DialogContentText>
+					<TextField
+						autoFocus
+						required
+						margin="dense"
+						id="adminusername"
+						name="username"
+						label="Username"
+						type="string"
+						fullWidth
+						variant="standard"
+					/><TextField
+                        required
+                        margin="dense"
+                        id="adminpassword"
+                        name="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        variant="standard"
+                    />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={this.setModalHidden}>Cancel</Button>
+                        <Button type="submit">Login</Button>
+                    </DialogActions>
+                </Dialog>
+			</>
 		);
 	}
 }
