@@ -42,9 +42,11 @@ jobs:
           npm ci
         
       - name: Run Linter
+        working-directory: ./backend
         run: npm run lint
 
       - name: Run Prettier Formatting Check
+        working-directory: ./backend
         run: npm run format
 
       - name: Set up PostgreSQL
@@ -96,9 +98,11 @@ jobs:
           npm ci
       
       - name: Run Linter
+        working-directory: ./frontend
         run: npm run lint
   
       - name: Run Prettier Formatting Check
+        working-directory: ./frontend
         run: npm run format
 
         # build frontend
