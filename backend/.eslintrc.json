@@ -14,10 +14,10 @@
 		"quotes": ["error", "double"],
 		"semi": ["error", "always"]
 	},
-	"ignorePatterns": ["tests/**", "**.ts"],
+	"ignorePatterns": ["**.ts", "dist/"],
 	"overrides": [
 		{
-			"files": ["test/**/*.js"],
+			"files": ["tests/**/*.js"],
 			"env": {
 				"jest": true,
 				"node": true
