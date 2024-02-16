@@ -25,55 +25,55 @@ const fs = require("fs");
 // create logs directory if it doesn't exist
 const logsDir = path.join(__dirname, "..", "logs");
 if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir);
+	fs.mkdirSync(logsDir);
 }
 
 // define a variable for multi-level logging levels ordered from highest to lowest priority
 const logLevels = {
-  levels: {
-    fatal: 0,
-    error: 1,
-    warn: 2,
-    info: 3,
-    debug: 4,
-  },
-  colors: {
-    fatal: "bold red",
-    error: "red",
-    warn: "yellow",
-    info: "green",
-    debug: "blue",
-  },
+	levels: {
+		fatal: 0,
+		error: 1,
+		warn: 2,
+		info: 3,
+		debug: 4,
+	},
+	colors: {
+		fatal: "bold red",
+		error: "red",
+		warn: "yellow",
+		info: "green",
+		debug: "blue",
+	},
 };
 
 // Winston configuration settings
 const logger = winston.createLogger({
-  level: "debug",
-  levels: logLevels.levels,
+	level: "debug",
+	levels: logLevels.levels,
 
-  // defines how the log lines will look like
-  format: winston.format.combine(
-    winston.format.timestamp({
-      format: "YYYY-MM-DD HH:mm:ss",
-    }),
-    winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`
-    ),
-    winston.format.colorize({ all: true }) // Optional: colorize log output
-  ),
+	// defines how the log lines will look like
+	format: winston.format.combine(
+		winston.format.timestamp({
+			format: "YYYY-MM-DD HH:mm:ss",
+		}),
+		winston.format.printf(
+			(info) => `${info.timestamp} ${info.level}: ${info.message}`,
+		),
+		winston.format.colorize({ all: true }), // Optional: colorize log output
+	),
 
-  // defines where the logs will be shown
-  // in this case, console & log folder
-  transports: [
-    new winston.transports.Console(),
-    new winston.transports.DailyRotateFile({
-      filename: "logs/%DATE%.log",
-      datePattern: "YYYY-MM-DD",
-      zippedArchive: true,
-      maxSize: "20m",
-      maxFiles: "14d",
-    }),
-  ],
+	// defines where the logs will be shown
+	// in this case, console & log folder
+	transports: [
+		new winston.transports.Console(),
+		new winston.transports.DailyRotateFile({
+			filename: "logs/%DATE%.log",
+			datePattern: "YYYY-MM-DD",
+			zippedArchive: true,
+			maxSize: "20m",
+			maxFiles: "14d",
+		}),
+	],
 });
 
 // apply colors to winston
@@ -81,7 +81,7 @@ winston.addColors(logLevels.colors);
 
 // morgan stream integration
 const morganIntegration = morgan("combined", {
-  stream: { write: (message) => logger.info(message.trim()) },
+	stream: { write: (message) => logger.info(message.trim()) },
 });
 
 module.exports = { logger, morganIntegration };
