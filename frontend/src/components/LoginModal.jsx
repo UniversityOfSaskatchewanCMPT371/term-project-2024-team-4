@@ -1,54 +1,57 @@
-import { Component } from 'react';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Form from 'react-bootstrap/Form';
-import './LoginModal.css';
-import logger from '../logger.js';
+import { Component } from "react";
+import PropTypes from "prop-types";
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
+import Form from "react-bootstrap/Form";
+import "./LoginModal.css";
+import logger from "../logger.js";
 
+/*
 async function loginUser(credentials) {
 	logger.info("Login button clicked.");
 
-	return fetch('URL', {
-		method: 'POST',
+	return fetch("URL", {
+		method: "POST",
 		headers: {
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json"
 		},
 		body: JSON.stringify(credentials)
 	}).then(data => data.json());
 }
+*/
 
 class LoginModal extends Component {
-  	constructor(props){
-    	super(props);
+	constructor(props) {
+		super(props);
 
-    	this.state={
-      		userName: "",
-      		password: "",
-    	};
-    
-    /**
-     * These are to make sure the functions are defined for the component
-     */
-    this.handleSubmit=this.handleSubmit.bind(this);
-    this.userNameChanged=this.userNameChanged.bind(this);
-    this.passwordChanged=this.passwordChanged.bind(this);
-  }
+		this.state = {
+			userName: "",
+			password: "",
+		};
 
-  	async handleSubmit(e) {
-    	e.preventDefault();
+		/**
+		 * These are to make sure the functions are defined for the component
+		 */
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.userNameChanged = this.userNameChanged.bind(this);
+		this.passwordChanged = this.passwordChanged.bind(this);
+	}
 
-    	//**Not needed yet */
-    	// const response = await loginUser({
-    	//   username,
-    	//   password
-    	// });
+	async handleSubmit(e) {
+		e.preventDefault();
 
-    /***
-     * These loggers are for testing to make sure that the information is properly passed
-     * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
-     */
-    logger.info("Username entered:" + this.state.userName);
-    logger.info("Password entered:" + this.state.password);
+		//**Not needed yet */
+		// const response = await loginUser({
+		//   username,
+		//   password
+		// });
+
+		/***
+		 * These loggers are for testing to make sure that the information is properly passed
+		 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
+		 */
+		logger.info("Username entered:" + this.state.userName);
+		logger.info("Password entered:" + this.state.password);
 
 		//**Not needed yet */
 		// if ('accessToken' in response) {
@@ -64,37 +67,35 @@ class LoginModal extends Component {
 		// } else {
 		//   // Login failed alert message
 		// }
-  	}
+	}
 
-  /**
-   * This is for when the username is entered into the textbox to update the state of the component
-   */
-  userNameChanged(e){
-    this.setState((state)=>({...state,
-      userName:e.target.value}));
-  }
+	/**
+	 * This is for when the username is entered into the textbox to update the state of the component
+	 */
+	userNameChanged(e) {
+		this.setState((state) => ({ ...state, userName: e.target.value }));
+	}
 
-  /**
-   * For when the password is entered into the texbox to update the state of the component
-   */
-  passwordChanged(e){
-    this.setState((state)=>({...state,
-      password: e.target.value}));
-  }
+	/**
+	 * For when the password is entered into the texbox to update the state of the component
+	 */
+	passwordChanged(e) {
+		this.setState((state) => ({ ...state, password: e.target.value }));
+	}
 
 	componentDidUpdate() {
 		logger.info("LoginModal mounted properly.");
 	}
 
-  	render() {
+	render() {
 		return (
 			<div>
 				<Modal
-				{...this.props}
-				size="md"
-				aria-labelledby="contained-modal-title-vcenter"
-				centered
-				animation={false}
+					{...this.props}
+					size="md"
+					aria-labelledby="contained-modal-title-vcenter"
+					centered
+					animation={false}
 				>
 					<Modal.Header closeButton>
 						<Modal.Title id="contained-modal-title-vcenter">Login</Modal.Title>
@@ -104,30 +105,39 @@ class LoginModal extends Component {
 							<Form.Group className="mb-3" controlId="loginFormUsername">
 								<Form.Label>Username</Form.Label>
 								<Form.Control
-								type="email"
-								placeholder="Username"
-								autoFocus
-								onChange={this.userNameChanged}
+									type="email"
+									placeholder="Username"
+									autoFocus
+									onChange={this.userNameChanged}
 								/>
 							</Form.Group>
 							<Form.Group className="mb-3" controlId="loginFormPassword">
 								<Form.Label>Password</Form.Label>
 								<Form.Control
-								type="password"
-								placeholder="Password"
-								onChange={this.passwordChanged}
+									type="password"
+									placeholder="Password"
+									onChange={this.passwordChanged}
 								/>
 							</Form.Group>
 						</Form>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button variant="secondary" onClick={this.props.onHide}>Close</Button>
-						<Button variant="primary" onClick={this.handleSubmit}>Login</Button>
+						<Button variant="secondary" onClick={this.props.onHide}>
+							Close
+						</Button>
+						<Button variant="primary" onClick={this.handleSubmit}>
+							Login
+						</Button>
 					</Modal.Footer>
 				</Modal>
 			</div>
 		);
 	}
 }
+
+// Define expected PropTypes
+LoginModal.propTypes = {
+	onHide: PropTypes.func.isRequired,
+};
 
 export default LoginModal;

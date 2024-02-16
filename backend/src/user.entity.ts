@@ -2,26 +2,26 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 
 // Define the RoleType enum
 enum RoleType {
-    BASIC = "basic",
-    ADMIN = "admin"
+	BASIC = "basic",
+	ADMIN = "admin",
 }
 
 // User entity definition
 @Entity()
 export class User {
-    @PrimaryGeneratedColumn()
-    id: number;
+	@PrimaryGeneratedColumn()
+	id: number;
 
-    @Column()
-    userName: string;
+	@Column()
+	userName: string;
 
-    @Column("text")
-    password: string;
+	@Column("text")
+	password: string;
 
-    @Column({
-        type: "enum",
-        enum: RoleType,
-        default: RoleType.BASIC
-    })
-    role: RoleType;
+	@Column({
+		type: "enum",
+		enum: RoleType,
+		default: RoleType.BASIC,
+	})
+	role: RoleType;
 }
