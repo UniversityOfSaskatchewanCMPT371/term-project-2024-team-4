@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './LoginModal.css';
 import logger from '../logger.js';
 
@@ -12,7 +12,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 async function loginUser(credentials) {
-	logger.info("Login button clicked.");
+	logger.info("Login button clicked");
 
 	return fetch('URL', {
 		method: 'POST',
@@ -24,40 +24,37 @@ async function loginUser(credentials) {
 }
 
 class LoginModal extends Component {
-  	constructor(props){
-    	super(props);
+	constructor(props) {
+		super(props);
 
-    	this.state={
-      		userName: "",
-      		password: "",
-			modalShow: this.props.isOpen
-    	};
+		this.state={
+			userName: "",
+			password: ""
+		};
     
-    /**
-     * These are to make sure the functions are defined for the component
-     */
-    this.handleSubmit=this.handleSubmit.bind(this);
-    this.userNameChanged=this.userNameChanged.bind(this);
-    this.passwordChanged=this.passwordChanged.bind(this);
+		/**
+		 * These are to make sure the functions are defined for the component
+		 */
+		this.handleSubmit = this.handleSubmit.bind(this);
+		this.userNameChanged = this.userNameChanged.bind(this);
+		this.passwordChanged = this.passwordChanged.bind(this);
+	}
 
-	console.log(this.props.isOpen);
-  }
+	async handleSubmit(e) {
+		e.preventDefault();
 
-  	async handleSubmit(e) {
-    	e.preventDefault();
+		//**Not needed yet */
+		// const response = await loginUser({
+		//   username,
+		//   password
+		// });
 
-    	//**Not needed yet */
-    	// const response = await loginUser({
-    	//   username,
-    	//   password
-    	// });
-
-    /***
-     * These loggers are for testing to make sure that the information is properly passed
-     * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
-     */
-    logger.info("Username entered:" + this.state.userName);
-    logger.info("Password entered:" + this.state.password);
+		/***
+		 * These loggers are for testing to make sure that the information is properly passed
+		 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
+		 */
+		logger.info("Username entered: " + this.state.userName);
+		logger.info("Password entered: " + this.state.password);
 
 		//**Not needed yet */
 		// if ('accessToken' in response) {
@@ -73,36 +70,34 @@ class LoginModal extends Component {
 		// } else {
 		//   // Login failed alert message
 		// }
-  	}
+	}
 
 	/**
 	 * This is for when the username is entered into the textbox to update the state of the component
 	 */
 	userNameChanged(e){
-		this.setState((state)=>({...state,
-		userName:e.target.value}));
+		this.setState((state) => ({...state,
+			userName:e.target.value}));
 	}
 
 	/**
 	 * For when the password is entered into the texbox to update the state of the component
 	 */
 	passwordChanged(e){
-		this.setState((state)=>({...state,
-		password: e.target.value}));
+		this.setState((state) => ({...state,
+			password: e.target.value}));
 	}
 
 	componentDidUpdate() {
-		logger.info("LoginModal mounted properly.");
+		logger.info("LoginModal mounted properly");
 	}
 
-  	render() {
-
-		console.log(this.state.modalShow);
+	render() {
 		return (
 			<>
 				<Dialog
-				open={this.state.modalShow}
-				onClose={this.setModalHidden}
+				open={this.props.modalVisible}
+				onClose={this.props.closeModal}
 				PaperProps={{
 				component: 'form',
 				onSubmit: (event) => {
@@ -129,7 +124,8 @@ class LoginModal extends Component {
 						label="Username"
 						type="string"
 						fullWidth
-						variant="standard"
+						variant="outlined"
+						onChange={this.userNameChanged}
 					/><TextField
                         required
                         margin="dense"
@@ -138,12 +134,13 @@ class LoginModal extends Component {
                         label="Password"
                         type="password"
                         fullWidth
-                        variant="standard"
+                        variant="outlined"
+						onChange={this.passwordChanged}
                     />
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={this.setModalHidden}>Cancel</Button>
-                        <Button type="submit">Login</Button>
+                        <Button onClick={this.props.closeModal}>Cancel</Button>
+                        <Button onClick={this.handleSubmit} type="submit">Login</Button>
                     </DialogActions>
                 </Dialog>
 			</>

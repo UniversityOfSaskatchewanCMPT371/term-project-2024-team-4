@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './Sidebar.css';
 import logger from '../logger.js';
 import LoginModal from './LoginModal';
@@ -27,35 +27,33 @@ class Sidebar extends Component {
         super(props);
 
         this.state = {
-            modalShow: false
+            modalVisible: false
         };
 
-        this.setModalShow = this.setModalShow.bind(this);
-        this.setModalHidden = this.setModalHidden.bind(this);
+        this.setModalVisible = this.setModalVisible.bind(this);
+        this.closeModal = this.closeModal.bind(this);
 
-        logger.info("Sidebar component rendered.");
+        logger.info("Sidebar component rendered");
     }
 
     handleClick(e) {
-        logger.info(e.target.innerText + " Sidebar navigation clicked.");
+        logger.info(e.target.innerText + " Sidebar navigation clicked");
     }
 
-    setModalShow(e) {
+    setModalVisible(e) {
         this.handleClick(e);
-        this.setState({ modalShow: true }, () => {
-            logger.info("LoginModal shown.");
+        this.setState({ modalVisible: true }, () => {
+            logger.info("LoginModal visible");
         });
     }
 
-    setModalHidden() {
-        this.setState({ modalShow: false }, () => {
-            logger.info("LoginModal hidden.");
+    closeModal() {
+        this.setState({ modalVisible: false }, () => {
+            logger.info("LoginModal closed");
         });
     }
 
     render() {
-
-        console.log(this.state.modalShow);
         return (
             <>
                 <Drawer
@@ -117,7 +115,7 @@ class Sidebar extends Component {
                                 <ListItemText primary='Settings' />
                             </ListItemButton>
                         </ListItem>
-                        <ListItem key='Login' disablePadding onClick={this.setModalShow}>
+                        <ListItem key='Login' disablePadding onClick={this.setModalVisible}>
                             <ListItemButton>
                                 <ListItemIcon>
                                     <LoginIcon />
@@ -128,7 +126,8 @@ class Sidebar extends Component {
                     </List>
                 </Drawer>
                 <LoginModal 
-				isOpen={this.state.modalShow}
+				modalVisible={this.state.modalVisible}
+                closeModal={this.closeModal}
                 />
             </>
         )
