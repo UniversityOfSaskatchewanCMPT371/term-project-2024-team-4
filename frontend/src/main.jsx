@@ -7,6 +7,20 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+
+const theme = createTheme({
+	palette: {
+		mode: 'light',
+		primary: {
+			main: '#bf8b3c',
+		},
+		secondary: {
+			main: '#ffffff',
+		},
+	},
+});
 
 const router = createBrowserRouter([
 	{
@@ -17,6 +31,8 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		<ThemeProvider theme={theme}>
+			<RouterProvider router={router} />
+		</ThemeProvider>
 	</React.StrictMode>
 );

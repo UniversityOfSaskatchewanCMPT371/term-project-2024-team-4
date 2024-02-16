@@ -40,8 +40,8 @@ class LoginModal extends Component {
 		this.passwordChanged = this.passwordChanged.bind(this);
 	}
 
-	async handleSubmit(e) {
-		e.preventDefault();
+	async handleSubmit(event) {
+		event.preventDefault();
 
 		//**Not needed yet */
 		// const response = await loginUser({
@@ -75,17 +75,17 @@ class LoginModal extends Component {
 	/**
 	 * This is for when the username is entered into the textbox to update the state of the component
 	 */
-	userNameChanged(e){
+	userNameChanged(event) {
 		this.setState((state) => ({...state,
-			userName:e.target.value}));
+			userName:event.target.value}));
 	}
 
 	/**
 	 * For when the password is entered into the texbox to update the state of the component
 	 */
-	passwordChanged(e){
+	passwordChanged(event) {
 		this.setState((state) => ({...state,
-			password: e.target.value}));
+			password: event.target.value}));
 	}
 
 	componentDidUpdate() {

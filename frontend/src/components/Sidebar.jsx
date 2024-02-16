@@ -6,6 +6,7 @@ import LoginModal from './LoginModal';
 // MUI
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
+import Typography from '@mui/material/Typography';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
 import ListItem from '@mui/material/ListItem';
@@ -36,12 +37,12 @@ class Sidebar extends Component {
         logger.info("Sidebar component rendered");
     }
 
-    handleClick(e) {
-        logger.info(e.target.innerText + " Sidebar navigation clicked");
+    handleClick(event) {
+        logger.info(event.target.innerText + " Sidebar navigation clicked");
     }
 
-    setModalVisible(e) {
-        this.handleClick(e);
+    setModalVisible(event) {
+        this.handleClick(event);
         this.setState({ modalVisible: true }, () => {
             logger.info("LoginModal visible");
         });
@@ -68,7 +69,11 @@ class Sidebar extends Component {
                     variant="permanent"
                     anchor="left"
                 >
-                    <Toolbar />
+                    <Toolbar>
+                        <Typography variant="h6" noWrap component="div">
+                            PCubed
+                        </Typography>
+                    </Toolbar>
                     <List>
                         <ListItem key='Home' disablePadding onClick={this.handleClick}>
                             <ListItemButton>
