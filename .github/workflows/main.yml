@@ -109,4 +109,38 @@ jobs:
           name: frontend-build-artifact
           path: frontend/release.zip
 
+  #Installing playwright
+  PLaywright-test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+    - name: Install dependencies
+      run: npm ci
+    - name: Install Playwright Browsers
+      run: npx playwright install --with-deps
+      
+  smoke-test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run smoke test
+        run: npx playwright --project smoke-test.js
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: smoke-report
+          path: smoke-report/
+          retention-days: 90
+
+
+
+
+
+
+
+
       
