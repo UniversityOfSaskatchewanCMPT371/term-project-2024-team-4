@@ -125,18 +125,14 @@ jobs:
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
   # Running Smoke Test    
-  smoke-test:
-    timeout-minutes: 60
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run smoke test
-        run: npx playwright --project smoke-test.js
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: smoke-report
-          path: smoke-report/
-          retention-days: 90
+    - name: Run smoke test
+      run: npx playwright --project smoke-test.js
+    - uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: smoke-report
+        path: smoke-report/
+        retention-days: 90
 
 
 
