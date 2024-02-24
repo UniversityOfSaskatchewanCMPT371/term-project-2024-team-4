@@ -137,6 +137,7 @@ jobs:
         if: always()
         with:
           name: smoke-report
+          working-directory: ./testing
           path: smoke-report/
           retention-days: 90
 
