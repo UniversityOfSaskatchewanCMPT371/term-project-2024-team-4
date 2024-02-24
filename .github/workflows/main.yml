@@ -131,7 +131,6 @@ jobs:
     # Running Smoke Test    
       - name: Run smoke test
         run: 
-          cd testing
           npx playwright test smoke-test.spec.js
       - uses: actions/upload-artifact@v3
         if: always()
