@@ -126,7 +126,7 @@ jobs:
       run: npx playwright install --with-deps
   # Running Smoke Test    
     - name: Run smoke test
-      run: npx playwright smoke-test.js
+      run: npx playwright test smoke-test.js
     - uses: actions/upload-artifact@v3
       if: always()
       with:
