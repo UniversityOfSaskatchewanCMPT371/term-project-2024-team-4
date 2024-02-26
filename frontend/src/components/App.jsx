@@ -4,12 +4,25 @@ import Sidebar from './Sidebar';
 // MUI
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
+import { styled } from '@mui/material/styles';
+import Paper from '@mui/material/Paper';
+import Grid from '@mui/material/Grid';
+import Divider from '@mui/material/Divider';
 import Typography from '@mui/material/Typography';
+import TextField from '@mui/material/TextField';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 
 
-const drawerWidth = 240;
+const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: 'center',
+    color: theme.palette.text.secondary,
+}));
 
 class App extends Component {
 	constructor(props) {
@@ -21,41 +34,58 @@ class App extends Component {
 			<>
 				<Box sx={{ display: 'flex' }}>
                     <CssBaseline />
-                    <AppBar
-                        position="fixed"
-                        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-                    >
-                        <Toolbar>
-                        <Typography variant="h6" noWrap component="div">
-                            PCubed
-                        </Typography>
-                        </Toolbar>
-                    </AppBar>
                     <Sidebar />
-                    <Box
-                        component="main"
-                        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+                    <Box sx={{
+                        flexGrow: 1,
+                        padding: '30px',
+                    }}
                     >
-                        <Toolbar />
-                        <Typography paragraph>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Rhoncus dolor purus non
-                        enim praesent elementum facilisis leo vel. Risus at ultrices mi tempus
-                        imperdiet.
-                        </Typography>
-                        <Typography paragraph>
-                        Consequat mauris nunc congue nisi vitae suscipit. Fringilla est ullamcorper
-                        eget nulla facilisi etiam dignissim diam. Pulvinar elementum integer enim
-                        neque volutpat ac tincidunt. Ornare suspendisse sed nisi lacus sed viverra
-                        tellus. Purus sit amet volutpat consequat mauris. Elementum eu facilisis
-                        sed odio morbi. Euismod lacinia at quis risus sed vulputate odio. Morbi
-                        tincidunt ornare massa eget egestas purus viverra accumsan in. In hendrerit
-                        gravida rutrum quisque non tellus orci ac. Pellentesque nec nam aliquam sem
-                        et tortor. Habitant morbi tristique senectus et. Adipiscing elit duis
-                        tristique sollicitudin nibh sit. Ornare aenean euismod elementum nisi quis
-                        eleifend. Commodo viverra maecenas accumsan lacus vel facilisis. Nulla
-                        posuere sollicitudin aliquam ultrices sagittis orci a.
-                        </Typography>
+                        <Grid container spacing={2}>
+                            <Grid item xs={12}>
+                                <Typography color="text.primary">Breadcrumbs / Navigation / Component / Placeholder</Typography>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField id="standard-basic" sx={{ minWidth: 500 }} label="Search" variant="standard" />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Divider />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <FormControl variant="standard" sx={{ minWidth: 200 }}>
+                                    <InputLabel id="demo-simple-select-standard-label">Sort</InputLabel>
+                                    <Select
+                                    labelId="demo-simple-select-standard-label"
+                                    id="demo-simple-select-standard"
+                                    label="Sort"
+                                    >
+                                        <MenuItem value="">
+                                            <em>None</em>
+                                        </MenuItem>
+                                        <MenuItem value={1}>Name</MenuItem>
+                                        <MenuItem value={2}>Type</MenuItem>
+                                    </Select>
+                                </FormControl>
+                                <FormControl variant="standard" sx={{ ml: '20px', minWidth: 200 }}>
+                                    <InputLabel id="demo-simple-select-standard-label">Filter</InputLabel>
+                                    <Select
+                                    labelId="demo-simple-select-standard-label"
+                                    id="demo-simple-select-standard"
+                                    label="Filter"
+                                    >
+                                        <MenuItem value="">
+                                            <em>None</em>
+                                        </MenuItem>
+                                        <MenuItem value={1}>Name</MenuItem>
+                                        <MenuItem value={2}>Description</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </Grid>
+                            <Grid item xs={12}>
+                                <Item variant="outlined" sx={{ mt: '40px', minHeight: '500px' }}>
+                                    
+                                </Item>
+                            </Grid>
+                        </Grid>
                     </Box>
                 </Box>
 			</>

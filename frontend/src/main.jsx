@@ -14,10 +14,17 @@ const theme = createTheme({
 	palette: {
 		mode: 'light',
 		primary: {
-			main: '#bf8b3c',
+			main: '#cda057',
 		},
 		secondary: {
 			main: '#ffffff',
+		},
+	},
+	components: {
+		MuiButtonBase: {
+			defaultProps: {
+				disableRipple: true,
+			},
 		},
 	},
 });
