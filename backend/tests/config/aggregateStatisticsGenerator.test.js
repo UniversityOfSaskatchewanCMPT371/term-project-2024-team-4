@@ -53,166 +53,178 @@
  *          - an existing large site
  */
 
-import {
+/**
+ * Materials:
+ * 		Agate Jasper: https://projectilepoints.net/Materials/Agate%20Jasper.html
+ * 			id: 1
+ * 			name: "Agate Jasper"
+ * 			description: "Agate Jasper is when both agate and jasper form together.
+ * 						  The color ranges from yellow to brown or green.  Part if the material
+ * 						  will be banded and be translucent while the remaining material will be
+ * 						  mottled and opaque."
+ *
+ * 		Alberta Ironstone: https://projectilepoints.net/Materials/Alberta%20Ironstone.html
+ * 			id: 2
+ * 			name: "Alberta Ironstone"
+ * 			description: "Alberta Ironstone ranges from a dark rusty brown to black."
+ *
+ * 		Alibates Chert: https://projectilepoints.net/Materials/Alibates%20Chert.html
+ * 			id: 3
+ * 			name: "Alibates Chert"
+ * 			description: "Alibates Chert ranges in mottled or variegated with colors from most
+ * 						  commonly reds, yellows, and oranges in iron rich areas to blues and dark
+ * 						  greens in manganese rich areas. Burgundy and white variations are commonly
+ * 						  called 'bacon strip' variety."
+ *
+ * 		Barger Gulch Chert: https://projectilepoints.net/Materials/Barger%20Gulch%20Chert.html
+ * 			id: 4
+ * 			name: "Barger Gulch Chert"
+ * 			description: "Barger Gulch chert is similar to chalcedony with a translucent base with
+ * 						  hues ranging from white to light yellow. Black dendric, starburst
+ * 						  inclusions are present."
+ */
+
+/**
+ * Artifacts:
+ * 		Blackwater Side Notch: https://projectilepoints.net/Points/Blackwater.html
+ * 			id: 1
+ * 			name: "Blackwater Side Notch"
+ * 			description:
+ *
+ * 		Athapaskan Notched: https://projectilepoints.net/Points/Athapaskan%20Notched.html
+ *  		id: 2
+ * 			name: "Athapaskan Notched"
+ * 			description:
+ *
+ * 		Galt Side Notch: https://projectilepoints.net/Points/Galt.html
+ * 			id: 3
+ * 			name: "Galt Side Notch"
+ * 			description:
+ *
+ * 		Gatecliff Stemmed: https://projectilepoints.net/Points/Gatecliff.html
+ * 			id: 4
+ * 			name: "Gatecliff Stemmed"
+ * 			description:
+ *
+ * 		Alberta Stemmed: https://projectilepoints.net/Points/Alberta.html
+ * 			id: 5
+ * 			name: "Alberta Stemmed"
+ * 			description:
+ *
+ * 		Silver Lake Stemmed: https://projectilepoints.net/Points/SIlver_Lake.html
+ * 			id: 6
+ * 			name: "Silver Lake Stemmed"
+ * 			description:
+ *
+ * 		Humboldt Basal Notch: https://projectilepoints.net/Points/Humboldt_Basal.html
+ * 			id: 7
+ * 			name: "Humboldt Basal Notch"
+ * 			description:
+ *
+ * 		Embarras Bi-Point: https://projectilepoints.net/Points/Embarras%20Bi-point.html
+ * 			id: 8
+ * 			name: "Embarras Bi-Point"
+ * 			description:
+ *
+ * 		Cody Knife: https://projectilepoints.net/Points/Cody.html
+ * 			id: 9
+ * 			name: "Cody Knife"
+ * 			description:
+ */
+
+const {
 	materialPercentage,
 	projectilePointPercentage,
 	averageProjectilePointDimensions,
 	aggregateSiteStatistics,
 	aggregateCatalogueStatistics,
 	aggregatePointTypeStatistics,
-} from "../../controllers/aggregateStatisticsController";
+} = require("../../controllers/aggregateStatisticsController");
 
 //NOTE: There is currently no test data to work with, so any tests that would use any test data
 //      currently do not function properly
 describe("Tests for the function: materialPercentage()", () => {
-	beforeAll(() => {
-		//TODO: if anything needs to be populated before these tests do here
-	});
-
-	afterAll(() => {
-		//TODO: clean up of test data done here
-	});
-
 	test("Attempt to calculate percentages with an empty list", () => {
-		percentages = materialPercentage([]);
-		expect(percentages).toEqual([]);
+		const percentages = materialPercentage([]);
+		expect(percentages).toBe(null);
 	});
 
 	test("Attempt to calculate percentages with a populated list expecting correct return", () => {
-		//TODO: Populate with actual data [materialName, count]
-		percentages = materialPercentage([
-			[Type1, 5],
-			[Type2, 5],
-			[Type3, 5],
-			[Type4, 5],
-		]);
-		expect(percentages).toEqual([
-			{ Type1: [0.25], Type2: [0.25], Type3: [0.25], Type4: [0.25] },
-		]);
-	});
-
-	test("Attempt to calculate percentages with a large populated list expecting correct return", () => {
-		//TODO: Populate with actual data [materialName, count], and with a large amount of data.
-		percentages = materialPercentage([
-			[Type1, 5],
-			[Type2, 5],
-			[Type3, 5],
-			[Type4, 5],
-			[Type5, 5],
-			[Type6, 5],
-			[Type7, 5],
-			[Type8, 5],
-			[Type9, 5],
-			[Type10, 5],
-			[Type11, 5],
-			[Type12, 5],
-			[Type13, 5],
-			[Type14, 5],
-		]); //NOTE: probably more than this lmao
-		expect(percentages).toEqual([
-			{
-				Type1: [0.25],
-				Type2: [0.25],
-				Type3: [0.25],
-				Type4: [0.25],
-				Type5: [0.25],
-				Type6: [0.25],
-				Type7: [0.25],
-				Type8: [0.25],
-				Type9: [0.25],
-				Type10: [0.25],
-				Type11: [0.25],
-				Type12: [0.25],
-				Type13: [0.25],
-				Type14: [0.25],
-			},
-		]);
+		const materialArray = new Array(
+			"Type 1",
+			"Type 1",
+			"Type 1",
+			"Type 1",
+			"Type 1",
+			"Type 2",
+			"Type 2",
+			"Type 2",
+			"Type 2",
+			"Type 2",
+			"Type 3",
+			"Type 3",
+			"Type 3",
+			"Type 3",
+			"Type 3",
+			"Type 4",
+			"Type 4",
+			"Type 4",
+			"Type 4",
+			"Type 4",
+		);
+		const percentages = materialPercentage(materialArray);
+		expect(parseFloat(percentages.get("Type 1"))).toBe(0.25);
+		expect(parseFloat(percentages.get("Type 2"))).toBe(0.25);
+		expect(parseFloat(percentages.get("Type 3"))).toBe(0.25);
+		expect(parseFloat(percentages.get("Type 4"))).toBe(0.25);
 	});
 });
 
 describe("Tests for the function: projectilePointPercentage()", () => {
-	beforeAll(() => {
-		//TODO: if anything needs to be populated before these tests do here
-	});
-
-	afterAll(() => {
-		//TODO: clean up of test data done here
-	});
-
 	test("Attempt to calculate percentages with an empty list", () => {
-		percentages = projectilePointPercentage([]);
+		const percentages = projectilePointPercentage([]);
 		expect(percentages).toEqual([]);
 	});
 
 	test("Attempt to calculate percentages with a populated list expecting correct return", () => {
-		//TODO: Populate with actual data [projectileName, count]
-		percentages = projectilePointPercentage([
-			[Type1, 5],
-			[Type2, 5],
-			[Type3, 5],
-			[Type4, 5],
-		]);
-		expect(percentages).toEqual([
-			{ Type1: [0.25], Type2: [0.25], Type3: [0.25], Type4: [0.25] },
-		]);
-	});
-
-	test("Attempt to calculate percentages with a large populated list expecting correct return", () => {
-		//TODO: Populate with actual data [projectileName, count], and with a large amount of data. and maybe using some file to make it look better
-		//NOTE: probably more than this lmao,
-		percentages = projectilePointPercentage([
-			[Type1, 5],
-			[Type2, 5],
-			[Type3, 5],
-			[Type4, 5],
-			[Type5, 5],
-			[Type6, 5],
-			[Type7, 5],
-			[Type8, 5],
-			[Type9, 5],
-			[Type10, 5],
-			[Type11, 5],
-			[Type12, 5],
-			[Type13, 5],
-			[Type14, 5],
-		]);
-		expect(percentages).toEqual([
-			{
-				Type1: [0.07],
-				Type2: [0.07],
-				Type3: [0.07],
-				Type4: [0.07],
-				Type5: [0.07],
-				Type6: [0.07],
-				Type7: [0.07],
-				Type8: [0.07],
-				Type9: [0.07],
-				Type10: [0.07],
-				Type11: [0.07],
-				Type12: [0.07],
-				Type13: [0.07],
-				Type14: [0.07],
-			},
-		]);
+		const projectileArray = new Array(
+			"Type 1",
+			"Type 1",
+			"Type 1",
+			"Type 1",
+			"Type 1",
+			"Type 2",
+			"Type 2",
+			"Type 2",
+			"Type 2",
+			"Type 2",
+			"Type 3",
+			"Type 3",
+			"Type 3",
+			"Type 3",
+			"Type 3",
+			"Type 4",
+			"Type 4",
+			"Type 4",
+			"Type 4",
+			"Type 4",
+		);
+		const percentages = projectilePointPercentage(projectileArray);
+		expect(percentages.get("Type 1")).toEqual(0.25);
+		expect(percentages.get("Type 2")).toEqual(0.25);
+		expect(percentages.get("Type 3")).toEqual(0.25);
+		expect(percentages.get("Type 4")).toEqual(0.25);
 	});
 });
 
 describe("Tests for the function: averageProjectilePointDimensions()", () => {
-	beforeAll(() => {
-		//TODO: if anything needs to be populated before these tests do here
-	});
-
-	afterAll(() => {
-		//TODO: clean up of test data done here
-	});
-
 	test("Calculate the average dimensions on an empty set of data", () => {
-		averageDimensions = averageProjectilePointDimensions([]);
-		expect(averageDimensions).toEqual([0, 0, 0]);
+		const averageDimensions = averageProjectilePointDimensions([]);
+		expect(averageDimensions).toEqual(null);
 	});
 
 	test("Calculate the average dimensions on a small set of data", () => {
-		averageDimensions = averageProjectilePointDimensions([
+		const averageDimensions = averageProjectilePointDimensions([
 			[2.1, 6.7, 0.3],
 			[3.4, 7.2, 0.6],
 			[2.2, 5.0, 0.7],
@@ -232,7 +244,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 
 	test("Correctly acquiring the data?", () => {
 		//TODO: once the data is populated properly fill this out.
-		siteStatistics = aggregateSiteStatistics(1);
+		const siteStatistics = aggregateSiteStatistics(1);
 		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -244,7 +256,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 
 	test("Correctly acquiring the data for a large site?", () => {
 		//TODO: once the data is populated properly fill this out.
-		siteStatistics = aggregateSiteStatistics(2);
+		const siteStatistics = aggregateSiteStatistics(2);
 		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -255,7 +267,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 	});
 
 	test("does it properly handle an empty input", () => {
-		siteStatistics = aggregateSiteStatistics();
+		const siteStatistics = aggregateSiteStatistics();
 		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -266,7 +278,9 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 	});
 
 	test("does it properly handle a site that doesnt exist", () => {
-		siteStatistics = aggregateSiteStatistics(-192349582399827345692);
+		const siteStatistics = aggregateSiteStatistics(
+			"This shouldn't exist lmao 89-0124389-01234890",
+		);
 		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -288,7 +302,7 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 
 	test("Correctly acquiring the data for a catalogue?", () => {
 		//TODO: once the data is populated properly fill this out.
-		catalogueStatistics = aggregateCatalogueStatistics(1);
+		const catalogueStatistics = aggregateCatalogueStatistics(1);
 		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -302,7 +316,7 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 
 	test("Correctly acquiring the data for a large catalogue?", () => {
 		//TODO: once the data is populated properly fill this out.
-		catalogueStatistics = aggregateCatalogueStatistics(2);
+		const catalogueStatistics = aggregateCatalogueStatistics(2);
 		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -315,7 +329,7 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 	});
 
 	test("does it properly handle an empty input", () => {
-		catalogueStatistics = aggregateCatalogueStatistics();
+		const catalogueStatistics = aggregateCatalogueStatistics();
 		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -328,7 +342,9 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 	});
 
 	test("does it properly handle a site that doesnt exist", () => {
-		catalogueStatistics = aggregateCatalogueStatistics(-192349582399827345692);
+		const catalogueStatistics = aggregateCatalogueStatistics(
+			"This shouldn't exist lmao 89-0124389-01234890",
+		);
 		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -352,7 +368,7 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 
 	test("Correctly acquiring the data for a catalogue?", () => {
 		//TODO: once the data is populated properly fill this out.
-		pointTypeStatistics = aggregatePointTypeStatistics(1);
+		const pointTypeStatistics = aggregatePointTypeStatistics(1);
 		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -366,7 +382,7 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 
 	test("Correctly acquiring the data for a large catalogue?", () => {
 		//TODO: once the data is populated properly fill this out.
-		pointTypeStatistics = aggregatePointTypeStatistics(2);
+		const pointTypeStatistics = aggregatePointTypeStatistics(2);
 		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -379,7 +395,7 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 	});
 
 	test("does it properly handle an empty input", () => {
-		pointTypeStatistics = aggregatePointTypeStatistics();
+		const pointTypeStatistics = aggregatePointTypeStatistics();
 		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
@@ -392,7 +408,9 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 	});
 
 	test("does it properly handle a site that doesnt exist", () => {
-		pointTypeStatistics = aggregatePointTypeStatistics(-192349582399827345692);
+		const pointTypeStatistics = aggregatePointTypeStatistics(
+			"This shouldn't exist lmao 89-0124389-01234890",
+		);
 		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
