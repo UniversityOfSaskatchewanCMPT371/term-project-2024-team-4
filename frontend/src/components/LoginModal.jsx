@@ -120,7 +120,7 @@ class LoginModal extends Component {
 							margin="dense"
 							id="adminusername"
 							name="username"
-							label="Username"
+							placeholder="Username"
 							type="string"
 							fullWidth
 							variant="outlined"
@@ -131,7 +131,7 @@ class LoginModal extends Component {
 							margin="dense"
 							id="adminpassword"
 							name="password"
-							label="Password"
+							placeholder="Password"
 							type="password"
 							fullWidth
 							variant="outlined"
