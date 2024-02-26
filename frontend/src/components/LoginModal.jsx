@@ -12,17 +12,17 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 // TODO: fetch login credentials using API endpoint
-async function loginUser(credentials) {
-	logger.info("Login button clicked");
+// async function loginUser(credentials) {
+// 	logger.info("Login button clicked");
 
-	return fetch("URL", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify(credentials),
-	}).then((data) => data.json());
-}
+// 	return fetch("URL", {
+// 		method: "POST",
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 		},
+// 		body: JSON.stringify(credentials),
+// 	}).then((data) => data.json());
+// }
 
 class LoginModal extends Component {
 	constructor(props) {
@@ -95,7 +95,9 @@ class LoginModal extends Component {
 		return (
 			<>
 				<Dialog
+					// eslint-disable-next-line react/prop-types
 					open={this.props.modalVisible}
+					// eslint-disable-next-line react/prop-types
 					onClose={this.props.closeModal}
 					PaperProps={{
 						component: "form",
@@ -137,7 +139,12 @@ class LoginModal extends Component {
 						/>
 					</DialogContent>
 					<DialogActions>
-						<Button onClick={this.props.closeModal}>Cancel</Button>
+						<Button
+							// eslint-disable-next-line react/prop-types
+							onClick={this.props.closeModal}
+						>
+							Cancel
+						</Button>
 						<Button onClick={this.handleSubmit} type="submit">
 							Login
 						</Button>
