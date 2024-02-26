@@ -1,16 +1,15 @@
-import { Component } from 'react';
-import logger from '../logger.js';
+import { Component } from "react";
+import logger from "../logger.js";
 import PropTypes from "prop-types";
 
 // MUI
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 // TODO: fetch login credentials using API endpoint
 async function loginUser(credentials) {
@@ -19,21 +18,21 @@ async function loginUser(credentials) {
 	return fetch("URL", {
 		method: "POST",
 		headers: {
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
 		},
-		body: JSON.stringify(credentials)
-	}).then(data => data.json());
+		body: JSON.stringify(credentials),
+	}).then((data) => data.json());
 }
 
 class LoginModal extends Component {
 	constructor(props) {
 		super(props);
 
-		this.state={
+		this.state = {
 			userName: "",
-			password: ""
+			password: "",
 		};
-    
+
 		/**
 		 * These are to make sure the functions are defined for the component
 		 */
@@ -78,16 +77,14 @@ class LoginModal extends Component {
 	 * This is for when the username is entered into the textbox to update the state of the component
 	 */
 	userNameChanged(event) {
-		this.setState((state) => ({...state,
-			userName:event.target.value}));
+		this.setState((state) => ({ ...state, userName: event.target.value }));
 	}
 
 	/**
 	 * For when the password is entered into the texbox to update the state of the component
 	 */
 	passwordChanged(event) {
-		this.setState((state) => ({...state,
-			password: event.target.value}));
+		this.setState((state) => ({ ...state, password: event.target.value }));
 	}
 
 	componentDidUpdate() {
@@ -98,53 +95,54 @@ class LoginModal extends Component {
 		return (
 			<>
 				<Dialog
-				open={this.props.modalVisible}
-				onClose={this.props.closeModal}
-				PaperProps={{
-				component: 'form',
-				onSubmit: (event) => {
-					event.preventDefault();
-					const formData = new FormData(event.currentTarget);
-					const formJson = Object.fromEntries(formData.entries());
-					const email = formJson.email;
-					console.log(email);
-					this.handleClose();
-				},
-				}}
+					open={this.props.modalVisible}
+					onClose={this.props.closeModal}
+					PaperProps={{
+						component: "form",
+						onSubmit: (event) => {
+							event.preventDefault();
+							const formData = new FormData(event.currentTarget);
+							const formJson = Object.fromEntries(formData.entries());
+							const email = formJson.email;
+							console.log(email);
+							this.handleClose();
+						},
+					}}
 				>
 					<DialogTitle>Admin</DialogTitle>
 					<DialogContent>
-					<DialogContentText>
-                        Lorem ipsum dolor sit amet.
-					</DialogContentText>
-					<TextField
-						autoFocus
-						required
-						margin="dense"
-						id="adminusername"
-						name="username"
-						label="Username"
-						type="string"
-						fullWidth
-						variant="outlined"
-						onChange={this.userNameChanged}
-					/><TextField
-                        required
-                        margin="dense"
-                        id="adminpassword"
-                        name="password"
-                        label="Password"
-                        type="password"
-                        fullWidth
-                        variant="outlined"
-						onChange={this.passwordChanged}
-                    />
-                    </DialogContent>
-                    <DialogActions>
-                        <Button onClick={this.props.closeModal}>Cancel</Button>
-                        <Button onClick={this.handleSubmit} type="submit">Login</Button>
-                    </DialogActions>
-                </Dialog>
+						<DialogContentText>Lorem ipsum dolor sit amet.</DialogContentText>
+						<TextField
+							autoFocus
+							required
+							margin="dense"
+							id="adminusername"
+							name="username"
+							label="Username"
+							type="string"
+							fullWidth
+							variant="outlined"
+							onChange={this.userNameChanged}
+						/>
+						<TextField
+							required
+							margin="dense"
+							id="adminpassword"
+							name="password"
+							label="Password"
+							type="password"
+							fullWidth
+							variant="outlined"
+							onChange={this.passwordChanged}
+						/>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={this.props.closeModal}>Cancel</Button>
+						<Button onClick={this.handleSubmit} type="submit">
+							Login
+						</Button>
+					</DialogActions>
+				</Dialog>
 			</>
 		);
 	}

@@ -2,22 +2,21 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./components/App";
-import './index.css';
-import '@fontsource/roboto/300.css';
-import '@fontsource/roboto/400.css';
-import '@fontsource/roboto/500.css';
-import '@fontsource/roboto/700.css';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import "./index.css";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme({
 	palette: {
-		mode: 'light',
+		mode: "light",
 		primary: {
-			main: '#cda057',
+			main: "#cda057",
 		},
 		secondary: {
-			main: '#ffffff',
+			main: "#ffffff",
 		},
 	},
 	components: {
@@ -42,5 +41,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
 		<ThemeProvider theme={theme}>
 			<RouterProvider router={router} />
 		</ThemeProvider>
-	</React.StrictMode>
+	</React.StrictMode>,
 );
