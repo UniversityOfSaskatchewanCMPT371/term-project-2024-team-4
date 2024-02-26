@@ -23,6 +23,7 @@ const theme = createTheme({
 	components: {
 		MuiButtonBase: {
 			defaultProps: {
+				// disable MUI ripple effect on all buttons
 				disableRipple: true,
 			},
 		},

@@ -10,6 +10,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
+
+// TODO: fetch login credentials using API endpoint
 async function loginUser(credentials) {
 	logger.info("Login button clicked");
 

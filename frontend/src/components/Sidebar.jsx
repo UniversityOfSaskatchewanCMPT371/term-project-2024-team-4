@@ -23,6 +23,7 @@ import { styled } from '@mui/material/styles';
 
 const drawerWidth = 240;
 
+// create SidebarList component and styling, based on List MUI component
 const SidebarList = styled(List)(() => ({
     padding: '10px',
     // selected and (selected + hover) states
@@ -43,6 +44,7 @@ const SidebarList = styled(List)(() => ({
     },
 }));
 
+// create SidebarIcon component and styling, based on ListItemIcon MUI component
 const SidebarIcon = styled(ListItemIcon)(() => ({
     minWidth: '47px',
 }));
@@ -92,6 +94,7 @@ class Sidebar extends Component {
                     }}
                     PaperProps={{
                         sx: {
+                            // sidebar background color
                             backgroundColor: "#f1f1f1",
                         }
                     }}
