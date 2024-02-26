@@ -229,7 +229,7 @@ describe("Tests for the function: averageProjectilePointDimensions()", () => {
 			[3.4, 7.2, 0.6],
 			[2.2, 5.0, 0.7],
 		]);
-		expect(averageDimensions).toEqual([2.57, 6.3, 5.33]);
+		expect(averageDimensions).toEqual([2.57, 6.3, 0.53]);
 	});
 });
 

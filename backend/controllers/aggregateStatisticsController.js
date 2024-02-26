@@ -24,7 +24,6 @@ function materialPercentage(materialArray) {
 	if (materialArray.length != 0) {
 		//var currMaterial = materialArray[0];
 		const materialCountMap = new Map();
-		materialCountMap.set("Total", 0);
 		for (let i = 0; i < materialArray.length; i++) {
 			//if the current material doesnt exist in the Map, add it with a value of 1.
 			var currMaterial = materialArray[i];
@@ -38,16 +37,11 @@ function materialPercentage(materialArray) {
 				materialCountMap.delete(currMaterial);
 				materialCountMap.set(currMaterial, newMaterialCount);
 			}
-			//increase total count
-			const newTotal = materialCountMap.get("Total") + 1;
-			//.set is supposed to update the value, but for some reason it doesn't in this loop, so i have to delete the key then update it.
-			materialCountMap.delete("Total");
-			materialCountMap.set("Total", newTotal);
 		}
 		const materialPercentageMap = new Map();
 		//iterate through map entries and calculate percentages.
 		for (let [key, value] of materialCountMap.entries()) {
-			materialPercentageMap.set(key, value / materialCountMap.get("Total"));
+			materialPercentageMap.set(key, value / materialArray.length);
 		}
 		logger.info(materialPercentageMap.toString());
 		return materialPercentageMap;
@@ -61,6 +55,7 @@ function materialPercentage(materialArray) {
  * Takes an array of Projectiles and calculates the percent split of the total
  * e.g. a list of 16 Projectiles 4 of each type, and there exist 4 different types of projectile points
  *      return: {"Projectile1":[0.25], "Projectile2":[0.25], "Projectile3":[0.25], "Projectile4":[0.25]}
+ * This differs from materialPercentage, since there is a predefined list of projectile types to choose from
  * @param {Array} projectilePointArray an array containing a list of projectile point types.
  * @returns {Map} a map containing the keys for the Projectiles and their percentages
  */
@@ -86,7 +81,33 @@ function averageProjectilePointDimensions(artifactArray) {
 	logger.info(
 		"Running averageProjectilePointDimensions() with value: " + artifactArray,
 	);
-	return null;
+
+	assert.notEqual(artifactArray, null);
+	assert.equal(Array.isArray(artifactArray), true);
+	//TODO: add an assertion that the artifactArray is of the appropriate structure.
+	//init a new set of dimensions
+	const averageDimensionArray = new Array(0.0, 0.0, 0.0);
+	if (artifactArray.length > 0) {
+		for (let i = 0; i < artifactArray.length; i++) {
+			var currDimensions = artifactArray[i]; //TODO: this may need to be adjusted to the object sent in.
+			averageDimensionArray[0] += currDimensions[0];
+			averageDimensionArray[1] += currDimensions[1];
+			averageDimensionArray[2] += currDimensions[2];
+		}
+		//get tthe average and round to 2 decimal places.
+		averageDimensionArray[0] = parseFloat(
+			(averageDimensionArray[0] / artifactArray.length).toFixed(2),
+		);
+		averageDimensionArray[1] = parseFloat(
+			(averageDimensionArray[1] / artifactArray.length).toFixed(2),
+		);
+		averageDimensionArray[2] = parseFloat(
+			(averageDimensionArray[2] / artifactArray.length).toFixed(2),
+		);
+		return averageDimensionArray;
+	} else {
+		return null;
+	}
 }
 
 /**
