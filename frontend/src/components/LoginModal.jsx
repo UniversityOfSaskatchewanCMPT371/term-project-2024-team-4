@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import logger from '../logger.js';
+import PropTypes from "prop-types";
 
 // MUI
 import Button from '@mui/material/Button';
@@ -15,10 +16,10 @@ import DialogTitle from '@mui/material/DialogTitle';
 async function loginUser(credentials) {
 	logger.info("Login button clicked");
 
-	return fetch('URL', {
-		method: 'POST',
+	return fetch("URL", {
+		method: "POST",
 		headers: {
-			'Content-Type': 'application/json'
+			"Content-Type": "application/json"
 		},
 		body: JSON.stringify(credentials)
 	}).then(data => data.json());
@@ -148,5 +149,10 @@ class LoginModal extends Component {
 		);
 	}
 }
+
+// Define expected PropTypes
+LoginModal.propTypes = {
+	onHide: PropTypes.func.isRequired,
+};
 
 export default LoginModal;

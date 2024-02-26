@@ -1,5 +1,5 @@
-import { Component } from 'react';
-import Sidebar from './Sidebar';
+import { Component } from "react";
+import Sidebar from "./Sidebar";
 
 // MUI
 import Box from '@mui/material/Box';
@@ -90,7 +90,7 @@ class App extends Component {
                     </Box>
                 </Box>
 			</>
-		)
+		);
 	}
 }
 

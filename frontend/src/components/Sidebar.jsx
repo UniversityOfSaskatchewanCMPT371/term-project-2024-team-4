@@ -50,8 +50,8 @@ const SidebarIcon = styled(ListItemIcon)(() => ({
 }));
 
 class Sidebar extends Component {
-    constructor(props) {
-        super(props);
+	constructor(props) {
+		super(props);
 
         this.state = {
             modalVisible: false
@@ -174,5 +174,5 @@ class Sidebar extends Component {
         )
     }
 }
-  
+
 export default Sidebar;
