@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import './LoginModal.css';
 import logger from '../logger.js';
 
 // MUI

@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import './Sidebar.css';
 import logger from '../logger.js';
 import LoginModal from './LoginModal';
 
