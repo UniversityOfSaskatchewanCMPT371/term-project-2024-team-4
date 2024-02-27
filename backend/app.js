@@ -2,10 +2,10 @@ require("reflect-metadata");
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const cookieParser = require("cookie-parser");
+
 const { logger, morganIntegration } = require("./config/logger");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+
 // const { synchModels } = require("./models");
 const dataSource = require("./config/db");
 
@@ -28,6 +28,9 @@ const artifactRouter = require("./routes/artifacts");
 const materialRouter = require("./routes/materials");
 
 const projectilePointsRouter = require("./routes/projectilePoints");
+
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const app = express();
 
