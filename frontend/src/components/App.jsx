@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { useState } from 'react';
 import Sidebar from "./Sidebar";
 
 // MUI
@@ -24,89 +24,83 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary,
 }));
 
-class App extends Component {
-	constructor(props) {
-		super(props);
-	}
-
-	render() {
-		return (
-			<>
-				<Box sx={{ display: "flex" }}>
-					<CssBaseline />
-					<Sidebar />
-					<Box
-						sx={{
-							flexGrow: 1,
-							padding: "30px",
-						}}
-					>
-						<Grid container spacing={2}>
-							<Grid item xs={12}>
-								<Typography color="text.primary">
-									Breadcrumbs / Navigation / Component / Placeholder
-								</Typography>
-							</Grid>
-							<Grid item xs={12}>
-								<TextField
-									id="standard-basic"
-									sx={{ minWidth: 500 }}
-									label="Search"
-									variant="standard"
-								/>
-							</Grid>
-							<Grid item xs={12}>
-								<Divider />
-							</Grid>
-							<Grid item xs={12}>
-								<FormControl variant="standard" sx={{ minWidth: 200 }}>
-									<InputLabel id="demo-simple-select-standard-label">
-										Sort
-									</InputLabel>
-									<Select
-										labelId="demo-simple-select-standard-label"
-										id="demo-simple-select-standard"
-										label="Sort"
-									>
-										<MenuItem value="">
-											<em>None</em>
-										</MenuItem>
-										<MenuItem value={1}>Name</MenuItem>
-										<MenuItem value={2}>Type</MenuItem>
-									</Select>
-								</FormControl>
-								<FormControl
-									variant="standard"
-									sx={{ ml: "20px", minWidth: 200 }}
-								>
-									<InputLabel id="demo-simple-select-standard-label">
-										Filter
-									</InputLabel>
-									<Select
-										labelId="demo-simple-select-standard-label"
-										id="demo-simple-select-standard"
-										label="Filter"
-									>
-										<MenuItem value="">
-											<em>None</em>
-										</MenuItem>
-										<MenuItem value={1}>Name</MenuItem>
-										<MenuItem value={2}>Description</MenuItem>
-									</Select>
-								</FormControl>
-							</Grid>
-							<Grid item xs={12}>
-								<Item
-									variant="outlined"
-									sx={{ mt: "40px", minHeight: "500px" }}
-								></Item>
-							</Grid>
+function App () {
+	return (
+		<>
+			<Box sx={{ display: "flex" }}>
+				<CssBaseline />
+				<Sidebar />
+				<Box
+					sx={{
+						flexGrow: 1,
+						padding: "30px",
+					}}
+				>
+					<Grid container spacing={2}>
+						<Grid item xs={12}>
+							<Typography color="text.primary">
+								Breadcrumbs / Navigation / Component / Placeholder
+							</Typography>
 						</Grid>
-					</Box>
+						<Grid item xs={12}>
+							<TextField
+								id="standard-basic"
+								sx={{ minWidth: 500 }}
+								label="Search"
+								variant="standard"
+							/>
+						</Grid>
+						<Grid item xs={12}>
+							<Divider />
+						</Grid>
+						<Grid item xs={12}>
+							<FormControl variant="standard" sx={{ minWidth: 200 }}>
+								<InputLabel id="demo-simple-select-standard-label">
+									Sort
+								</InputLabel>
+								<Select
+									labelId="demo-simple-select-standard-label"
+									id="demo-simple-select-standard"
+									label="Sort"
+								>
+									<MenuItem value="">
+										<em>None</em>
+									</MenuItem>
+									<MenuItem value={1}>Name</MenuItem>
+									<MenuItem value={2}>Type</MenuItem>
+								</Select>
+							</FormControl>
+							<FormControl
+								variant="standard"
+								sx={{ ml: "20px", minWidth: 200 }}
+							>
+								<InputLabel id="demo-simple-select-standard-label">
+									Filter
+								</InputLabel>
+								<Select
+									labelId="demo-simple-select-standard-label"
+									id="demo-simple-select-standard"
+									label="Filter"
+								>
+									<MenuItem value="">
+										<em>None</em>
+									</MenuItem>
+									<MenuItem value={1}>Name</MenuItem>
+									<MenuItem value={2}>Description</MenuItem>
+								</Select>
+							</FormControl>
+						</Grid>
+						<Grid item xs={12}>
+							<Item
+								variant="outlined"
+								sx={{ mt: "40px", minHeight: "500px" }}
+							></Item>
+						</Grid>
+					</Grid>
 				</Box>
-			</>
-		);
-	}
+			</Box>
+		</>
+	);
 }
 
 export default App;

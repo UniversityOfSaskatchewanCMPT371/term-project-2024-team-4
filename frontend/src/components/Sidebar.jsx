@@ -1,4 +1,4 @@
-import { Component } from "react";
+import React, { useState } from 'react';
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
 
@@ -48,134 +48,119 @@ const SidebarIcon = styled(ListItemIcon)(() => ({
 	minWidth: "47px",
 }));
 
-class Sidebar extends Component {
-	constructor(props) {
-		super(props);
+function Sidebar() {
+	const [modalVisible, setModalShow] = useState(false);
 
-		this.state = {
-			modalVisible: false,
-		};
-
-		this.setModalVisible = this.setModalVisible.bind(this);
-		this.closeModal = this.closeModal.bind(this);
-
-		logger.info("Sidebar component rendered");
-	}
-
-	handleClick(event) {
+	const handleClick = event => {
 		logger.info(event.target.innerText + " Sidebar navigation clicked");
-	}
+	};
 
-	setModalVisible(event) {
-		this.handleClick(event);
-		this.setState({ modalVisible: true }, () => {
-			logger.info("LoginModal visible");
-		});
-	}
+	const setModalVisible = event => {
+		handleClick(event);
+		setModalShow(true);
+		logger.info("LoginModal visible");
+	};
 
-	closeModal() {
-		this.setState({ modalVisible: false }, () => {
-			logger.info("LoginModal closed");
-		});
-	}
+	const closeModal = () => {
+		setModalShow(false);
+		logger.info("LoginModal closed");
+	};
 
-	render() {
-		return (
-			<>
-				<Drawer
-					sx={{
+	return (
+		<>
+			<Drawer
+				sx={{
+					width: drawerWidth,
+					flexShrink: 0,
+					"& .MuiDrawer-paper": {
 						width: drawerWidth,
-						flexShrink: 0,
-						"& .MuiDrawer-paper": {
-							width: drawerWidth,
-							boxSizing: "border-box",
-						},
-					}}
-					PaperProps={{
-						sx: {
-							// sidebar background color
-							backgroundColor: "#f1f1f1",
-						},
-					}}
-					variant="permanent"
-					anchor="left"
-				>
-					<Toolbar>
-						<Typography variant="h6" noWrap component="div">
-							PCubed
-						</Typography>
-					</Toolbar>
-					<SidebarList>
-						<ListItem key="Home" disablePadding onClick={this.handleClick}>
-							<ListItemButton>
-								<SidebarIcon>
-									<HomeIcon />
-								</SidebarIcon>
-								<ListItemText primary="Home" />
-							</ListItemButton>
-						</ListItem>
-						<ListItem key="Connect" disablePadding onClick={this.handleClick}>
-							<ListItemButton>
-								<SidebarIcon>
-									<UploadIcon />
-								</SidebarIcon>
-								<ListItemText primary="Connect" />
-							</ListItemButton>
-						</ListItem>
-					</SidebarList>
-					<Divider />
-					<SidebarList>
-						<ListItem
-							key="Statistics"
-							disablePadding
-							onClick={this.handleClick}
-						>
-							<ListItemButton>
-								<SidebarIcon>
-									<BarChartIcon />
-								</SidebarIcon>
-								<ListItemText primary="Statistics" />
-							</ListItemButton>
-						</ListItem>
-						<ListItem
-							key="Data Management"
-							disablePadding
-							onClick={this.handleClick}
-						>
-							<ListItemButton>
-								<SidebarIcon>
-									<FolderCopyIcon />
-								</SidebarIcon>
-								<ListItemText primary="Data Management" />
-							</ListItemButton>
-						</ListItem>
-					</SidebarList>
-					<SidebarList sx={{ marginTop: "auto" }}>
-						<ListItem key="Settings" disablePadding onClick={this.handleClick}>
-							<ListItemButton>
-								<SidebarIcon>
-									<RoomPreferencesIcon />
-								</SidebarIcon>
-								<ListItemText primary="Settings" />
-							</ListItemButton>
-						</ListItem>
-						<ListItem key="Login" disablePadding onClick={this.setModalVisible}>
-							<ListItemButton>
-								<SidebarIcon>
-									<LoginIcon />
-								</SidebarIcon>
-								<ListItemText primary="Login" />
-							</ListItemButton>
-						</ListItem>
-					</SidebarList>
-				</Drawer>
-				<LoginModal
-					modalVisible={this.state.modalVisible}
-					closeModal={this.closeModal}
-				/>
-			</>
-		);
-	}
+						boxSizing: "border-box",
+					},
+				}}
+				PaperProps={{
+					sx: {
+						// sidebar background color
+						backgroundColor: "#f1f1f1",
+					},
+				}}
+				variant="permanent"
+				anchor="left"
+			>
+				<Toolbar>
+					<Typography variant="h6" noWrap component="div">
+						PCubed
+					</Typography>
+				</Toolbar>
+				<SidebarList>
+					<ListItem key="Home" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<HomeIcon />
+							</SidebarIcon>
+							<ListItemText primary="Home" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="Connect" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<UploadIcon />
+							</SidebarIcon>
+							<ListItemText primary="Connect" />
+						</ListItemButton>
+					</ListItem>
+				</SidebarList>
+				<Divider />
+				<SidebarList>
+					<ListItem
+						key="Statistics"
+						disablePadding
+						onClick={handleClick}
+					>
+						<ListItemButton>
+							<SidebarIcon>
+								<BarChartIcon />
+							</SidebarIcon>
+							<ListItemText primary="Statistics" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem
+						key="Data Management"
+						disablePadding
+						onClick={handleClick}
+					>
+						<ListItemButton>
+							<SidebarIcon>
+								<FolderCopyIcon />
+							</SidebarIcon>
+							<ListItemText primary="Data Management" />
+						</ListItemButton>
+					</ListItem>
+				</SidebarList>
+				<SidebarList sx={{ marginTop: "auto" }}>
+					<ListItem key="Settings" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<RoomPreferencesIcon />
+							</SidebarIcon>
+							<ListItemText primary="Settings" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="Login" disablePadding onClick={setModalVisible}>
+						<ListItemButton>
+							<SidebarIcon>
+								<LoginIcon />
+							</SidebarIcon>
+							<ListItemText primary="Login" />
+						</ListItemButton>
+					</ListItem>
+				</SidebarList>
+			</Drawer>
+			<LoginModal
+				modalVisible={modalVisible}
+				closeModal={closeModal}
+			/>
+		</>
+	);
 }
 
 export default Sidebar;
