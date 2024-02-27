@@ -76,7 +76,7 @@ describe("Logging Methods in Backend Transport to Log Files", () => {
     // test if a log file is created
     expect(fs.createWriteStream).toHaveBeenCalledWith(
       expect.stringMatching(/\.log$/),
-      expect.anything()
+      expect.anything(),
     );
 
     // test if log file contains proper text
@@ -97,7 +97,7 @@ describe("Logging Methods in Backend Transport to Log Files", () => {
     // test if a log file is attempted to write to
     expect(fs.createWriteStream).toHaveBeenCalledWith(
       expect.stringMatching(/\.log$/),
-      expect.anything()
+      expect.anything(),
     );
   });
 });

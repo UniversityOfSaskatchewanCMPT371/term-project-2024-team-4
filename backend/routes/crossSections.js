@@ -41,7 +41,7 @@ router.get("/:id", async (req, res) => {
     const crossSectionRepository = await myDatabase.getRepository(CrossSection);
     const crossSections = await crossSectionRepository.findOne({
       where: { id: parseInt(req.params.id) },
-      relations: ["cultures", "projectilePoints"]
+      relations: ["cultures", "projectilePoints"],
     });
     if (crossSections) {
       res.json(crossSections);

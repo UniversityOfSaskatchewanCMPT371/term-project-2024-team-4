@@ -1,9 +1,17 @@
-import { 
-  Entity, PrimaryGeneratedColumn, Column, OneToMany, PrimaryColumn,
-  ManyToOne, ManyToMany, JoinTable, TableInheritance, ChildEntity
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  PrimaryColumn,
+  ManyToOne,
+  ManyToMany,
+  JoinTable,
+  TableInheritance,
+  ChildEntity,
 } from "typeorm";
 
-  // Catalogue
+// Catalogue
 @Entity()
 export class Catalogue {
   @PrimaryGeneratedColumn()
@@ -15,7 +23,7 @@ export class Catalogue {
   @Column("text")
   description: string;
 
-  @OneToMany(() => Site, site => site.catalogue)
+  @OneToMany(() => Site, (site) => site.catalogue)
   sites: Site[];
 }
 
@@ -31,11 +39,11 @@ export class Region {
   @Column("text")
   description: string;
 
-  @OneToMany(() => Site, site => site.region)
+  @OneToMany(() => Site, (site) => site.region)
   sites: Site[];
 }
 
-  // Site
+// Site
 @Entity()
 export class Site {
   @PrimaryGeneratedColumn()
@@ -50,18 +58,17 @@ export class Site {
   @Column()
   location: string;
 
-  @ManyToOne(() => Catalogue, catalogue => catalogue.sites)
+  @ManyToOne(() => Catalogue, (catalogue) => catalogue.sites)
   catalogue: Catalogue;
 
-  @ManyToOne(() => Region, region => region.sites)
+  @ManyToOne(() => Region, (region) => region.sites)
   region: Region;
 
-  @OneToMany(() => Artifact, artifact => artifact.site)
+  @OneToMany(() => Artifact, (artifact) => artifact.site)
   artifacts: Artifact[];
 }
 
-
-  // Period Entity
+// Period Entity
 @Entity()
 export class Period {
   @PrimaryGeneratedColumn()
@@ -76,154 +83,167 @@ export class Period {
   @Column()
   end: number;
 
-  @OneToMany(() => Culture, culture => culture.period)
+  @OneToMany(() => Culture, (culture) => culture.period)
   cultures: Culture[];
 }
 
 // Culture Entity
 @Entity()
 export class Culture {
-@PrimaryGeneratedColumn()
-id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-@Column()
-name: string;
+  @Column()
+  name: string;
 
-@ManyToOne(() => Period, period => period.cultures)
-period: Period;
+  @ManyToOne(() => Period, (period) => period.cultures)
+  period: Period;
 
-@OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.culture)
- projectilePoints: ProjectilePoint[]; 
+  @OneToMany(
+    () => ProjectilePoint,
+    (projectilePoint) => projectilePoint.culture,
+  )
+  projectilePoints: ProjectilePoint[];
 
-@ManyToMany(() => BladeShape, bladeShape => bladeShape.cultures)
-@JoinTable()
-bladeShapes: BladeShape[];
+  @ManyToMany(() => BladeShape, (bladeShape) => bladeShape.cultures)
+  @JoinTable()
+  bladeShapes: BladeShape[];
 
-@ManyToMany(() => BaseShape, baseShape => baseShape.cultures)
-@JoinTable()
-baseShapes: BaseShape[];
+  @ManyToMany(() => BaseShape, (baseShape) => baseShape.cultures)
+  @JoinTable()
+  baseShapes: BaseShape[];
 
-@ManyToMany(() => HaftingShape, haftingShape => haftingShape.cultures)
-@JoinTable()
-haftingShapes: HaftingShape[];
+  @ManyToMany(() => HaftingShape, (haftingShape) => haftingShape.cultures)
+  @JoinTable()
+  haftingShapes: HaftingShape[];
 
-@ManyToMany(() => CrossSection, crossSection => crossSection.cultures)
-@JoinTable()
-crossSections: CrossSection[];
-
+  @ManyToMany(() => CrossSection, (crossSection) => crossSection.cultures)
+  @JoinTable()
+  crossSections: CrossSection[];
 }
 
 // Shape Entity (Blade Shape)
 @Entity()
 export class BladeShape {
-@PrimaryGeneratedColumn()
-id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-@Column()
-name: string;
+  @Column()
+  name: string;
 
-@ManyToMany(() => Culture, culture => culture.bladeShapes)
-cultures: Culture[];
+  @ManyToMany(() => Culture, (culture) => culture.bladeShapes)
+  cultures: Culture[];
 
-@OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.bladeShape)
-projectilePoints: ProjectilePoint[];  
+  @OneToMany(
+    () => ProjectilePoint,
+    (projectilePoint) => projectilePoint.bladeShape,
+  )
+  projectilePoints: ProjectilePoint[];
 }
 
 // Shape Entity (Base Shape)
 @Entity()
 export class BaseShape {
-@PrimaryGeneratedColumn()
-id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-@Column()
-name: string;
+  @Column()
+  name: string;
 
-@ManyToMany(() => Culture, culture => culture.baseShapes)
-cultures: Culture[];
+  @ManyToMany(() => Culture, (culture) => culture.baseShapes)
+  cultures: Culture[];
 
-@OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.baseShape)
-projectilePoints: ProjectilePoint[];  
+  @OneToMany(
+    () => ProjectilePoint,
+    (projectilePoint) => projectilePoint.baseShape,
+  )
+  projectilePoints: ProjectilePoint[];
 }
 
 // Shape Entity (Hafting Shape)
 @Entity()
 export class HaftingShape {
- @PrimaryGeneratedColumn()
- id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
- @Column()
- name: string;
+  @Column()
+  name: string;
 
- @ManyToMany(() => Culture, culture => culture.haftingShapes)
- cultures: Culture[];
- 
- @OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.haftingShape)
- projectilePoints: ProjectilePoint[];
+  @ManyToMany(() => Culture, (culture) => culture.haftingShapes)
+  cultures: Culture[];
+
+  @OneToMany(
+    () => ProjectilePoint,
+    (projectilePoint) => projectilePoint.haftingShape,
+  )
+  projectilePoints: ProjectilePoint[];
 }
 
 // Shape Entity (Cross Section)
 @Entity()
 export class CrossSection {
- @PrimaryGeneratedColumn()
- id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
- @Column()
- name: string;
+  @Column()
+  name: string;
 
- @ManyToMany(() => Culture, culture => culture.crossSections)
- cultures: Culture[];
- 
- @OneToMany(() => ProjectilePoint, projectilePoint => projectilePoint.crossSection)
- projectilePoints: ProjectilePoint[]; 
+  @ManyToMany(() => Culture, (culture) => culture.crossSections)
+  cultures: Culture[];
+
+  @OneToMany(
+    () => ProjectilePoint,
+    (projectilePoint) => projectilePoint.crossSection,
+  )
+  projectilePoints: ProjectilePoint[];
 }
 
 // Artifact Type
 @Entity()
 export class ArtifactType {
   @PrimaryColumn({
-      type: "varchar",
-      length: 10
+    type: "varchar",
+    length: 10,
   })
-  id: 'Lithic' | 'Ceramic' | 'Faunal';
+  id: "Lithic" | "Ceramic" | "Faunal";
 
-  @OneToMany(() => Material, material => material.artifactType)
+  @OneToMany(() => Material, (material) => material.artifactType)
   materials: Material[];
- 
- @OneToMany(() => Artifact, artifact => artifact.artifactType)
- artifacts: Artifact[];  
-}
 
+  @OneToMany(() => Artifact, (artifact) => artifact.artifactType)
+  artifacts: Artifact[];
+}
 
 // Artifact (highest superclass, using Single Table Inheritance)
 @Entity()
 @TableInheritance({ column: { type: "varchar", name: "subtype" } })
 export class Artifact {
-@PrimaryGeneratedColumn()
-id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-@Column()
-name: string;
+  @Column()
+  name: string;
 
-@Column()
-location: string;
+  @Column()
+  location: string;
 
-@Column("text")
-description: string;
+  @Column("text")
+  description: string;
 
-@Column()
-dimensions: string;
+  @Column()
+  dimensions: string;
 
-@Column({ nullable: true })
-photo: string;
+  @Column({ nullable: true })
+  photo: string;
 
-@ManyToOne(() => Site, site => site.artifacts)
-site: Site;
+  @ManyToOne(() => Site, (site) => site.artifacts)
+  site: Site;
 
-@ManyToOne(() => ArtifactType, artifactType => artifactType.artifacts)
-artifactType: ArtifactType;
+  @ManyToOne(() => ArtifactType, (artifactType) => artifactType.artifacts)
+  artifactType: ArtifactType;
 
-@ManyToMany(() => Material)
-materials: Material[];
+  @ManyToMany(() => Material)
+  materials: Material[];
 }
 
 // Material Entity
@@ -238,31 +258,35 @@ export class Material {
   @Column("text")
   description: string;
 
-  @ManyToOne(() => ArtifactType, artifactType => artifactType.materials)
+  @ManyToOne(() => ArtifactType, (artifactType) => artifactType.materials)
   artifactType: ArtifactType;
 
-  @ManyToMany(() =>Artifact)
+  @ManyToMany(() => Artifact)
   @JoinTable()
   artifacts: Artifact[];
 }
 
-
-
 // Lithic Subtypes (Projectile Point, Basal Knife)
 @ChildEntity()
 export class ProjectilePoint extends Artifact {
-  @ManyToOne(() => Culture, culture => culture.projectilePoints)
+  @ManyToOne(() => Culture, (culture) => culture.projectilePoints)
   culture: Culture;
 
-  @ManyToOne(() => BladeShape, bladeShape => bladeShape.projectilePoints)
+  @ManyToOne(() => BladeShape, (bladeShape) => bladeShape.projectilePoints)
   bladeShape: BladeShape;
 
-  @ManyToOne(() => BaseShape, baseShape => baseShape.projectilePoints)
+  @ManyToOne(() => BaseShape, (baseShape) => baseShape.projectilePoints)
   baseShape: BaseShape;
 
-  @ManyToOne(() => HaftingShape, haftingShape => haftingShape.projectilePoints)
+  @ManyToOne(
+    () => HaftingShape,
+    (haftingShape) => haftingShape.projectilePoints,
+  )
   haftingShape: HaftingShape;
 
-  @ManyToOne(() => CrossSection, crossSection => crossSection.projectilePoints)
+  @ManyToOne(
+    () => CrossSection,
+    (crossSection) => crossSection.projectilePoints,
+  )
   crossSection: CrossSection;
 }

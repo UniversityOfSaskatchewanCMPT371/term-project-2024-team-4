@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
     .getMany();
      */
     const bladeShapes = await bladeShapeRepository.find({
-      relations: ["cultures", "projectilePoints"]
+      relations: ["cultures", "projectilePoints"],
     });
     res.json(bladeShapes);
   } catch (error) {
@@ -42,7 +42,7 @@ router.get("/:id", async (req, res) => {
     const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
     const bladeShape = await bladeShapeRepository.findOne({
       where: { id: parseInt(req.params.id) },
-      relations: ["cultures", "projectilePoints"]
+      relations: ["cultures", "projectilePoints"],
     });
     if (bladeShape) {
       res.json(bladeShape);

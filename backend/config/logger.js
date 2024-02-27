@@ -57,9 +57,9 @@ const logger = winston.createLogger({
       format: "YYYY-MM-DD HH:mm:ss",
     }),
     winston.format.printf(
-      (info) => `${info.timestamp} ${info.level}: ${info.message}`
+      (info) => `${info.timestamp} ${info.level}: ${info.message}`,
     ),
-    winston.format.colorize({ all: true }) // Optional: colorize log output
+    winston.format.colorize({ all: true }), // Optional: colorize log output
   ),
 
   // defines where the logs will be shown

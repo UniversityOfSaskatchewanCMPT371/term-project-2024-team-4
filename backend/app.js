@@ -5,6 +5,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const { logger, morganIntegration } = require("./config/logger");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 // const { synchModels } = require("./models");
 const dataSource = require("./config/db");
 
@@ -15,7 +16,6 @@ const catalogueRouter = require("./routes/catalogues");
 const regionRouter = require("./routes/regions");
 const siteRouter = require("./routes/sites");
 const periodRouter = require("./routes/periods");
-
 
 const bladeShapeRouter = require("./routes/bladeShapes");
 const baseShapeRouter = require("./routes/baseShapes");
@@ -40,7 +40,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
 
 // Synchronize models with the database
 // synchModels()
@@ -50,6 +49,18 @@ app.use(cors());
 //   .catch((error) => {
 //     console.error("Database synchronization failed:", error);
 //   });
+
+// Middleware
+app.use(bodyParser.json());
+
+// Use CORS middleware
+app.use(
+  cors({
+    origin: "http://localhost:8080", // Replace with your frontend's URL
+    methods: ["POST", "GET", "DELETE", "PATCH"],
+    credentials: true, // Enable credentials (cookies, authorization headers)
+  }),
+);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
@@ -64,7 +75,6 @@ app.use("/baseshapes", baseShapeRouter);
 app.use("/haftingshapes", haftingShapeRouter);
 app.use("/crosssections", crossSectionRouter);
 app.use("/cultures", cultureRouter);
-
 
 app.use("/artifacttypes", artifactTypeRouter);
 app.use("/artifacts", artifactRouter);
