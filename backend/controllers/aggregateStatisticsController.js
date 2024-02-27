@@ -21,7 +21,7 @@ function materialPercentage(materialArray) {
 	assert.notEqual(materialArray, null);
 	assert.equal(Array.isArray(materialArray), true);
 
-	if (materialArray.length != 0) {
+	if (materialArray.length > 0) {
 		//var currMaterial = materialArray[0];
 		const materialCountMap = new Map();
 		for (let i = 0; i < materialArray.length; i++) {
@@ -41,7 +41,7 @@ function materialPercentage(materialArray) {
 		const materialPercentageMap = new Map();
 		//iterate through map entries and calculate percentages.
 		for (let [key, value] of materialCountMap.entries()) {
-			materialPercentageMap.set(key, value / materialArray.length);
+			materialPercentageMap.set(key, (value / materialArray.length).toFixed(2));
 		}
 		logger.info(materialPercentageMap.toString());
 		return materialPercentageMap;
@@ -53,8 +53,11 @@ function materialPercentage(materialArray) {
 
 /**
  * Takes an array of Projectiles and calculates the percent split of the total
- * e.g. a list of 16 Projectiles 4 of each type, and there exist 4 different types of projectile points
- *      return: {"Projectile1":[0.25], "Projectile2":[0.25], "Projectile3":[0.25], "Projectile4":[0.25]}
+ * e.g. a list of
+ *      return: {"Blade Shape": {"Triangular": 0.25, "Excurvate": 0.25, "Incurvate": 0.25, "Ovate": 0.25},
+ * 				 "Base Shape": {"Straight": 0.33, "Concave": 0.33, "Convex": 0.33},
+ * 				 "Cross Section": {"Rhombiod": 0.17, "Lemicular": 0.17, "Plano-Convex": 0.17,
+ * 								   "Flutex": 0.17, "Median Ridged": 0.17, "Flat": 0.17}}
  * This differs from materialPercentage, since there is a predefined list of projectile types to choose from
  * @param {Array} projectilePointArray an array containing a list of projectile point types.
  * @returns {Map} a map containing the keys for the Projectiles and their percentages
@@ -64,7 +67,126 @@ function projectilePointPercentage(projectilePointArray) {
 	logger.info(
 		"Running projectilePointPercentage() with value: " + projectilePointArray,
 	);
-	return null;
+
+	//Blade Shapes: Triangular, excurvate, incurvate, ovate
+	//Base Shapes: Straight, concave, convex
+	//Hafting Shapes: ________, straight, basally convcave, expanding, contracting, corner-notched, side-notched, basal-notched, triangular un-notched
+	//Cross Sections: rhomboid, Lemicular, plano-convex, flutex, median ridged, flat
+
+	const pointPercentageMap = new Map();
+	const bladeShapeCountMap = new Map();
+	const baseShapeCountMap = new Map();
+	const haftingShapeCountMap = new Map();
+	const crossSectionCountMap = new Map();
+
+	if (projectilePointArray.length > 0) {
+		for (let i = 0; i < projectilePointArray.length; i++) {
+			assert.equal(Object.hasOwn(projectilePointArray[i], "bladeShape"), true);
+			assert.equal(Object.hasOwn(projectilePointArray[i], "baseShape"), true);
+			assert.equal(
+				Object.hasOwn(projectilePointArray[i], "haftingShape"),
+				true,
+			);
+			assert.equal(
+				Object.hasOwn(projectilePointArray[i], "crossSection"),
+				true,
+			);
+			const currProjectile = projectilePointArray[i];
+
+			//bools to make sure that a shape type isnt updated mroe than once.
+			var checkBladeShape = false;
+			var checkBaseShape = false;
+			var checkHaftingShape = false;
+			var checkCrossSection = false;
+
+			if (!bladeShapeCountMap.has(currProjectile.bladeShape)) {
+				bladeShapeCountMap.set(currProjectile.bladeShape, 1);
+				checkBladeShape = true;
+			} else if (checkBladeShape === false) {
+				//increase bladeshape count for given bladeshape, if it hasnt already been updated.
+				const newBladeShapeCount =
+					bladeShapeCountMap.get(currProjectile.bladeShape) + 1;
+				bladeShapeCountMap.delete(currProjectile.bladeShape);
+				bladeShapeCountMap.set(currProjectile.bladeShape, newBladeShapeCount);
+			}
+			if (!baseShapeCountMap.has(currProjectile.baseShape)) {
+				baseShapeCountMap.set(currProjectile.baseShape, 1);
+				checkBaseShape = true;
+			} else if (checkBaseShape === false) {
+				const newBaseShapeCount =
+					baseShapeCountMap.get(currProjectile.baseShape) + 1;
+				baseShapeCountMap.delete(currProjectile.baseShape);
+				baseShapeCountMap.set(currProjectile.baseShape, newBaseShapeCount);
+			}
+			if (!haftingShapeCountMap.has(currProjectile.haftingShape)) {
+				haftingShapeCountMap.set(currProjectile.haftingShape, 1);
+				checkHaftingShape = true;
+			} else if (checkHaftingShape === false) {
+				const newHaftingShapeCount =
+					haftingShapeCountMap.get(currProjectile.haftingShape) + 1;
+				haftingShapeCountMap.delete(currProjectile.haftingShape);
+				haftingShapeCountMap.set(
+					currProjectile.haftingShape,
+					newHaftingShapeCount,
+				);
+			}
+			if (!crossSectionCountMap.has(currProjectile.crossSection)) {
+				crossSectionCountMap.set(currProjectile.crossSection, 1);
+				checkCrossSection = true;
+			} else if (checkCrossSection === false) {
+				const newCrossSectionCount =
+					crossSectionCountMap.get(currProjectile.crossSection) + 1;
+				crossSectionCountMap.delete(currProjectile.crossSection);
+				crossSectionCountMap.set(
+					currProjectile.crossSection,
+					newCrossSectionCount,
+				);
+			}
+		}
+
+		//init empty percentage maps
+		const bladeShapePercentageMap = new Map();
+		const baseShapePercentageMap = new Map();
+		const haftingShapePercentageMap = new Map();
+		const crossSectionPercentageMap = new Map();
+
+		//NOTE: there is probably a better way to do this. but im short on time.
+		//populate percentage maps using the countmaps.
+		for (let [key, value] of bladeShapeCountMap.entries()) {
+			bladeShapePercentageMap.set(
+				key,
+				(value / projectilePointArray.length).toFixed(2),
+			);
+		}
+		for (let [key, value] of baseShapeCountMap.entries()) {
+			baseShapePercentageMap.set(
+				key,
+				(value / projectilePointArray.length).toFixed(2),
+			);
+		}
+		for (let [key, value] of haftingShapeCountMap.entries()) {
+			haftingShapePercentageMap.set(
+				key,
+				(value / projectilePointArray.length).toFixed(2),
+			);
+		}
+		for (let [key, value] of crossSectionCountMap.entries()) {
+			crossSectionPercentageMap.set(
+				key,
+				(value / projectilePointArray.length).toFixed(2),
+			);
+		}
+
+		pointPercentageMap.set("Blade Shape", bladeShapePercentageMap);
+		pointPercentageMap.set("Base Shape", baseShapePercentageMap);
+		pointPercentageMap.set("Hafting Shape", haftingShapePercentageMap);
+		pointPercentageMap.set("Cross Section", crossSectionPercentageMap);
+
+		return pointPercentageMap;
+	} else {
+		logger.debug("projectilePointPercentage was given an empty array");
+		return null;
+	}
 }
 
 /**
@@ -86,13 +208,12 @@ function averageProjectilePointDimensions(artifactArray) {
 	assert.equal(Array.isArray(artifactArray), true);
 	//TODO: add an assertion that the artifactArray is of the appropriate structure.
 	//init a new set of dimensions
-	const averageDimensionArray = new Array(0.0, 0.0, 0.0);
+	const averageDimensionArray = new Array(0.0, 0.0);
 	if (artifactArray.length > 0) {
 		for (let i = 0; i < artifactArray.length; i++) {
 			var currDimensions = artifactArray[i]; //TODO: this may need to be adjusted to the object sent in.
 			averageDimensionArray[0] += currDimensions[0];
 			averageDimensionArray[1] += currDimensions[1];
-			averageDimensionArray[2] += currDimensions[2];
 		}
 		//get tthe average and round to 2 decimal places.
 		averageDimensionArray[0] = parseFloat(
@@ -100,9 +221,6 @@ function averageProjectilePointDimensions(artifactArray) {
 		);
 		averageDimensionArray[1] = parseFloat(
 			(averageDimensionArray[1] / artifactArray.length).toFixed(2),
-		);
-		averageDimensionArray[2] = parseFloat(
-			(averageDimensionArray[2] / artifactArray.length).toFixed(2),
 		);
 		return averageDimensionArray;
 	} else {
@@ -121,6 +239,15 @@ function averageProjectilePointDimensions(artifactArray) {
 function aggregateSiteStatistics(siteId) {
 	//TODO: code the aggregateSiteStatistics function
 	logger.info("Running aggregateSiteStatistics() with value: " + siteId);
+
+	//TODO: MaterialCount
+	//TODO: MaterialTypes
+	//TODO: MaterialPercentages
+	//TODO: ProjectileCount
+	//TODO: ProjectileTypes
+	//TODO: ProjectilePercentages
+	//TODO: AverageDimensions
+
 	return null;
 }
 

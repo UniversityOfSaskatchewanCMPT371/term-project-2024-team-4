@@ -183,37 +183,103 @@ describe("Tests for the function: materialPercentage()", () => {
 describe("Tests for the function: projectilePointPercentage()", () => {
 	test("Attempt to calculate percentages with an empty list", () => {
 		const percentages = projectilePointPercentage([]);
-		expect(percentages).toEqual([]);
+		expect(percentages).toEqual(null);
 	});
 
 	test("Attempt to calculate percentages with a populated list expecting correct return", () => {
-		const projectileArray = new Array(
-			"Type 1",
-			"Type 1",
-			"Type 1",
-			"Type 1",
-			"Type 1",
-			"Type 2",
-			"Type 2",
-			"Type 2",
-			"Type 2",
-			"Type 2",
-			"Type 3",
-			"Type 3",
-			"Type 3",
-			"Type 3",
-			"Type 3",
-			"Type 4",
-			"Type 4",
-			"Type 4",
-			"Type 4",
-			"Type 4",
+		const projectile1 = {
+			bladeShape: "Triangular",
+			baseShape: "Straight",
+			haftingShape: "Straight",
+			crossSection: "Rhomboid",
+		};
+
+		const projectile2 = {
+			bladeShape: "Excurvate",
+			baseShape: "Concave",
+			haftingShape: "Basally Concave",
+			crossSection: "Lemicular",
+		};
+
+		const projectile3 = {
+			bladeShape: "Incurvate",
+			baseShape: "Convex",
+			haftingShape: "Expanding",
+			crossSection: "Plano-Convex",
+		};
+
+		const projectile4 = {
+			bladeShape: "Ovate",
+			baseShape: "Concave",
+			haftingShape: "Contracting",
+			crossSection: "Flutex",
+		};
+
+		const projectile5 = {
+			bladeShape: "Incurvate",
+			baseShape: "Straight",
+			haftingShape: "Side-Notched",
+			crossSection: "Flat",
+		};
+
+		const percentages = projectilePointPercentage([
+			projectile1,
+			projectile2,
+			projectile3,
+			projectile4,
+			projectile5,
+		]);
+		expect(
+			parseFloat(percentages.get("Blade Shape").get("Triangular")),
+		).toEqual(0.2);
+		expect(parseFloat(percentages.get("Blade Shape").get("Excurvate"))).toEqual(
+			0.2,
 		);
-		const percentages = projectilePointPercentage(projectileArray);
-		expect(percentages.get("Type 1")).toEqual(0.25);
-		expect(percentages.get("Type 2")).toEqual(0.25);
-		expect(percentages.get("Type 3")).toEqual(0.25);
-		expect(percentages.get("Type 4")).toEqual(0.25);
+		expect(parseFloat(percentages.get("Blade Shape").get("Incurvate"))).toEqual(
+			0.4,
+		);
+		expect(parseFloat(percentages.get("Blade Shape").get("Ovate"))).toEqual(
+			0.2,
+		);
+		expect(parseFloat(percentages.get("Base Shape").get("Straight"))).toEqual(
+			0.4,
+		);
+		expect(parseFloat(percentages.get("Base Shape").get("Concave"))).toEqual(
+			0.4,
+		);
+		expect(parseFloat(percentages.get("Base Shape").get("Convex"))).toEqual(
+			0.2,
+		);
+		expect(
+			parseFloat(percentages.get("Hafting Shape").get("Straight")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Hafting Shape").get("Basally Concave")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Hafting Shape").get("Expanding")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Hafting Shape").get("Contracting")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Hafting Shape").get("Side-Notched")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Cross Section").get("Rhomboid")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Cross Section").get("Lemicular")),
+		).toEqual(0.2);
+		expect(
+			parseFloat(percentages.get("Cross Section").get("Plano-Convex")),
+		).toEqual(0.2);
+		expect(parseFloat(percentages.get("Cross Section").get("Flutex"))).toEqual(
+			0.2,
+		);
+		expect(parseFloat(percentages.get("Cross Section").get("Flat"))).toEqual(
+			0.2,
+		);
 	});
 });
 
@@ -225,13 +291,22 @@ describe("Tests for the function: averageProjectilePointDimensions()", () => {
 
 	test("Calculate the average dimensions on a small set of data", () => {
 		const averageDimensions = averageProjectilePointDimensions([
-			[2.1, 6.7, 0.3],
-			[3.4, 7.2, 0.6],
-			[2.2, 5.0, 0.7],
+			[2.1, 6.7],
+			[3.4, 7.2],
+			[2.2, 5.0],
 		]);
-		expect(averageDimensions).toEqual([2.57, 6.3, 0.53]);
+		expect(averageDimensions).toEqual([2.57, 6.3]);
 	});
 });
+
+const mockRouterGet = jest.fn();
+const mockRouterPost = jest.fn();
+jest.mock("express", () => ({
+	Router: () => ({
+		get: mockRouterGet,
+		post: mockRouterPost,
+	}),
+}));
 
 describe("Tests for function: aggregateSiteStatistics()", () => {
 	beforeAll(() => {
@@ -243,32 +318,277 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 	});
 
 	test("Correctly acquiring the data?", () => {
+		//initializing some dummy data to work with using a mock call of the get site route function
+
+		//Materials
+
+		const material1 = {
+			id: 1,
+			name: "Material1",
+			description: "This is Material1",
+			artifactType: artifactType1,
+			artifacts: [projectilePoint1],
+		};
+
+		const material2 = {
+			id: 1,
+			name: "Material2",
+			description: "This is Material2",
+			artifactType: artifactType2,
+			artifacts: [projectilePoint2],
+		};
+
+		const material3 = {
+			id: 1,
+			name: "Material3",
+			description: "This is Material3",
+			artifactType: artifactType3,
+			artifacts: [projectilePoint3],
+		};
+
+		//ArtifactTypes
+
+		const artifactType1 = {
+			id: "Lithic",
+			materials: [material1],
+			artifacts: [projectilePoint1],
+		};
+
+		const artifactType2 = {
+			id: "Cermaic",
+			materials: [material2],
+			artifacts: [projectilePoint2],
+		};
+
+		const artifactType3 = {
+			id: "Faunal",
+			materials: [material3],
+			artifacts: [projectilePoint3],
+		};
+
+		//Period
+
+		const period = {
+			id: 1,
+			name: "Period1",
+			start: 1990,
+			end: 2000,
+			cultures: [culture],
+		};
+
+		//Culture
+
+		const culture = {
+			id: 1,
+			name: "Culture1",
+			period: period,
+			projectilePoints: [projectilePoint1, projectilePoint2, projectilePoint3],
+			bladeShapes: [bladeShape1, bladeShape2, bladeShape3],
+			baseShapes: [baseShape1, baseShape2, baseShape3],
+			haftingShapes: [haftingShape1, haftingShape2, haftingShape3],
+			crossSections: [crossSection1, crossSection2, crossSection3],
+		};
+
+		//Blade Shapes
+
+		const bladeShape1 = {
+			id: 1,
+			name: "Triangular",
+			cultures: [culture],
+			projectilePoints: [projectilePoint1],
+		};
+
+		const bladeShape2 = {
+			id: 2,
+			name: "Excurvate",
+			cultures: [culture],
+			projectilePoints: [projectilePoint2],
+		};
+
+		const bladeShape3 = {
+			id: 3,
+			name: "Incurvate",
+			cultures: [culture],
+			projectilePoints: [projectilePoint3],
+		};
+
+		//Base Shapes
+
+		const baseShape1 = {
+			id: 1,
+			name: "Straight",
+			culture: [culture],
+			projectilePoints: [projectilePoint1],
+		};
+
+		const baseShape2 = {
+			id: 2,
+			name: "Concave",
+			culture: [culture],
+			projectilePoints: [projectilePoint2],
+		};
+
+		const baseShape3 = {
+			id: 3,
+			name: "Convex",
+			culture: [culture],
+			projectilePoints: [projectilePoint3],
+		};
+
+		//Hafting Shapes
+
+		const haftingShape1 = {
+			id: 1,
+			name: "Straight",
+			culture: [culture],
+			projectilePoints: [projectilePoint1],
+		};
+
+		const haftingShape2 = {
+			id: 2,
+			name: "Expanding",
+			culture: [culture],
+			projectilePoints: [projectilePoint2],
+		};
+
+		const haftingShape3 = {
+			id: 3,
+			name: "Contracting",
+			culture: [culture],
+			projectilePoints: [projectilePoint2],
+		};
+
+		//Cross Sections
+
+		const crossSection1 = {
+			id: 1,
+			name: "Rhomboid",
+			culture: [culture],
+			projectilePoints: [projectilePoint1],
+		};
+
+		const crossSection2 = {
+			id: 2,
+			name: "Lemicular",
+			culture: [culture],
+			projectilePoints: [projectilePoint2],
+		};
+
+		const crossSection3 = {
+			id: 3,
+			name: "Flutex",
+			culture: [culture],
+			projectilePoints: [projectilePoint3],
+		};
+
+		//Projectile Points
+
+		const projectilePoint1 = {
+			id: 1,
+			name: "projectilePoint1",
+			location: "A place",
+			description: "This is projectilePoint1, its neat",
+			dimensions: [3.2, 4.8],
+			photo: "Imagine there is a link here",
+			site: 1,
+			artifactType: artifactType1,
+			culture: 1,
+			bladeShape: bladeShape1,
+			baseShape: 1,
+			haftingShape: 1,
+			crossSection: 1,
+		};
+
+		const projectilePoint2 = {
+			id: 1,
+			name: "projectilePoint2",
+			location: "A place",
+			description: "This is projectilePoint2, its neat",
+			dimensions: [1.9, 6.2],
+			photo: "Imagine there is a link here",
+			site: 1,
+			artifactType: artifactType2,
+			culture: 2,
+			bladeShape: bladeShape2,
+			baseShape: 2,
+			haftingShape: 2,
+			crossSection: 2,
+		};
+
+		const projectilePoint3 = {
+			id: 1,
+			name: "projectilePoint3",
+			location: "A place",
+			description: "This is projectilePoint3, its neat",
+			dimensions: [3.6, 3.9],
+			photo: "Imagine there is a link here",
+			site: 1,
+			artifactType: artifactType3,
+			culture: 3,
+			bladeShape: bladeShape3,
+			baseShape: 3,
+			haftingShape: 3,
+			crossSection: 3,
+		};
+
+		mockRouterPost.mockReturnValueOnce({
+			id: 1,
+			name: "TestSite1",
+			description: "This is a TestSite",
+			location: "A place",
+			catalogue: 1,
+			region: 1,
+			artifacts: [projectilePoint1, projectilePoint2, projectilePoint3],
+		});
+
 		//TODO: once the data is populated properly fill this out.
 		const siteStatistics = aggregateSiteStatistics(1);
-		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectilePercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.AverageDimensions).toEqual([]);
-	});
+		expect(siteStatistics.get("MaterialData").get("MaterialCount")).toEqual(3);
+		expect(siteStatistics.get("MaterialData").get("MaterialTypes")).toEqual([
+			"Material1",
+			"Material2",
+			"Material3",
+		]);
+		expect(
+			siteStatistics
+				.get("MaterialData")
+				.get("MaterialPercentages")
+				.get("Material1"),
+		).toEqual(0.33);
+		expect(
+			siteStatistics
+				.get("MaterialData")
+				.get("MaterialPercentages")
+				.get("Material2"),
+		).toEqual(0.33);
+		expect(
+			siteStatistics
+				.get("MaterialData")
+				.get("MaterialPercentages")
+				.get("Material3"),
+		).toEqual(0.33);
 
-	test("Correctly acquiring the data for a large site?", () => {
-		//TODO: once the data is populated properly fill this out.
-		const siteStatistics = aggregateSiteStatistics(2);
-		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectilePercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		expect(siteStatistics.get("ProjectileData").get("ProjectileCount")).toEqual(
+			3,
+		);
+		expect(siteStatistics.get("ProjectileData").get("ProjectileTypes")).toEqual(
+			["Lithic", "Ceramic", "Faunal"],
+		);
+		expect(
+			siteStatistics
+				.get("ProjectileData")
+				.get("ProjectilePercentages")
+				.get("Blade Shape")
+				.get(""),
+		).toEqual([]);
+		expect(
+			siteStatistics.get("ProjectileData").get("AverageDimensions"),
+		).toEqual([2.9, 4.97]);
 	});
 
 	test("does it properly handle an empty input", () => {
 		const siteStatistics = aggregateSiteStatistics();
-		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
+		expect(siteStatistics.get("MaterialData").get("MaterialCount")).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
 		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
 		expect(siteStatistics.ProjectileData.ProjectileCount).toEqual([]);
