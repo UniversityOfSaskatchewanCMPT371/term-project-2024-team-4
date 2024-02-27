@@ -23,7 +23,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary,
 }));
 
-function App () {
+function App() {
 	return (
 		<>
 			<Box sx={{ display: "flex" }}>

@@ -51,11 +51,11 @@ const SidebarIcon = styled(ListItemIcon)(() => ({
 function Sidebar() {
 	const [modalVisible, setModalShow] = useState(false);
 
-	const handleClick = event => {
+	const handleClick = (event) => {
 		logger.info(event.target.innerText + " Sidebar navigation clicked");
 	};
 
-	const setModalVisible = event => {
+	const setModalVisible = (event) => {
 		handleClick(event);
 		setModalShow(true);
 		logger.info("LoginModal visible");
@@ -111,11 +111,7 @@ function Sidebar() {
 				</SidebarList>
 				<Divider />
 				<SidebarList>
-					<ListItem
-						key="Statistics"
-						disablePadding
-						onClick={handleClick}
-					>
+					<ListItem key="Statistics" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
 								<BarChartIcon />
@@ -123,11 +119,7 @@ function Sidebar() {
 							<ListItemText primary="Statistics" />
 						</ListItemButton>
 					</ListItem>
-					<ListItem
-						key="Data Management"
-						disablePadding
-						onClick={handleClick}
-					>
+					<ListItem key="Data Management" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
 								<FolderCopyIcon />
@@ -155,10 +147,7 @@ function Sidebar() {
 					</ListItem>
 				</SidebarList>
 			</Drawer>
-			<LoginModal
-				modalVisible={modalVisible}
-				closeModal={closeModal}
-			/>
+			<LoginModal modalVisible={modalVisible} closeModal={closeModal} />
 		</>
 	);
 }
