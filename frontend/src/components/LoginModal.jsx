@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import logger from "../logger.js";
-import PropTypes from "prop-types";
 
 // MUI
 import Button from "@mui/material/Button";
@@ -24,11 +23,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 // 	}).then((data) => data.json());
 // }
 
+// eslint-disable-next-line react/prop-types
 function LoginModal({ modalVisible, closeModal }) {
 	const [userName, setUserName] = useState();
-  	const [password, setPassword] = useState();
+	const [password, setPassword] = useState();
 
-	const handleSubmit = async event => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		//**Not needed yet */
@@ -63,15 +63,15 @@ function LoginModal({ modalVisible, closeModal }) {
 	/**
 	 * This is for when the username is entered into the textbox to update the state of the component
 	 */
-	const userNameChanged = event => {
-		setUserName(event.target.value)
+	const userNameChanged = (event) => {
+		setUserName(event.target.value);
 	};
 
 	/**
 	 * For when the password is entered into the texbox to update the state of the component
 	 */
-	const passwordChanged = event => {
-		setPassword(event.target.value)
+	const passwordChanged = (event) => {
+		setPassword(event.target.value);
 	};
 
 	return (
@@ -119,11 +119,7 @@ function LoginModal({ modalVisible, closeModal }) {
 					/>
 				</DialogContent>
 				<DialogActions>
-					<Button
-						onClick={closeModal}
-					>
-						Cancel
-					</Button>
+					<Button onClick={closeModal}>Cancel</Button>
 					<Button onClick={handleSubmit} type="submit">
 						Login
 					</Button>
