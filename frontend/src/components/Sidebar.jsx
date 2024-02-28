@@ -1,160 +1,155 @@
-import React, { Component } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
-import "./Sidebar.css";
-import LoginModal from "./LoginModal";
+import { useState } from "react";
 import logger from "../logger.js";
+import LoginModal from "./LoginModal";
 
-class Sidebar extends Component {
-  constructor(props) {
-    super(props);
+// MUI
+import Drawer from "@mui/material/Drawer";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import HomeIcon from "@mui/icons-material/Home";
+import UploadIcon from "@mui/icons-material/Upload";
+import BarChartIcon from "@mui/icons-material/BarChart";
+import FolderCopyIcon from "@mui/icons-material/FolderCopy";
+import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
+import LoginIcon from "@mui/icons-material/Login";
+import { styled } from "@mui/material/styles";
 
-    this.state = {
-      modalShow: false,
-      isLoggedIn: false,
-    };
+const drawerWidth = 240;
 
-    this.setModalShow = this.setModalShow.bind(this);
-    this.setModalHidden = this.setModalHidden.bind(this);
-    this.handleLogin = this.handleLogin.bind(this);
-    this.handleLogout = this.handleLogout.bind(this);
+// create SidebarList component and styling, based on List MUI component
+const SidebarList = styled(List)(() => ({
+	padding: "10px",
+	// selected and (selected + hover) states
+	"&& .Mui-selected, && .Mui-selected:hover": {
+		backgroundColor: "#cda057",
+		borderRadius: "7px",
+		"&, & .MuiListItemIcon-root": {
+			color: "white",
+		},
+	},
+	// hover states
+	"& .MuiListItemButton-root:hover": {
+		backgroundColor: "#cda057",
+		borderRadius: "7px",
+		"&, & .MuiListItemIcon-root": {
+			color: "white",
+		},
+	},
+}));
 
-    logger.info("Sidebar component rendered.");
-  }
+// create SidebarIcon component and styling, based on ListItemIcon MUI component
+const SidebarIcon = styled(ListItemIcon)(() => ({
+	minWidth: "47px",
+}));
 
-  handleClick(e) {
-    logger.info(e.target.innerText + " Sidebar navigation clicked.");
-  }
+function Sidebar() {
+	const [modalVisible, setModalShow] = useState(false);
 
-  setModalShow(e) {
-    this.handleClick(e);
-    this.setState({ modalShow: true }, () => {
-      logger.info("LoginModal shown.");
-    });
-  }
+	const handleClick = (event) => {
+		logger.info(event.target.innerText + " Sidebar navigation clicked");
+	};
 
-  setModalHidden() {
-    this.setState({ modalShow: false }, () => {
-      logger.info("LoginModal hidden.");
-    });
-  }
-  handleLogin() {
-    this.setState({ isLoggedIn: true }); // Set login status to true
-  }
+	const setModalVisible = (event) => {
+		handleClick(event);
+		setModalShow(true);
+		logger.info("LoginModal visible");
+	};
 
-  handleLogout() {
-    this.setState({ isLoggedIn: false }); // Set login status to false
-  }
+	const closeModal = () => {
+		setModalShow(false);
+		logger.info("LoginModal closed");
+	};
 
-  render() {
-    const { isLoggedIn } = this.state;
-    return (
-      <div className="container-fluid">
-        <div className="sidebar col-auto min-vh-100 d-flex justify-content-between flex-column">
-          <div>
-            <a className="title text-decoration-none d-none d-sm-inline d-flex align-items-center m-4">
-              <span className="fs-2 fw-bold">Projectile</span>
-            </a>
-            <hr className="d-none d-sm-block" />
-            <ul className="nav nav-pills flex-column mt-3 mt-sm-0">
-              <li className="nav-item fs-4 my-1 py-2 py-sm-0">
-                <a
-                  href="#"
-                  onClick={this.handleClick}
-                  className="nav-link fs-5"
-                  aria-current="page"
-                >
-                  <i className="bi bi-house-door-fill"></i>
-                  <span className="ms-3 d-none d-sm-inline">Home</span>
-                </a>
-              </li>
-              <li className="nav-item fs-4 my-1 py-2 py-sm-0">
-                <a
-                  href="#"
-                  onClick={this.handleClick}
-                  className="nav-link fs-5"
-                  aria-current="page"
-                >
-                  <i className="bi bi-file-earmark-arrow-down-fill"></i>
-                  <span className="ms-3 d-none d-sm-inline">Connect</span>
-                </a>
-              </li>
-            </ul>
-            <hr className="d-none d-sm-block" />
-            <ul className="nav nav-pills flex-column mt-3 mt-sm-0">
-              <li className="nav-item fs-4 my-1 py-2 py-sm-0">
-                <a
-                  href="#"
-                  onClick={this.handleClick}
-                  className="nav-link fs-5"
-                  aria-current="page"
-                >
-                  <i className="bi bi-clipboard2-data-fill"></i>
-                  <span className="ms-3 d-none d-sm-inline">Statistics</span>
-                </a>
-              </li>
-              <li className="nav-item fs-4 my-1 py-2 py-sm-0">
-                <a
-                  href="#"
-                  onClick={this.handleClick}
-                  className="nav-link fs-5"
-                  aria-current="page"
-                >
-                  <i className="bi bi-database-fill"></i>
-                  <span className="ms-3 d-none d-sm-inline">
-                    Data Management
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <ul className="nav nav-pills flex-column mt-3 mt-sm-0">
-              <li className="nav-item fs-4 my-1 py-2 py-sm-0">
-                <a
-                  href="#"
-                  onClick={this.handleClick}
-                  className="nav-link fs-5"
-                  aria-current="page"
-                >
-                  <i className="bi bi-gear-fill"></i>
-                  <span className="ms-3 d-none d-sm-inline">Settings</span>
-                </a>
-              </li>
-              <li className="nav-item fs-4 my-1 py-2 py-sm-0">
-                {isLoggedIn ? (
-                  <a
-                    href="#"
-                    onClick={this.handleLogout}
-                    className="nav-link fs-5"
-                    aria-current="page"
-                  >
-                    <i className="bi bi-box-arrow-in-left"></i>
-                    <span className="ms-3 d-none d-sm-inline">Logout</span>
-                  </a>
-                ) : (
-                  <a
-                    href="#"
-                    className="nav-link fs-5"
-                    aria-current="page"
-                    onClick={this.setModalShow}
-                  >
-                    <i className="bi bi-box-arrow-in-right"></i>
-                    <span className="ms-3 d-none d-sm-inline">Login</span>
-                  </a>
-                )}
-              </li>
-            </ul>
-          </div>
-        </div>
-        <LoginModal
-          show={this.state.modalShow}
-          onHide={this.setModalHidden}
-          onLogin={this.handleLogin}
-        />
-      </div>
-    );
-  }
+	return (
+		<>
+			<Drawer
+				sx={{
+					width: drawerWidth,
+					flexShrink: 0,
+					"& .MuiDrawer-paper": {
+						width: drawerWidth,
+						boxSizing: "border-box",
+					},
+				}}
+				PaperProps={{
+					sx: {
+						// sidebar background color
+						backgroundColor: "#f1f1f1",
+					},
+				}}
+				variant="permanent"
+				anchor="left"
+			>
+				<Toolbar>
+					<Typography variant="h6" noWrap component="div">
+						PCubed
+					</Typography>
+				</Toolbar>
+				<SidebarList>
+					<ListItem key="Home" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<HomeIcon />
+							</SidebarIcon>
+							<ListItemText primary="Home" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="Connect" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<UploadIcon />
+							</SidebarIcon>
+							<ListItemText primary="Connect" />
+						</ListItemButton>
+					</ListItem>
+				</SidebarList>
+				<Divider />
+				<SidebarList>
+					<ListItem key="Statistics" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<BarChartIcon />
+							</SidebarIcon>
+							<ListItemText primary="Statistics" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="Data Management" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<FolderCopyIcon />
+							</SidebarIcon>
+							<ListItemText primary="Data Management" />
+						</ListItemButton>
+					</ListItem>
+				</SidebarList>
+				<SidebarList sx={{ marginTop: "auto" }}>
+					<ListItem key="Settings" disablePadding onClick={handleClick}>
+						<ListItemButton>
+							<SidebarIcon>
+								<RoomPreferencesIcon />
+							</SidebarIcon>
+							<ListItemText primary="Settings" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="Login" disablePadding onClick={setModalVisible}>
+						<ListItemButton>
+							<SidebarIcon>
+								<LoginIcon />
+							</SidebarIcon>
+							<ListItemText primary="Login" />
+						</ListItemButton>
+					</ListItem>
+				</SidebarList>
+			</Drawer>
+			<LoginModal modalVisible={modalVisible} closeModal={closeModal} />
+		</>
+	);
 }
 
 export default Sidebar;
