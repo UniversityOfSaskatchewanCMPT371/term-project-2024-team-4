@@ -35,7 +35,6 @@ describe("User Authentication API", () => {
 			// Mocking findOne to return mockedUser
 			// eslint-disable-next-line no-unused-vars
 			router.post("/", async (req, res) => {
-				
 				// eslint-disable-next-line no-undef
 				dataSource.getRepository.mockReturnValueOnce({
 					findOne: jest.fn().mockResolvedValueOnce(mockedUser),

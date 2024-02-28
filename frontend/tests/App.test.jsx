@@ -7,7 +7,7 @@ test("Render Sidebar component correctly", () => {
 	render(<Sidebar />);
 
 	// Test if title is present on Sidebar
-	const titleElement = screen.getByText("Projectile");
+	const titleElement = screen.getByText("PCubedq");
 	expect(titleElement).toBeInTheDocument();
 
 	// Test if Home nav link is present on Sidebar
