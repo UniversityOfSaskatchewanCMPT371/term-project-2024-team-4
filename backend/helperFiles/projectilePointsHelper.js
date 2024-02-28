@@ -28,6 +28,8 @@ async function newProjectilePoint(req) {
 		crossSectionId,
 	} = req.body;
 
+	console.log("Creating new Projectile Point: " + req.body);
+
 	try {
 		// Fetch related entities by their IDs
 		const culture = await myDatabase
@@ -77,6 +79,7 @@ async function newProjectilePoint(req) {
  *
  */
 async function getAllProjectilePoints() {
+	console.log("Getting all Projectile Points");
 	try {
 		const projectilePoints = await myDatabase
 			.getRepository(ProjectilePoint)
@@ -104,6 +107,7 @@ async function getAllProjectilePoints() {
  */
 async function getProjectilePointFromId(req) {
 	const { id } = req.params;
+	console.log("Getting Projectile Point from Id: " + 1);
 	try {
 		const projectilePoint = await myDatabase
 			.getRepository(ProjectilePoint)
@@ -136,6 +140,7 @@ async function getProjectilePointFromId(req) {
  */
 async function updateProjectilePoint(req) {
 	const { id } = req.params;
+	console.log("Updating Projectile Point Id: " + id);
 	const {
 		name,
 		location,
@@ -205,6 +210,7 @@ async function updateProjectilePoint(req) {
  */
 async function deleteProjectilePoint(req) {
 	const { id } = req.params;
+	console.log("Deleting Projectile Point Id: " + id);
 	try {
 		const result = await myDatabase.getRepository(ProjectilePoint).delete(id);
 		if (result.affected > 0) {

@@ -6,6 +6,7 @@ const myDatabase = require("../config/db");
  * @param {*} req
  */
 async function newSite(req) {
+	console.log("Creating new Site: " + req.body);
 	const { name, description, location, catalogueId, regionId } = req.body;
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
@@ -30,6 +31,7 @@ async function newSite(req) {
  *
  */
 async function getAllSites() {
+	console.log("Getting All Sites");
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
 		const sites = await siteRepository.find({
@@ -49,6 +51,7 @@ async function getAllSites() {
  * @param {*} req
  */
 async function getSiteFromId(req) {
+	console.log("Getting Site From Id: " + req.params.id);
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
 		const site = await siteRepository.findOne({
@@ -74,6 +77,7 @@ async function getSiteFromId(req) {
  * @param {*} req
  */
 async function updateSite(req) {
+	console.log("Updating Site Id: " + req.params.id + " With: " + req.body);
 	const { name, description, location, catalogueId, regionId } = req.body;
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
@@ -105,6 +109,7 @@ async function updateSite(req) {
  * @param {*} req
  */
 async function deleteSite(req) {
+	console.log("Deleting Site Id: " + req.params.id);
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
 		const deleteResult = await siteRepository.delete(parseInt(req.params.id));

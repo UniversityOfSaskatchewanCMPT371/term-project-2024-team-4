@@ -6,6 +6,7 @@ const myDatabase = require("../config/db");
  * @returns
  */
 async function getAllCatalogues() {
+	console.log("Getting all Catalogues");
 	try {
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const catalogues = await catalogueRepository.find();
@@ -23,6 +24,7 @@ async function getAllCatalogues() {
  * @param {*} req
  */
 async function createNewCatalogue(req) {
+	console.log("Creating new Catalogue: " + req.body);
 	const { name, description } = req.body;
 	try {
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
@@ -42,6 +44,7 @@ async function createNewCatalogue(req) {
  * @param {*} req
  */
 async function getCatalogueFromId(req) {
+	console.log("Getting catalogue from Id: " + req.params.id);
 	try {
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const catalogue = await catalogueRepository.findOne({
@@ -68,6 +71,7 @@ async function getCatalogueFromId(req) {
  * @param {*} req
  */
 async function updateCatalogue(req) {
+	console.log("Updating Catalogue Id: " + req.params);
 	const { id } = req.params;
 	const { name, description } = req.body;
 	try {
@@ -97,6 +101,7 @@ async function updateCatalogue(req) {
  * @param {*} req
  */
 async function deleteCatalogue(req) {
+	console.log("Deleting Catalogue Id: " + req.params.id);
 	const id = parseInt(req.params.id);
 	try {
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);

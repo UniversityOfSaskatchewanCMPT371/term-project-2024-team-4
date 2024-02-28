@@ -6,6 +6,7 @@ const myDatabase = require("../config/db");
  * @param {*} req - the request
  */
 async function newArtifact(req) {
+	console.log("creating new artifact: " + req.body);
 	// Extract the information from the request body
 	const {
 		name,
@@ -56,6 +57,7 @@ async function newArtifact(req) {
  * Gets all artifacts in the database.
  */
 async function getAllArtifacts() {
+	console.log("Getting All Artifacts");
 	try {
 		const artifactRepository = await myDatabase.getRepository(Artifact);
 		const artifacts = await artifactRepository.find({
@@ -79,6 +81,7 @@ async function getAllArtifacts() {
  * @param {*} req - the id requested
  */
 async function getArtifactFromId(req) {
+	console.log("Getting artifact from id: " + req.params);
 	const { id } = req.params;
 	try {
 		const artifact = await myDatabase.getRepository(Artifact).findOne({
@@ -104,6 +107,7 @@ async function getArtifactFromId(req) {
  * @param {*} req - the request
  */
 async function updateArtifact(req) {
+	console.log("Updating Artifact Id: " + req.params);
 	const { id } = req.params;
 	const {
 		name,
@@ -169,6 +173,7 @@ async function updateArtifact(req) {
  * @param {*} req - the request
  */
 async function deleteArtifact(req) {
+	console.log("Deleting Artifact Id: " + req.params);
 	const { id } = req.params;
 	try {
 		const artifactRepository = await myDatabase.getRepository(Artifact);
