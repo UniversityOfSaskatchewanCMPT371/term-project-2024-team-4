@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import SearchSites from "./SearchSites";
+import SearchResult from "./SearchArtfacts";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Sidebar from "./Sidebar";
 import { Box } from "@mui/material";
 
-const Catalogue1 = (props) => {
+const Site = (props) => {
 	const [searchValue, setSearchValue] = useState("");
 	const [sortValue, setSortValue] = useState("newest");
 	const [filterValue, setFilterValue] = useState("");
@@ -46,7 +46,7 @@ const Catalogue1 = (props) => {
 						{props.props}
 					</Typography>
 					<Typography variant="body1" gutterBottom>
-						This is a short description of Catalogue.
+						This is a short description of Sites.
 					</Typography>
 				</Grid>
 
@@ -109,10 +109,10 @@ const Catalogue1 = (props) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				<SearchSites query={searchValue} />
+				<SearchResult query={searchValue} />
 			</Grid>
 		</Box>
 	);
 };
 
-export default Catalogue1;
+export default Site;

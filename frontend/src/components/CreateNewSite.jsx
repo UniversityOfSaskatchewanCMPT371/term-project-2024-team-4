@@ -26,13 +26,11 @@ const CreateNewSite = ({ setOpen }) => {
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [selectedRegion, setSelectedRegion] = useState(null);
-	const [regions1, setRegions1] = useState([
-		"region 1",
-		"region 2",
-		"region 3",
-	]);
+	const [regions1, setRegions1] = useState([]);
 	const [editMenuAnchor, setEditMenuAnchor] = useState(null);
 	const [editRegion, setEditRegion] = useState(false);
+	const [description1, setDescription1] = useState("");
+	const [selectedRegionID, setselectedRegionID] = useState(0);
 
 	const handleClose = () => {
 		setOpen(false);
@@ -48,10 +46,31 @@ const CreateNewSite = ({ setOpen }) => {
 		console.log("Site name is: " + e.target.value);
 	};
 
-	const handleDescriptionChange = (e) => {
+	const handleDescription = (e) => {
+
 		setDescription(e.target.value);
-		console.log("Description is: " + e.target.value);
+	}
+
+	const handleDescriptionChange = (e) => {
+		const name = e.target.value;
+		axios.get("http://localhost:3000/regions")
+			.then(response => {
+				const filteredRegion = response.data.find(region => region.name === name);
+				
+				// Check if a region with the provided name was found
+				if (filteredRegion) {
+					const description = filteredRegion.description;
+					 setselectedRegionID(filteredRegion.id);
+					 setDescription1(description)
+				} else {
+					console.log("Region not found");
+				}
+			})
+			.catch(error => {
+				console.error('Error fetching regions:', error);
+			});
 	};
+	
 
 	const handleLocationChange = (e) => {
 		setLocation(e.target.value);
@@ -60,26 +79,8 @@ const CreateNewSite = ({ setOpen }) => {
 
 	const handleRegionChange = (e) => {
 		const regionValue = e.target.value;
-
-		fetch("http://localhost:8000/regions")
-			.then((response) => response.json())
-			.then((json) => setRegions1(json))
-			.then(console.log(regions1))
-			.catch((error) => console.error("Error fetching data:", error));
-
 		setSelectedRegion(regionValue);
-		axios
-			.get(`http://localhost:8000/sites/${regionValue}`)
-			.then((response) => {
-				// Assuming response.data contains the description of the selected region
-				setDescription(response.data.description);
-				console.log(response.data);
-			})
-			.catch((error) => {
-				console.error("Error fetching region description:", error);
-			});
-
-		console.log("Region is: " + regionValue);
+		handleDescriptionChange(e)
 	};
 
 	const handleEditMenuOpen = (event) => {
@@ -98,6 +99,16 @@ const CreateNewSite = ({ setOpen }) => {
 
 	const handleDeleteRegion = () => {
 		// Implement delete region functionality here
+		if (selectedRegion) {
+			axios
+			  .delete(`http://localhost:3000/regions/${selectedRegionID}`)
+			  .then((response) => {
+				console.log("Region delete successfully:", response.data);
+			  })
+			  .catch((error) => {
+				console.error("Error deleting region:", error);
+			  });
+		  }
 		handleEditMenuClose();
 	};
 
@@ -106,11 +117,12 @@ const CreateNewSite = ({ setOpen }) => {
 			name,
 			description,
 			location,
-			region: selectedRegion,
+			catalogueId: 1,
+			regionId: selectedRegionID,
 		};
 
 		axios
-			.post("http://localhost:8000/sites", newSite)
+			.post("http://localhost:3000/sites", newSite)
 			.then((response) => {
 				console.log("New site added successfully:", response.data);
 				handleClose();
@@ -124,11 +136,12 @@ const CreateNewSite = ({ setOpen }) => {
 	};
 
 	const handleClick = () => {
-		fetch("http://localhost:8000/regions")
+		fetch("http://localhost:3000/regions")
 			.then((response) => response.json())
 			.then((json) => setRegions1(json))
 			.then(console.log(regions1))
 			.catch((error) => console.error("Error fetching data:", error));
+
 	};
 
 	return (
@@ -159,7 +172,7 @@ const CreateNewSite = ({ setOpen }) => {
 						multiline
 						rows={10}
 						value={description}
-						onChange={handleDescriptionChange}
+						onChange={handleDescription}
 					/>
 
 					<Grid
@@ -200,7 +213,7 @@ const CreateNewSite = ({ setOpen }) => {
 									}}
 								>
 									{regions1.map((region) => (
-										<MenuItem key={region.name} value={region.name}>
+										<MenuItem key={region.name} value={region.name} onClick={handleClick}>
 											{region.name}
 											<IconButton
 												aria-label="more"
@@ -252,6 +265,8 @@ const CreateNewSite = ({ setOpen }) => {
 				<EditRegion
 					setEditRegion={setEditRegion}
 					selectedRegion={selectedRegion}
+					selectedDescription={description1}
+					selectedRegionID = {selectedRegionID}
 				/>
 			)}
 		</div>
@@ -259,3 +274,5 @@ const CreateNewSite = ({ setOpen }) => {
 };
 
 export default CreateNewSite;
+
+

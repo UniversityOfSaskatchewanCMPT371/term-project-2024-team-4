@@ -6,6 +6,7 @@ export default function EditRegion({
   setEditRegion,
   selectedRegion,
   selectedDescription,
+  selectedRegionID,
   setOpen1,
 }) {
   const [open, setOpen] = useState(true); // State to manage the dialog open/close
@@ -20,7 +21,7 @@ export default function EditRegion({
 
     if (selectedRegion) {
       axios
-        .put(`http://localhost:8000/regions/${selectedRegion}`, updatedRegion)
+        .put(`http://localhost:3000/regions/${selectedRegionID}`, updatedRegion)
         .then((response) => {
           console.log("Region updated successfully:", response.data);
           setOpen1(true);
@@ -35,7 +36,7 @@ export default function EditRegion({
 
     if (!selectedRegion) {
       axios
-        .post("http://localhost:8000/regions", updatedRegion)
+        .post("http://localhost:3000/regions", updatedRegion)
         .then((response) => {
           console.log("Region created successfully:", response.data);
         })
