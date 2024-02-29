@@ -246,7 +246,11 @@ function aggregateSiteStatistics(siteId) {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
 		);
-		return null;
+		return "Site not found";
+	}
+	if (currentSiteRes instanceof Error) {
+		console.error("aggregateCatalogueStatistics() encountered an error");
+		return currentSiteRes;
 	}
 	const { artifacts } = currentSiteRes.body;
 
@@ -347,7 +351,11 @@ function aggregateCatalogueStatistics(catalogueId) {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
 		);
-		return null;
+		return "Catalogue not found";
+	}
+	if (currentCatalogueRes instanceof Error) {
+		console.error("aggregateCatalogueStatistics() encountered an error");
+		return currentCatalogueRes;
 	}
 	const { sites } = currentCatalogueRes.body;
 
@@ -463,7 +471,11 @@ function aggregatePointTypeStatistics(pointType) {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
 		);
-		return null;
+		return "ArtifactType not found";
+	}
+	if (currentPointTypeRes instanceof Error) {
+		console.error("aggregateCatalogueStatistics() encountered an error");
+		return currentPointTypeRes;
 	}
 	const { artifacts } = currentPointTypeRes.body;
 

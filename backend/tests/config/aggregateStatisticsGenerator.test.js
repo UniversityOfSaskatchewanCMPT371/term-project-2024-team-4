@@ -719,7 +719,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 	test("does it properly handle a site that doesnt exist", () => {
 		getSiteFromId.mockReturnValueOnce("Site not found");
 		const siteStatistics = aggregateSiteStatistics(3);
-		expect(siteStatistics).toEqual(null);
+		expect(siteStatistics).toEqual("Site not found");
 	});
 });
 
@@ -801,9 +801,9 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 	});
 
 	test("does it properly handle a catalogue that doesnt exist", () => {
-		getCatalogueFromId.mockReturnValueOnce("Site not found");
+		getCatalogueFromId.mockReturnValueOnce("Catalogue not found");
 		const siteStatistics = aggregateCatalogueStatistics(3);
-		expect(siteStatistics).toEqual(null);
+		expect(siteStatistics).toEqual("Catalogue not found");
 	});
 });
 
@@ -872,6 +872,6 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 	test("does it properly handle a pointType that doesnt exist", () => {
 		getArtifactTypeFromId.mockReturnValueOnce("ArtifactType not found");
 		const pointTypeStatistics = aggregatePointTypeStatistics(51);
-		expect(pointTypeStatistics).toEqual(null);
+		expect(pointTypeStatistics).toEqual("ArtifactType not found");
 	});
 });
