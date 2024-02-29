@@ -18,9 +18,6 @@ const sitesHelper = require("../helperFiles/sitesHelper.js");
  * @returns {Map} a map containing the keys for the Materials and their percentages
  */
 function materialPercentage(materialArray) {
-	//TODO: Code the materialPercentage function
-	logger.info("Running materialPercentage() with value: " + materialArray);
-
 	assert.notEqual(materialArray, null);
 	assert.equal(Array.isArray(materialArray), true);
 
@@ -46,7 +43,6 @@ function materialPercentage(materialArray) {
 		for (let [key, value] of materialCountMap.entries()) {
 			materialPercentageMap.set(key, (value / materialArray.length).toFixed(2));
 		}
-		logger.info(materialPercentageMap.toString());
 		return materialPercentageMap;
 	} else {
 		logger.debug("materialPercentage() was given an empty array.");
@@ -66,11 +62,6 @@ function materialPercentage(materialArray) {
  * @returns {Map} a map containing the keys for the Projectiles and their percentages
  */
 function projectilePointPercentage(projectilePointArray) {
-	//TODO: Code the projectilePointPercentage function
-	logger.info(
-		"Running projectilePointPercentage() with value: " + projectilePointArray,
-	);
-
 	//Blade Shapes: Triangular, excurvate, incurvate, ovate
 	//Base Shapes: Straight, concave, convex
 	//Hafting Shapes: ________, straight, basally convcave, expanding, contracting, corner-notched, side-notched, basal-notched, triangular un-notched
@@ -202,19 +193,13 @@ function projectilePointPercentage(projectilePointArray) {
  * @returns {Map} a list containing the average values of [x, y, z]
  */
 function averageProjectilePointDimensions(artifactArray) {
-	//TODO: code the averageProjectilePointDimensions function
-	logger.info(
-		"Running averageProjectilePointDimensions() with value: " + artifactArray,
-	);
-
 	assert.notEqual(artifactArray, null);
 	assert.equal(Array.isArray(artifactArray), true);
-	//TODO: add an assertion that the artifactArray is of the appropriate structure.
 	//init a new set of dimensions
 	const averageDimensionArray = new Array(0.0, 0.0, 0.0);
 	if (artifactArray.length > 0) {
 		for (let i = 0; i < artifactArray.length; i++) {
-			var currDimensions = artifactArray[i].dimensions; //TODO: this may need to be adjusted to the object sent in.
+			var currDimensions = artifactArray[i].dimensions;
 			averageDimensionArray[0] += currDimensions[0];
 			averageDimensionArray[1] += currDimensions[1];
 			averageDimensionArray[2] += currDimensions[2];
@@ -245,9 +230,6 @@ function averageProjectilePointDimensions(artifactArray) {
  * 											   "Projectile Percentages":[floats], "Average Dimensions":[float]}}
  */
 function aggregateSiteStatistics(siteId) {
-	//TODO: code the aggregateSiteStatistics function
-	logger.info("Running aggregateSiteStatistics() with value: " + siteId);
-
 	const siteSatisticsMap = new Map();
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
