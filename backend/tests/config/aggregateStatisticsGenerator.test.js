@@ -140,6 +140,7 @@ const {
 	aggregateCatalogueStatistics,
 	aggregatePointTypeStatistics,
 } = require("../../controllers/aggregateStatisticsController");
+//const FileSystem = require("fs");
 
 //NOTE: There is currently no test data to work with, so any tests that would use any test data
 //      currently do not function properly
@@ -149,7 +150,7 @@ describe("Tests for the function: materialPercentage()", () => {
 		expect(percentages).toBe(null);
 	});
 
-	test("Attempt to calculate percentages with a populated list expecting correct return", () => {
+	test("Attempt to calculate percentages wssssssith a populated list expecting correct return", () => {
 		const materialArray = new Array(
 			"Type 1",
 			"Type 1",
@@ -290,23 +291,70 @@ describe("Tests for the function: averageProjectilePointDimensions()", () => {
 	});
 
 	test("Calculate the average dimensions on a small set of data", () => {
+		const projectilePoint1 = {
+			id: 1,
+			name: "projectilePoint1",
+			location: "A place",
+			description: "This is projectilePoint1, its neat",
+			dimensions: [2.1, 6.7, 0.7],
+			photo: "Imagine there is a link here",
+			site: 1,
+			artifactType: 1,
+			culture: 1,
+			bladeShape: 1,
+			baseShape: 1,
+			haftingShape: 1,
+			crossSection: 1,
+		};
+
+		const projectilePoint2 = {
+			id: 1,
+			name: "projectilePoint2",
+			location: "A place",
+			description: "This is projectilePoint2, its neat",
+			dimensions: [3.4, 7.2, 0.2],
+			photo: "Imagine there is a link here",
+			site: 1,
+			artifactType: 2,
+			culture: 2,
+			bladeShape: 2,
+			baseShape: 2,
+			haftingShape: 2,
+			crossSection: 2,
+		};
+
+		const projectilePoint3 = {
+			id: 1,
+			name: "projectilePoint3",
+			location: "A place",
+			description: "This is projectilePoint3, its neat",
+			dimensions: [2.2, 5.0, 0.5],
+			photo: "Imagine there is a link here",
+			site: 1,
+			artifactType: 3,
+			culture: 3,
+			bladeShape: 3,
+			baseShape: 3,
+			haftingShape: 3,
+			crossSection: 3,
+		};
 		const averageDimensions = averageProjectilePointDimensions([
-			[2.1, 6.7],
-			[3.4, 7.2],
-			[2.2, 5.0],
+			projectilePoint1,
+			projectilePoint2,
+			projectilePoint3,
 		]);
 		expect(averageDimensions).toEqual([2.57, 6.3]);
 	});
 });
 
-const mockRouterGet = jest.fn();
-const mockRouterPost = jest.fn();
-jest.mock("express", () => ({
-	Router: () => ({
-		get: mockRouterGet,
-		post: mockRouterPost,
-	}),
-}));
+// const mockRouterGet = jest.fn();
+// const mockRouterPost = jest.fn();
+// jest.mock("express", () => ({
+// 	Router: () => ({
+// 		get: mockRouterGet,
+// 		post: mockRouterPost,
+// 	}),
+// }));
 
 describe("Tests for function: aggregateSiteStatistics()", () => {
 	beforeAll(() => {
@@ -488,15 +536,15 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 			name: "projectilePoint1",
 			location: "A place",
 			description: "This is projectilePoint1, its neat",
-			dimensions: [3.2, 4.8],
+			dimensions: [3.2, 4.8, 0.4],
 			photo: "Imagine there is a link here",
 			site: 1,
 			artifactType: artifactType1,
 			culture: 1,
 			bladeShape: bladeShape1,
-			baseShape: 1,
-			haftingShape: 1,
-			crossSection: 1,
+			baseShape: baseShape1,
+			haftingShape: haftingShape1,
+			crossSection: crossSection1,
 		};
 
 		const projectilePoint2 = {
@@ -504,15 +552,15 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 			name: "projectilePoint2",
 			location: "A place",
 			description: "This is projectilePoint2, its neat",
-			dimensions: [1.9, 6.2],
+			dimensions: [1.9, 6.2, 0.6],
 			photo: "Imagine there is a link here",
 			site: 1,
 			artifactType: artifactType2,
 			culture: 2,
 			bladeShape: bladeShape2,
-			baseShape: 2,
-			haftingShape: 2,
-			crossSection: 2,
+			baseShape: baseShape2,
+			haftingShape: haftingShape2,
+			crossSection: crossSection2,
 		};
 
 		const projectilePoint3 = {
@@ -520,15 +568,15 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 			name: "projectilePoint3",
 			location: "A place",
 			description: "This is projectilePoint3, its neat",
-			dimensions: [3.6, 3.9],
+			dimensions: [3.6, 3.9, 0.3],
 			photo: "Imagine there is a link here",
 			site: 1,
 			artifactType: artifactType3,
 			culture: 3,
 			bladeShape: bladeShape3,
-			baseShape: 3,
-			haftingShape: 3,
-			crossSection: 3,
+			baseShape: baseShape3,
+			haftingShape: haftingShape3,
+			crossSection: crossSection3,
 		};
 
 		mockRouterPost.mockReturnValueOnce({
@@ -583,7 +631,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 		).toEqual([]);
 		expect(
 			siteStatistics.get("ProjectileData").get("AverageDimensions"),
-		).toEqual([2.9, 4.97]);
+		).toEqual([2.9, 4.97, 0.43]);
 	});
 
 	test("does it properly handle an empty input", () => {

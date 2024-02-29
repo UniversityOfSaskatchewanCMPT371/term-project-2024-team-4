@@ -6,7 +6,10 @@
 
 const { logger } = require("backend/config/logger.js");
 const assert = require("node:assert/strict");
-
+//const artifactsHelper = require("../helperFiles/artifactsHelper.js");
+//const cataloguesHelper = require("../helperFiles/catalogueHelper.js");
+//const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+const sitesHelper = require("../helperFiles/sitesHelper.js");
 /**
  * Takes an array of materials and calculates the percent split of the total
  * e.g. a list of 16 materials 4 of each type, and there exist 4 different types of materials
@@ -208,12 +211,13 @@ function averageProjectilePointDimensions(artifactArray) {
 	assert.equal(Array.isArray(artifactArray), true);
 	//TODO: add an assertion that the artifactArray is of the appropriate structure.
 	//init a new set of dimensions
-	const averageDimensionArray = new Array(0.0, 0.0);
+	const averageDimensionArray = new Array(0.0, 0.0, 0.0);
 	if (artifactArray.length > 0) {
 		for (let i = 0; i < artifactArray.length; i++) {
-			var currDimensions = artifactArray[i]; //TODO: this may need to be adjusted to the object sent in.
+			var currDimensions = artifactArray[i].dimensions; //TODO: this may need to be adjusted to the object sent in.
 			averageDimensionArray[0] += currDimensions[0];
 			averageDimensionArray[1] += currDimensions[1];
+			averageDimensionArray[2] += currDimensions[2];
 		}
 		//get tthe average and round to 2 decimal places.
 		averageDimensionArray[0] = parseFloat(
@@ -221,6 +225,9 @@ function averageProjectilePointDimensions(artifactArray) {
 		);
 		averageDimensionArray[1] = parseFloat(
 			(averageDimensionArray[1] / artifactArray.length).toFixed(2),
+		);
+		averageDimensionArray[2] = parseFloat(
+			(averageDimensionArray[2] / artifactArray.length).toFixed(2),
 		);
 		return averageDimensionArray;
 	} else {
@@ -233,22 +240,82 @@ function averageProjectilePointDimensions(artifactArray) {
  *
  * Given a site Id, calculate the aggregate statistics for that site
  * @param siteId (a number related to a specific site)
- * @returns {Map} a map containing the keys:  {"MaterialData":{"MaterialCount":[int], "MaterialTypes":[String], "MaterialPercentages":[floats]},
- *                                             "ProjectileData":{"ProjectileCount":[int], "ProjectileTypes":[String], "ProjectilePercentages":[floats], "AverageDimensions":[float]}}
+ * @returns {Map} a map containing the keys:  {"Material Data":{"Material Count":[int], "Material Types":[String], "Material Percentages":[floats]},
+ *                                             "Projectile Data":{"Projectile Count":[int], "Projectile Types": {"Base Shapes": [String], "Blade Shapes": [String], "Hafting Shapes": [String], "Cross Sections": [String]},
+ * 											   "Projectile Percentages":[floats], "Average Dimensions":[float]}}
  */
 function aggregateSiteStatistics(siteId) {
 	//TODO: code the aggregateSiteStatistics function
 	logger.info("Running aggregateSiteStatistics() with value: " + siteId);
 
-	//TODO: MaterialCount
-	//TODO: MaterialTypes
-	//TODO: MaterialPercentages
-	//TODO: ProjectileCount
-	//TODO: ProjectileTypes
-	//TODO: ProjectilePercentages
-	//TODO: AverageDimensions
+	const siteSatisticsMap = new Map();
+	const materialDataMap = new Map();
+	const projectileDataMap = new Map();
 
-	return null;
+	const currentSiteRes = sitesHelper.getSiteFromId(siteId);
+	const { artifacts } = currentSiteRes.body;
+
+	//contains a list of each type of material, no duplicates
+	const materialTypeArray = new Array();
+	//contains every material, can have duplicates.
+	const materialArray = new Array();
+
+	//init all the maps
+	const projectileShapeMap = new Map();
+	const bladeShapeArray = new Array();
+	const baseShapeArray = new Array();
+	const haftingShapeArray = new Array();
+	const crossSectionArray = new Array();
+	//Materials are stored in the Artifact Type
+	for (let i = 0; i < artifacts.length; i++) {
+		assert.equal(Object.hasOwn(artifacts[i], "artifactType"), true);
+		assert.equal(Object.hasOwn(artifacts[i].artifactType, "id"), true);
+		const currentArtifact = artifacts[i];
+		//the artifact type contains a list of materials
+		for (let j = 0; j < currentArtifact.artifactType.materials.length; i++) {
+			const currentMaterial = currentArtifact.artifactType.materials[i];
+			materialArray.push(currentMaterial.name);
+			//only add a material to the array if it hasnt been added already.
+			if (materialTypeArray.indexOf(currentMaterial.name) == -1) {
+				materialTypeArray.push(currentMaterial.name);
+			}
+		}
+		if (bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1) {
+			bladeShapeArray.push(currentArtifact.bladeShape.name);
+		}
+		if (baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1) {
+			baseShapeArray.push(currentArtifact.baseShape.name);
+		}
+		if (haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1) {
+			haftingShapeArray.push(currentArtifact.haftingShape.name);
+		}
+		if (crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1) {
+			crossSectionArray.push(currentArtifact.crossSection.name);
+		}
+	}
+	//add material data to materialDataMap
+	materialDataMap.set("Material Count", materialArray.length);
+	materialDataMap.set("Material Types", materialTypeArray);
+	materialDataMap.set(
+		"Material Percentages",
+		materialPercentage(materialArray),
+	);
+	//add projectile data to projectileDataMap
+	projectileDataMap.set("Projectile Count", artifacts.length);
+	projectileShapeMap.set("Blade Shapes", bladeShapeArray);
+	projectileShapeMap.set("Base Shapes", bladeShapeArray);
+	projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
+	projectileShapeMap.set("Cross Sections", crossSectionArray);
+	projectileDataMap.set("Projectile Types", projectileShapeMap);
+	projectileDataMap.set("Projectile Percentages", artifacts);
+	projectileDataMap.set(
+		"Average Dimensions",
+		averageProjectilePointDimensions(artifacts),
+	);
+	//populate siteStatisticsMap
+	siteSatisticsMap.set("Material Data", materialDataMap);
+	siteSatisticsMap.set("Projectile Data", projectileDataMap);
+	return siteSatisticsMap;
 }
 
 /**
