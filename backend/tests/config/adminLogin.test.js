@@ -3,7 +3,6 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken"); // Import jwt module
 const app = express();
-const router = require("../../routes/users");
 
 // Mock the database connection
 jest.mock("../../config/db.js", () => {
@@ -20,6 +19,7 @@ jest.mock("../../config/db.js", () => {
 
 // Setup Express app to parse JSON
 app.use(bodyParser.json());
+const router = require("../../routes/users");
 app.use("/users", router);
 
 describe("User Authentication API", () => {
