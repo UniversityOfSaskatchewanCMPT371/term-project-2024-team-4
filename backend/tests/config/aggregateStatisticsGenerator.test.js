@@ -343,18 +343,294 @@ describe("Tests for the function: averageProjectilePointDimensions()", () => {
 			projectilePoint2,
 			projectilePoint3,
 		]);
-		expect(averageDimensions).toEqual([2.57, 6.3]);
+		expect(averageDimensions).toEqual([2.57, 6.3, 0.47]);
 	});
 });
 
-// const mockRouterGet = jest.fn();
-// const mockRouterPost = jest.fn();
-// jest.mock("express", () => ({
-// 	Router: () => ({
-// 		get: mockRouterGet,
-// 		post: mockRouterPost,
-// 	}),
-// }));
+const getSiteFromId = jest.fn();
+const getCatalogueFromId = jest.fn();
+const getArtifactTypeFromId = jest.fn();
+jest.mock("../helperFiles/sitesHelper.js", () => ({
+	getSiteFromId: jest.fn(),
+	getCatalogueFromId: jest.fn(),
+	getArtifactTypeFromId: jest.fn(),
+}));
+
+const catalogue1 = {
+	id: 1,
+	name: "Catalogue1",
+	description: "This is Catalogue 1",
+	sites: [site1, site2],
+};
+
+const site1 = {
+	id: 1,
+	name: "Site1",
+	description: "This is Site 1",
+	location: "This is Site 1's location",
+	catalogue: catalogue1,
+	region: region1,
+	artifacts: [projectilePoint1, projectilePoint2, projectilePoint3],
+};
+
+const site2 = {
+	id: 2,
+	name: "Site2",
+	description: "This is Site 2",
+	location: "This is Site 2's location",
+	catalogue: catalogue1,
+	region: region1,
+	artifacts: [projectilePoint4, projectilePoint5],
+};
+
+const region1 = {
+	id: 1,
+	name: "Region1",
+	description: "This is Region 1",
+	sites: [site1, site2],
+};
+
+//A bunch of mock test data to use for the aggregateStatisticsFunctions
+const material1 = {
+	id: 1,
+	name: "Material1",
+	description: "This is Material1",
+	artifactType: artifactType1,
+	artifacts: [projectilePoint1],
+};
+
+const material2 = {
+	id: 1,
+	name: "Material2",
+	description: "This is Material2",
+	artifactType: artifactType2,
+	artifacts: [projectilePoint2],
+};
+
+const material3 = {
+	id: 1,
+	name: "Material3",
+	description: "This is Material3",
+	artifactType: artifactType3,
+	artifacts: [projectilePoint3],
+};
+
+//ArtifactTypes
+
+const artifactType1 = {
+	id: "Lithic",
+	materials: [material1],
+	artifacts: [projectilePoint1],
+};
+
+const artifactType2 = {
+	id: "Cermaic",
+	materials: [material2],
+	artifacts: [projectilePoint2, projectilePoint4],
+};
+
+const artifactType3 = {
+	id: "Faunal",
+	materials: [material3],
+	artifacts: [projectilePoint3, projectilePoint5],
+};
+
+//Period
+
+const period = {
+	id: 1,
+	name: "Period1",
+	start: 1990,
+	end: 2000,
+	cultures: [culture1],
+};
+
+//Culture
+
+const culture1 = {
+	id: 1,
+	name: "Culture1",
+	period: period,
+	projectilePoints: [projectilePoint1, projectilePoint2, projectilePoint3],
+	bladeShapes: [bladeShape1, bladeShape2, bladeShape3],
+	baseShapes: [baseShape1, baseShape2, baseShape3],
+	haftingShapes: [haftingShape1, haftingShape2, haftingShape3],
+	crossSections: [crossSection1, crossSection2, crossSection3],
+};
+
+//Blade Shapes
+
+const bladeShape1 = {
+	id: 1,
+	name: "Triangular",
+	cultures: [culture1],
+	projectilePoints: [projectilePoint1],
+};
+
+const bladeShape2 = {
+	id: 2,
+	name: "Excurvate",
+	cultures: [culture1],
+	projectilePoints: [projectilePoint2, projectilePoint4],
+};
+
+const bladeShape3 = {
+	id: 3,
+	name: "Incurvate",
+	cultures: [culture1],
+	projectilePoints: [projectilePoint3, projectilePoint5],
+};
+
+//Base Shapes
+
+const baseShape1 = {
+	id: 1,
+	name: "Straight",
+	culture: [culture1],
+	projectilePoints: [projectilePoint1, projectilePoint4],
+};
+
+const baseShape2 = {
+	id: 2,
+	name: "Concave",
+	culture: [culture1],
+	projectilePoints: [projectilePoint2, projectilePoint5],
+};
+
+const baseShape3 = {
+	id: 3,
+	name: "Convex",
+	culture: [culture1],
+	projectilePoints: [projectilePoint3],
+};
+
+//Hafting Shapes
+
+const haftingShape1 = {
+	id: 1,
+	name: "Straight",
+	culture: [culture1],
+	projectilePoints: [projectilePoint1, projectilePoint5],
+};
+
+const haftingShape2 = {
+	id: 2,
+	name: "Expanding",
+	culture: [culture1],
+	projectilePoints: [projectilePoint2],
+};
+
+const haftingShape3 = {
+	id: 3,
+	name: "Contracting",
+	culture: [culture1],
+	projectilePoints: [projectilePoint2, projectilePoint4],
+};
+
+//Cross Sections
+
+const crossSection1 = {
+	id: 1,
+	name: "Rhomboid",
+	culture: [culture1],
+	projectilePoints: [projectilePoint1],
+};
+
+const crossSection2 = {
+	id: 2,
+	name: "Lemicular",
+	culture: [culture1],
+	projectilePoints: [projectilePoint2, projectilePoint4],
+};
+
+const crossSection3 = {
+	id: 3,
+	name: "Flutex",
+	culture: [culture1],
+	projectilePoints: [projectilePoint3, projectilePoint5],
+};
+
+//Projectile Points
+
+const projectilePoint1 = {
+	id: 1,
+	name: "projectilePoint1",
+	location: "A place",
+	description: "This is projectilePoint1, its neat",
+	dimensions: [3.2, 4.8, 0.4],
+	photo: "Imagine there is a link here",
+	site: site1,
+	artifactType: artifactType1,
+	culture: culture1,
+	bladeShape: bladeShape1,
+	baseShape: baseShape1,
+	haftingShape: haftingShape1,
+	crossSection: crossSection1,
+};
+
+const projectilePoint2 = {
+	id: 1,
+	name: "projectilePoint2",
+	location: "A place",
+	description: "This is projectilePoint2, its neat",
+	dimensions: [1.9, 6.2, 0.6],
+	photo: "Imagine there is a link here",
+	site: site1,
+	artifactType: artifactType2,
+	culture: culture1,
+	bladeShape: bladeShape2,
+	baseShape: baseShape2,
+	haftingShape: haftingShape2,
+	crossSection: crossSection2,
+};
+
+const projectilePoint3 = {
+	id: 1,
+	name: "projectilePoint3",
+	location: "A place",
+	description: "This is projectilePoint3, its neat",
+	dimensions: [3.6, 3.9, 0.3],
+	photo: "Imagine there is a link here",
+	site: site1,
+	artifactType: artifactType3,
+	culture: culture1,
+	bladeShape: bladeShape3,
+	baseShape: baseShape3,
+	haftingShape: haftingShape3,
+	crossSection: crossSection3,
+};
+
+const projectilePoint4 = {
+	id: 1,
+	name: "projectilePoint5",
+	location: "A place",
+	description: "This is projectilePoint3, its neat",
+	dimensions: [3.6, 3.9, 0.3],
+	photo: "Imagine there is a link here",
+	site: site2,
+	artifactType: artifactType2,
+	culture: culture1,
+	bladeShape: bladeShape2,
+	baseShape: baseShape1,
+	haftingShape: haftingShape3,
+	crossSection: crossSection2,
+};
+
+const projectilePoint5 = {
+	id: 1,
+	name: "projectilePoint5",
+	location: "A place",
+	description: "This is projectilePoint3, its neat",
+	dimensions: [3.6, 3.9, 0.3],
+	photo: "Imagine there is a link here",
+	site: site2,
+	artifactType: artifactType3,
+	culture: culture1,
+	bladeShape: bladeShape3,
+	baseShape: baseShape2,
+	haftingShape: haftingShape1,
+	crossSection: crossSection3,
+};
 
 describe("Tests for function: aggregateSiteStatistics()", () => {
 	beforeAll(() => {
@@ -369,224 +645,9 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 		//initializing some dummy data to work with using a mock call of the get site route function
 
 		//Materials
-
-		const material1 = {
-			id: 1,
-			name: "Material1",
-			description: "This is Material1",
-			artifactType: artifactType1,
-			artifacts: [projectilePoint1],
-		};
-
-		const material2 = {
-			id: 1,
-			name: "Material2",
-			description: "This is Material2",
-			artifactType: artifactType2,
-			artifacts: [projectilePoint2],
-		};
-
-		const material3 = {
-			id: 1,
-			name: "Material3",
-			description: "This is Material3",
-			artifactType: artifactType3,
-			artifacts: [projectilePoint3],
-		};
-
-		//ArtifactTypes
-
-		const artifactType1 = {
-			id: "Lithic",
-			materials: [material1],
-			artifacts: [projectilePoint1],
-		};
-
-		const artifactType2 = {
-			id: "Cermaic",
-			materials: [material2],
-			artifacts: [projectilePoint2],
-		};
-
-		const artifactType3 = {
-			id: "Faunal",
-			materials: [material3],
-			artifacts: [projectilePoint3],
-		};
-
-		//Period
-
-		const period = {
-			id: 1,
-			name: "Period1",
-			start: 1990,
-			end: 2000,
-			cultures: [culture],
-		};
-
-		//Culture
-
-		const culture = {
-			id: 1,
-			name: "Culture1",
-			period: period,
-			projectilePoints: [projectilePoint1, projectilePoint2, projectilePoint3],
-			bladeShapes: [bladeShape1, bladeShape2, bladeShape3],
-			baseShapes: [baseShape1, baseShape2, baseShape3],
-			haftingShapes: [haftingShape1, haftingShape2, haftingShape3],
-			crossSections: [crossSection1, crossSection2, crossSection3],
-		};
-
-		//Blade Shapes
-
-		const bladeShape1 = {
-			id: 1,
-			name: "Triangular",
-			cultures: [culture],
-			projectilePoints: [projectilePoint1],
-		};
-
-		const bladeShape2 = {
-			id: 2,
-			name: "Excurvate",
-			cultures: [culture],
-			projectilePoints: [projectilePoint2],
-		};
-
-		const bladeShape3 = {
-			id: 3,
-			name: "Incurvate",
-			cultures: [culture],
-			projectilePoints: [projectilePoint3],
-		};
-
-		//Base Shapes
-
-		const baseShape1 = {
-			id: 1,
-			name: "Straight",
-			culture: [culture],
-			projectilePoints: [projectilePoint1],
-		};
-
-		const baseShape2 = {
-			id: 2,
-			name: "Concave",
-			culture: [culture],
-			projectilePoints: [projectilePoint2],
-		};
-
-		const baseShape3 = {
-			id: 3,
-			name: "Convex",
-			culture: [culture],
-			projectilePoints: [projectilePoint3],
-		};
-
-		//Hafting Shapes
-
-		const haftingShape1 = {
-			id: 1,
-			name: "Straight",
-			culture: [culture],
-			projectilePoints: [projectilePoint1],
-		};
-
-		const haftingShape2 = {
-			id: 2,
-			name: "Expanding",
-			culture: [culture],
-			projectilePoints: [projectilePoint2],
-		};
-
-		const haftingShape3 = {
-			id: 3,
-			name: "Contracting",
-			culture: [culture],
-			projectilePoints: [projectilePoint2],
-		};
-
-		//Cross Sections
-
-		const crossSection1 = {
-			id: 1,
-			name: "Rhomboid",
-			culture: [culture],
-			projectilePoints: [projectilePoint1],
-		};
-
-		const crossSection2 = {
-			id: 2,
-			name: "Lemicular",
-			culture: [culture],
-			projectilePoints: [projectilePoint2],
-		};
-
-		const crossSection3 = {
-			id: 3,
-			name: "Flutex",
-			culture: [culture],
-			projectilePoints: [projectilePoint3],
-		};
-
-		//Projectile Points
-
-		const projectilePoint1 = {
-			id: 1,
-			name: "projectilePoint1",
-			location: "A place",
-			description: "This is projectilePoint1, its neat",
-			dimensions: [3.2, 4.8, 0.4],
-			photo: "Imagine there is a link here",
-			site: 1,
-			artifactType: artifactType1,
-			culture: 1,
-			bladeShape: bladeShape1,
-			baseShape: baseShape1,
-			haftingShape: haftingShape1,
-			crossSection: crossSection1,
-		};
-
-		const projectilePoint2 = {
-			id: 1,
-			name: "projectilePoint2",
-			location: "A place",
-			description: "This is projectilePoint2, its neat",
-			dimensions: [1.9, 6.2, 0.6],
-			photo: "Imagine there is a link here",
-			site: 1,
-			artifactType: artifactType2,
-			culture: 2,
-			bladeShape: bladeShape2,
-			baseShape: baseShape2,
-			haftingShape: haftingShape2,
-			crossSection: crossSection2,
-		};
-
-		const projectilePoint3 = {
-			id: 1,
-			name: "projectilePoint3",
-			location: "A place",
-			description: "This is projectilePoint3, its neat",
-			dimensions: [3.6, 3.9, 0.3],
-			photo: "Imagine there is a link here",
-			site: 1,
-			artifactType: artifactType3,
-			culture: 3,
-			bladeShape: bladeShape3,
-			baseShape: baseShape3,
-			haftingShape: haftingShape3,
-			crossSection: crossSection3,
-		};
-
-		mockRouterPost.mockReturnValueOnce({
-			id: 1,
-			name: "TestSite1",
-			description: "This is a TestSite",
-			location: "A place",
-			catalogue: 1,
-			region: 1,
-			artifacts: [projectilePoint1, projectilePoint2, projectilePoint3],
+		//mock a return from getSiteFromId to test functionality.
+		getSiteFromId.mockReturnValueOnce({
+			site1,
 		});
 
 		//TODO: once the data is populated properly fill this out.
@@ -615,47 +676,50 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 				.get("MaterialPercentages")
 				.get("Material3"),
 		).toEqual(0.33);
-
-		expect(siteStatistics.get("ProjectileData").get("ProjectileCount")).toEqual(
-			3,
-		);
-		expect(siteStatistics.get("ProjectileData").get("ProjectileTypes")).toEqual(
-			["Lithic", "Ceramic", "Faunal"],
-		);
+		expect(
+			siteStatistics.get("Projectile Data").get("Projectile Count"),
+		).toEqual(3);
+		expect(
+			siteStatistics.get("Projectile Data").get("Projectile Types"),
+		).toEqual(["Lithic", "Ceramic", "Faunal"]);
 		expect(
 			siteStatistics
-				.get("ProjectileData")
-				.get("ProjectilePercentages")
-				.get("Blade Shape")
-				.get(""),
-		).toEqual([]);
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Blade Shape"),
+		).toEqual(["Triangular", "Exurvate", "Incuvate"]);
 		expect(
-			siteStatistics.get("ProjectileData").get("AverageDimensions"),
+			siteStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Base Shape"),
+		).toEqual(["Straight", "Concave", "Convex"]);
+		expect(
+			siteStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Hafting Shape"),
+		).toEqual(["Straight", "Expanding", "Contracting"]);
+		expect(
+			siteStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Cross Section"),
+		).toEqual(["Rhomboid", "Lemicular", "Flutex"]);
+		expect(
+			siteStatistics.get("Projectile Data").get("Average Dimensions"),
 		).toEqual([2.9, 4.97, 0.43]);
 	});
 
 	test("does it properly handle an empty input", () => {
 		const siteStatistics = aggregateSiteStatistics();
-		expect(siteStatistics.get("MaterialData").get("MaterialCount")).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectilePercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		expect(siteStatistics).toEqual(null);
 	});
 
 	test("does it properly handle a site that doesnt exist", () => {
-		const siteStatistics = aggregateSiteStatistics(
-			"This shouldn't exist lmao 89-0124389-01234890",
-		);
-		expect(siteStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(siteStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(siteStatistics.ProjectileData.ProjectilePercentages).toEqual([]);
-		expect(siteStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		getSiteFromId.mockReturnValueOnce("Site not found");
+		const siteStatistics = aggregateSiteStatistics(3);
+		expect(siteStatistics).toEqual(null);
 	});
 });
 
@@ -670,58 +734,76 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 
 	test("Correctly acquiring the data for a catalogue?", () => {
 		//TODO: once the data is populated properly fill this out.
+		getCatalogueFromId.mockReturnValueOnce(catalogue1);
 		const catalogueStatistics = aggregateCatalogueStatistics(1);
-		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(catalogueStatistics.ProjectileData.AverageDimensions).toEqual([]);
-	});
-
-	test("Correctly acquiring the data for a large catalogue?", () => {
-		//TODO: once the data is populated properly fill this out.
-		const catalogueStatistics = aggregateCatalogueStatistics(2);
-		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(catalogueStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		expect(
+			catalogueStatistics.get("MaterialData").get("MaterialCount"),
+		).toEqual(3);
+		expect(
+			catalogueStatistics.get("MaterialData").get("MaterialTypes"),
+		).toEqual(["Material1", "Material2", "Material3"]);
+		expect(
+			catalogueStatistics
+				.get("MaterialData")
+				.get("MaterialPercentages")
+				.get("Material1"),
+		).toEqual(0.2);
+		expect(
+			catalogueStatistics
+				.get("MaterialData")
+				.get("MaterialPercentages")
+				.get("Material2"),
+		).toEqual(0.4);
+		expect(
+			catalogueStatistics
+				.get("MaterialData")
+				.get("MaterialPercentages")
+				.get("Material3"),
+		).toEqual(0.4);
+		expect(
+			catalogueStatistics.get("Projectile Data").get("Projectile Count"),
+		).toEqual(5);
+		expect(
+			catalogueStatistics.get("Projectile Data").get("Projectile Types"),
+		).toEqual(["Lithic", "Ceramic", "Faunal"]);
+		expect(
+			catalogueStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Blade Shape"),
+		).toEqual(["Triangular", "Exurvate", "Incuvate"]);
+		expect(
+			catalogueStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Base Shape"),
+		).toEqual(["Straight", "Concave", "Convex"]);
+		expect(
+			catalogueStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Hafting Shape"),
+		).toEqual(["Straight", "Expanding", "Contracting"]);
+		expect(
+			catalogueStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Cross Section"),
+		).toEqual(["Rhomboid", "Lemicular", "Flutex"]);
+		expect(
+			catalogueStatistics.get("Projectile Data").get("Average Dimensions"),
+		).toEqual([3.18, 4.54, 0.38]);
 	});
 
 	test("does it properly handle an empty input", () => {
-		const catalogueStatistics = aggregateCatalogueStatistics();
-		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(catalogueStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		const siteStatistics = aggregateCatalogueStatistics();
+		expect(siteStatistics).toEqual(null);
 	});
 
-	test("does it properly handle a site that doesnt exist", () => {
-		const catalogueStatistics = aggregateCatalogueStatistics(
-			"This shouldn't exist lmao 89-0124389-01234890",
-		);
-		expect(catalogueStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(catalogueStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(catalogueStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(catalogueStatistics.ProjectileData.AverageDimensions).toEqual([]);
+	test("does it properly handle a catalogue that doesnt exist", () => {
+		getCatalogueFromId.mockReturnValueOnce("Site not found");
+		const siteStatistics = aggregateCatalogueStatistics(3);
+		expect(siteStatistics).toEqual(null);
 	});
 });
 
@@ -734,59 +816,62 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 		//TODO: clean up of test data done here
 	});
 
-	test("Correctly acquiring the data for a catalogue?", () => {
+	test("Correctly acquiring the data for a pointType?", () => {
 		//TODO: once the data is populated properly fill this out.
+		getArtifactTypeFromId.mockReturnValueOnce(artifactType3);
 		const pointTypeStatistics = aggregatePointTypeStatistics(1);
-		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(pointTypeStatistics.ProjectileData.AverageDimensions).toEqual([]);
-	});
-
-	test("Correctly acquiring the data for a large catalogue?", () => {
-		//TODO: once the data is populated properly fill this out.
-		const pointTypeStatistics = aggregatePointTypeStatistics(2);
-		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(pointTypeStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		expect(
+			pointTypeStatistics.get("Material Data").get("Material Count"),
+		).toEqual(1);
+		expect(
+			pointTypeStatistics.get("Material Data").get("Material Types"),
+		).toEqual(["Material1"]);
+		expect(
+			pointTypeStatistics
+				.get("Material Data")
+				.get("Material Percentages")
+				.get("Material1"),
+		).toEqual(1);
+		expect(
+			pointTypeStatistics.get("Projectile Data").get("Projectile Count"),
+		).toEqual(2);
+		expect(
+			pointTypeStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Blade Shape"),
+		).toEqual(["Triangular"]);
+		expect(
+			pointTypeStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Base Shape"),
+		).toEqual(["Convex", "Concave"]);
+		expect(
+			pointTypeStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Hafting Shape"),
+		).toEqual(["Contracting", "Straight"]);
+		expect(
+			pointTypeStatistics
+				.get("Projectile Data")
+				.get("Projectile Types")
+				.get("Cross Section"),
+		).toEqual(["Flutex"]);
+		expect(pointTypeStatistics.ProjectileData.AverageDimensions).toEqual([
+			3.6, 3.6, 0.3,
+		]);
 	});
 
 	test("does it properly handle an empty input", () => {
 		const pointTypeStatistics = aggregatePointTypeStatistics();
-		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(pointTypeStatistics.ProjectileData.AverageDimensions).toEqual([]);
+		expect(pointTypeStatistics).toEqual(null);
 	});
 
-	test("does it properly handle a site that doesnt exist", () => {
-		const pointTypeStatistics = aggregatePointTypeStatistics(
-			"This shouldn't exist lmao 89-0124389-01234890",
-		);
-		expect(pointTypeStatistics.MaterialData.MaterialCount).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialTypes).toEqual([]);
-		expect(pointTypeStatistics.MaterialData.MaterialPercentages).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileCount).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectileTypes).toEqual([]);
-		expect(pointTypeStatistics.ProjectileData.ProjectilePercentages).toEqual(
-			[],
-		);
-		expect(pointTypeStatistics.ProjectileData.AverageDimensions).toEqual([]);
+	test("does it properly handle a pointType that doesnt exist", () => {
+		getArtifactTypeFromId.mockReturnValueOnce("ArtifactType not found");
+		const pointTypeStatistics = aggregatePointTypeStatistics(51);
+		expect(pointTypeStatistics).toEqual(null);
 	});
 });
