@@ -5,7 +5,7 @@ import axios from "axios";
 import AddProjectile from "../src/components/AddProjectile.jsx";
 import { MemoryRouter } from "react-router-dom";
 
-// Mock axios post request
+// Mock axios post request for verifying successful submission
 vi.mock("axios", () => ({
   ...vi.importActual("axios"),
   post: vi.fn(),

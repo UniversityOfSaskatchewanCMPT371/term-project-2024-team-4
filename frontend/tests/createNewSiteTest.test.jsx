@@ -3,6 +3,7 @@ import { render, fireEvent, waitFor, screen } from "@testing-library/react";
 import axios from "axios";
 import CreateNewSite from "../src/components/CreateNewSite.jsx";
 
+// Not integration testing; Uses mock data for testing because functionality does not save in the database.
 // Mocking axios for all tests
 vi.mock("axios");
 
