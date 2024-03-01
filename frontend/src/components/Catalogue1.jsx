@@ -38,7 +38,7 @@ const Catalogue1 = (props) => {
 	};
 
 	return (
-		<Box marginLeft={40} marginTop={5} container spacing={5}>
+		<Box marginLeft={40} marginTop={5}  container spacing={5}>
 			<Sidebar />
 			<Grid item xs={12}>
 				<Grid>

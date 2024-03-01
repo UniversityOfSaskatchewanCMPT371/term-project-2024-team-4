@@ -1,5 +1,3 @@
-
-
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
@@ -8,30 +6,32 @@ import Button from "@mui/material/Button";
 import Sidebar from "./Sidebar";
 import FileUpload from "./UploadPicture";
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 
-export default function AddProjectile() {
+export default function AddProjectile(props) {
     const [siteID, setSiteID] = useState(0);
     const [description, setDescription] = useState("");
     const [name, setName] = useState("");
     const [dimension, setDimension] = useState("");
     const [location, setLocation] = useState("");
     const [selectedType, setSelectedType] = useState("");
+    
 
     const locationx = useLocation();
-	
-    if (locationx.state) {
-        const { id } = locationx.state;
-        setSiteID(id);
-        console.log("ID is:", siteID);
-    }
-	else console.log("wrong");
+    const {some} = locationx.state;
+    console.log(some.id);
 
-    const handleTypeChange = (event) => {
-        setSelectedType(event.target.value);
-    };
 
+    useEffect(() => {
+        console.log(dimension);
+        console.log(name);
+        console.log(location);
+        console.log(selectedType);
+        setSiteID(some.id);
+    }, [dimension,name,location,selectedType]);
+   
+    
     const handleLocationChange = (event) => {
         setLocation(event.target.value);
     };
@@ -42,6 +42,8 @@ export default function AddProjectile() {
 
     const handleDimensionChange = (event) => {
         setDimension(event.target.value);
+        console.log(dimension)
+
     };
 
     const handleNameChange = (event) => {
@@ -49,12 +51,13 @@ export default function AddProjectile() {
     };
 
     const handleSubmit = () => {
+
         const newArtifacts = {
             name,
             location,
             description,
-            dimension,
-            photo,
+            dimensions: dimension,
+            photo:"photo1",
             siteId: siteID,
             artifactTypeId: selectedType,
         };
@@ -67,10 +70,14 @@ export default function AddProjectile() {
             .catch((error) => {
                 console.error("Error adding new site:", error);
             });
+
+
     };
 
+    
     return (
         <Box container spacing={5} style={{ marginLeft: 300, marginTop: 2 }}>
+            <h1>{some.name}</h1>
             <Sidebar />
             <Grid container spacing={5} marginTop={5}>
                 <Grid>
@@ -131,19 +138,23 @@ export default function AddProjectile() {
                             select
                             size="small"
                             value={selectedType}
-                            onChange={handleTypeChange}
+                            onChange={(e) => setSelectedType(e.target.value)}
                         >
-                            <MenuItem value="culture1">Lithic</MenuItem>
-                            <MenuItem value="culture2">Ceramic</MenuItem>
-                            <MenuItem value="culture3">Faunal</MenuItem>
+                            <MenuItem value="Lithic">Lithic</MenuItem>
+                            <MenuItem value="Ceramic">Ceramic</MenuItem>
+                            <MenuItem value="Faunal">Faunal</MenuItem>
+
                         </TextField>
                     </Box>
                 </Grid>
             </Grid>
 
             <Grid item xs={12}>
-                <Button variant="contained" color="primary" sx={{ marginRight: 2 }}>
-                    <Link to="/sites" onClick={handleSubmit}>Submit</Link>
+                <Button variant="contained" color="primary" sx={{ marginRight: 2 }} onClick={handleSubmit}>
+                    
+               
+                    <Link to="/sites">Submit</Link> 
+
                 </Button>
                 <Button variant="contained" color="secondary">
                     <Link to="/sites">Cancel</Link>

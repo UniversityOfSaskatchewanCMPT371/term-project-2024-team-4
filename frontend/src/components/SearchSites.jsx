@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import CreateNewSite from "./CreateNewSite";
+import { Link } from "react-router-dom";
 import {
   Grid,
   Card,
@@ -44,19 +45,28 @@ export default function SearchResult({ query }) {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} md={3}>
               <ButtonBase onClick={handleClick1}>
+             
                 <Card>
                   <CardContent style={{ textAlign: "center" }}>
                     <AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
                   </CardContent>
                 </Card>
+               
               </ButtonBase>
             </Grid>
             {filteredData &&
-              filteredData.map((item) => (
+              filteredData.map((item, key) => (
+               
                 <Grid item xs={12} sm={6} md={3} key={item.id}>
 
                 
                   <ButtonBase onClick={handleClick2(item.id)}>
+                
+
+                   {/* <Link to={"/addnewprojectile"} state={{key}}> */}
+
+                   <Link to="/addnewprojectile" state={{ some: item }} >
+
                     <Card>
                       <CardContent>
                         <Typography variant="h5" component="h3">
@@ -70,13 +80,14 @@ export default function SearchResult({ query }) {
                         </Typography>
                       </CardContent>
                     </Card>
+
+                    </ Link>
+
                   </ButtonBase>
-
-                 
-
 
                 </Grid>
               ))}
+
           </Grid>
         </Box>
       </Grid>

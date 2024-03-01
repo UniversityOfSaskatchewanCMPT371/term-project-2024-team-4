@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
 import {
   Grid,
   Card,
@@ -14,11 +13,12 @@ export default function SearchResult({ query }) {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState([]);
 
-  const handleClick1 = () => {
-    setOpen(true);
-    console.log("Add card clicked!");
-  };
+  // const handleClick1 = () => {
+  //   setOpen(true);
+  //   console.log("Add card clicked!");
+  // };
 
+ 
   const handleClick2 = (id) => () => {
     // event handler
     console.log("Card clicked! ID:", id);
@@ -30,7 +30,7 @@ export default function SearchResult({ query }) {
       .then((response) => response.json())
       .then((json) => setData(json))
       .catch((error) => console.error("Error fetching data:", error));
-  }, [open]);
+  }, []);
 
   //Filter data based on search query (mock)
   const filteredData = data?.filter((item) =>
@@ -47,12 +47,7 @@ export default function SearchResult({ query }) {
               filteredData.map((item) => (
                 <Grid item xs={12} sm={6} md={3} key={item.id}>
                   <ButtonBase onClick={handleClick2(item.id)}>
-                  <Link 
-                     to={{
-                     pathname: "/addnewprojectile",
-                     state: { id: item.id } // Pass the id as a prop
-                    }}
-                  >
+             
                     <Card>
                       <CardContent>
                         <Typography variant="h5" component="h3">
@@ -66,7 +61,7 @@ export default function SearchResult({ query }) {
                         </Typography>
                       </CardContent>
                     </Card>
-                    </Link>
+                   
                   </ButtonBase>
                 </Grid>
               ))}

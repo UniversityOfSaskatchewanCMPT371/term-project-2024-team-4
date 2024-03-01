@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import {
 	Button,
@@ -130,19 +130,27 @@ const CreateNewSite = ({ setOpen }) => {
 			.catch((error) => {
 				console.error("Error adding new site:", error);
 			});
-
+			setOpen(true);
 		console.log("Submitted:", newSite);
 		handleClose();
 	};
 
-	const handleClick = () => {
-		fetch("http://localhost:3000/regions")
-			.then((response) => response.json())
-			.then((json) => setRegions1(json))
-			.then(console.log(regions1))
-			.catch((error) => console.error("Error fetching data:", error));
 
-	};
+	
+		const handleClick = () => {
+			
+			fetch("http://localhost:3000/regions")
+				.then((response) => response.json())
+				.then((json) => setRegions1(json))
+				.then(console.log(regions1))
+				.catch((error) => console.error("Error fetching data:", error));
+	
+		};
+
+        useEffect(() => {
+	         handleClick();
+
+        },[]);
 
 	return (
 		<div>
@@ -176,7 +184,7 @@ const CreateNewSite = ({ setOpen }) => {
 					/>
 
 					<Grid
-						container
+				        container
 						spacing={2}
 						style={{ marginTop: 10, height: "100pt" }}
 					>
@@ -195,11 +203,11 @@ const CreateNewSite = ({ setOpen }) => {
 							item
 							xs={6}
 							style={{ maxHeight: "100pt" }}
-							onClick={handleClick}
+							onClick={ handleClick }
 						>
-							<FormControl fullWidth onClick={handleClick}>
+							<FormControl fullWidth onClick={ handleClick }>
 								<TextField
-									onClick={handleClick}
+									onClick={ handleClick }
 									margin="dense"
 									label="Region"
 									id="region"

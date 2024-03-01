@@ -7,7 +7,7 @@ export default function EditRegion({
   selectedRegion,
   selectedDescription,
   selectedRegionID,
-  setOpen1,
+  
 }) {
   const [open, setOpen] = useState(true); // State to manage the dialog open/close
   const [name, setName] = useState(selectedRegion); // Initialize name state with selectedRegion
@@ -24,7 +24,6 @@ export default function EditRegion({
         .put(`http://localhost:3000/regions/${selectedRegionID}`, updatedRegion)
         .then((response) => {
           console.log("Region updated successfully:", response.data);
-          setOpen1(true);
         })
         .catch((error) => {
           console.error("Error updating region:", error);
