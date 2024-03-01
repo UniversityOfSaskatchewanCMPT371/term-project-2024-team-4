@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-unused-vars
 import React, { useContext } from "react";
 
 // MUI
@@ -27,9 +28,8 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary,
 }));
 
-
 function Home() {
-	const {user} = useContext(UserContext);
+	const { user } = useContext(UserContext);
 	// console.log(user)
 
 	return (
@@ -56,7 +56,6 @@ function Home() {
 									<h1>basic user</h1>
 								)}
 							</div>
-
 						</Grid>
 						<Grid item xs={12}>
 							<TextField

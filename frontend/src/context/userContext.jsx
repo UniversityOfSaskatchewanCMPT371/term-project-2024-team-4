@@ -3,12 +3,14 @@ import axios from "axios";
 
 export const UserContext = createContext({});
 
+// eslint-disable-next-line react/prop-types
 export function UserContextProvider({ children }) {
 	const [user, setUser] = useState(null);
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const getData = useCallback(async () => {
-
-		axios.get("http://localhost:3000/users", { withCredentials: true })
+		axios
+			.get("http://localhost:3000/users", { withCredentials: true })
 			.then(({ data }) => {
 				setUser(data);
 			})
@@ -17,8 +19,9 @@ export function UserContextProvider({ children }) {
 			});
 	});
 	// Fetch user data or set user based on your logic
-	useEffect(() =>{
+	useEffect(() => {
 		getData();
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
