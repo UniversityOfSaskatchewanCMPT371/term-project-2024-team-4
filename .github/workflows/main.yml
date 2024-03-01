@@ -178,7 +178,7 @@ jobs:
 
       - name: Run Backend Unit Tests
         working-directory: ./backend
-        run: npm run test
+        run: npm run build && npm run test
 
   ### Run Frontend Unit Tests ###
   unit-test-frontend:

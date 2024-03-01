@@ -1,4 +1,4 @@
-const { User } = require("../dist/user.entity.js");
+const { User } = require("../dist/user.entity");
 const express = require("express");
 const router = express.Router();
 const dataSource = require("../config/db");
