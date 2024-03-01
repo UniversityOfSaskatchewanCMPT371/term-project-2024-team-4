@@ -21,7 +21,7 @@ export function UserContextProvider({ children }) {
 	// Fetch user data or set user based on your logic
 	useEffect(() => {
 		getData();
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	return (
