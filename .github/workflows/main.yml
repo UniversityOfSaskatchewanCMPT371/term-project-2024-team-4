@@ -2,7 +2,7 @@ name: CI Pipeline
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ["main"] # only run on direct pushes to main (which should not happen)
   pull_request:
     branches: ["main", "develop"]
 
