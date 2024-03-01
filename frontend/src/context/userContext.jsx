@@ -1,30 +1,29 @@
-// // UserContextProvider.js
-// import { createContext, useState, useEffect, useCallback } from "react";
-// import axios from "axios";
+import { createContext, useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
-// export const UserContext = createContext({});
+export const UserContext = createContext({});
 
-// export function UserContextProvider({ children }) {
-//   const [user, setUser] = useState(null);
-//   const [loaded, setLoaded] = useState(false);
+export function UserContextProvider({ children }) {
+	const [user, setUser] = useState(null);
 
-//   const fetchData = useCallback(async () => {
-//     if (!loaded) {
-//       axios.get("/users").then(({ data }) => {
-//         setUser(data);
-//         setLoaded(true);
-//       });
-//     }
-//   }, []);
+	const getData = useCallback(async () => {
 
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-//   return (
-//     <UserContext.Provider
-//       value={{ user, setUser, fetchData, loaded, setLoaded }}
-//     >
-//       {children}
-//     </UserContext.Provider>
-//   );
-// }
+		axios.get("http://localhost:3000/users", { withCredentials: true })
+			.then(({ data }) => {
+				setUser(data);
+			})
+			.catch((error) => {
+				console.error("Error fetching user data:", error);
+			});
+	});
+	// Fetch user data or set user based on your logic
+	useEffect(() =>{
+		getData();
+	}, []);
+
+	return (
+		<UserContext.Provider value={{ user, setUser, getData }}>
+			{children}
+		</UserContext.Provider>
+	);
+}

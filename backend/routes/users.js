@@ -5,7 +5,15 @@ const dataSource = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const registerUser = require("../helpers/register");
-const JWT_SECRET = "5565656565656D5CF6D5F6DW56QD565";
+const crypto = require("crypto");
+
+// Function to generate a secure random string
+function generateJWTSecret(length = 64) {
+	return crypto.randomBytes(length).toString("hex");
+}
+
+// Generate a JWT secret
+const JWT_SECRET = generateJWTSecret();
 
 router.post("/", async (req, res) => {
 	const { userName, password } = req.body;
@@ -50,10 +58,16 @@ router.post("/", async (req, res) => {
 	}
 });
 
+router.post("/logout", async (req, res) => {
+	// Clear the token cookie
+	res.clearCookie("token");
+	// Send a success response
+	res.sendStatus(204);
+});
+
 // GET route to fetch the single user's details
 router.get("/", async (req, res) => {
 	const { token } = req.cookies;
-	console.log(" token", token);
 	if (token) {
 		jwt.verify(token, JWT_SECRET, {}, (err, user) => {
 			if (err) throw err;

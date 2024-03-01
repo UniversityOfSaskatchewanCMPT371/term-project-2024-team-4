@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
-
+import axios from "axios";
 // MUI
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,6 +18,7 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
 import LoginIcon from "@mui/icons-material/Login";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { styled } from "@mui/material/styles";
 
 const drawerWidth = 240;
@@ -50,6 +51,21 @@ const SidebarIcon = styled(ListItemIcon)(() => ({
 
 function Sidebar() {
 	const [modalVisible, setModalShow] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+	useEffect(() => {
+		// Check if user is logged in
+		const checkLoginStatus = async () => {
+			try {
+				const response = await axios.get("http://localhost:3000/users");
+				setIsLoggedIn(!!response.data);
+			} catch (error) {
+				console.error("Error checking login status:", error);
+			}
+		};
+
+		checkLoginStatus();
+	}, []);
 
 	const handleClick = (event) => {
 		logger.info(event.target.innerText + " Sidebar navigation clicked");
@@ -64,6 +80,16 @@ function Sidebar() {
 	const closeModal = () => {
 		setModalShow(false);
 		logger.info("LoginModal closed");
+	};
+
+	const handleLogout = async () => {
+		try {
+			await axios.post("http://localhost:3000/users/logout");
+			setIsLoggedIn(false);
+			window.location.reload();
+		} catch (error) {
+			console.error("Error logging out:", error);
+		}
 	};
 
 	return (
@@ -137,14 +163,25 @@ function Sidebar() {
 							<ListItemText primary="Settings" />
 						</ListItemButton>
 					</ListItem>
-					<ListItem key="Login" disablePadding onClick={setModalVisible}>
-						<ListItemButton>
-							<SidebarIcon>
-								<LoginIcon />
-							</SidebarIcon>
-							<ListItemText primary="Login" />
-						</ListItemButton>
-					</ListItem>
+					{isLoggedIn ? (
+						<ListItem key="Logout" disablePadding onClick={handleLogout}>
+							<ListItemButton>
+								<SidebarIcon>
+									<ExitToAppIcon />
+								</SidebarIcon>
+								<ListItemText primary="Logout" />
+							</ListItemButton>
+						</ListItem>
+					) : (
+						<ListItem key="Login" disablePadding onClick={setModalVisible}>
+							<ListItemButton>
+								<SidebarIcon>
+									<LoginIcon />
+								</SidebarIcon>
+								<ListItemText primary="Login" />
+							</ListItemButton>
+						</ListItem>
+					)}
 				</SidebarList>
 			</Drawer>
 			<LoginModal modalVisible={modalVisible} closeModal={closeModal} />

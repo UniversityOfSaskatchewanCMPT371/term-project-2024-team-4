@@ -36,6 +36,7 @@ function LoginModal({ modalVisible, closeModal }) {
 				// Login successful
 				alert("Login successful");
 				closeModal(); // Close the modal after successful login
+				window.location.reload();
 			}
 		} catch (error) {
 			if (error.response) {
