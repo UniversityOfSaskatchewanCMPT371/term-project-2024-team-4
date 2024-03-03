@@ -14,6 +14,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
+import UploadIcon from "@mui/icons-material/Upload";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
@@ -25,8 +26,10 @@ import { styled } from "@mui/material/styles";
 
 const drawerWidth = 240;
 
+// create SidebarList component and styling, based on List MUI component
 const SidebarList = styled(List)(() => ({
 	padding: "10px",
+	// selected and (selected + hover) states
 	"&& .Mui-selected, && .Mui-selected:hover": {
 		backgroundColor: "#cda057",
 		borderRadius: "7px",
@@ -34,6 +37,7 @@ const SidebarList = styled(List)(() => ({
 			color: "white",
 		},
 	},
+	// hover states
 	"& .MuiListItemButton-root:hover": {
 		backgroundColor: "#cda057",
 		borderRadius: "7px",
@@ -43,6 +47,7 @@ const SidebarList = styled(List)(() => ({
 	},
 }));
 
+// create SidebarIcon component and styling, based on ListItemIcon MUI component
 const SidebarIcon = styled(ListItemIcon)(() => ({
 	minWidth: "47px",
 }));
@@ -82,6 +87,7 @@ function Sidebar() {
 				}}
 				PaperProps={{
 					sx: {
+						// sidebar background color
 						backgroundColor: "#f1f1f1",
 					},
 				}}
@@ -95,10 +101,7 @@ function Sidebar() {
 				</Toolbar>
 				<SidebarList>
 					<ListItem key="Home" disablePadding onClick={handleClick}>
-						<ListItemButton
-							component={Link}
-							to="/"
-						>
+						<ListItemButton component={Link} to="/">
 							<SidebarIcon>
 								<HomeIcon />
 							</SidebarIcon>
@@ -106,7 +109,11 @@ function Sidebar() {
 						</ListItemButton>
 					</ListItem>
 					<ListItem key="Catalogue" disablePadding onClick={handleClick}>
-						<ListItemButton component={Link} to="/catalogue" {...{ pros: "Catalogue1" }}>
+						<ListItemButton
+							component={Link}
+							to="/catalogue"
+							{...{ pros: "Catalogue1" }}
+						>
 							<SidebarIconButton>
 								<ExploreIcon />
 							</SidebarIconButton>
@@ -121,7 +128,6 @@ function Sidebar() {
 							<ListItemText primary="Site" />
 						</ListItemButton>
 					</ListItem>
-					
 				</SidebarList>
 				<Divider />
 				<SidebarList>
