@@ -47,30 +47,31 @@ const CreateNewSite = ({ setOpen }) => {
 	};
 
 	const handleDescription = (e) => {
-
 		setDescription(e.target.value);
-	}
+	};
 
 	const handleDescriptionChange = (e) => {
 		const name = e.target.value;
-		axios.get("http://localhost:3000/regions")
-			.then(response => {
-				const filteredRegion = response.data.find(region => region.name === name);
-				
+		axios
+			.get("http://localhost:3000/regions")
+			.then((response) => {
+				const filteredRegion = response.data.find(
+					(region) => region.name === name,
+				);
+
 				// Check if a region with the provided name was found
 				if (filteredRegion) {
 					const description = filteredRegion.description;
-					 setselectedRegionID(filteredRegion.id);
-					 setDescription1(description)
+					setselectedRegionID(filteredRegion.id);
+					setDescription1(description);
 				} else {
 					console.log("Region not found");
 				}
 			})
-			.catch(error => {
-				console.error('Error fetching regions:', error);
+			.catch((error) => {
+				console.error("Error fetching regions:", error);
 			});
 	};
-	
 
 	const handleLocationChange = (e) => {
 		setLocation(e.target.value);
@@ -80,7 +81,7 @@ const CreateNewSite = ({ setOpen }) => {
 	const handleRegionChange = (e) => {
 		const regionValue = e.target.value;
 		setSelectedRegion(regionValue);
-		handleDescriptionChange(e)
+		handleDescriptionChange(e);
 	};
 
 	const handleEditMenuOpen = (event) => {
@@ -101,14 +102,14 @@ const CreateNewSite = ({ setOpen }) => {
 		// Implement delete region functionality here
 		if (selectedRegion) {
 			axios
-			  .delete(`http://localhost:3000/regions/${selectedRegionID}`)
-			  .then((response) => {
-				console.log("Region delete successfully:", response.data);
-			  })
-			  .catch((error) => {
-				console.error("Error deleting region:", error);
-			  });
-		  }
+				.delete(`http://localhost:3000/regions/${selectedRegionID}`)
+				.then((response) => {
+					console.log("Region delete successfully:", response.data);
+				})
+				.catch((error) => {
+					console.error("Error deleting region:", error);
+				});
+		}
 		handleEditMenuClose();
 	};
 
@@ -130,27 +131,22 @@ const CreateNewSite = ({ setOpen }) => {
 			.catch((error) => {
 				console.error("Error adding new site:", error);
 			});
-			setOpen(true);
+		setOpen(true);
 		console.log("Submitted:", newSite);
 		handleClose();
 	};
 
+	const handleClick = () => {
+		fetch("http://localhost:3000/regions")
+			.then((response) => response.json())
+			.then((json) => setRegions1(json))
+			.then(console.log(regions1))
+			.catch((error) => console.error("Error fetching data:", error));
+	};
 
-	
-		const handleClick = () => {
-			
-			fetch("http://localhost:3000/regions")
-				.then((response) => response.json())
-				.then((json) => setRegions1(json))
-				.then(console.log(regions1))
-				.catch((error) => console.error("Error fetching data:", error));
-	
-		};
-
-        useEffect(() => {
-	         handleClick();
-
-        },[]);
+	useEffect(() => {
+		handleClick();
+	}, []);
 
 	return (
 		<div>
@@ -184,7 +180,7 @@ const CreateNewSite = ({ setOpen }) => {
 					/>
 
 					<Grid
-				        container
+						container
 						spacing={2}
 						style={{ marginTop: 10, height: "100pt" }}
 					>
@@ -203,11 +199,11 @@ const CreateNewSite = ({ setOpen }) => {
 							item
 							xs={6}
 							style={{ maxHeight: "100pt" }}
-							onClick={ handleClick }
+							onClick={handleClick}
 						>
-							<FormControl fullWidth onClick={ handleClick }>
+							<FormControl fullWidth onClick={handleClick}>
 								<TextField
-									onClick={ handleClick }
+									onClick={handleClick}
 									margin="dense"
 									label="Region"
 									id="region"
@@ -221,7 +217,11 @@ const CreateNewSite = ({ setOpen }) => {
 									}}
 								>
 									{regions1.map((region) => (
-										<MenuItem key={region.name} value={region.name} onClick={handleClick}>
+										<MenuItem
+											key={region.name}
+											value={region.name}
+											onClick={handleClick}
+										>
 											{region.name}
 											<IconButton
 												aria-label="more"
@@ -274,7 +274,7 @@ const CreateNewSite = ({ setOpen }) => {
 					setEditRegion={setEditRegion}
 					selectedRegion={selectedRegion}
 					selectedDescription={description1}
-					selectedRegionID = {selectedRegionID}
+					selectedRegionID={selectedRegionID}
 				/>
 			)}
 		</div>
@@ -282,5 +282,3 @@ const CreateNewSite = ({ setOpen }) => {
 };
 
 export default CreateNewSite;
-
-
