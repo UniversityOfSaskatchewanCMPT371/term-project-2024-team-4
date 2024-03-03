@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -146,7 +147,7 @@ const CreateNewSite = ({ setOpen }) => {
 
 	useEffect(() => {
 		handleClick();
-	}, []);
+	}, [handleClick]);
 
 	return (
 		<div>
