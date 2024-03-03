@@ -1,14 +1,9 @@
 /**
  * Contains function calls for calculating aggregate statistics
- *
- * Currently just stubs for test calls.
  */
 
 const { logger } = require("../config/logger.js");
 const assert = require("node:assert/strict");
-//const artifactsHelper = require("../helperFiles/artifactsHelper.js");
-//const cataloguesHelper = require("../helperFiles/catalogueHelper.js");
-//const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
 const sitesHelper = require("../helperFiles/sitesHelper.js");
 const cataloguesHelper = require("../helperFiles/cataloguesHelper.js");
 const artifactTypesHelper = require("../helperFiles/artifactTypesHelper.js");
@@ -65,11 +60,6 @@ function materialPercentage(materialArray) {
  * @returns {Map} a map containing the keys for the Projectiles and their percentages
  */
 function projectilePointPercentage(projectilePointArray) {
-	//Blade Shapes: Triangular, excurvate, incurvate, ovate
-	//Base Shapes: Straight, concave, convex
-	//Hafting Shapes: ________, straight, basally convcave, expanding, contracting, corner-notched, side-notched, basal-notched, triangular un-notched
-	//Cross Sections: rhomboid, Lemicular, plano-convex, flutex, median ridged, flat
-
 	const pointPercentageMap = new Map();
 	const bladeShapeCountMap = new Map();
 	const baseShapeCountMap = new Map();
@@ -90,7 +80,7 @@ function projectilePointPercentage(projectilePointArray) {
 			);
 			const currProjectile = projectilePointArray[i];
 
-			//bools to make sure that a shape type isnt updated mroe than once.
+			//bools to make sure that a shape type isnt updated more than once.
 			var checkBladeShape = false;
 			var checkBaseShape = false;
 			var checkHaftingShape = false;
@@ -257,8 +247,6 @@ function aggregateSiteStatistics(siteId) {
 	}
 	const { artifacts } = currentSiteRes.body;
 
-	//const artifacts = Object(Object(currentSiteRes).body).artifacts;
-
 	//contains a list of each type of material, no duplicates
 	const materialTypeArray = new Array();
 	//contains every material, can have duplicates.
@@ -333,8 +321,6 @@ function aggregateSiteStatistics(siteId) {
 }
 
 /**
- * NOTE: the return of this function may be adjusted
- *
  * Given a catalogue Id, calculate the aggregate statistics for that catalogue
  * @param catalogueId (a number related to a specific catalogue)
  * @returns {Map} a map containing the keys: {"Material Data":{"Material Count":[int], "Material Types":[String], "Material Percentages":[floats]},
@@ -342,8 +328,6 @@ function aggregateSiteStatistics(siteId) {
  * 											   "Projectile Types":[String], "Projectile Percentages":[floats], "Average Dimensions":[float]}}
  */
 function aggregateCatalogueStatistics(catalogueId) {
-	//TODO: code the aggregateCatalogueStatistics function
-
 	if (catalogueId === undefined) {
 		console.debug("aggregateCatalogueStatistics() received an empty input");
 		return null;
@@ -462,8 +446,6 @@ function aggregateCatalogueStatistics(catalogueId) {
  *                                             "ProjectileData":{"ProjectileCount":[int], "ProjectileTypes":[String], "ProjectilePercentages":[floats], "AverageDimensions":[float]}}
  */
 function aggregatePointTypeStatistics(pointType) {
-	//TODO: code the aggregateCatalogueStatistics function
-
 	if (pointType === undefined) {
 		console.debug("aggregateCatalogueStatistics() received an empty input");
 		return null;

@@ -53,85 +53,6 @@
  *          - an existing large site
  */
 
-/**
- * Materials:
- * 		Agate Jasper: https://projectilepoints.net/Materials/Agate%20Jasper.html
- * 			id: 1
- * 			name: "Agate Jasper"
- * 			description: "Agate Jasper is when both agate and jasper form together.
- * 						  The color ranges from yellow to brown or green.  Part if the material
- * 						  will be banded and be translucent while the remaining material will be
- * 						  mottled and opaque."
- *
- * 		Alberta Ironstone: https://projectilepoints.net/Materials/Alberta%20Ironstone.html
- * 			id: 2
- * 			name: "Alberta Ironstone"
- * 			description: "Alberta Ironstone ranges from a dark rusty brown to black."
- *
- * 		Alibates Chert: https://projectilepoints.net/Materials/Alibates%20Chert.html
- * 			id: 3
- * 			name: "Alibates Chert"
- * 			description: "Alibates Chert ranges in mottled or variegated with colors from most
- * 						  commonly reds, yellows, and oranges in iron rich areas to blues and dark
- * 						  greens in manganese rich areas. Burgundy and white variations are commonly
- * 						  called 'bacon strip' variety."
- *
- * 		Barger Gulch Chert: https://projectilepoints.net/Materials/Barger%20Gulch%20Chert.html
- * 			id: 4
- * 			name: "Barger Gulch Chert"
- * 			description: "Barger Gulch chert is similar to chalcedony with a translucent base with
- * 						  hues ranging from white to light yellow. Black dendric, starburst
- * 						  inclusions are present."
- */
-
-/**
- * Artifacts:
- * 		Blackwater Side Notch: https://projectilepoints.net/Points/Blackwater.html
- * 			id: 1
- * 			name: "Blackwater Side Notch"
- * 			description:
- *
- * 		Athapaskan Notched: https://projectilepoints.net/Points/Athapaskan%20Notched.html
- *  		id: 2
- * 			name: "Athapaskan Notched"
- * 			description:
- *
- * 		Galt Side Notch: https://projectilepoints.net/Points/Galt.html
- * 			id: 3
- * 			name: "Galt Side Notch"
- * 			description:
- *
- * 		Gatecliff Stemmed: https://projectilepoints.net/Points/Gatecliff.html
- * 			id: 4
- * 			name: "Gatecliff Stemmed"
- * 			description:
- *
- * 		Alberta Stemmed: https://projectilepoints.net/Points/Alberta.html
- * 			id: 5
- * 			name: "Alberta Stemmed"
- * 			description:
- *
- * 		Silver Lake Stemmed: https://projectilepoints.net/Points/SIlver_Lake.html
- * 			id: 6
- * 			name: "Silver Lake Stemmed"
- * 			description:
- *
- * 		Humboldt Basal Notch: https://projectilepoints.net/Points/Humboldt_Basal.html
- * 			id: 7
- * 			name: "Humboldt Basal Notch"
- * 			description:
- *
- * 		Embarras Bi-Point: https://projectilepoints.net/Points/Embarras%20Bi-point.html
- * 			id: 8
- * 			name: "Embarras Bi-Point"
- * 			description:
- *
- * 		Cody Knife: https://projectilepoints.net/Points/Cody.html
- * 			id: 9
- * 			name: "Cody Knife"
- * 			description:
- */
-
 const {
 	materialPercentage,
 	projectilePointPercentage,
@@ -145,10 +66,6 @@ const artifactTypesHelper = require("../../helperFiles/artifactTypesHelper");
 const cataloguesHelper = require("../../helperFiles/cataloguesHelper");
 const sitesHelper = require("../../helperFiles/sitesHelper");
 
-//const FileSystem = require("fs");
-
-//NOTE: There is currently no test data to work with, so any tests that would use any test data
-//      currently do not function properly
 describe("Tests for the function: materialPercentage()", () => {
 	test("Attempt to calculate percentages with an empty list", () => {
 		const percentages = materialPercentage([]);
@@ -323,21 +240,6 @@ describe("Tests for the function: averageProjectilePointDimensions()", () => {
 		expect(averageDimensions).toEqual([2.57, 6.3, 0.47]);
 	});
 });
-
-//Mock call for getSiteFromId, getCatalogueFromId, getArtifactTypeFromId from aggregateStatisticsController
-
-// const getSiteFromId = jest.fn();
-// const getCatalogueFromId = jest.fn();
-// const getArtifactTypeFromId = jest.fn();
-// jest.mock("../../helperFiles/sitesHelper.js", () => ({
-// 	getSiteFromId: jest.fn(),
-// }));
-// jest.mock("../../helperFiles/cataloguesHelper.js", () => ({
-// 	getCatalogueFromId: jest.fn(),
-// }));
-// jest.mock("../../helperFiles/artifactTypesHelper.js", () => ({
-// 	getArtifactTypeFromId: jest.fn(),
-// }));
 
 let catalogue1 = {
 	id: 1,
@@ -666,14 +568,6 @@ crossSection3.cultures.push(culture1);
 crossSection3.projectilePoints.push(projectilePoint3, projectilePoint5);
 
 describe("Tests for function: aggregateSiteStatistics()", () => {
-	beforeAll(() => {
-		//TODO: if anything needs to be populated before these tests do here
-	});
-
-	afterAll(() => {
-		//TODO: clean up of test data done here
-	});
-
 	test("Correctly acquiring the data?", () => {
 		//initializing some dummy data to work with using a mock call of the get site route function
 		let body = {
@@ -685,9 +579,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 			region: region1,
 			artifacts: [projectilePoint1, projectilePoint2, projectilePoint3],
 		};
-		//Materials
-		//mock a return from getSiteFromId to test functionality.
-		//const mockReturn = JSON.stringify(body);
+
 		sitesHelper.getSiteFromId = jest.fn().mockReturnValueOnce({
 			body,
 		});
@@ -820,7 +712,6 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 	});
 
 	test("does it properly handle a site that doesnt exist", () => {
-		//getSiteFromId.mockReturnValueOnce("Site not found");
 		sitesHelper.getSiteFromId = jest.fn().mockReturnValueOnce("Site not found");
 		const siteStatistics = aggregateSiteStatistics(3);
 		expect(siteStatistics).toEqual("Site not found");
@@ -828,17 +719,7 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 });
 
 describe("Tests for function: aggregateCatalogueStatistics()", () => {
-	beforeAll(() => {
-		//TODO: if anything needs to be populated before these tests do here
-	});
-
-	afterAll(() => {
-		//TODO: clean up of test data done here
-	});
-
 	test("Correctly acquiring the data for a catalogue?", () => {
-		//TODO: once the data is populated properly fill this out.
-
 		let body = {
 			id: 1,
 			name: "Catalogue1",
@@ -1001,7 +882,6 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 	});
 
 	test("does it properly handle a catalogue that doesnt exist", () => {
-		//getCatalogueFromId.mockReturnValueOnce("Catalogue not found");
 		cataloguesHelper.getCatalogueFromId = jest
 			.fn()
 			.mockReturnValueOnce("Catalogue not found");
@@ -1011,23 +891,12 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 });
 
 describe("Tests for function: aggregatePointTypeStatistics()", () => {
-	beforeAll(() => {
-		//TODO: if anything needs to be populated before these tests do here
-	});
-
-	afterAll(() => {
-		//TODO: clean up of test data done here
-	});
-
 	test("Correctly acquiring the data for a pointType?", () => {
 		const body = {
 			id: "Ceramic",
 			materials: [material2],
 			artifacts: [projectilePoint2, projectilePoint4],
 		};
-
-		//TODO: once the data is populated properly fill this out.
-		//getArtifactTypeFromId.mockReturnValueOnce(artifactType3);
 		artifactTypesHelper.getArtifactTypeFromId = jest.fn().mockReturnValueOnce({
 			body,
 		});
@@ -1103,7 +972,6 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 	});
 
 	test("does it properly handle a pointType that doesnt exist", () => {
-		//getArtifactTypeFromId.mockReturnValueOnce("ArtifactType not found");
 		artifactTypesHelper.getArtifactTypeFromId = jest
 			.fn()
 			.mockReturnValueOnce("ArtifactType not found");

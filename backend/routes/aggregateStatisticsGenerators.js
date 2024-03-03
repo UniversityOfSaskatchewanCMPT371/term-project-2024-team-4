@@ -3,7 +3,7 @@ const router = express.Router();
 const aggregateStatisticsConstroller = require("../controllers/aggregateStatisticsController.js");
 
 //GET: Point Type Aggregate Statistics
-router.get("/", async (req, res) => {
+router.get("/pointType/:id", async (req, res) => {
 	const aggregatePointTypeStatistics =
 		await aggregateStatisticsConstroller.aggregatePointTypeStatistics(req);
 	if (aggregatePointTypeStatistics === "ArtifactType not found") {
@@ -19,7 +19,7 @@ router.get("/", async (req, res) => {
 });
 
 //GET: Site Aggregate Statistics
-router.get("/", async (req, res) => {
+router.get("/site/:id", async (req, res) => {
 	const aggregateSiteStatistics =
 		await aggregateStatisticsConstroller.aggregateSiteStatistics(req);
 	if (aggregateSiteStatistics === "Site not found") {
@@ -35,7 +35,7 @@ router.get("/", async (req, res) => {
 });
 
 //GET: Catalogue Aggregate Statistics
-router.get("/", async (req, res) => {
+router.get("/catalogue/:id", async (req, res) => {
 	const aggregateCatalogueStatistics =
 		await aggregateStatisticsConstroller.aggregateCatalogueStatistics(req);
 	if (aggregateCatalogueStatistics === "Catalogue not found") {
