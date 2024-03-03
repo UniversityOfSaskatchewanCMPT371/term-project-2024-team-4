@@ -4,7 +4,7 @@
  * Currently just stubs for test calls.
  */
 
-const { logger } = require("backend/config/logger.js");
+const { logger } = require("../config/logger.js");
 const assert = require("node:assert/strict");
 //const artifactsHelper = require("../helperFiles/artifactsHelper.js");
 //const cataloguesHelper = require("../helperFiles/catalogueHelper.js");
@@ -96,46 +96,49 @@ function projectilePointPercentage(projectilePointArray) {
 			var checkHaftingShape = false;
 			var checkCrossSection = false;
 
-			if (!bladeShapeCountMap.has(currProjectile.bladeShape)) {
-				bladeShapeCountMap.set(currProjectile.bladeShape, 1);
+			if (!bladeShapeCountMap.has(currProjectile.bladeShape.name)) {
+				bladeShapeCountMap.set(currProjectile.bladeShape.name, 1);
 				checkBladeShape = true;
 			} else if (checkBladeShape === false) {
 				//increase bladeshape count for given bladeshape, if it hasnt already been updated.
 				const newBladeShapeCount =
-					bladeShapeCountMap.get(currProjectile.bladeShape) + 1;
-				bladeShapeCountMap.delete(currProjectile.bladeShape);
-				bladeShapeCountMap.set(currProjectile.bladeShape, newBladeShapeCount);
+					bladeShapeCountMap.get(currProjectile.bladeShape.name) + 1;
+				bladeShapeCountMap.delete(currProjectile.bladeShape.name);
+				bladeShapeCountMap.set(
+					currProjectile.bladeShape.name,
+					newBladeShapeCount,
+				);
 			}
-			if (!baseShapeCountMap.has(currProjectile.baseShape)) {
-				baseShapeCountMap.set(currProjectile.baseShape, 1);
+			if (!baseShapeCountMap.has(currProjectile.baseShape.name)) {
+				baseShapeCountMap.set(currProjectile.baseShape.name, 1);
 				checkBaseShape = true;
 			} else if (checkBaseShape === false) {
 				const newBaseShapeCount =
-					baseShapeCountMap.get(currProjectile.baseShape) + 1;
-				baseShapeCountMap.delete(currProjectile.baseShape);
-				baseShapeCountMap.set(currProjectile.baseShape, newBaseShapeCount);
+					baseShapeCountMap.get(currProjectile.baseShape.name) + 1;
+				baseShapeCountMap.delete(currProjectile.baseShape.name);
+				baseShapeCountMap.set(currProjectile.baseShape.name, newBaseShapeCount);
 			}
-			if (!haftingShapeCountMap.has(currProjectile.haftingShape)) {
-				haftingShapeCountMap.set(currProjectile.haftingShape, 1);
+			if (!haftingShapeCountMap.has(currProjectile.haftingShape.name)) {
+				haftingShapeCountMap.set(currProjectile.haftingShape.name, 1);
 				checkHaftingShape = true;
 			} else if (checkHaftingShape === false) {
 				const newHaftingShapeCount =
-					haftingShapeCountMap.get(currProjectile.haftingShape) + 1;
-				haftingShapeCountMap.delete(currProjectile.haftingShape);
+					haftingShapeCountMap.get(currProjectile.haftingShape.name) + 1;
+				haftingShapeCountMap.delete(currProjectile.haftingShape.name);
 				haftingShapeCountMap.set(
-					currProjectile.haftingShape,
+					currProjectile.haftingShape.name,
 					newHaftingShapeCount,
 				);
 			}
-			if (!crossSectionCountMap.has(currProjectile.crossSection)) {
-				crossSectionCountMap.set(currProjectile.crossSection, 1);
+			if (!crossSectionCountMap.has(currProjectile.crossSection.name)) {
+				crossSectionCountMap.set(currProjectile.crossSection.name, 1);
 				checkCrossSection = true;
 			} else if (checkCrossSection === false) {
 				const newCrossSectionCount =
-					crossSectionCountMap.get(currProjectile.crossSection) + 1;
-				crossSectionCountMap.delete(currProjectile.crossSection);
+					crossSectionCountMap.get(currProjectile.crossSection.name) + 1;
+				crossSectionCountMap.delete(currProjectile.crossSection.name);
 				crossSectionCountMap.set(
-					currProjectile.crossSection,
+					currProjectile.crossSection.name,
 					newCrossSectionCount,
 				);
 			}
@@ -241,7 +244,7 @@ function aggregateSiteStatistics(siteId) {
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
 
-	const currentSiteRes = sitesHelper.getSiteFromId(siteId);
+	const currentSiteRes = sitesHelper.getSiteFromId({ params: { id: siteId } });
 	if (currentSiteRes === "Site not found") {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
@@ -253,6 +256,8 @@ function aggregateSiteStatistics(siteId) {
 		return currentSiteRes;
 	}
 	const { artifacts } = currentSiteRes.body;
+
+	//const artifacts = Object(Object(currentSiteRes).body).artifacts;
 
 	//contains a list of each type of material, no duplicates
 	const materialTypeArray = new Array();
@@ -268,12 +273,14 @@ function aggregateSiteStatistics(siteId) {
 	const crossSectionArray = new Array();
 	//Materials are stored in the Artifact Type
 	for (let i = 0; i < artifacts.length; i++) {
+		const currentArtifact = artifacts[i];
 		assert.equal(Object.hasOwn(artifacts[i], "artifactType"), true);
 		assert.equal(Object.hasOwn(artifacts[i].artifactType, "id"), true);
-		const currentArtifact = artifacts[i];
+
 		//the artifact type contains a list of materials
-		for (let j = 0; j < currentArtifact.artifactType.materials.length; i++) {
-			const currentMaterial = currentArtifact.artifactType.materials[i];
+		for (let j = 0; j < currentArtifact.artifactType.materials.length; j++) {
+			const currentMaterial = currentArtifact.artifactType.materials[j];
+
 			materialArray.push(currentMaterial.name);
 			//only add a material to the array if it hasnt been added already.
 			if (materialTypeArray.indexOf(currentMaterial.name) == -1) {
@@ -309,7 +316,7 @@ function aggregateSiteStatistics(siteId) {
 	projectileShapeMap.set("Base Shapes", bladeShapeArray);
 	projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
 	projectileShapeMap.set("Cross Sections", crossSectionArray);
-	projectileDataMap.set("Projectile Types", projectileShapeMap);
+	projectileDataMap.set("Projectile Shapes", projectileShapeMap);
 	projectileDataMap.set(
 		"Projectile Percentages",
 		projectilePointPercentage(artifacts),
@@ -346,7 +353,9 @@ function aggregateCatalogueStatistics(catalogueId) {
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
 
-	const currentCatalogueRes = cataloguesHelper.getCatalogueFromId(catalogueId);
+	const currentCatalogueRes = cataloguesHelper.getCatalogueFromId({
+		params: { id: catalogueId },
+	});
 	if (currentCatalogueRes === "Catalogue not found") {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
@@ -375,24 +384,24 @@ function aggregateCatalogueStatistics(catalogueId) {
 
 	var artifactCount = 0;
 
-	for (let i; i < sites.length; i++) {
+	for (let i = 0; i < sites.length; i++) {
 		assert.equal(Object.hasOwn(sites[i], "artifacts"), true);
 		const currentSite = sites[i];
-		for (let i = 0; i < currentSite.artifacts.length; i++) {
+		for (let j = 0; j < currentSite.artifacts.length; j++) {
 			assert.equal(
-				Object.hasOwn(currentSite.artifacts[i], "artifactType"),
+				Object.hasOwn(currentSite.artifacts[j], "artifactType"),
 				true,
 			);
 			assert.equal(
-				Object.hasOwn(currentSite.artifacts[i].artifactType, "id"),
+				Object.hasOwn(currentSite.artifacts[j].artifactType, "id"),
 				true,
 			);
 			artifactCount += 1;
-			const currentArtifact = currentSite.artifacts[i];
+			const currentArtifact = currentSite.artifacts[j];
 			artifactArray.push(currentArtifact);
 			//the artifact type contains a list of materials
-			for (let j = 0; j < currentArtifact.artifactType.materials.length; i++) {
-				const currentMaterial = currentArtifact.artifactType.materials[i];
+			for (let k = 0; k < currentArtifact.artifactType.materials.length; k++) {
+				const currentMaterial = currentArtifact.artifactType.materials[k];
 				materialArray.push(currentMaterial.name);
 				//only add a material to the array if it hasnt been added already.
 				if (materialTypeArray.indexOf(currentMaterial.name) == -1) {
@@ -427,7 +436,7 @@ function aggregateCatalogueStatistics(catalogueId) {
 	projectileShapeMap.set("Base Shapes", bladeShapeArray);
 	projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
 	projectileShapeMap.set("Cross Sections", crossSectionArray);
-	projectileDataMap.set("Projectile Types", projectileShapeMap);
+	projectileDataMap.set("Projectile Shapes", projectileShapeMap);
 	projectileDataMap.set(
 		"Projectile Percentages",
 		projectilePointPercentage(artifactArray),
@@ -454,7 +463,6 @@ function aggregateCatalogueStatistics(catalogueId) {
  */
 function aggregatePointTypeStatistics(pointType) {
 	//TODO: code the aggregateCatalogueStatistics function
-	//TODO: code the aggregateCatalogueStatistics function
 
 	if (pointType === undefined) {
 		console.debug("aggregateCatalogueStatistics() received an empty input");
@@ -465,8 +473,9 @@ function aggregatePointTypeStatistics(pointType) {
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
 
-	const currentPointTypeRes =
-		artifactTypesHelper.getArtifactTypeFromId(pointType);
+	const currentPointTypeRes = artifactTypesHelper.getArtifactTypeFromId({
+		params: { id: pointType },
+	});
 	if (currentPointTypeRes === "ArtifactType not found") {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
@@ -499,8 +508,8 @@ function aggregatePointTypeStatistics(pointType) {
 		assert.equal(Object.hasOwn(artifacts[i].artifactType, "id"), true);
 		const currentArtifact = artifacts[i];
 		//the artifact type contains a list of materials
-		for (let j = 0; j < currentArtifact.artifactType.materials.length; i++) {
-			const currentMaterial = currentArtifact.artifactType.materials[i];
+		for (let j = 0; j < currentArtifact.artifactType.materials.length; j++) {
+			const currentMaterial = currentArtifact.artifactType.materials[j];
 			materialArray.push(currentMaterial.name);
 			//only add a material to the array if it hasnt been added already.
 			if (materialTypeArray.indexOf(currentMaterial.name) == -1) {
@@ -536,7 +545,7 @@ function aggregatePointTypeStatistics(pointType) {
 	projectileShapeMap.set("Base Shapes", bladeShapeArray);
 	projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
 	projectileShapeMap.set("Cross Sections", crossSectionArray);
-	projectileDataMap.set("Projectile Types", projectileShapeMap);
+	projectileDataMap.set("Projectile Shapes", projectileShapeMap);
 	projectileDataMap.set(
 		"Projectile Percentages",
 		projectilePointPercentage(artifacts),
