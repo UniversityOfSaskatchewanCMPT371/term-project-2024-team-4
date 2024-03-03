@@ -1,8 +1,0 @@
-{
-  "devDependencies": {
-    "prettier": "^3.2.5"
-  },
-  "dependencies": {
-    "jest": "^29.7.0"
-  }
-}
