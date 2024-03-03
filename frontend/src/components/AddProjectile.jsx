@@ -28,6 +28,7 @@ export default function AddProjectile(props) {
 		console.log(location);
 		console.log(selectedType);
 		setSiteID(some.id);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dimension, name, location, selectedType]);
 
 	const handleLocationChange = (event) => {
