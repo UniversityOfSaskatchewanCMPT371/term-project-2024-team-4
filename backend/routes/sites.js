@@ -56,4 +56,29 @@ router.delete("/:id", async (req, res) => {
 	res.send();
 });
 
+// GET: Fetch Sites by Location
+router.get("/catalougesite/:location", async (req, res) => {
+	const { location } = req.params; // geting the query
+	try {
+		const siteRepository = await myDatabase.getRepository(Site);
+		// get the name of all the sites with location
+		const sites = await siteRepository.find({
+			where: { location },
+			select: ["name"],
+		});
+		if (sites.length > 0) {
+			const siteNames = sites.map((site) => site.name);
+			// 200 found the sites with given location
+			res.status(200).json(siteNames);
+		} else {
+			// 404 not found the location and sites
+			res.status(404).send("Not available");
+		}
+	} catch (error) {
+		console.error("Error fetching Sites:", error);
+		// 500 error while fetching the sites
+		res.status(500).json({ error: error.message });
+	}
+});
+
 module.exports = router;
