@@ -1,3 +1,5 @@
+// @ts-check
+const { test, expect } = require('@playwright/test');
 /**
  * This file will host our smoke tests to ensure that
  * the main functionality of the system works.
