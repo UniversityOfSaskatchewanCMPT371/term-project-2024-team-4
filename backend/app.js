@@ -26,6 +26,8 @@ const artifactTypeRouter = require("./routes/artifactTypes");
 const artifactRouter = require("./routes/artifacts");
 const materialRouter = require("./routes/materials");
 
+const aggregateStatisticsGeneratorRouter = require("./routes/aggregateStatisticsGenerators");
+
 const projectilePointsRouter = require("./routes/projectilePoints");
 
 const app = express();
@@ -69,6 +71,8 @@ app.use("/artifacts", artifactRouter);
 app.use("/materials", materialRouter);
 
 app.use("/projectilepoints", projectilePointsRouter);
+
+app.use("/aggregateStatisticsGenerators", aggregateStatisticsGeneratorRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
