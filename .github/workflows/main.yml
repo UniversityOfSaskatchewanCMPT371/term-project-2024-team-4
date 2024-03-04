@@ -167,11 +167,11 @@ jobs:
       
       - name: Build & Start Backend
         working-directory: ./backend
-        run: npm start
+        run: npm start & # runs in background
 
       - name: Build & Start Frontend
         working-directory: ./frontend
-        run: npm run build && npm run dev
+        run: npm run build && npm run dev & # runs in background
       
       - name: Install Testing Dependencies
         working-directory: ./e2e
