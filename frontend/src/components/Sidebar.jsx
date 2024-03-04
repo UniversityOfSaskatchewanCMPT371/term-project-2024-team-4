@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
+import { Link } from "react-router-dom";
 
 // MUI
 import Drawer from "@mui/material/Drawer";
@@ -13,11 +14,12 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import HomeIcon from "@mui/icons-material/Home";
-import UploadIcon from "@mui/icons-material/Upload";
 import BarChartIcon from "@mui/icons-material/BarChart";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
 import LoginIcon from "@mui/icons-material/Login";
+import ExploreIcon from "@mui/icons-material/Explore";
+import IconButton from "@mui/material/IconButton";
 import { styled } from "@mui/material/styles";
 
 const drawerWidth = 240;
@@ -45,6 +47,10 @@ const SidebarList = styled(List)(() => ({
 
 // create SidebarIcon component and styling, based on ListItemIcon MUI component
 const SidebarIcon = styled(ListItemIcon)(() => ({
+	minWidth: "47px",
+}));
+
+const SidebarIconButton = styled(IconButton)(() => ({
 	minWidth: "47px",
 }));
 
@@ -93,19 +99,31 @@ function Sidebar() {
 				</Toolbar>
 				<SidebarList>
 					<ListItem key="Home" disablePadding onClick={handleClick}>
-						<ListItemButton>
+						<ListItemButton component={Link} to="/">
 							<SidebarIcon>
 								<HomeIcon />
 							</SidebarIcon>
 							<ListItemText primary="Home" />
 						</ListItemButton>
 					</ListItem>
-					<ListItem key="Connect" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<UploadIcon />
-							</SidebarIcon>
-							<ListItemText primary="Connect" />
+					<ListItem key="Catalogue" disablePadding onClick={handleClick}>
+						<ListItemButton
+							component={Link}
+							to="/catalogue"
+							{...{ pros: "Catalogue1" }}
+						>
+							<SidebarIconButton>
+								<ExploreIcon />
+							</SidebarIconButton>
+							<ListItemText primary="Catalogue" />
+						</ListItemButton>
+					</ListItem>
+					<ListItem key="Site" disablePadding onClick={handleClick}>
+						<ListItemButton component={Link} to="/sites" {...{ pros: "Site" }}>
+							<SidebarIconButton>
+								<ExploreIcon />
+							</SidebarIconButton>
+							<ListItemText primary="Site" />
 						</ListItemButton>
 					</ListItem>
 				</SidebarList>

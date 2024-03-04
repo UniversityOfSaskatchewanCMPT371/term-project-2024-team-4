@@ -8,6 +8,9 @@ import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Catalogue from "./components/Catalogue1";
+import AddProjectile from "./components/AddProjectile";
+import Site from "./components/Site";
 
 const theme = createTheme({
 	palette: {
@@ -33,6 +36,21 @@ const router = createBrowserRouter([
 	{
 		path: "/",
 		element: <App />,
+	},
+
+	{
+		path: "/Catalogue",
+		element: <Catalogue />,
+	},
+
+	{
+		path: "/addNewProjectile",
+		element: <AddProjectile />,
+	},
+
+	{
+		path: "/sites",
+		element: <Site />,
 	},
 ]);
 
