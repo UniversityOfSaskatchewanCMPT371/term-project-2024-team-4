@@ -59,15 +59,21 @@ jobs:
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
 
-      - name: Build, Test, and Zip Backend
+      - name: Build & Check if Backend Runs
         working-directory: ./backend
         run: |
           npm start & 
           SERVER_PID=$!
           sleep 5
           kill $SERVER_PID
-          npm run build && npm run test
-          zip release.zip ./* -r
+      
+      - name: Test Backend
+        working-directory: ./backend
+        run: npm run build && npm run test
+
+      - name: Zip Backend
+        working-directory: ./backend
+        run: zip release.zip ./* -r
       
       - name: Upload Backend Build and Test Artifact
         uses: actions/upload-artifact@v2
@@ -101,12 +107,18 @@ jobs:
           run: npm run format
 
           # build frontend
-        - name: Build, Test, and Zip Frontend
+        - name: Build Frontend
           working-directory: ./frontend
           run: |
             npm run build
-            npm run test
-            zip release.zip ./* -r
+
+        - name: Test Frontend
+          working-directory: ./frontend
+          run: npm run test
+
+        - name: Zip Frontend
+          working-directory: ./frontend
+          run: zip release.zip ./* -r
         
         - name: Upload Frontend Build and Test Artifact
           uses: actions/upload-artifact@v2
