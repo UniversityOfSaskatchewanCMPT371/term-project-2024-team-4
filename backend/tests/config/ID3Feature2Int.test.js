@@ -49,6 +49,7 @@ describe("Search sites test", () => {
 	});
 });
 
+// eslint-disable-next-line no-unused-vars
 let projectilePointId = "";
 
 describe("Create projectile point tests", () => {
