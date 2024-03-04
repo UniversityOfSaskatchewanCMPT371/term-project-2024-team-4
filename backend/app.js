@@ -2,9 +2,9 @@ require("reflect-metadata");
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const cookieParser = require("cookie-parser");
 const { morganIntegration } = require("./config/logger");
 const cors = require("cors");
+
 // const { synchModels } = require("./models");
 // const dataSource = require("./config/db");
 
@@ -30,6 +30,9 @@ const aggregateStatisticsGeneratorRouter = require("./routes/aggregateStatistics
 
 const projectilePointsRouter = require("./routes/projectilePoints");
 
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+
 const app = express();
 
 // view engine setup
@@ -41,7 +44,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
 
 // Synchronize models with the database
 // synchModels()
@@ -51,6 +53,18 @@ app.use(cors());
 //   .catch((error) => {
 //     console.error("Database synchronization failed:", error);
 //   });
+
+// Middleware
+app.use(bodyParser.json());
+
+// Use CORS middleware
+app.use(
+	cors({
+		origin: "http://localhost:8080", // Replace with your frontend's URL
+		methods: ["POST", "GET", "DELETE", "PATCH"],
+		credentials: true, // Enable credentials (cookies, authorization headers)
+	}),
+);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

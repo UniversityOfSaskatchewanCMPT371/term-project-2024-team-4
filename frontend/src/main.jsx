@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import App from "./components/App";
 import "./index.css";
 import "@fontsource/roboto/300.css";
@@ -32,32 +32,12 @@ const theme = createTheme({
 	},
 });
 
-const router = createBrowserRouter([
-	{
-		path: "/",
-		element: <App />,
-	},
-
-	{
-		path: "/Catalogue",
-		element: <Catalogue />,
-	},
-
-	{
-		path: "/addNewProjectile",
-		element: <AddProjectile />,
-	},
-
-	{
-		path: "/sites",
-		element: <Site />,
-	},
-]);
-
 ReactDOM.createRoot(document.getElementById("root")).render(
 	<React.StrictMode>
 		<ThemeProvider theme={theme}>
-			<RouterProvider router={router} />
+			<Router>
+				<App />
+			</Router>
 		</ThemeProvider>
 	</React.StrictMode>,
 );
