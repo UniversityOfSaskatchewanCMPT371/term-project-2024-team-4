@@ -125,3 +125,29 @@ jobs:
           with:
             name: frontend-artifact
             path: frontend/release.zip
+  
+  ### Smoke Tests using Playwright
+  smoke-tests:
+    runs-on: ubuntu-latest
+    needs: [build-and-test-backend, build-and-test-frontend]
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+            node-version: "18"
+      
+      - name: Install Testing Dependencies
+        working-directory: ./e2e
+        run: |
+          npm ci
+      
+      - name: Install Playwright browsers
+        working-directory: ./e2e
+        run: npx playwright install chromium # only uses chromium for tests
+      
+      - name: Run smoke tests
+        working-directory: ./e2e/smoke-test
+        run: npx playwright test
+          
