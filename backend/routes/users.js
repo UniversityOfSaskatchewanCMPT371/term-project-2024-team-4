@@ -19,7 +19,13 @@ router.post("/", async (req, res) => {
 	const { userName, password } = req.body;
 
 	// Check if userName or password is null or undefined
-	if (!userName || !password) {
+	// Should be checking instead if password is not empty
+	if (
+		!userName ||
+		userName.length === 0 ||
+		!password ||
+		password.length === 0
+	) {
 		return res
 			.status(400)
 			.json({ message: "Username and password are required" });

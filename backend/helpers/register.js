@@ -5,6 +5,8 @@ const bcrypt = require("bcrypt");
 const registerUser = async () => {
 	const Users = await dataSource.getRepository(User);
 	// hardcoded data
+
+	// could be a GitHub secret
 	const hardcodedUserName = "admin";
 	const hardcodedPassword = "admin";
 
