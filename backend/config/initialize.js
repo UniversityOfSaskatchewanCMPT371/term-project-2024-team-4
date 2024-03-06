@@ -1,6 +1,6 @@
 const dataSource = require("./db");
 const { Catalogue } = require("../dist/entity");
-const { logger } = require("logger");
+const { logger } = require("./logger");
 
 async function initializeDefaultCatalogue() {
 	try {
