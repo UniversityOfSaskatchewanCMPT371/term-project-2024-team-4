@@ -43,6 +43,6 @@ const dataSource = new DataSource({
 	],
 });
 
-dataSource.initialize().then(() => console.log("connected to DB succesfully!"));
+//dataSource.initialize().then(() => console.log("connected to DB succesfully!"));
 
 module.exports = dataSource;
