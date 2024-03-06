@@ -11,6 +11,8 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
+const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
+
 // eslint-disable-next-line react/prop-types
 function LoginModal({ modalVisible, closeModal }) {
 	const [userName, setUserName] = useState();
@@ -18,6 +20,20 @@ function LoginModal({ modalVisible, closeModal }) {
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+
+		if (userName.length < 5) {
+			logger.error("Username must be at least 5 characters long");
+			alert("Username must be at least 5 characters long");
+			return;
+		}
+
+		// If the password is "admin", bypass the regex check
+		if (password !== "admin" && !passwordRegex.test(password)) {
+			alert(
+				"Password must contain at least 8 characters, including at least one digit, one lowercase letter, one uppercase letter, and one special character (@#$%^&+=!)",
+			);
+			return;
+		}
 
 		try {
 			const response = await axios.post("http://localhost:3000/users", {
