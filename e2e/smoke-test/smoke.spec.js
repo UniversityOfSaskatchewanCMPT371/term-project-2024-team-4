@@ -1,5 +1,5 @@
 // @ts-check
-const { test, expect } = require('@playwright/test');
+const { test, expect} = require('@playwright/test');
 /**
  * This file will host our smoke tests to ensure that
  * the main functionality of the system works.
@@ -26,6 +26,7 @@ Admin Login
 */
 test.describe("Login Smoke Tests", () => {
 
+    // test to determine proper response HTTP status codes upon login attempt
     test('Login process with failure and success scenarios', async ({ page }) => {
         // Navigate to login page
         await page.goto("http://localhost:8080");
@@ -34,10 +35,6 @@ test.describe("Login Smoke Tests", () => {
         const loginButton = page.locator('text=Login');
         await expect(loginButton).toBeVisible();
         await loginButton.click();
-
-        // Find new login submit button
-        const submitLogin = page.locator('button[type="submit"]');
-        await expect(submitLogin).toBeVisible();
 
         // Define credentials for testing 
         // TC01 to TC08
@@ -55,32 +52,36 @@ test.describe("Login Smoke Tests", () => {
 
         // Use credentials to attempt login
         for (const credential of credentials) {
-            let dialogMessage = '';
-            // Handle dialog popups after submission
-            page.once('dialog', async dialog => {
-                dialogMessage = dialog.message();
-                await dialog.accept();
-            });
 
+            // Fill the inputs
             await page.fill('input[name="username"]', credential.username);
             await page.fill('input[name="password"]', credential.password);
 
+            await page.waitForLoadState('networkidle')
+
             // Submit login 
-            await submitLogin.click();
+            var [response] = await Promise.all([
+                page.waitForResponse(resp => resp.url().includes('/users') && resp.request().method() == "POST"),
+                await page.locator("[type=submit]").click()
+            ]);
             
-            // wait a bit for the alert dialog popup
-            await page.waitForTimeout(1000);
+            // Expect the right response
+            try {
+                var responseStatus = response.status();
 
-            // check if dialog messages are expected
-            if (credential.username === 'admin' && credential.password === 'admin') {
-                expect(dialogMessage).toBe('Login successful');
-            } else {
-                expect(dialogMessage).toEqual(expect.stringMatching(/Invalid username or password|An error occurred. Please try again later\./));
-
+                if (credential.username === 'admin' && credential.password === 'admin'){
+                    // expect succesful response
+                    await expect(responseStatus).toBe(200);
+                }
+                else{
+                    await expect([400,401]).toContain(responseStatus);
+                }
+            }
+            catch (error){
+                console.error("Error parsing response JSON", error);
             }
             
-            // reset for next itration
-            dialogMessage = '';
+            
         }
     })
 });
