@@ -1,5 +1,6 @@
 const dataSource = require("./db");
 const { Catalogue } = require("../dist/entity");
+const { logger } = require("logger");
 
 async function initializeDefaultCatalogue() {
 	try {
@@ -9,18 +10,18 @@ async function initializeDefaultCatalogue() {
 		});
 
 		if (!defaultCatalogueExists) {
-			console.log("Creating default catalogue...");
+			logger.info("Creating default catalogue...");
 			const defaultCatalogue = catalogueRepository.create({
 				name: "Default Catalogue",
 				description: "This is the default catalogue.",
 			});
 			await catalogueRepository.save(defaultCatalogue);
-			console.log("Default catalogue created.");
+			logger.info("Default catalogue created.");
 		} else {
-			console.log("Default catalogue already exists.");
+			logger.info("Default catalogue already exists.");
 		}
 	} catch (error) {
-		console.error(
+		logger.error(
 			"Failed to connect to the database or create default catalogue:",
 			error,
 		);
