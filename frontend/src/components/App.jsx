@@ -1,36 +1,20 @@
-import { Component } from "react";
-import Sidebar from "./Sidebar";
+import { UserContextProvider } from "../context/userContext";
+import { Route, Routes } from "react-router-dom";
+import Home from "./Home";
+import axios from "axios";
 
-class App extends Component {
-	constructor(props) {
-		super(props);
-	}
+axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.withCredentials = true;
 
-	render() {
-		return (
-			<>
-				<div className="row">
-					<div className="col-3">
-						<Sidebar />
-					</div>
-					<div className="col">
-						<div className="container">
-							<h2>&lt; Catalogue &lt;Museum of Anthropology&gt; / X Farm</h2>
-							<div className="row">
-								<div className="col">Row 2 Col 1</div>
-								<div className="col">Row 2 Col 2</div>
-							</div>
-							<div className="row">
-								<div className="col">Row 3 Col 1</div>
-								<div className="col">Row 3 Col 2</div>
-								<div className="col">Row 3 Col 3</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</>
-		);
-	}
+function App() {
+	return (
+		<UserContextProvider>
+			<Routes>
+				<Route path="/" element={<Home />} />
+				{/* Add new routes here as you make new pages - use '/your_path' as path and the coresponding filename in element. */}
+			</Routes>
+		</UserContextProvider>
+	);
 }
 
 export default App;

@@ -1,143 +1,130 @@
-import { Component } from "react";
-import PropTypes from "prop-types";
-import Button from "react-bootstrap/Button";
-import Modal from "react-bootstrap/Modal";
-import Form from "react-bootstrap/Form";
-import "./LoginModal.css";
+import { useState } from "react";
 import logger from "../logger.js";
+import axios from "axios";
 
-/*
-async function loginUser(credentials) {
-	logger.info("Login button clicked.");
+// MUI
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
-	return fetch("URL", {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json"
-		},
-		body: JSON.stringify(credentials)
-	}).then(data => data.json());
-}
-*/
+// eslint-disable-next-line react/prop-types
+function LoginModal({ modalVisible, closeModal }) {
+	const [userName, setUserName] = useState();
+	const [password, setPassword] = useState();
 
-class LoginModal extends Component {
-	constructor(props) {
-		super(props);
+	const handleSubmit = async (event) => {
+		event.preventDefault();
 
-		this.state = {
-			userName: "",
-			password: "",
-		};
+		try {
+			const response = await axios.post("http://localhost:3000/users", {
+				userName,
+				password,
+			});
 
-		/**
-		 * These are to make sure the functions are defined for the component
-		 */
-		this.handleSubmit = this.handleSubmit.bind(this);
-		this.userNameChanged = this.userNameChanged.bind(this);
-		this.passwordChanged = this.passwordChanged.bind(this);
-	}
+			/***
+			 * These loggers are for testing to make sure that the information is properly passed
+			 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
+			 */
+			logger.info("Username entered: " + userName);
+			logger.info("Password entered: " + password);
 
-	async handleSubmit(e) {
-		e.preventDefault();
-
-		//**Not needed yet */
-		// const response = await loginUser({
-		//   username,
-		//   password
-		// });
-
-		/***
-		 * These loggers are for testing to make sure that the information is properly passed
-		 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
-		 */
-		logger.info("Username entered:" + this.state.userName);
-		logger.info("Password entered:" + this.state.password);
-
-		//**Not needed yet */
-		// if ('accessToken' in response) {
-		//   swal("Success", response.message, "success", {
-		//     buttons: false,
-		//     timer: 2000,
-		//   })
-		//   .then((value) => {
-		//     localStorage.setItem('accessToken', response['accessToken']);
-		//     localStorage.setItem('user', JSON.stringify(response['user']));
-		//     window.location.href = "/profile";
-		//   });
-		// } else {
-		//   // Login failed alert message
-		// }
-	}
+			if (response.status === 200) {
+				// Login successful
+				alert("Login successful");
+				closeModal(); // Close the modal after successful login
+				window.location.reload();
+			}
+		} catch (error) {
+			if (error.response) {
+				// Request made and server responded with a status code that falls out of the range of 2xx
+				if (error.response.status === 401) {
+					// Unauthorized: Invalid username or password
+					alert("Invalid username or password");
+				} else {
+					// Other server errors
+					alert("An error occurred. Please try again later.");
+				}
+			} else if (error.request) {
+				// The request was made but no response was received
+				alert("Network error. Please check your internet connection.");
+			} else {
+				// Something happened in setting up the request that triggered an error
+				console.error("Error:", error.message);
+			}
+		}
+	};
 
 	/**
 	 * This is for when the username is entered into the textbox to update the state of the component
 	 */
-	userNameChanged(e) {
-		this.setState((state) => ({ ...state, userName: e.target.value }));
-	}
+	const userNameChanged = (event) => {
+		setUserName(event.target.value);
+	};
 
 	/**
 	 * For when the password is entered into the texbox to update the state of the component
 	 */
-	passwordChanged(e) {
-		this.setState((state) => ({ ...state, password: e.target.value }));
-	}
+	const passwordChanged = (event) => {
+		setPassword(event.target.value);
+	};
 
-	componentDidUpdate() {
-		logger.info("LoginModal mounted properly.");
-	}
-
-	render() {
-		return (
-			<div>
-				<Modal
-					{...this.props}
-					size="md"
-					aria-labelledby="contained-modal-title-vcenter"
-					centered
-					animation={false}
-				>
-					<Modal.Header closeButton>
-						<Modal.Title id="contained-modal-title-vcenter">Login</Modal.Title>
-					</Modal.Header>
-					<Modal.Body>
-						<Form>
-							<Form.Group className="mb-3" controlId="loginFormUsername">
-								<Form.Label>Username</Form.Label>
-								<Form.Control
-									type="email"
-									placeholder="Username"
-									autoFocus
-									onChange={this.userNameChanged}
-								/>
-							</Form.Group>
-							<Form.Group className="mb-3" controlId="loginFormPassword">
-								<Form.Label>Password</Form.Label>
-								<Form.Control
-									type="password"
-									placeholder="Password"
-									onChange={this.passwordChanged}
-								/>
-							</Form.Group>
-						</Form>
-					</Modal.Body>
-					<Modal.Footer>
-						<Button variant="secondary" onClick={this.props.onHide}>
-							Close
-						</Button>
-						<Button variant="primary" onClick={this.handleSubmit}>
-							Login
-						</Button>
-					</Modal.Footer>
-				</Modal>
-			</div>
-		);
-	}
+	return (
+		<>
+			<Dialog
+				open={modalVisible}
+				onClose={closeModal}
+				PaperProps={{
+					component: "form",
+					onSubmit: (event) => {
+						event.preventDefault();
+						const formData = new FormData(event.currentTarget);
+						const formJson = Object.fromEntries(formData.entries());
+						const email = formJson.email;
+						console.log(email);
+						this.handleClose();
+					},
+				}}
+			>
+				<DialogTitle>Admin</DialogTitle>
+				<DialogContent>
+					<DialogContentText>Lorem ipsum dolor sit amet.</DialogContentText>
+					<TextField
+						autoFocus
+						required
+						margin="dense"
+						id="adminusername"
+						name="username"
+						placeholder="Username"
+						type="string"
+						fullWidth
+						variant="outlined"
+						onChange={userNameChanged}
+					/>
+					<TextField
+						required
+						margin="dense"
+						id="adminpassword"
+						name="password"
+						placeholder="Password"
+						type="password"
+						fullWidth
+						variant="outlined"
+						onChange={passwordChanged}
+					/>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={closeModal}>Cancel</Button>
+					<Button onClick={handleSubmit} type="submit">
+						Login
+					</Button>
+				</DialogActions>
+			</Dialog>
+		</>
+	);
 }
-
-// Define expected PropTypes
-LoginModal.propTypes = {
-	onHide: PropTypes.func.isRequired,
-};
 
 export default LoginModal;
