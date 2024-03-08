@@ -174,16 +174,16 @@ jobs:
         run: npm run build && npm run dev & # runs in background
       
       - name: Install Testing Dependencies
-        working-directory: ./e2e
+        working-directory: ./testing
         run: |
           npm ci
       
       - name: Install Playwright Browsers
-        working-directory: ./e2e
+        working-directory: ./testing
         run: npx playwright install chromium # only uses chromium for tests (CURRENTLY)
       
       - name: Run smoke tests
-        working-directory: ./e2e/smoke-test
+        working-directory: ./testing/smoke-test
         run: npx playwright test
       
       - name: Cleanup
