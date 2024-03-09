@@ -1,10 +1,10 @@
 import { screen, render, fireEvent } from "@testing-library/react";
 import { expect, vi } from "vitest";
-import StatisticsPage from "../src/components/StatisticsPage.jsx";
+import StatisticsPage from "../src/components/App";
 
 describe("Statistics page tests", () => {
 	test("Render statistics page correctly", () => {
-		render(<statisticsPage />);
+		render(<StatisticsPage />);
 
 		//Test if the search bar is on the screen
 		const searchBar = screen.getByLabelText("Search");
@@ -32,7 +32,7 @@ describe("Statistics page tests", () => {
 
 		//Changes the value in the search bar and ensures it properly changes
 		fireEvent.change(searchInput, { target: { value: "New value" } });
-		expect(searchInput.vaue).toBe("New value");
+		expect(searchInput.value).toBe("New value");
 	});
 
 	test("Calls handleSortChange() when the selection for sorting changes", () => {
@@ -46,11 +46,11 @@ describe("Statistics page tests", () => {
 	});
 
 	test("Calls handleFiterChange() when the selection for filtering changes", () => {
-		const handleFiterChangeMock = vi.fn();
+		const handleFilterChangeMock = vi.fn();
 		const filterSelection = screen.getByLabelText("Filter");
 
 		//Changes the dropdown selection for the filter dropdown
-		expect(handleFiterChangeMock).toHaveBeenCalled();
+		expect(handleFilterChangeMock).toHaveBeenCalled();
 		fireEvent.change(filterSelection, { target: { value: "Period" } });
 		expect(filterSelection.value).toBe("Period");
 	});
