@@ -31,7 +31,7 @@ export default function SearchResult({ query }) {
 	useEffect(() => {
 		// Fetch data from JSON server on component mount
 
-		console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed 
+		//console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed 
 
 		fetch("http://localhost:3000/artifacts")
 			.then((response) => response.json())

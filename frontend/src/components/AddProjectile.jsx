@@ -10,6 +10,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import log from "../logger";
 
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({setOpen}) => {
@@ -21,6 +22,8 @@ const AddProjectile = ({setOpen}) => {
 	const [location, setLocation] = useState("");
 	const [selectedType, setSelectedType] = useState("");
 	const [currentProjectiles, setCurrentProjectiles] = useState([]); 
+
+	// I'm not sure if what this 'some' is used for | Jorden
 	// const locationx = useLocation();
 	// const { some } = locationx.state;
 
@@ -42,6 +45,8 @@ const AddProjectile = ({setOpen}) => {
 
 	const handleClicks = () => {
 		//This gets the Projectiles from the database to be shown on screen
+
+		
 		fetch("http://localhost:3000/sites")
 			.then((response) => response.json())
 			.then(json => setCurrentProjectiles(json))
@@ -52,6 +57,7 @@ const AddProjectile = ({setOpen}) => {
 	useEffect(() => {
 		handleClicks();
 	}, [handleClicks]);
+
 	const handleLocationChange = (event) => {
 		setLocation(event.target.value);
 	};
@@ -95,13 +101,14 @@ const AddProjectile = ({setOpen}) => {
 			<Dialog	
 				open={true}
 				onClose={handleClose}
-				maxWidth="md"
+				//maxWidth="md" //The size that Jeffery used
+				maxWidth="lg"
 				fullWidth
 				PaperProps={{style: {maxHeight: "80vh"}}}
 			>
 
 				<DialogTitle>Add Projectile</DialogTitle>
-				<Box container spacing={5} style={{ marginLeft: 300, marginTop: 2 }}>
+				<Box container spacing={5} style={{ marginLeft: 100, marginTop: 2 }}>
 				<Grid container spacing={5} marginTop={5}>
 				<Grid>
 					<Grid item marginBottom={3}>

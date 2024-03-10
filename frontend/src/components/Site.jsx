@@ -11,9 +11,12 @@ import Sidebar from "./Sidebar";
 import { Box } from "@mui/material";
 
 const Site = (props) => {
+	if(props!=null){console.log("HERRERERR");}
+
 	const [searchValue, setSearchValue] = useState("");
 	const [sortValue, setSortValue] = useState("newest");
 	const [filterValue, setFilterValue] = useState("");
+	const inComingInfo = props;
 
 	const handleSearch = (event) => {
 		setSearchValue(event.target.value);
@@ -26,6 +29,13 @@ const Site = (props) => {
 			console.log("Searching Catalogue for:", searchValue);
 		} else if (props.props === "site") {
 			console.log("Searching Site for:", searchValue);
+		}
+		// This is a test to see if the props are being passed correctly
+		if (inComingInfo != null) {
+			console.log(inComingInfo.id);
+		}
+		else {
+			console.log(false);
 		}
 	}, [searchValue, props.props]);
 
@@ -53,12 +63,13 @@ const Site = (props) => {
 			{/*Above search bar text*/}
 			<Grid item xs={12}>
 				<Grid>
-					<Typography variant="h4" gutterBottom>
+				<Typography variant="h4" gutterBottom>
 						{props.props}
 					</Typography>
 					<Typography variant="body1" gutterBottom>
 						This is a short description of Sites.
 					</Typography>
+					<Typography>The name is {props.id}</Typography>{/*Used as a test to see the current Site, if you can read this please remove this line*/}
 				</Grid>
 				{/*Search bar*/}
 				<Grid container spacing={2}>

@@ -14,19 +14,36 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
+// Should this function be renamed to SearchSitesResults? | Jorden
 export default function SearchResult({ query }) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
+	// infoToSendDicionary = null;
 
+	// Used to pass the data to the next page
+	// const makeDataPackage = (DataItem) => {
+	// 	infoToSendDicionary = {
+	// 		id: DataItem.id,
+	// 		name: DataItem.name,
+	// 		location: DataItem.location,
+
+	// 	};
+	// }
+
+	// the action to take when the new site button is pressed
 	const handleClick1 = () => {
 		setOpen(true);
 		console.log("Add card clicked!");
+		
 	};
-
-	const handleClick2 = (id) => () => {
+	// The action to take when an already existing site is clicked on 
+	const handleClick2 = (item) => () => {
 		// event handler
-		console.log("Card clicked! ID:", id);
+		console.log("Card clicked! ID:", item.id);
+		makeDataPackage(item)
 		Catalogue1.refreshPage(); // Tell the Catalogue1 to refresh
+		
+		
 	};
 
 	useEffect(() => {
@@ -59,10 +76,11 @@ export default function SearchResult({ query }) {
 						{filteredData &&
 							filteredData.map((item, key) => (
 								<Grid item xs={12} sm={6} md={3} key={item.id}>
-									<ButtonBase onClick={handleClick2(item.id)}>
+									<ButtonBase onClick={handleClick2(item)}>
 										{/* <Link to={"/addnewprojectile"} state={{key}}> */}
 
-										<Link to="/addnewprojectile" state={{ some: item }}>
+										{/*<Link to="/addnewprojectile" state={{ some: item }}>*/ /*This is the original line of code, if things don't work add it back*/}
+										<Link to="/Sites" state={{temp: item}}>{/**/}
 											<Card>
 												<CardContent>
 													<Typography variant="h5" component="h3">
