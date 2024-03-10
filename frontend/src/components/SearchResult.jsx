@@ -45,6 +45,7 @@ export default function SearchResult({ query }) {
 				<Box display="flex">
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6} md={3}>
+							{/*This Button is for the creation of new sites*/}
 							<ButtonBase onClick={handleClick1}>
 								<Card>
 									<CardContent style={{ textAlign: "center" }}>
@@ -56,6 +57,7 @@ export default function SearchResult({ query }) {
 						{filteredData &&
 							filteredData.map((item) => (
 								<Grid item xs={12} sm={6} md={3} key={item.id}>
+									{/*This section is for displaying all the found sites*/}
 									<ButtonBase onClick={handleClick2(item.id)}>
 										<Card>
 											<CardContent>
@@ -76,6 +78,7 @@ export default function SearchResult({ query }) {
 					</Grid>
 				</Box>
 			</Grid>
+			/* This section opens the create new site popup*/
 			<Typography>{open && <CreateNewSite setOpen={setOpen} />}</Typography>
 		</div>
 	);

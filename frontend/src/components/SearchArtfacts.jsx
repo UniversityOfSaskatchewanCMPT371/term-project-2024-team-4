@@ -1,5 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+import Site from "./Site";
+import AddProjectile from "./AddProjectile";
 import { useState, useEffect } from "react";
 import {
 	Grid,
@@ -14,18 +16,23 @@ export default function SearchResult({ query }) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
 
-	// const handleClick1 = () => {
-	//   setOpen(true);
-	//   console.log("Add card clicked!");
-	// };
+	//Used for opening the create new artifact page
+	const createArtifactClick = () => {
+	  setOpen(true);
+	  console.info("Create Artifact button clicked!");
+	};
 
 	const handleClick2 = (id) => () => {
 		// event handler
 		console.log("Card clicked! ID:", id);
+		Site.refreshPage(); // Tell the Site page to refresh
 	};
 
 	useEffect(() => {
 		// Fetch data from JSON server on component mount
+
+		console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed 
+
 		fetch("http://localhost:3000/artifacts")
 			.then((response) => response.json())
 			.then((json) => setData(json))
@@ -42,29 +49,39 @@ export default function SearchResult({ query }) {
 			<Grid maxWidth="md" style={{ marginTop: 20, marginLeft: -10 }}>
 				<Box display="flex">
 					<Grid container spacing={2}>
+						<Grid item xs={12} sm={6} md={3}>
+							{/*This Button is for the creation of new artifacts*/}
+							<ButtonBase onClick={createArtifactClick}>
+								<Card>
+									<CardContent style={{ textAlign: "center" }}>
+										{/*<AddProjectile style={{ fontSize: 80, color: "lightgrey" }} />*/}
+									</CardContent>
+								</Card>
+							</ButtonBase>
+						</Grid>
 						{filteredData &&
 							filteredData.map((item) => (
 								<Grid item xs={12} sm={6} md={3} key={item.id}>
-									<ButtonBase onClick={handleClick2(item.id)}>
-										<Card>
-											<CardContent>
-												<Typography variant="h5" component="h3">
-													{item.name}
-												</Typography>
-												<Typography color="textSecondary" gutterBottom>
-													{item.location}
-												</Typography>
-												<Typography variant="body2" component="p">
-													{item.id}
-												</Typography>
-											</CardContent>
-										</Card>
-									</ButtonBase>
+									{/*This section is for displaying all the found artifacts*/}
+									<Card onClick={handleClick2(item.id)}>
+										<CardContent>
+											<Typography variant="h5" component="div">
+												{item.name}
+											</Typography>
+											<Typography variant="body2" component="p">
+												{item.description}
+											</Typography>
+										</CardContent>
+									</Card>
 								</Grid>
 							))}
 					</Grid>
 				</Box>
 			</Grid>
+			<Typography>{open && <AddProjectile setOpen={setOpen} />}</Typography>
 		</div>
 	);
 }
+
+
+// 

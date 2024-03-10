@@ -50,4 +50,9 @@ describe("Catalogue1 component", () => {
 		expect(handleFilterChangeMock).toHaveBeenCalled(); // Check that handleFilterChange function is called
 		expect(filterSelect.value).toBe("category1");
 	});
+
+	test("checks to see if catalogue refreshes",() => {
+		//Can this be tested? 
+
+	});
 });

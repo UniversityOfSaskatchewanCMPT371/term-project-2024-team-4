@@ -6,31 +6,52 @@ import Button from "@mui/material/Button";
 import Sidebar from "./Sidebar";
 import FileUpload from "./UploadPicture";
 import { Link, useLocation } from "react-router-dom";
+
+import { Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
 // eslint-disable-next-line no-unused-vars
-export default function AddProjectile(props) {
+const AddProjectile = ({setOpen}) => {
+
 	const [siteID, setSiteID] = useState(0);
 	const [description, setDescription] = useState("");
 	const [name, setName] = useState("");
 	const [dimension, setDimension] = useState("");
 	const [location, setLocation] = useState("");
 	const [selectedType, setSelectedType] = useState("");
+	const [currentProjectiles, setCurrentProjectiles] = useState([]); 
+	// const locationx = useLocation();
+	// const { some } = locationx.state;
 
-	const locationx = useLocation();
-	const { some } = locationx.state;
-	console.log(some.id);
+	//console.log(some.id);
+
+	const PlaceholderText = "Add Information";
+	const handleClose = () => {
+		setOpen(false);
+	};
 
 	useEffect(() => {
 		console.log(dimension);
 		console.log(name);
 		console.log(location);
 		console.log(selectedType);
-		setSiteID(some.id);
+		//setSiteID(some.id);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [dimension, name, location, selectedType]);
 
+	const handleClicks = () => {
+		//This gets the Projectiles from the database to be shown on screen
+		fetch("http://localhost:3000/sites")
+			.then((response) => response.json())
+			.then(json => setCurrentProjectiles(json))
+			.catch((error) => console.error("Error fetching Projectile data:", error));
+			
+	};
+
+	useEffect(() => {
+		handleClicks();
+	}, [handleClicks]);
 	const handleLocationChange = (event) => {
 		setLocation(event.target.value);
 	};
@@ -70,10 +91,18 @@ export default function AddProjectile(props) {
 	};
 
 	return (
-		<Box container spacing={5} style={{ marginLeft: 300, marginTop: 2 }}>
-			<h1>{some.name}</h1>
-			<Sidebar />
-			<Grid container spacing={5} marginTop={5}>
+		<div>
+			<Dialog	
+				open={true}
+				onClose={handleClose}
+				maxWidth="md"
+				fullWidth
+				PaperProps={{style: {maxHeight: "80vh"}}}
+			>
+
+				<DialogTitle>Add Projectile</DialogTitle>
+				<Box container spacing={5} style={{ marginLeft: 300, marginTop: 2 }}>
+				<Grid container spacing={5} marginTop={5}>
 				<Grid>
 					<Grid item marginBottom={3}>
 						<FileUpload />
@@ -156,5 +185,14 @@ export default function AddProjectile(props) {
 				</Button>
 			</Grid>
 		</Box>
+
+			</Dialog>
+
+		</div>
+
+	
+
 	);
 }
+
+export default AddProjectile;

@@ -21,7 +21,7 @@ const Site = (props) => {
 
 	useEffect(() => {
 		console.log(props.props);
-
+		
 		if (props.props === "catalogue") {
 			console.log("Searching Catalogue for:", searchValue);
 		} else if (props.props === "site") {
@@ -37,9 +37,20 @@ const Site = (props) => {
 		setFilterValue(event.target.value);
 	};
 
+
+	//Used to refresh the page after a new artifact is added
+	const refreshPage = () => {
+		console.info("Site page refreshed");
+		window.location.reload();
+
+
+	};
+
+
 	return (
 		<Box marginLeft={40} marginTop={5} container spacing={5}>
 			<Sidebar />
+			{/*Above search bar text*/}
 			<Grid item xs={12}>
 				<Grid>
 					<Typography variant="h4" gutterBottom>
@@ -49,7 +60,7 @@ const Site = (props) => {
 						This is a short description of Sites.
 					</Typography>
 				</Grid>
-
+				{/*Search bar*/}
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
 						<form noValidate autoComplete="off">
@@ -73,6 +84,7 @@ const Site = (props) => {
 				</Grid>
 				<Grid container spacing={2} style={{ marginTop: 5 }}>
 					{" "}
+					{/*Sort drop down menu*/}
 					{/* Adjusted marginTop */}
 					<Grid item xs={6} sm={3}>
 						<TextField
@@ -90,6 +102,7 @@ const Site = (props) => {
 							<MenuItem value="ascending">Ascending</MenuItem>
 						</TextField>
 					</Grid>
+					{/*Above filter bar text*/}
 					<Grid item xs={6} sm={3}>
 						<TextField
 							id="filter"

@@ -37,6 +37,14 @@ const Catalogue1 = (props) => {
 		setFilterValue(event.target.value);
 	};
 
+
+	//This function is here to refresh the page after a new site is added, 
+	const refreshPage = () => {
+		console.info("Catalogue1 page refreshed");
+		window.location.reload(); 
+	};
+
+
 	return (
 		<Box marginLeft={40} marginTop={5} container spacing={5}>
 			<Sidebar />
@@ -52,6 +60,7 @@ const Catalogue1 = (props) => {
 
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
+						{/*Search Bar*/}
 						<form noValidate autoComplete="off">
 							<TextField
 								id="search"
@@ -75,6 +84,7 @@ const Catalogue1 = (props) => {
 					{" "}
 					{/* Adjusted marginTop */}
 					<Grid item xs={6} sm={3}>
+						{/*Sort widget*/}
 						<TextField
 							id="sort"
 							select
@@ -91,6 +101,7 @@ const Catalogue1 = (props) => {
 						</TextField>
 					</Grid>
 					<Grid item xs={6} sm={3}>
+						{/*Filter widget*/}
 						<TextField
 							id="filter"
 							select
@@ -101,6 +112,7 @@ const Catalogue1 = (props) => {
 							onChange={handleFilterChange}
 							size="small"
 						>
+							{/*Filter Values | NOTE: these should be dynamic, right*/}
 							<MenuItem value="all">All</MenuItem>
 							<MenuItem value="category1">Category 1</MenuItem>
 							<MenuItem value="category2">Category 2</MenuItem>
@@ -109,6 +121,7 @@ const Catalogue1 = (props) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
+				{/* Note: this 'SearchSites' here shows all the sites attached to the catalogue aka the search results, oldest first(as of March 9th, 2023) */}
 				<SearchSites query={searchValue} />
 			</Grid>
 		</Box>

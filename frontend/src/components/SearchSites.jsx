@@ -2,6 +2,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import CreateNewSite from "./CreateNewSite";
+import Catalogue1 from "./Catalogue1";
 import { Link } from "react-router-dom";
 import {
 	Grid,
@@ -25,6 +26,7 @@ export default function SearchResult({ query }) {
 	const handleClick2 = (id) => () => {
 		// event handler
 		console.log("Card clicked! ID:", id);
+		Catalogue1.refreshPage(); // Tell the Catalogue1 to refresh
 	};
 
 	useEffect(() => {

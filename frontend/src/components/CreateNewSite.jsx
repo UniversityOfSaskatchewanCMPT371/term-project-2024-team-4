@@ -54,6 +54,7 @@ const CreateNewSite = ({ setOpen }) => {
 	const handleDescriptionChange = (e) => {
 		const name = e.target.value;
 		axios
+			// Gets the regions from the database  
 			.get("http://localhost:3000/regions")
 			.then((response) => {
 				const filteredRegion = response.data.find(
