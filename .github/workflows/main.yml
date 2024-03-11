@@ -67,9 +67,9 @@ jobs:
           sleep 5
           kill $SERVER_PID
       
-      - name: Test Backend
+      - name: Run Backend Unit Tests
         working-directory: ./backend
-        run: npm run build && npm run test
+        run: npm run build && npm run unit-test
 
       - name: Zip Backend
         working-directory: ./backend
@@ -112,9 +112,9 @@ jobs:
           run: |
             npm run build
 
-        - name: Test Frontend
+        - name: Run Frontend Unit Tests
           working-directory: ./frontend
-          run: npm run test
+          run: npm run unit-test
 
         - name: Zip Frontend
           working-directory: ./frontend
@@ -174,17 +174,25 @@ jobs:
         run: npm run build && npm run dev & # runs in background
       
       - name: Install Testing Dependencies
-        working-directory: ./e2e
+        working-directory: ./testing
         run: |
           npm ci
       
       - name: Install Playwright Browsers
-        working-directory: ./e2e
+        working-directory: ./testing
         run: npx playwright install chromium # only uses chromium for tests (CURRENTLY)
       
       - name: Run smoke tests
-        working-directory: ./e2e/smoke-test
+        working-directory: ./testing/smoke-test
         run: npx playwright test
+      
+      - name: Run Backend Integration Tests
+        working-directory: ./backend
+        run: npm run integ-test
+
+      - name: Run Frontend Integration Tests
+        working-directory: ./frontend
+        run: npm run integ-test
       
       - name: Cleanup
         if: always()
