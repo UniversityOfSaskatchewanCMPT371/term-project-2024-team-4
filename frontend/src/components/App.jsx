@@ -2,7 +2,7 @@ import { UserContextProvider } from "../context/userContext";
 import { Route, Routes } from "react-router-dom";
 import Home from "./Home";
 import axios from "axios";
-import StatisticsPage from "./statisticsPage";
+import StatisticsPage from "./StatisticsPage";
 
 axios.defaults.baseURL = "http://localhost:8080";
 axios.defaults.withCredentials = true;

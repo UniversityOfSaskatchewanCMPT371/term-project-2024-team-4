@@ -1,7 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import logger from "../logger.js";
-import axios from "axios";
-import Sidebar from "./Sidebar";
+// import axios from "axios";
+import Sidebar from "./Sidebar.jsx";
+// import {
+// 	aggregateSiteStatistics,
+// 	aggregateCatalogueStatistics,
+// 	aggregatePointTypeStatistics,
+// } from "../../../backend/controllers/aggregateStatisticsController.js";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
@@ -9,28 +14,31 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
+import Button from "@mui/material/Button";
+// import List from "@mui/material/List";
+// import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
-import PropTypes from "prop-types";
+// import PropTypes from "prop-types";
 import Box from "@mui/material/Box";
-import TableBody from "@mui/material/TableBody";
+// import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
+// import TableSortLabel from "@mui/material/TableSortLabel";
+// import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
+// import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
+// import IconButton from "@mui/material/IconButton";
+// import Tooltip from "@mui/material/Tooltip";
 import FormControl from "@mui/material/FormControl";
-import { styled } from "@mui/material/styles";
+// import { styled } from "@mui/material/styles";
 
 function StatisticsPage() {
 	const [checked, setChecked] = useState(false);
+	const [sortValue, setSortValue] = useState("newest");
+	const [filterValue, setFilterValue] = useState("");
 
 	//Holds all the information for the header rows of the table
 	const tableHeads = [
@@ -70,6 +78,14 @@ function StatisticsPage() {
 		setChecked(event.target.checked);
 	};
 
+	const handleSortChange = (event) => {
+		setSortValue(event.target.value);
+	};
+
+	const handleFilterChange = (event) => {
+		setFilterValue(event.target.value);
+	};
+
 	return (
 		<>
 			<Box sx={{ display: "flex" }}>
@@ -94,6 +110,7 @@ function StatisticsPage() {
 								label="Search"
 								variant="standard"
 							/>
+							<Button variant="contained">Generate Statistics</Button>
 						</Grid>
 						<Grid item xs={12}>
 							<Divider />
@@ -107,11 +124,14 @@ function StatisticsPage() {
 									labelId="demo-simple-select-standard-label"
 									id="demo-simple-select-standard"
 									label="Sort"
+									onChange={handleSortChange}
 								>
-									<MenuItem value="">
+									<MenuItem value="" Name="sorts">
 										<em>None</em>
 									</MenuItem>
-									<MenuItem value={1}>Name</MenuItem>
+									<MenuItem value={1} Name="sorts">
+										Name
+									</MenuItem>
 									<MenuItem value={2}>Type</MenuItem>
 								</Select>
 							</FormControl>
@@ -126,6 +146,7 @@ function StatisticsPage() {
 									labelId="demo-simple-select-standard-label"
 									id="demo-simple-select-standard"
 									label="Filter"
+									onChange={handleFilterChange}
 								>
 									<MenuItem value="">
 										<em>None</em>
