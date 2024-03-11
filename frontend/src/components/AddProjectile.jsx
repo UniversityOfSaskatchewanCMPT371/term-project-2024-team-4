@@ -23,13 +23,11 @@ const AddProjectile = ({setOpen}) => {
 	const [selectedType, setSelectedType] = useState("");
 	const [currentProjectiles, setCurrentProjectiles] = useState([]); 
 
-	// I'm not sure if what this 'some' is used for | Jorden
-	// const locationx = useLocation();
-	// const { some } = locationx.state;
 
-	//console.log(some.id);
+	const inComingSiteInfo = useLocation();
 
-	const PlaceholderText = "Add Information";
+
+	// const PlaceholderText = "Add Information";
 	const handleClose = () => {
 		setOpen(false);
 	};
@@ -44,7 +42,6 @@ const AddProjectile = ({setOpen}) => {
 	}, [dimension, name, location, selectedType]);
 
 	const handleClicks = () => {
-		//This gets the Projectiles from the database to be shown on screen
 
 		
 		fetch("http://localhost:3000/sites")
@@ -76,6 +73,7 @@ const AddProjectile = ({setOpen}) => {
 	};
 
 	const handleSubmit = () => {
+		log.info("Adding new projectile");
 		const newArtifacts = {
 			name,
 			location,
@@ -94,6 +92,7 @@ const AddProjectile = ({setOpen}) => {
 			.catch((error) => {
 				console.error("Error adding new site:", error);
 			});
+		handleClose();
 	};
 
 	return (
@@ -101,13 +100,12 @@ const AddProjectile = ({setOpen}) => {
 			<Dialog	
 				open={true}
 				onClose={handleClose}
-				//maxWidth="md" //The size that Jeffery used
-				maxWidth="lg"
+				maxWidth="lg" // 
 				fullWidth
 				PaperProps={{style: {maxHeight: "80vh"}}}
 			>
 
-				<DialogTitle>Add Projectile</DialogTitle>
+				<DialogTitle>Add Projectile to site {inComingSiteInfo.state.info.name}</DialogTitle>
 				<Box container spacing={5} style={{ marginLeft: 100, marginTop: 2 }}>
 				<Grid container spacing={5} marginTop={5}>
 				<Grid>
@@ -139,6 +137,7 @@ const AddProjectile = ({setOpen}) => {
 							onChange={handleNameChange}
 						/>
 					</Box>
+					{/*This should removed, as the location is attached to the site*/}
 					<Box marginBottom={10} width={350}>
 						<TextField
 							margin="dense"
@@ -149,6 +148,9 @@ const AddProjectile = ({setOpen}) => {
 							onChange={handleLocationChange}
 						/>
 					</Box>
+					{/* The dimenisons should be three different fields(legnth, width, height and )
+						if you are making this change, make sure the database was changed to hold a list of
+						float/double and not a string*/}
 					<Box marginBottom={10} width={350}>
 						<TextField
 							margin="dense"
@@ -159,6 +161,7 @@ const AddProjectile = ({setOpen}) => {
 							onChange={handleDimensionChange}
 						/>
 					</Box>
+					{/*Should be renamed(maybe just drop the ID?)  also, Menu items will need to be dynamic at some point*/}
 					<Box marginBottom={10} width={350}>
 						<TextField
 							id="artifactTypeID"
@@ -185,10 +188,10 @@ const AddProjectile = ({setOpen}) => {
 					sx={{ marginRight: 2 }}
 					onClick={handleSubmit}
 				>
-					<Link to="/sites">Submit</Link>
+					Submit
 				</Button>
-				<Button variant="contained" color="secondary">
-					<Link to="/sites">Cancel</Link>
+				<Button variant="contained" color="secondary" onClick={handleClose}>
+					Close
 				</Button>
 			</Grid>
 		</Box>

@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
-import CreateNewSite from "./components/CreateNewSite";
+import CreateNewSite from "../components/CreateNewSite";
 
 jest.mock("axios");
 

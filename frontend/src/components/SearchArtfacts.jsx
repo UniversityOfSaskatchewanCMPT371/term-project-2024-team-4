@@ -11,11 +11,13 @@ import {
 	Typography,
 	Box,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import { useLocation } from "react-router-dom";
 
-export default function SearchResult({ query }) {
+export default function SearchResult(query) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
-
+	const inComingSiteInfo = useLocation();
 	//Used for opening the create new artifact page
 	const createArtifactClick = () => {
 	  setOpen(true);
@@ -37,6 +39,7 @@ export default function SearchResult({ query }) {
 			.then((response) => response.json())
 			.then((json) => setData(json))
 			.catch((error) => console.error("Error fetching data:", error));
+;
 	}, []);
 
 	//Filter data based on search query (mock)
@@ -54,6 +57,7 @@ export default function SearchResult({ query }) {
 							<ButtonBase onClick={createArtifactClick}>
 								<Card>
 									<CardContent style={{ textAlign: "center" }}>
+										<AddIcon style={{fontSize: 80, color:"lightgrey"}}/>
 										{/*<AddProjectile style={{ fontSize: 80, color: "lightgrey" }} />*/}
 									</CardContent>
 								</Card>

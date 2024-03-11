@@ -20,6 +20,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import EditRegion from "./EditRegion";
+import Catalogue1 from "./Catalogue1";
 
 // eslint-disable-next-line react/prop-types
 const CreateNewSite = ({ setOpen }) => {
@@ -35,6 +36,7 @@ const CreateNewSite = ({ setOpen }) => {
 
 	const handleClose = () => {
 		setOpen(false);
+		Catalogue1.refreshPage();
 	};
 
 	const handleAddmore = () => {

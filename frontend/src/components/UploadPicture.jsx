@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Paper, Typography } from "@mui/material";
 
+
+// When used this component will allow any file type, it should be modified to only allow images
 const FileUpload = () => {
 	const [uploadedFiles, setUploadedFiles] = useState([]);
 	const { getRootProps, getInputProps } = useDropzone({

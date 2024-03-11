@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import SearchSites from "./SearchSites";
+import SearchSiteResult from "./SearchSites";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
@@ -38,7 +38,9 @@ const Catalogue1 = (props) => {
 	};
 
 
-	//This function is here to refresh the page after a new site is added, 
+
+
+	//This function is here to refresh the page after a new site is added
 	const refreshPage = () => {
 		console.info("Catalogue1 page refreshed");
 		window.location.reload(); 
@@ -51,7 +53,7 @@ const Catalogue1 = (props) => {
 			<Grid item xs={12}>
 				<Grid>
 					<Typography variant="h4" gutterBottom>
-						{props.props}
+						{props.props/*As of March 9th, this is always null */}
 					</Typography>
 					<Typography variant="body1" gutterBottom>
 						This is a short description of Catalogue.
@@ -121,8 +123,8 @@ const Catalogue1 = (props) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				{/* Note: this 'SearchSites' here shows all the sites attached to the catalogue aka the search results, oldest first(as of March 9th, 2023) */}
-				<SearchSites query={searchValue} />
+				{/* Note: this shows all the sites attached to the catalogue oldest first(as of March 9th, 2023) */}
+				<SearchSiteResult query={searchValue} />
 			</Grid>
 		</Box>
 	);

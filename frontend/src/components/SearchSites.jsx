@@ -14,21 +14,10 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-// Should this function be renamed to SearchSitesResults? | Jorden
-export default function SearchResult({ query }) {
+// Renamed this from SearchResults because two files exported that name,  | Jorden
+export default function SearchSiteResult({ query }) { 
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
-	// infoToSendDicionary = null;
-
-	// Used to pass the data to the next page
-	// const makeDataPackage = (DataItem) => {
-	// 	infoToSendDicionary = {
-	// 		id: DataItem.id,
-	// 		name: DataItem.name,
-	// 		location: DataItem.location,
-
-	// 	};
-	// }
 
 	// the action to take when the new site button is pressed
 	const handleClick1 = () => {
@@ -40,8 +29,8 @@ export default function SearchResult({ query }) {
 	const handleClick2 = (item) => () => {
 		// event handler
 		console.log("Card clicked! ID:", item.id);
-		makeDataPackage(item)
-		Catalogue1.refreshPage(); // Tell the Catalogue1 to refresh
+		
+		//Catalogue1.refreshPage(); // Tell the Catalogue1 to refresh
 		
 		
 	};
@@ -80,7 +69,7 @@ export default function SearchResult({ query }) {
 										{/* <Link to={"/addnewprojectile"} state={{key}}> */}
 
 										{/*<Link to="/addnewprojectile" state={{ some: item }}>*/ /*This is the original line of code, if things don't work add it back*/}
-										<Link to="/Sites" state={{temp: item}}>{/**/}
+										<Link to="/sites" state={{info : item}}>
 											<Card>
 												<CardContent>
 													<Typography variant="h5" component="h3">

@@ -9,34 +9,44 @@ import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Sidebar from "./Sidebar";
 import { Box } from "@mui/material";
+import { Link, useLocation} from "react-router-dom";
+
 
 const Site = (props) => {
-	if(props!=null){console.log("HERRERERR");}
 
 	const [searchValue, setSearchValue] = useState("");
 	const [sortValue, setSortValue] = useState("newest");
 	const [filterValue, setFilterValue] = useState("");
-	const inComingInfo = props;
-
+	
+	//This has all the information about the site that was clicked on in the catalogue
+	// which are name, location and id
+	// Need to use 'inComingInfo.state.info.<item>' to get a value out of this
+	const inComingInfo = useLocation();	
+	
 	const handleSearch = (event) => {
 		setSearchValue(event.target.value);
 	};
 
 	useEffect(() => {
-		console.log(props.props);
+		console.log(inComingInfo.state.name);
 		
+		//Not sure what this is for, because this file should only be used for sites, right? | Jorden
 		if (props.props === "catalogue") {
 			console.log("Searching Catalogue for:", searchValue);
 		} else if (props.props === "site") {
 			console.log("Searching Site for:", searchValue);
 		}
+
 		// This is a test to see if the props are being passed correctly
 		if (inComingInfo != null) {
-			console.log(inComingInfo.id);
+			//console.log(locationx.state);
+			//console.log(locationx.state.name);
+			console.log(inComingInfo.state.info.name);
 		}
 		else {
 			console.log(false);
 		}
+
 	}, [searchValue, props.props]);
 
 	const handleSortChange = (event) => {
@@ -47,15 +57,15 @@ const Site = (props) => {
 		setFilterValue(event.target.value);
 	};
 
-
 	//Used to refresh the page after a new artifact is added
 	const refreshPage = () => {
 		console.info("Site page refreshed");
 		window.location.reload();
 
-
 	};
-
+	const sendInfo = () => {
+		return inComingInfo.state.info;
+	}
 
 	return (
 		<Box marginLeft={40} marginTop={5} container spacing={5}>
@@ -69,7 +79,7 @@ const Site = (props) => {
 					<Typography variant="body1" gutterBottom>
 						This is a short description of Sites.
 					</Typography>
-					<Typography>The name is {props.id}</Typography>{/*Used as a test to see the current Site, if you can read this please remove this line*/}
+					<Typography>The site name is {inComingInfo.state.info.name}</Typography>{/*Used as a test to see the current Site, if you can read this please remove this line*/}
 				</Grid>
 				{/*Search bar*/}
 				<Grid container spacing={2}>
@@ -133,7 +143,7 @@ const Site = (props) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				<SearchResult query={searchValue} />
+				{<SearchResult query={searchValue}/>}
 			</Grid>
 		</Box>
 	);

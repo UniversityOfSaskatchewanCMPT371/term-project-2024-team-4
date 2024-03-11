@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import { render, fireEvent } from "@testing-library/react";
-import Catalogue1 from "./components/Catalogue1";
+import Catalogue1 from "../components/Catalogue1";
 
 describe("Catalogue1 component", () => {
 	test("renders Catalogue1 component with correct initial values", () => {
