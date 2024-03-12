@@ -59,7 +59,7 @@ jobs:
           echo "DB_USER=test-user" >> $GITHUB_ENV
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
-          echo "JWT_SECRET="1234abc" >> $GITHUB_ENV
+          echo "JWT_SECRET=1234abc" >> $GITHUB_ENV
 
       - name: Build & Check if Backend Runs
         working-directory: ./backend
@@ -163,7 +163,7 @@ jobs:
           echo "DB_USER=test-user" >> $GITHUB_ENV
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
-          echo "JWT_SECRET="1234abc" >> $GITHUB_ENV
+          echo "JWT_SECRET=1234abc" >> $GITHUB_ENV
       
       - name: Install Frontend Dependencies
         working-directory: ./frontend
