@@ -56,7 +56,7 @@ const CreateNewSite = ({ setOpen }) => {
 	const handleDescriptionChange = (e) => {
 		const name = e.target.value;
 		axios
-			// Gets the regions from the database  
+			// Gets the regions from the database
 			.get("http://localhost:3000/regions")
 			.then((response) => {
 				const filteredRegion = response.data.find(
@@ -157,7 +157,7 @@ const CreateNewSite = ({ setOpen }) => {
 			<Dialog
 				open={true}
 				onClose={handleClose}
-				maxWidth="md"
+				maxWidth="sm"
 				fullWidth
 				PaperProps={{ style: { maxHeight: "80vh" } }}
 			>
@@ -183,11 +183,7 @@ const CreateNewSite = ({ setOpen }) => {
 						onChange={handleDescription}
 					/>
 
-					<Grid
-						container
-						spacing={2}
-						style={{ marginTop: 10, height: "100pt" }}
-					>
+					<Grid container spacing={2} sx={{ paddingTop: 0 }}>
 						<Grid item xs={6}>
 							<TextField
 								margin="dense"

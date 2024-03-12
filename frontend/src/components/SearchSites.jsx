@@ -15,7 +15,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 
 // Renamed this from SearchResults because two files exported that name,  | Jorden
-export default function SearchSiteResult({ query }) { 
+export default function SearchSiteResult({ query }) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
 
@@ -23,16 +23,13 @@ export default function SearchSiteResult({ query }) {
 	const handleClick1 = () => {
 		setOpen(true);
 		console.log("Add card clicked!");
-		
 	};
-	// The action to take when an already existing site is clicked on 
+	// The action to take when an already existing site is clicked on
 	const handleClick2 = (item) => () => {
 		// event handler
 		console.log("Card clicked! ID:", item.id);
-		
+
 		//Catalogue1.refreshPage(); // Tell the Catalogue1 to refresh
-		
-		
 	};
 
 	useEffect(() => {
@@ -68,8 +65,9 @@ export default function SearchSiteResult({ query }) {
 									<ButtonBase onClick={handleClick2(item)}>
 										{/* <Link to={"/addnewprojectile"} state={{key}}> */}
 
-										{/*<Link to="/addnewprojectile" state={{ some: item }}>*/ /*This is the original line of code, if things don't work add it back*/}
-										<Link to="/sites" state={{info : item}}>
+										{/*<Link to="/addnewprojectile" state={{ some: item }}>*/
+										/*This is the original line of code, if things don't work add it back*/}
+										<Link to="/sites" state={{ info: item }}>
 											<Card>
 												<CardContent>
 													<Typography variant="h5" component="h3">

@@ -37,15 +37,11 @@ const Catalogue1 = (props) => {
 		setFilterValue(event.target.value);
 	};
 
-
-
-
 	//This function is here to refresh the page after a new site is added
 	const refreshPage = () => {
 		console.info("Catalogue1 page refreshed");
-		window.location.reload(); 
+		window.location.reload();
 	};
-
 
 	return (
 		<Box marginLeft={40} marginTop={5} container spacing={5}>
@@ -53,7 +49,7 @@ const Catalogue1 = (props) => {
 			<Grid item xs={12}>
 				<Grid>
 					<Typography variant="h4" gutterBottom>
-						{props.props/*As of March 9th, this is always null */}
+						{props.props /*As of March 9th, this is always null */}
 					</Typography>
 					<Typography variant="body1" gutterBottom>
 						This is a short description of Catalogue.
