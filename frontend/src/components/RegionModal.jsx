@@ -3,7 +3,7 @@ import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
 
-export default function EditRegion({
+export default function RegionModal({
 	setEditRegion,
 	selectedRegion,
 	selectedDescription,

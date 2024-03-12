@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
-import CreateSite from "./CreateSite";
+import SiteModal from "./SiteModal";
 import { Link } from "react-router-dom";
 import {
 	Grid,
@@ -86,7 +86,7 @@ export default function SiteList({ query }) {
 					</Grid>
 				</Box>
 			</Grid>
-			<Typography>{open && <CreateSite setOpen={setOpen} />}</Typography>
+			<Typography>{open && <SiteModal setOpen={setOpen} />}</Typography>
 		</div>
 	);
 }

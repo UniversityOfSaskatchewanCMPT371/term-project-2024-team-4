@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import TextField from "@mui/material/TextField";
 import IconButton from "@mui/material/IconButton";
 import SearchIcon from "@mui/icons-material/Search";
-import ArtifactList from "./ArtifactList";
+import ProjectiletList from "./ProjectileList";
 import Typography from "@mui/material/Typography";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
@@ -141,7 +141,7 @@ const Site = (props) => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				{<ArtifactList query={searchValue} />}
+				{<ProjectiletList query={searchValue} />}
 			</Grid>
 		</Grid>
 	);

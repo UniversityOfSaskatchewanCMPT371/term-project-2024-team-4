@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import Site from "./Site";
-import CreateArtifact from "./CreateArtifact";
+import ProjectileModal from "./ProjectileModal";
 import { useState, useEffect } from "react";
 import {
 	Grid,
@@ -14,7 +14,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from "react-router-dom";
 
-export default function SearchResult(query) {
+export default function ProjectileList(query) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
 	const inComingSiteInfo = useLocation();
@@ -81,7 +81,7 @@ export default function SearchResult(query) {
 					</Grid>
 				</Box>
 			</Grid>
-			<Typography>{open && <CreateArtifact setOpen={setOpen} />}</Typography>
+			<Typography>{open && <ProjectileModal setOpen={setOpen} />}</Typography>
 		</div>
 	);
 }

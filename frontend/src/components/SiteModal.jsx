@@ -19,11 +19,11 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import EditRegion from "./EditRegion";
+import EditRegion from "./RegionModal";
 import Catalogue1 from "./Catalogue";
 
 // eslint-disable-next-line react/prop-types
-const CreateSite = ({ setOpen }) => {
+const SiteModal = ({ setOpen }) => {
 	const [name, setSiteName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
@@ -285,4 +285,4 @@ const CreateSite = ({ setOpen }) => {
 	);
 };
 
-export default CreateSite;
+export default SiteModal;
