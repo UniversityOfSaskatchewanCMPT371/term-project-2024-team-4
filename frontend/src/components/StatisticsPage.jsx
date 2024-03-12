@@ -2,6 +2,7 @@ import { useState } from "react";
 import logger from "../logger.js";
 // import axios from "axios";
 import Sidebar from "./Sidebar.jsx";
+import StatisticsModal from "./StatisticsModal.jsx";
 // import {
 // 	aggregateSiteStatistics,
 // 	aggregateCatalogueStatistics,
@@ -39,6 +40,7 @@ function StatisticsPage() {
 	const [checked, setChecked] = useState(false);
 	const [sortValue, setSortValue] = useState("newest");
 	const [filterValue, setFilterValue] = useState("");
+	const [modalOpen, setModalOpen] = useState(false);
 
 	//Holds all the information for the header rows of the table
 	const tableHeads = [
@@ -86,6 +88,14 @@ function StatisticsPage() {
 		setFilterValue(event.target.value);
 	};
 
+	const openModal = () => {
+		setModalOpen(true);
+	};
+
+	const closeModal = () => {
+		setModalOpen(false);
+	};
+
 	return (
 		<>
 			<Box sx={{ display: "flex" }}>
@@ -110,7 +120,9 @@ function StatisticsPage() {
 								label="Search"
 								variant="standard"
 							/>
-							<Button variant="contained">Generate Statistics</Button>
+							<Button variant="contained" onClick={openModal}>
+								Generate Statistics
+							</Button>
 						</Grid>
 						<Grid item xs={12}>
 							<Divider />
@@ -183,6 +195,7 @@ function StatisticsPage() {
 					</TableContainer>
 				</Box>
 			</Box>
+			<StatisticsModal modalOpen={modalOpen} closeModal={closeModal} />
 		</>
 	);
 }
