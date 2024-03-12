@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
 import axios from "axios";
+import { Link } from "react-router-dom";
 // MUI
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -118,14 +119,16 @@ function Sidebar() {
 					</Typography>
 				</Toolbar>
 				<SidebarList>
-					<ListItem key="Home" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<HomeIcon />
-							</SidebarIcon>
-							<ListItemText primary="Home" />
-						</ListItemButton>
-					</ListItem>
+					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+						<ListItem key="Home" disablePadding onClick={handleClick}>
+							<ListItemButton>
+								<SidebarIcon>
+									<HomeIcon />
+								</SidebarIcon>
+								<ListItemText primary="Home" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 					<ListItem key="Connect" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
