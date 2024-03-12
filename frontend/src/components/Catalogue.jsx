@@ -12,7 +12,7 @@ import {
 	MenuItem,
 } from "@mui/material";
 
-const Catalogue = (props) => {
+const Catalogue = () => {
 	const [catalogueName, setCatalogueName] = useState("");
 	const [catalogueDescription, setCatalogueDescription] = useState("");
 
@@ -38,19 +38,15 @@ const Catalogue = (props) => {
 		setSearchValue(event.target.value);
 	};
 
-	// this is what causes the site to show the newly added
-	// site without needing to reload the site
-	// do not move form this position or will not work
-	// weird, need to investigate -Babz
-	useEffect(() => {
-		console.log(props.props);
+	// useEffect(() => {
+	// 	console.log(props.props);
 
-		if (props.props === "catalogue") {
-			console.log("Searching Catalogue for:", searchValue);
-		} else if (props.props === "site") {
-			console.log("Searching Site for:", searchValue);
-		}
-	}, [searchValue, props.props]);
+	// 	if (props.props === "catalogue") {
+	// 		console.log("Searching Catalogue for:", searchValue);
+	// 	} else if (props.props === "site") {
+	// 		console.log("Searching Site for:", searchValue);
+	// 	}
+	// }, [searchValue, props.props]);
 
 	const handleSortChange = (event) => {
 		setSortValue(event.target.value);
