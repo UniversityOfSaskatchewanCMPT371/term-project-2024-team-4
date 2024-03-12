@@ -55,7 +55,7 @@ export default function RegionModal({
 
 	return (
 		<div>
-			<Dialog open={true} onClose={handleClose}>
+			<Dialog open={open} onClose={handleClose}>
 				<DialogContent>
 					<TextField
 						id="name"
@@ -66,7 +66,6 @@ export default function RegionModal({
 						onChange={(e) => setPeriodName(e.target.value)} // Handle change in name field
 						style={{ marginBottom: "15px" }}
 					/>
-					<br />
 					<TextField
 						id="startDate"
 						label="Start Date"
@@ -79,8 +78,6 @@ export default function RegionModal({
 						onChange={(e) => setStartDate(e.target.value)} // Handle change in description field
 						style={{ marginBottom: "15px" }}
 					/>
-					<br />
-
 					<TextField
 						id="endDate"
 						label="End Date"
@@ -93,8 +90,6 @@ export default function RegionModal({
 						onChange={(e) => setEndDate(e.target.value)} // Handle change in description field
 						style={{ marginBottom: "15px" }}
 					/>
-					<br />
-
 					<Button onClick={handleSave} variant="contained" color="primary">
 						Save
 					</Button>
