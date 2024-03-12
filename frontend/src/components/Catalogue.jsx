@@ -4,6 +4,7 @@ import SiteList from "./SiteList";
 import BaseLayout from "./BaseLayout";
 import axios from "axios";
 import SearchIcon from "@mui/icons-material/Search";
+import log from "../logger";
 import {
 	TextField,
 	IconButton,
@@ -27,7 +28,7 @@ const Catalogue = () => {
 				setCatalogueName(response.data.name);
 				setCatalogueDescription(response.data.description);
 			} catch (error) {
-				console.error("Error fetching catalogue:", error);
+				log.error("Error fetching catalogue:", error);
 			}
 		}
 
