@@ -76,8 +76,8 @@ const AddProjectile = ({ setOpen }) => {
 	// ------------ For state variables for editing cultures through the CultureModal ----------
 	const [cultures, setCultures] = useState([]);
 	const [selectedCulture, setSelectedCulture] = useState("");
-	const [editCulture, setEditCulture] = useState(false);
 	const [cultureModalOpen, setCultureModalOpen] = useState(false);
+	const [editCulture, setEditCulture] = useState(false);
 	const [selectedCultureID, setSelectedCultureID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
@@ -225,6 +225,70 @@ const AddProjectile = ({ setOpen }) => {
 	};
 	// ---------------- End of PeriodModal functions --------------------
 
+	// ---------------- Start of CultureModal functions --------------------
+
+	// This function fetches cultures when the component mounts. This ensures the dropdown for cultures is always up-to-date.
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/cultures")
+			.then((response) => {
+				setCultures(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching cultures:", error);
+			});
+	}, []);
+
+	// This function opens the CultureModal for editing an existing culture or adding a new one.
+	// If a cultureId is provided, the modal is configured for editing that culture.
+	// If no cultureId is provided, the modal is configured for adding a new culture.
+	const handleOpenCultureModal = (cultureId = null) => {
+		setSelectedCultureID(cultureId);
+		setEditCulture(true);
+		setCultureModalOpen(true);
+	};
+
+	// This function handles the selection of a culture from the dropdown menu.
+	// Also prepares to show options for editing or deleting the selected culture.
+	const handleOpenEditCultureMenu = (event, culture) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setSelectedCultureID(culture.id);
+	};
+
+	// This function the selectedCulture state when a user selects a different culture from the dropdown
+	const handleCultureChange = (event) => {
+		setSelectedCulture(event.target.value);
+	};
+
+	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
+	const updateCulturesList = (newCulture) => {
+		setCultures((prev) => {
+			const index = prev.findIndex((c) => c.id === newCulture.id);
+			if (index > -1) {
+				return prev.map((c) => (c.id === newCulture.id ? newCulture : c));
+			} else {
+				return [...prev, newCulture];
+			}
+		});
+	};
+	// This function handles delete a culture from the server and updates the local list.
+	const handleDeleteCulture = () => {
+		axios
+			.delete(`http://localhost:3000/cultures/${selectedCultureID}`)
+			.then(() => {
+				setCultures(
+					cultures.filter((culture) => culture.id !== selectedCultureID),
+				);
+				handleCloseMenu();
+			})
+			.catch((error) => {
+				console.error("Error deleting culture:", error);
+				handleCloseMenu();
+			});
+	};
+	// ---------------- End of CultureModal functions --------------------
+
 	return (
 		<div>
 			<Dialog
@@ -258,7 +322,7 @@ const AddProjectile = ({ setOpen }) => {
 								value={description}
 								onChange={handleDescriptionChange}
 							/>
-							{/* ------------ EDIT REGION ------------- */}
+							{/* ------------ Start of PeriodModal ------------- */}
 							<TextField
 								select
 								label="Period"
@@ -268,12 +332,15 @@ const AddProjectile = ({ setOpen }) => {
 								margin="dense"
 							>
 								{periods.map((period) => (
-									<MenuItem
-										key={period.id}
-										value={period.name}
-										onClick={(event) => handleOpenMenu(event, period)}
-									>
+									<MenuItem key={period.id} value={period.name}>
 										{period.name}
+										<IconButton
+											size="small"
+											onClick={(event) => handleOpenMenu(event, period)}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
 									</MenuItem>
 								))}
 								<MenuItem onClick={() => handleOpenPeriodModal()}>
@@ -281,7 +348,7 @@ const AddProjectile = ({ setOpen }) => {
 								</MenuItem>
 							</TextField>
 							<Menu
-								id="simple-menu"
+								id="period-menu"
 								anchorEl={anchorEl}
 								keepMounted
 								open={Boolean(anchorEl)}
@@ -299,8 +366,63 @@ const AddProjectile = ({ setOpen }) => {
 									<DeleteIcon fontSize="small" /> Delete
 								</MenuItem>
 							</Menu>
+							{/* ------------ End of PeriodModal  ------------- */}
+							{/* ------------ Start of CultureModal  ------------- */}
+							<TextField
+								select
+								label="Culture"
+								value={selectedCulture}
+								onChange={handleCultureChange}
+								fullWidth
+								margin="dense"
+							>
+								{cultures.map((culture) => (
+									<MenuItem key={culture.id} value={culture.name}>
+										{culture.name}
+										<IconButton
+											size="small"
+											onClick={(event) =>
+												handleOpenEditCultureMenu(event, culture)
+											}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
 
-							{/* ------------ EDIT REGION ------------- */}
+								<MenuItem onClick={() => handleOpenCultureModal()}>
+									+ Add New Culture
+								</MenuItem>
+								<Menu
+									id="culture-menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={() => {
+										setAnchorEl(null);
+									}}
+								>
+									<MenuItem
+										onClick={() => {
+											setEditCulture(true);
+											setCultureModalOpen(true);
+											setAnchorEl(null);
+										}}
+									>
+										<EditIcon fontSize="small" /> Edit
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											handleDeleteCulture();
+											setAnchorEl(null);
+										}}
+									>
+										<DeleteIcon fontSize="small" /> Delete
+									</MenuItem>
+								</Menu>
+							</TextField>
+							{/* ------------ End of CultureModal  ------------- */}
 						</Grid>
 						<Grid item xs={6}>
 							{/*This should removed, as the location is attached to the site*/}
@@ -379,6 +501,17 @@ const AddProjectile = ({ setOpen }) => {
 					updatePeriodsList={updatePeriodsList}
 					periodModalOpen={periodModalOpen}
 					setPeriodModalOpen={setPeriodModalOpen}
+				/>
+			)}
+			{editCulture && (
+				<CultureModal
+					setEditCulture={setEditCulture}
+					selectedCulture={selectedCulture}
+					selectedCultureID={selectedCultureID}
+					updateCulturesList={updateCulturesList}
+					periods={periods}
+					cultureModalOpen={cultureModalOpen}
+					setCultureModalOpen={setCultureModalOpen}
 				/>
 			)}
 		</div>
