@@ -26,7 +26,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // import { EditIcon, DeleteIcon, MoreHorizIcon } from "@mui/icons-material";
 import log from "../logger.js";
 
-import PeriodModal from "./PeriodModal.jsx"; // Rename as required
+import PeriodModal from "./PeriodModal.jsx";
+import CultureModal from "./CultureModal.jsx";
 
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({ setOpen }) => {
@@ -70,6 +71,14 @@ const AddProjectile = ({ setOpen }) => {
 	const [editPeriod, setEditPeriod] = useState(false);
 	const [periodModalOpen, setPeriodModalOpen] = useState(false);
 	const [selectedPeriodID, setSelectedPeriodID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ------------ For state variables for editing cultures through the CultureModal ----------
+	const [cultures, setCultures] = useState([]);
+	const [selectedCulture, setSelectedCulture] = useState("");
+	const [editCulture, setEditCulture] = useState(false);
+	const [cultureModalOpen, setCultureModalOpen] = useState(false);
+	const [selectedCultureID, setSelectedCultureID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
 	const [currentProjectiles, setCurrentProjectiles] = useState([]);
@@ -204,7 +213,6 @@ const AddProjectile = ({ setOpen }) => {
 				});
 		}
 	};
-	// ------------------------------------------------
 
 	const handlePeriodChange = (event) => {
 		setSelectedPeriod(event.target.value);
@@ -215,6 +223,7 @@ const AddProjectile = ({ setOpen }) => {
 		setEditPeriod(true);
 		setPeriodModalOpen(true);
 	};
+	// ---------------- End of PeriodModal functions --------------------
 
 	return (
 		<div>
