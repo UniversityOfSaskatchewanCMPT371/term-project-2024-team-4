@@ -27,12 +27,13 @@ const Site = () => {
 	// which are name, location and id
 	// Need to use 'inComingInfo.state.info.<item>' to get a value out of this
 	const inComingInfo = useLocation();
+	const siteID = inComingInfo.state.info.id;
 
 	useEffect(() => {
 		async function fetchSite() {
 			try {
 				const response = await axios.get(
-					"http://localhost:3000/sites/${inComingInfo.state.info.id}",
+					`http://localhost:3000/sites/${siteID}`,
 				);
 				setSiteName(response.data.name);
 				setSiteDescription(response.data.description);
@@ -157,10 +158,7 @@ const Site = () => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				<ProjectileList
-					query={searchValue}
-					siteId={inComingInfo.state.info.id}
-				/>
+				<ProjectileList query={searchValue} siteId={siteID} />
 			</Grid>
 		</BaseLayout>
 	);
