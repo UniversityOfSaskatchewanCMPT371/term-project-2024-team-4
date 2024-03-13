@@ -1,8 +1,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
+import axios from "axios";
 import ProjectileModal from "./ProjectileModal";
 import Projectile from "./Projectile";
+import log from "../logger.js";
 import {
 	Grid,
 	Card,
@@ -37,12 +39,19 @@ export default function ProjectileList({ query, siteId }) {
 	};
 
 	useEffect(() => {
-		// Fetch data from JSON server on component mount
-		fetch("http://localhost:3000/projectilePoints")
-			.then((response) => response.json())
-			.then((json) => setData(json))
-			.catch((error) => console.error("Error fetching data:", error));
-	}, [open]);
+		async function fetchSites() {
+			try {
+				const response = await axios.get(
+					"http://localhost:3000/projectilePoints",
+				);
+				setData(response.data);
+			} catch (error) {
+				log.error("Error fetching sites:", error);
+			}
+		}
+
+		fetchSites();
+	}, []);
 
 	const siteData = data?.filter((item) => item.site.id == siteId);
 
