@@ -31,6 +31,7 @@ import CultureModal from "./CultureModal.jsx";
 import BaseShapeModal from "./BaseShapeModal.jsx";
 import CrossSectionModal from "./CrossSectionModal.jsx";
 import BladeShapeModal from "./BladeShapeModal.jsx";
+import HaftingShapeModal from "./HaftingShapeModal.jsx";
 
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({ setOpen }) => {
@@ -92,7 +93,7 @@ const AddProjectile = ({ setOpen }) => {
 	const [selectedBaseShapeID, setSelectedBaseShapeID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
-	// ---------- For state variables for editing rossSections through the BaseShapeModal --------
+	// ---------- For state variables for editing CrossSections through the CrossSectionModal --------
 	const [crossSections, setCrossSections] = useState([]);
 	const [selectedCrossSection, setSelectedCrossSection] = useState("");
 	const [crossSectionModalOpen, setCrossSectionModalOpen] = useState(false);
@@ -100,12 +101,20 @@ const AddProjectile = ({ setOpen }) => {
 	const [selectedCrossSectionID, setSelectedCrossSectionID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
-	// ---------- For state variables for editing BladeShapes through the BaseShapeModal --------
+	// ---------- For state variables for editing BladeShapes through the BladeShapeModal --------
 	const [bladeShapes, setBladeShapes] = useState([]);
 	const [selectedBladeShape, setSelectedBladeShape] = useState("");
 	const [bladeShapeModalOpen, setBladeShapeModalOpen] = useState(false);
 	const [editBladeShape, setEditBladeShape] = useState(false);
 	const [selectedBladeShapeID, setSelectedBladeShapeID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ---------- For state variables for editing HaftingShapes through the HaftinfShapeModal --------
+	const [haftingShapes, setHaftingShapes] = useState([]);
+	const [selectedHaftingShape, setSelectedHaftingShape] = useState("");
+	const [haftingShapeModalOpen, setHaftingShapeModalOpen] = useState(false);
+	const [editHaftingShape, setEditHaftingShape] = useState(false);
+	const [selectedHaftingShapeID, setSelectedHaftingShapeID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
 	const [currentProjectiles, setCurrentProjectiles] = useState([]);
@@ -514,6 +523,72 @@ const AddProjectile = ({ setOpen }) => {
 	};
 
 	// ----------------- End of BladeShapeModal functions ---------------------
+
+	// ---------------- Start of HaftingShapeModal functions --------------------
+	// This function fetches all hafting shapes from the server and updates the local state on mount.
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/haftingShapes")
+			.then((response) => {
+				setHaftingShapes(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching hafting shapes:", error);
+			});
+	}, []);
+
+	// This function opens the HaftingShapeModal for editing an existing hafting shape or adding a new one.
+	const handleOpenHaftingShapeModal = (haftingShapeID = null) => {
+		setSelectedHaftingShapeID(haftingShapeID);
+		setEditHaftingShape(true);
+		setHaftingShapeModalOpen(true);
+	};
+
+	// This function handles the selection of a hafting shape for editing.
+	const handleEditHaftingShape = (event, haftingShape) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setSelectedHaftingShapeID(haftingShape.id);
+	};
+
+	// This function updates the local list of hafting shapes after adding or editing a hafting shape.
+	// If the hafting shape already exists in the list, it's updated.
+	// Otherwise, the new hafting shape is added to the list.
+	const updateHaftingShapeList = (newHaftingShape) => {
+		setHaftingShapes((prevHaftingShapes) => {
+			const index = prevHaftingShapes.findIndex(
+				(shape) => shape.id === newHaftingShape.id,
+			);
+			if (index > -1) {
+				const updatedHaftingShape = [...prevHaftingShapes];
+				updateHaftingShapeList[index] = newHaftingShape;
+				return updatedHaftingShape;
+			} else {
+				return [...prevHaftingShapes, newHaftingShape];
+			}
+		});
+	};
+
+	// This function handles delete a hafting shape from the server and updates the local list.
+	const handleDeleteHaftingShape = () => {
+		axios
+			.delete(`http://localhost:3000/haftingShapes/${selectedHaftingShapeID}`)
+			.then(() => {
+				setHaftingShapes(
+					haftingShapes.filter((shape) => shape.id !== selectedHaftingShapeID),
+				);
+				setHaftingShapeModalOpen(false);
+			})
+			.catch((error) => {
+				console.error("Error deleting hafting shape:", error);
+			});
+	};
+
+	const handleHaftingShapeChange = (event) => {
+		setSelectedHaftingShape(event.target.value);
+	};
+
+	// ----------------- End of HaftingShapeModalfunctions ---------------------
 	return (
 		<div>
 			<Dialog
@@ -812,6 +887,60 @@ const AddProjectile = ({ setOpen }) => {
 								</Menu>
 							</TextField>
 							{/* ------------ End of BladeShapeModal  ------------- */}
+							{/* ------------ Start of HaftingShapeModal  ------------- */}
+							<TextField
+								select
+								label="Hafting Shape"
+								fullWidth
+								margin="dense"
+								value={selectedHaftingShape}
+								onChange={handleHaftingShapeChange}
+							>
+								{haftingShapes.map((shape) => (
+									<MenuItem key={shape.id} value={shape.name}>
+										{shape.name}
+										<IconButton
+											size="small"
+											onClick={(event) => handleEditHaftingShape(event, shape)}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
+								<MenuItem onClick={() => handleOpenHaftingShapeModal()}>
+									+ Add New Hafting Shape
+								</MenuItem>
+
+								<Menu
+									id="hafting-shape-menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={() => {
+										setAnchorEl(null);
+									}}
+								>
+									<MenuItem
+										onClick={() => {
+											setEditHaftingShape(true);
+											setHaftingShapeModalOpen(true);
+											setAnchorEl(null);
+										}}
+									>
+										<EditIcon fontSize="small" /> Edit
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											handleDeleteHaftingShape();
+											setAnchorEl(null);
+										}}
+									>
+										<DeleteIcon fontSize="small" /> Delete
+									</MenuItem>
+								</Menu>
+							</TextField>
+							{/* ------------ End of HaftingShapeModal  ------------- */}
 						</Grid>
 						<Grid item xs={6}>
 							{/*This should removed, as the location is attached to the site*/}
@@ -925,6 +1054,14 @@ const AddProjectile = ({ setOpen }) => {
 					selectedBladeShape={selectedBladeShape}
 					selectedBladeShapeID={selectedBladeShapeID}
 					updateBladeShapesList={updateBladeShapesList}
+				/>
+			)}
+			{editHaftingShape && (
+				<HaftingShapeModal
+					setEditHaftingShape={setEditHaftingShape}
+					selectedHaftingShape={selectedHaftingShape}
+					selectedHaftingShapeID={selectedHaftingShapeID}
+					updateHaftingShapeList={updateHaftingShapeList}
 				/>
 			)}
 		</div>

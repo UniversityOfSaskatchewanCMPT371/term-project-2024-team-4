@@ -2,52 +2,54 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import logger from "../logger";
 
-export default function RegionModal({
+export default function HaftingShapeModal({
 	setEditHaftingShape,
 	selectedHaftingShape,
 	selectedHaftingShapeID,
+	updateHaftingShapeList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
 	const [haftingShape, setHaftingShape] = useState(selectedHaftingShape);
 
+	/**
+	 * Handles the save action when the form is submitted.
+	 * Validates the form, updates the blade shape, and closes the modal.
+	 */
 	const handleSave = () => {
-		const updatedHaftingShape = {
-			haftingShape,
-		};
+		const haftingShapeData = { name: haftingShape };
 
-		if (selectedHaftingShape) {
-			axios
-				.put(
+		const apiCall = selectedHaftingShapeID
+			? axios.put(
 					`http://localhost:3000/haftingShapes/${selectedHaftingShapeID}`,
-					updatedHaftingShape,
+					haftingShapeData,
 				)
-				.then((response) => {
-					console.log("HaftingShape updated successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating HaftingShape:", error);
-				});
-		}
+			: axios.post("http://localhost:3000/haftingShapes", haftingShapeData);
 
-		setOpen(false); // Close the dialog
-		setEditHaftingShape(false);
-
-		if (!selectedHaftingShape) {
-			axios
-				.post("http://localhost:3000/haftingShapes", updatedHaftingShape)
-				.then((response) => {
-					console.log("HaftingShape created successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating HaftingShape:", error);
-				});
-		}
+		apiCall
+			.then((response) => {
+				logger.info(
+					`Hafting shape ${selectedHaftingShapeID ? "updated" : "created"} successfully: `,
+					response.data,
+				);
+				updateHaftingShapeList(response.data);
+				handleClose();
+			})
+			.catch((error) => {
+				logger.error("Error saving Hafting Shape: ", error);
+			});
 	};
 
+	/**
+	 * Closes the modal and resets the blade shape editing state.
+	 */
 	const handleClose = () => {
-		setOpen(false); // Close the dialog
-		setEditHaftingShape(false);
+		setOpen(false);
+		if (setEditHaftingShape) selectedHaftingShape(false);
+		logger.debug(
+			`HaftingShapeModal closed, mode: ${selectedHaftingShape ? "edit" : "add"}.`,
+		);
 	};
 
 	return (
