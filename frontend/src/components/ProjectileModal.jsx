@@ -28,6 +28,7 @@ import log from "../logger.js";
 
 import PeriodModal from "./PeriodModal.jsx";
 import CultureModal from "./CultureModal.jsx";
+import BaseShapeModal from "./BaseShapeModal.jsx";
 
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({ setOpen }) => {
@@ -79,6 +80,14 @@ const AddProjectile = ({ setOpen }) => {
 	const [cultureModalOpen, setCultureModalOpen] = useState(false);
 	const [editCulture, setEditCulture] = useState(false);
 	const [selectedCultureID, setSelectedCultureID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
+	const [baseShapes, setBaseShapes] = useState([]);
+	const [selectedBaseShape, setSelectedBaseShape] = useState("");
+	const [baseShapeModalOpen, setBaseShapeModalOpen] = useState(false);
+	const [editBaseShape, setEditBaseShape] = useState(false);
+	const [selectedBaseShapeID, setSelectedBaseShapeID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
 	const [currentProjectiles, setCurrentProjectiles] = useState([]);
@@ -289,6 +298,72 @@ const AddProjectile = ({ setOpen }) => {
 	};
 	// ---------------- End of CultureModal functions --------------------
 
+	// ---------------- Start of BaseShapeModal functions --------------------
+	// This function fetches all base shapes from the server and updates the local state on mount.
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/baseShapes")
+			.then((response) => {
+				setBaseShapes(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching base shapes:", error);
+			});
+	}, []);
+
+	// This function opens the BaseShapeModal for editing an existing base shape or adding a new one.
+	const handleOpenBaseShapeModal = (baseShapeId = null) => {
+		setSelectedBaseShapeID(baseShapeId);
+		setEditBaseShape(true);
+		setCultureModalOpen(true);
+	};
+
+	// This function handles the selection of a base shape for editing.
+	const handleEditBaseShape = (event, baseShape) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setSelectedBaseShapeID(baseShape.id);
+	};
+
+	// This function updates the local list of base shapes after adding or editing a base shape.
+	// If the base shape already exists in the list, it's updated.
+	// Otherwise, the new base shape is added to the list.
+	const updateBaseShapesList = (newBaseShape) => {
+		setBaseShapes((prevBaseShapes) => {
+			const index = prevBaseShapes.findIndex(
+				(shape) => shape.id === newBaseShape.id,
+			);
+			if (index > -1) {
+				const updatedBaseShapes = [...prevBaseShapes];
+				updatedBaseShapes[index] = newBaseShape;
+				return updatedBaseShapes;
+			} else {
+				return [...prevBaseShapes, newBaseShape];
+			}
+		});
+	};
+
+	// This function handles delete a base shape from the server and updates the local list.
+	const handleDeleteBaseShape = () => {
+		axios
+			.delete(`http://localhost:3000/baseShapes/${selectedBaseShapeID}`)
+			.then(() => {
+				setBaseShapes(
+					baseShapes.filter((shape) => shape.id !== selectedBaseShapeID),
+				);
+				setBaseShapeModalOpen(false);
+			})
+			.catch((error) => {
+				console.error("Error deleting base shape:", error);
+			});
+	};
+
+	const handleBaseShapeChange = (event) => {
+		setSelectedBaseShape(event.target.value);
+	};
+
+	// ----------------- End of BaseShapeModal functions ---------------------
+
 	return (
 		<div>
 			<Dialog
@@ -423,6 +498,60 @@ const AddProjectile = ({ setOpen }) => {
 								</Menu>
 							</TextField>
 							{/* ------------ End of CultureModal  ------------- */}
+							{/* ------------ Start of BaseShapeModal  ------------- */}
+							<TextField
+								select
+								label="Base Shape"
+								fullWidth
+								margin="dense"
+								value={selectedBaseShape}
+								onChange={handleBaseShapeChange}
+							>
+								{baseShapes.map((shape) => (
+									<MenuItem key={shape.id} value={shape.name}>
+										{shape.name}
+										<IconButton
+											size="small"
+											onClick={(event) => handleEditBaseShape(event, shape)}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
+								<MenuItem onClick={() => handleOpenBaseShapeModal()}>
+									+ Add New Base Shape
+								</MenuItem>
+
+								<Menu
+									id="base-shape-menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={() => {
+										setAnchorEl(null);
+									}}
+								>
+									<MenuItem
+										onClick={() => {
+											setEditBaseShape(true);
+											setBaseShapeModalOpen(true);
+											setAnchorEl(null);
+										}}
+									>
+										<EditIcon fontSize="small" /> Edit
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											handleDeleteBaseShape();
+											setAnchorEl(null);
+										}}
+									>
+										<DeleteIcon fontSize="small" /> Delete
+									</MenuItem>
+								</Menu>
+							</TextField>
+							{/* ------------ End of BaseShapeModal  ------------- */}
 						</Grid>
 						<Grid item xs={6}>
 							{/*This should removed, as the location is attached to the site*/}
@@ -512,6 +641,14 @@ const AddProjectile = ({ setOpen }) => {
 					periods={periods}
 					cultureModalOpen={cultureModalOpen}
 					setCultureModalOpen={setCultureModalOpen}
+				/>
+			)}
+			{editBaseShape && (
+				<BaseShapeModal
+					setEditBaseShape={setEditBaseShape}
+					selectedBaseShape={selectedBaseShape}
+					selectedBaseShapeID={selectedBaseShapeID}
+					updateBaseShapesList={updateBaseShapesList}
 				/>
 			)}
 		</div>

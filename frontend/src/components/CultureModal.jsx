@@ -9,11 +9,24 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import logger from "../logger";
+
 /**
- * A modal for creating or editing cultural associations.
- * This modal allows users to associate a culture with a specific period.
+ * Modal component for adding or editing cultures.
+ * Allows association of a culture with a specific period.
  *
- * @param {Object} props - Component props for managing culture state and ID.
+ * Pre-conditions:
+ * - `setEditCulture`: Function to update the editing state in the parent component.
+ * - `selectedCulture`: String representing the name of the culture being edited, if any.
+ * - `selectedCultureID`: ID of the culture being edited, null if adding a new culture.
+ * - `updateCulturesList`: Function to update the list of cultures in the parent component.
+ * - `periods`: Array of available periods for association.
+ *
+ * Post-conditions:
+ * - If a period is not selected, alerts the user and prevents form submission.
+ * - On successful submission, updates the culture list in the parent component.
+ * - Closes the modal upon successful submission or cancellation.
+ *
+ * @param {Object} props Component props including functions and state for managing culture data.
  */
 export default function CultureModal({
 	setEditCulture,
@@ -26,8 +39,10 @@ export default function CultureModal({
 	const [cultureName, setCultureName] = useState(selectedCulture || "");
 	const [selectedPeriodID, setSelectedPeriodID] = useState("");
 
-	// Handles the saving of culture
-	const handleSave = () => {
+	/**
+	 * Handles the save action when the form is submitted.
+	 * Validates the form, updates the culture, and closes the modal.
+	 */ const handleSave = () => {
 		logger.debug(
 			`Saving culture: ${cultureName} with period ID: ${selectedPeriodID}`,
 		);
@@ -64,8 +79,9 @@ export default function CultureModal({
 			});
 	};
 
-	// Close handlers
-	const handleClose = () => {
+	/**
+	 * Closes the modal and resets the culture editing state.
+	 */ const handleClose = () => {
 		setOpen(false);
 		setEditCulture(false);
 	};
