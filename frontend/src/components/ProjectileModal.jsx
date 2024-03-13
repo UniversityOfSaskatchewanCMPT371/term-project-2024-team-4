@@ -29,6 +29,7 @@ import log from "../logger.js";
 import PeriodModal from "./PeriodModal.jsx";
 import CultureModal from "./CultureModal.jsx";
 import BaseShapeModal from "./BaseShapeModal.jsx";
+import CrossSectionModal from "./CrossSectionModal.jsx";
 
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({ setOpen }) => {
@@ -88,6 +89,14 @@ const AddProjectile = ({ setOpen }) => {
 	const [baseShapeModalOpen, setBaseShapeModalOpen] = useState(false);
 	const [editBaseShape, setEditBaseShape] = useState(false);
 	const [selectedBaseShapeID, setSelectedBaseShapeID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
+	const [crossSections, setCrossSections] = useState([]);
+	const [selectedCrossSection, setSelectedCrossSection] = useState("");
+	const [crossSectionModalOpen, setCrossSectionModalOpen] = useState(false);
+	const [editCrossSection, setEditCrossSection] = useState(false);
+	const [selectedCrossSectionID, setSelectedCrossSectionID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
 	const [currentProjectiles, setCurrentProjectiles] = useState([]);
@@ -364,6 +373,73 @@ const AddProjectile = ({ setOpen }) => {
 
 	// ----------------- End of BaseShapeModal functions ---------------------
 
+	// ---------------- Start of CrossSectionModal functions --------------------
+	// This function fetches all cross sections from the server and updates the local state on mount.
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/crossSections")
+			.then((response) => {
+				setBaseShapes(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching cross sections:", error);
+			});
+	}, []);
+
+	// This function opens the CrossSectionModal for editing an existing cross sections or adding a new one.
+	const handleOpenCrossSectionModal = (crossSectionId = null) => {
+		setSelectedCrossSectionID(crossSectionId);
+		setEditCrossSection(true);
+		setCrossSectionModalOpen(true);
+	};
+
+	// This function handles the selection of a cross sections for editing.
+	const handleEditCrossSection = (event, crossSection) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setSelectedCrossSectionID(crossSection.id);
+	};
+
+	// This function updates the local list of cross sections after adding or editing a cross sections.
+	// If the cross sections already exists in the list, it's updated.
+	// Otherwise, the new cross sections is added to the list.
+	const updateCrossSectionList = (newCrossSection) => {
+		setCrossSections((prevCrossSection) => {
+			const index = prevCrossSection.findIndex(
+				(shape) => shape.id === newCrossSection.id,
+			);
+			if (index > -1) {
+				const updatedCrossSection = [...prevCrossSection];
+				updatedCrossSection[index] = newCrossSection;
+				return updatedCrossSection;
+			} else {
+				return [...prevCrossSection, newCrossSection];
+			}
+		});
+	};
+
+	// This function handles delete a base shape from the server and updates the local list.
+	const handleDeleteCrossSection = () => {
+		axios
+			.delete(`http://localhost:3000/crossSections/${selectedCrossSectionID}`)
+			.then(() => {
+				setCrossSections(
+					crossSections.filter(
+						(crossSect) => crossSect.id !== selectedCrossSectionID,
+					),
+				);
+				setCrossSectionModalOpen(false);
+			})
+			.catch((error) => {
+				console.error("Error deleting cross shape:", error);
+			});
+	};
+
+	const handleCrossSectionChange = (event) => {
+		setSelectedCrossSection(event.target.value);
+	};
+	// ---------------- End of CrossSectionModal functions ----------------------
+
 	return (
 		<div>
 			<Dialog
@@ -552,6 +628,62 @@ const AddProjectile = ({ setOpen }) => {
 								</Menu>
 							</TextField>
 							{/* ------------ End of BaseShapeModal  ------------- */}
+							{/* ------------ Start of CrossSectionModal  ------------- */}
+							<TextField
+								select
+								label="Cross Section"
+								fullWidth
+								margin="dense"
+								value={selectedCrossSection}
+								onChange={handleCrossSectionChange}
+							>
+								{crossSections.map((crossSect) => (
+									<MenuItem key={crossSect.id} value={crossSect.name}>
+										{crossSect.name}
+										<IconButton
+											size="small"
+											onClick={(event) =>
+												handleEditCrossSection(event, crossSect)
+											}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
+								<MenuItem onClick={() => handleOpenCrossSectionModal()}>
+									+ Add New Cross Section
+								</MenuItem>
+
+								<Menu
+									id="cross-section-menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={() => {
+										setAnchorEl(null);
+									}}
+								>
+									<MenuItem
+										onClick={() => {
+											setEditCrossSection(true);
+											setCrossSectionModalOpen(true);
+											setAnchorEl(null);
+										}}
+									>
+										<EditIcon fontSize="small" /> Edit
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											handleDeleteCrossSection();
+											setAnchorEl(null);
+										}}
+									>
+										<DeleteIcon fontSize="small" /> Delete
+									</MenuItem>
+								</Menu>
+							</TextField>
+							{/* ------------ End of CrossSectionModal  ------------- */}
 						</Grid>
 						<Grid item xs={6}>
 							{/*This should removed, as the location is attached to the site*/}
@@ -649,6 +781,14 @@ const AddProjectile = ({ setOpen }) => {
 					selectedBaseShape={selectedBaseShape}
 					selectedBaseShapeID={selectedBaseShapeID}
 					updateBaseShapesList={updateBaseShapesList}
+				/>
+			)}
+			{editCrossSection && (
+				<CrossSectionModal
+					setEditCrossSection={setEditCrossSection}
+					selectedCrossSection={selectedCrossSection}
+					selectedCrossSectionID={selectedCrossSectionID}
+					updateCrossSectionsList={updateCrossSectionList}
 				/>
 			)}
 		</div>

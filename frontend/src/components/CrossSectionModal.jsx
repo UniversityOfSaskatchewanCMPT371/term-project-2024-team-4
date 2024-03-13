@@ -2,52 +2,71 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import logger from "../logger";
 
-export default function RegionModal({
+/**
+ * Modal component for adding or editing cross sections.
+ * Allows for the creation of new cross sections or editing existing ones.
+ *
+ * Pre-conditions:
+ * - `setEditCrossSection`: Function to update editing state in the parent component.
+ * - `selectedCrossSection`: String representing the name of the cross section being edited, if any.
+ * - `selectedCrossSectionID`: ID of the cross section being edited, null if adding a new cross section.
+ * - `updateCrossSectionsList`: Function to update the list of cross sections in the parent component.
+ *
+ * Post-conditions:
+ * - On successful submission, updates the cross section list in the parent component.
+ * - Closes the modal upon successful submission or cancellation.
+ * - Logs the operation status and any errors encountered.
+ *
+ * @param {Object} props Component props including functions and state for managing cross section data.
+ */
+export default function CrossSectionModal({
 	setEditCrossSection,
 	selectedCrossSection,
 	selectedCrossSectionID,
+	updateCrossSectionsList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
 	const [crossSection, setCrossSection] = useState(selectedCrossSection);
 
+	/**
+	 * Handles the save action when the form is submitted.
+	 * Validates the form, updates the cross section, and closes the modal.
+	 */
 	const handleSave = () => {
-		const updatedCrossSection = {
-			crossSection,
-		};
+		const crossSectionData = { name: crossSection };
 
-		if (selectedCrossSection) {
-			axios
-				.put(
+		const apiCall = selectedCrossSectionID
+			? axios.put(
 					`http://localhost:3000/crossSections/${selectedCrossSectionID}`,
-					updatedCrossSection,
+					crossSectionData,
 				)
-				.then((response) => {
-					console.log("CrossSection updated successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating CrossSection:", error);
-				});
-		}
+			: axios.post("http://localhost:3000/crossSections", crossSectionData);
 
-		setOpen(false); // Close the dialog
-		setEditCrossSection(false);
-
-		if (!selectedCrossSection) {
-			axios
-				.post("http://localhost:3000/crossSections", updatedCrossSection)
-				.then((response) => {
-					console.log("CrossSection created successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating CrossSection:", error);
-				});
-		}
+		apiCall
+			.then((response) => {
+				logger.info(
+					`Cross Section ${selectedCrossSection ? "updated" : "created"} successfully: `,
+					response.data,
+				);
+				updateCrossSectionsList(response.data);
+				handleClose();
+			})
+			.catch((error) => {
+				logger.error("Error saving Cross Section: ", error);
+			});
 	};
 
+	/**
+	 * Closes the modal and resets the cross section editing state.
+	 */
 	const handleClose = () => {
-		setOpen(false); // Close the dialog
-		setEditCrossSection(false);
+		setOpen(false);
+		if (setEditCrossSection) setEditCrossSection(false);
+		logger.debug(
+			`BaseShapeModal closed, mode: ${selectedCrossSectionID ? "edit" : "add"}.`,
+		);
 	};
 
 	return (
