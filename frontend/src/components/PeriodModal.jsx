@@ -24,7 +24,7 @@ export default function RegionModal({
 
 		if (selectedPeroid) {
 			axios
-				.put(`http://localhost:3000/regions/${selectedPeriodID}`, updatedPeriod)
+				.put(`http://localhost:3000/periods/${selectedPeriodID}`, updatedPeriod)
 				.then((response) => {
 					console.log("Period updated successfully:", response.data);
 				})

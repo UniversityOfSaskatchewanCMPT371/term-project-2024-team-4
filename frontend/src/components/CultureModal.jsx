@@ -19,7 +19,7 @@ export default function RegionModal({
 		if (selectedCulture) {
 			axios
 				.put(
-					`http://localhost:3000/regions/${selectedCultureID}`,
+					`http://localhost:3000/cultures/${selectedCultureID}`,
 					updatedCulture,
 				)
 				.then((response) => {
