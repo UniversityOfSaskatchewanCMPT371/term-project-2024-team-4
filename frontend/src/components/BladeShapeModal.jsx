@@ -2,52 +2,71 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import logger from "../logger";
 
-export default function RegionModal({
+/**
+ * Modal component for adding or editing blade shapes.
+ * Allows for the creation of new blade shapes or editing existing ones.
+ *
+ * Pre-conditions:
+ * - `setEditBladeShape`: Function to update editing state in the parent component.
+ * - `selectedBladeShape`: String representing the name of the blade shape being edited, if any.
+ * - `selectedBladeShapeID`: ID of the blade shape being edited, null if adding a new blade shape.
+ * - `updateBladeShapesList`: Function to update the list of blade shapes in the parent component.
+ *
+ * Post-conditions:
+ * - On successful submission, updates the blade shape list in the parent component.
+ * - Closes the modal upon successful submission or cancellation.
+ * - Logs the operation status and any errors encountered.
+ *
+ * @param {Object} props Component props including functions and state for managing blade shape data.
+ */
+export default function BladeShapeModal({
 	setEditBladeShape,
 	selectedBladeShape,
 	selectedBladeShapeID,
+	updateBladeShapesList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
 	const [bladeShape, setbladeShape] = useState(selectedBladeShape);
 
+	/**
+	 * Handles the save action when the form is submitted.
+	 * Validates the form, updates the blade shape, and closes the modal.
+	 */
 	const handleSave = () => {
-		const updatedBladeShape = {
-			bladeShape,
-		};
+		const bladeShapeData = { name: bladeShape };
 
-		if (selectedBladeShape) {
-			axios
-				.put(
+		const apiCall = selectedBladeShapeID
+			? axios.put(
 					`http://localhost:3000/bladeShapes/${selectedBladeShapeID}`,
-					updatedBladeShape,
+					bladeShapeData,
 				)
-				.then((response) => {
-					console.log("BladeShape updated successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating BladeShape:", error);
-				});
-		}
+			: axios.post("http://localhost:3000/bladeShapes", bladeShapeData);
 
-		setOpen(false); // Close the dialog
-		setEditBladeShape(false);
-
-		if (!selectedBladeShape) {
-			axios
-				.post("http://localhost:3000/bladeShapes", updatedBladeShape)
-				.then((response) => {
-					console.log("BladeShape created successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating BladeShape:", error);
-				});
-		}
+		apiCall
+			.then((response) => {
+				logger.info(
+					`Blade shape ${selectedBladeShapeID ? "updated" : "created"} successfully: `,
+					response.data,
+				);
+				updateBladeShapesList(response.data);
+				handleClose();
+			})
+			.catch((error) => {
+				logger.error("Error saving Base Shape: ", error);
+			});
 	};
 
+	/**
+	 * Closes the modal and resets the blade shape editing state.
+	 */
 	const handleClose = () => {
-		setOpen(false); // Close the dialog
-		setEditBladeShape(false);
+		setOpen(false);
+		if (setEditBladeShape) setEditBladeShape(false);
+		logger.debug(
+			`BladeShapeModal closed, mode: ${selectedBladeShapeID ? "edit" : "add"}.`,
+		);
 	};
 
 	return (

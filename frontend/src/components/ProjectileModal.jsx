@@ -30,6 +30,7 @@ import PeriodModal from "./PeriodModal.jsx";
 import CultureModal from "./CultureModal.jsx";
 import BaseShapeModal from "./BaseShapeModal.jsx";
 import CrossSectionModal from "./CrossSectionModal.jsx";
+import BladeShapeModal from "./BladeShapeModal.jsx";
 
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({ setOpen }) => {
@@ -91,12 +92,20 @@ const AddProjectile = ({ setOpen }) => {
 	const [selectedBaseShapeID, setSelectedBaseShapeID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
-	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
+	// ---------- For state variables for editing rossSections through the BaseShapeModal --------
 	const [crossSections, setCrossSections] = useState([]);
 	const [selectedCrossSection, setSelectedCrossSection] = useState("");
 	const [crossSectionModalOpen, setCrossSectionModalOpen] = useState(false);
 	const [editCrossSection, setEditCrossSection] = useState(false);
 	const [selectedCrossSectionID, setSelectedCrossSectionID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ---------- For state variables for editing BladeShapes through the BaseShapeModal --------
+	const [bladeShapes, setBladeShapes] = useState([]);
+	const [selectedBladeShape, setSelectedBladeShape] = useState("");
+	const [bladeShapeModalOpen, setBladeShapeModalOpen] = useState(false);
+	const [editBladeShape, setEditBladeShape] = useState(false);
+	const [selectedBladeShapeID, setSelectedBladeShapeID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
 	const [currentProjectiles, setCurrentProjectiles] = useState([]);
@@ -324,7 +333,7 @@ const AddProjectile = ({ setOpen }) => {
 	const handleOpenBaseShapeModal = (baseShapeId = null) => {
 		setSelectedBaseShapeID(baseShapeId);
 		setEditBaseShape(true);
-		setCultureModalOpen(true);
+		setBaseShapeModalOpen(true);
 	};
 
 	// This function handles the selection of a base shape for editing.
@@ -379,7 +388,7 @@ const AddProjectile = ({ setOpen }) => {
 		axios
 			.get("http://localhost:3000/crossSections")
 			.then((response) => {
-				setBaseShapes(response.data);
+				setCrossSections(response.data);
 			})
 			.catch((error) => {
 				console.error("Error fetching cross sections:", error);
@@ -418,7 +427,7 @@ const AddProjectile = ({ setOpen }) => {
 		});
 	};
 
-	// This function handles delete a base shape from the server and updates the local list.
+	// This function handles delete a cross section from the server and updates the local list.
 	const handleDeleteCrossSection = () => {
 		axios
 			.delete(`http://localhost:3000/crossSections/${selectedCrossSectionID}`)
@@ -440,6 +449,71 @@ const AddProjectile = ({ setOpen }) => {
 	};
 	// ---------------- End of CrossSectionModal functions ----------------------
 
+	// ---------------- Start of BladeShapeModal functions --------------------
+	// This function fetches all blade shapes from the server and updates the local state on mount.
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/bladeShapes")
+			.then((response) => {
+				setBladeShapes(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching blade shapes:", error);
+			});
+	}, []);
+
+	// This function opens the BladeShapeModal for editing an existing blade shape or adding a new one.
+	const handleOpenBladeShapeModal = (bladeShapeId = null) => {
+		setSelectedBladeShapeID(bladeShapeId);
+		setEditBladeShape(true);
+		setBladeShapeModalOpen(true);
+	};
+
+	// This function handles the selection of a blade shape for editing.
+	const handleEditBladeShape = (event, bladeShape) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setSelectedBladeShapeID(bladeShape.id);
+	};
+
+	// This function updates the local list of blade shapes after adding or editing a blade shape.
+	// If the blade shape already exists in the list, it's updated.
+	// Otherwise, the new blade shape is added to the list.
+	const updateBladeShapesList = (newBladeShape) => {
+		setBladeShapes((prevBladeShapes) => {
+			const index = prevBladeShapes.findIndex(
+				(shape) => shape.id === newBladeShape.id,
+			);
+			if (index > -1) {
+				const updatedBladeShapes = [...prevBladeShapes];
+				updatedBladeShapes[index] = newBladeShape;
+				return updatedBladeShapes;
+			} else {
+				return [...prevBladeShapes, newBladeShape];
+			}
+		});
+	};
+
+	// This function handles delete a blade shape from the server and updates the local list.
+	const handleDeleteBladeShape = () => {
+		axios
+			.delete(`http://localhost:3000/bladeShapes/${selectedBladeShapeID}`)
+			.then(() => {
+				setBladeShapes(
+					bladeShapes.filter((shape) => shape.id !== selectedBladeShapeID),
+				);
+				setBladeShapeModalOpen(false);
+			})
+			.catch((error) => {
+				console.error("Error deleting blade shape:", error);
+			});
+	};
+
+	const handleBladeShapeChange = (event) => {
+		setSelectedBladeShape(event.target.value);
+	};
+
+	// ----------------- End of BladeShapeModal functions ---------------------
 	return (
 		<div>
 			<Dialog
@@ -684,6 +758,60 @@ const AddProjectile = ({ setOpen }) => {
 								</Menu>
 							</TextField>
 							{/* ------------ End of CrossSectionModal  ------------- */}
+							{/* ------------ Start of BladeShapeModal  ------------- */}
+							<TextField
+								select
+								label="Blade Shape"
+								fullWidth
+								margin="dense"
+								value={selectedBladeShape}
+								onChange={handleBladeShapeChange}
+							>
+								{bladeShapes.map((shape) => (
+									<MenuItem key={shape.id} value={shape.name}>
+										{shape.name}
+										<IconButton
+											size="small"
+											onClick={(event) => handleEditBladeShape(event, shape)}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
+								<MenuItem onClick={() => handleOpenBladeShapeModal()}>
+									+ Add New Blade Shape
+								</MenuItem>
+
+								<Menu
+									id="blade-shape-menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={() => {
+										setAnchorEl(null);
+									}}
+								>
+									<MenuItem
+										onClick={() => {
+											setEditBladeShape(true);
+											setBladeShapeModalOpen(true);
+											setAnchorEl(null);
+										}}
+									>
+										<EditIcon fontSize="small" /> Edit
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											handleDeleteBladeShape();
+											setAnchorEl(null);
+										}}
+									>
+										<DeleteIcon fontSize="small" /> Delete
+									</MenuItem>
+								</Menu>
+							</TextField>
+							{/* ------------ End of BladeShapeModal  ------------- */}
 						</Grid>
 						<Grid item xs={6}>
 							{/*This should removed, as the location is attached to the site*/}
@@ -789,6 +917,14 @@ const AddProjectile = ({ setOpen }) => {
 					selectedCrossSection={selectedCrossSection}
 					selectedCrossSectionID={selectedCrossSectionID}
 					updateCrossSectionsList={updateCrossSectionList}
+				/>
+			)}
+			{editBladeShape && (
+				<BladeShapeModal
+					setEditBladeShape={setEditBladeShape}
+					selectedBladeShape={selectedBladeShape}
+					selectedBladeShapeID={selectedBladeShapeID}
+					updateBladeShapesList={updateBladeShapesList}
 				/>
 			)}
 		</div>
