@@ -10,17 +10,14 @@ import StatisticsModal from "./StatisticsModal.jsx";
 // } from "../../../backend/controllers/aggregateStatisticsController.js";
 
 import CssBaseline from "@mui/material/CssBaseline";
+import { Box } from "@mui/material";
 import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
 import Button from "@mui/material/Button";
-// import List from "@mui/material/List";
-// import ListItem from "@mui/material/ListItem";
 import Divider from "@mui/material/Divider";
-// import PropTypes from "prop-types";
-import Box from "@mui/material/Box";
 // import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
@@ -35,6 +32,7 @@ import Checkbox from "@mui/material/Checkbox";
 // import Tooltip from "@mui/material/Tooltip";
 import FormControl from "@mui/material/FormControl";
 // import { styled } from "@mui/material/styles";
+import { DataGrid } from "@mui/x-data-grid";
 
 function StatisticsPage() {
 	const [checked, setChecked] = useState(false);
@@ -74,20 +72,6 @@ function StatisticsPage() {
 		},
 	];
 
-	//Used to switch checkboxes when clicked
-	const CheckboxClick = (event) => {
-		logger.info("Checkbox " + event.target.id + "clicked");
-		setChecked(event.target.checked);
-	};
-
-	const handleSortChange = (event) => {
-		setSortValue(event.target.value);
-	};
-
-	const handleFilterChange = (event) => {
-		setFilterValue(event.target.value);
-	};
-
 	const openModal = () => {
 		setModalOpen(true);
 	};
@@ -114,12 +98,6 @@ function StatisticsPage() {
 							</Typography>
 						</Grid>
 						<Grid item xs={12}>
-							<TextField
-								id="standard-basic"
-								sx={{ minWidth: 500 }}
-								label="Search"
-								variant="standard"
-							/>
 							<Button variant="contained" onClick={openModal}>
 								Generate Statistics
 							</Button>
@@ -127,49 +105,9 @@ function StatisticsPage() {
 						<Grid item xs={12}>
 							<Divider />
 						</Grid>
-						<Grid item xs={12}>
-							<FormControl variant="standard" sx={{ minWidth: 200 }}>
-								<InputLabel id="demo-simple-select-standard-label">
-									Sort
-								</InputLabel>
-								<Select
-									labelId="demo-simple-select-standard-label"
-									id="demo-simple-select-standard"
-									label="Sort"
-									onChange={handleSortChange}
-								>
-									<MenuItem value="" Name="sorts">
-										<em>None</em>
-									</MenuItem>
-									<MenuItem value={1} Name="sorts">
-										Name
-									</MenuItem>
-									<MenuItem value={2}>Type</MenuItem>
-								</Select>
-							</FormControl>
-							<FormControl
-								variant="standard"
-								sx={{ ml: "20px", minWidth: 200 }}
-							>
-								<InputLabel id="demo-simple-select-standard-label">
-									Filter
-								</InputLabel>
-								<Select
-									labelId="demo-simple-select-standard-label"
-									id="demo-simple-select-standard"
-									label="Filter"
-									onChange={handleFilterChange}
-								>
-									<MenuItem value="">
-										<em>None</em>
-									</MenuItem>
-									<MenuItem value={1}>Name</MenuItem>
-									<MenuItem value={2}>Description</MenuItem>
-								</Select>
-							</FormControl>
-						</Grid>
+						<Grid item xs={12}></Grid>
 					</Grid>
-					<TableContainer>
+					{/* <TableContainer>
 						<TableHead>
 							<TableRow>
 								<TableCell padding="checkbox">
@@ -192,7 +130,7 @@ function StatisticsPage() {
 								))}
 							</TableRow>
 						</TableHead>
-					</TableContainer>
+					</TableContainer> */}
 				</Box>
 			</Box>
 			<StatisticsModal modalOpen={modalOpen} closeModal={closeModal} />
