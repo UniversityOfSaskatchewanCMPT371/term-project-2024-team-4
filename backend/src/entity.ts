@@ -9,11 +9,15 @@ import {
 	JoinTable,
 	TableInheritance,
 	ChildEntity,
+	CreateDateColumn,
 } from "typeorm";
 
 // Catalogue
 @Entity()
 export class Catalogue {
+	@CreateDateColumn()
+	createdDate: Date;
+
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -30,6 +34,7 @@ export class Catalogue {
 // Region
 @Entity()
 export class Region {
+	
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -46,6 +51,9 @@ export class Region {
 // Site
 @Entity()
 export class Site {
+	@CreateDateColumn()
+	createdDate: Date
+
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -218,6 +226,9 @@ export class ArtifactType {
 @Entity()
 @TableInheritance({ column: { type: "varchar", name: "subtype" } })
 export class Artifact {
+	@CreateDateColumn()
+	createdDate: Date
+	
 	@PrimaryGeneratedColumn()
 	id: number;
 
