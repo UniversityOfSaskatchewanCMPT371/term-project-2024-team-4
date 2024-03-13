@@ -85,6 +85,8 @@ async function getAllProjectilePoints() {
 			.getRepository(ProjectilePoint)
 			.find({
 				relations: [
+					"site",
+					"artifactType",
 					"culture",
 					"bladeShape",
 					"baseShape",
