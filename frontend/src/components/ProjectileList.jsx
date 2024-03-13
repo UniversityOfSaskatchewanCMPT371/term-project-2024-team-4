@@ -2,7 +2,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import ProjectileModal from "./ProjectileModal";
-import { Link } from "react-router-dom";
 import {
 	Grid,
 	Card,
@@ -14,7 +13,7 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from "react-router-dom";
 
-export default function ProjectileList({ query }) {
+export default function ProjectileList({ query, siteId }) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
 
@@ -35,17 +34,16 @@ export default function ProjectileList({ query }) {
 
 	useEffect(() => {
 		// Fetch data from JSON server on component mount
-
-		//console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed
-
 		fetch("http://localhost:3000/projectilePoints")
 			.then((response) => response.json())
 			.then((json) => setData(json))
 			.catch((error) => console.error("Error fetching data:", error));
 	}, [open]);
 
+	const siteData = data?.filter((item) => item.site.id == siteId);
+
 	//Filter data based on search query (mock)
-	const filteredData = data?.filter((item) =>
+	const filteredData = siteData?.filter((item) =>
 		item.name.toLowerCase().includes(query.toLowerCase()),
 	);
 
