@@ -26,6 +26,8 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // import { EditIcon, DeleteIcon, MoreHorizIcon } from "@mui/icons-material";
 import log from "../logger.js";
 
+import PeriodModal from "./PeriodModal.jsx"; // Rename as required
+
 // eslint-disable-next-line no-unused-vars
 const AddProjectile = ({ setOpen }) => {
 	const inComingSiteInfo = useLocation();
@@ -44,12 +46,31 @@ const AddProjectile = ({ setOpen }) => {
 	// const [haftingShapeID, setHaftingShapeID] = useState(1);
 	// const [crossSectionID, setCrossSectionID] = useState(1);
 
-	// EDIT REGION
-	const [selectedRegion, setSelectedRegion] = useState(null);
-	const [regions1, setRegions1] = useState([]);
-	const [editMenuAnchor, setEditMenuAnchor] = useState(null);
-	const [editRegion, setEditRegion] = useState(false);
-	const [selectedRegionID, setselectedRegionID] = useState(0);
+	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
+	const [anchorEl, setAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [currentPeriod, setCurrentPeriod] = useState(null); // The period currently selected in the dropdown
+
+	// Function to open the dropdown menu (Edit/Delete options for periods)
+	const handleOpenMenu = (event, period) => {
+		setAnchorEl(event.currentTarget);
+		setCurrentPeriod(period);
+	};
+
+	// Function to close the dropdown menu
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
+		setCurrentPeriod(null);
+	};
+
+	// ----------------------------------------------------------------------------------------
+
+	// ------------ For state variables for editing periods through the PeriodModal ------------
+	const [periods, setPeriods] = useState([]);
+	const [selectedPeriod, setSelectedPeriod] = useState("");
+	const [editPeriod, setEditPeriod] = useState(false);
+	const [periodModalOpen, setPeriodModalOpen] = useState(false);
+	const [selectedPeriodID, setSelectedPeriodID] = useState(null);
+	// -----------------------------------------------------------------------------------------
 
 	const [currentProjectiles, setCurrentProjectiles] = useState([]);
 
@@ -137,59 +158,63 @@ const AddProjectile = ({ setOpen }) => {
 	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	// }, [dimensions, name, location, artifactType]);
 
-	// EDIT REGION
+	// ------------ For EDIT Period Modal ------------
+	// Load periods from the database on component mount
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/periods")
+			.then((response) => {
+				setPeriods(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching periods:", error);
+			});
+	}, []);
 
-	const handleClick = () => {
-		fetch("http://localhost:3000/regions")
-			.then((response) => response.json())
-			.then((json) => setRegions1(json))
-			.then(console.log(regions1))
-			.catch((error) => console.error("Error fetching data:", error));
+	// Function to update the list of periods after an edit or addition
+	const updatePeriodsList = (newPeriod) => {
+		setPeriods((prevPeriods) => {
+			// Check if the period already exists and update it
+			const index = prevPeriods.findIndex(
+				(period) => period.id === newPeriod.id,
+			);
+			if (index > -1) {
+				// Update existing period
+				const updatedPeriods = [...prevPeriods];
+				updatedPeriods[index] = newPeriod;
+				return updatedPeriods;
+			} else {
+				// Else, add the new period to the list
+				return [...prevPeriods, newPeriod];
+			}
+		});
 	};
 
-	const handleAddmore = () => {
-		console.log("Add more");
-		setEditRegion(true);
-	};
-
-	const handleRegionChange = (e) => {
-		const regionValue = e.target.value;
-		setSelectedRegion(regionValue);
-		handleDescriptionChange(e);
-	};
-
-	const handleEditMenuOpen = (event) => {
-		setEditMenuAnchor(event.currentTarget);
-	};
-
-	const handleEditMenuClose = () => {
-		setEditMenuAnchor(null);
-	};
-
-	const handleEditRegion = () => {
-		// Implement edit region functionality here
-		setEditRegion(true);
-		handleEditMenuClose();
-	};
-
-	const handleDeleteRegion = () => {
-		// Implement delete region functionality here
-		if (selectedRegion) {
+	// Function to delete a period
+	const handleDeletePeriod = () => {
+		if (currentPeriod && currentPeriod.id) {
 			axios
-				.delete(`http://localhost:3000/regions/${selectedRegionID}`)
-				.then((response) => {
-					console.log("Region delete successfully:", response.data);
+				.delete(`http://localhost:3000/periods/${currentPeriod.id}`)
+				.then(() => {
+					setPeriods(periods.filter((p) => p.id !== currentPeriod.id));
+					handleCloseMenu();
 				})
 				.catch((error) => {
-					console.error("Error deleting region:", error);
+					console.error("Error deleting period:", error);
 				});
 		}
-		handleEditMenuClose();
+	};
+	// ------------------------------------------------
+
+	const handlePeriodChange = (event) => {
+		setSelectedPeriod(event.target.value);
 	};
 
-	useEffect(() => {
-		handleClick();
-	}, [handleClick]);
+	const handleOpenPeriodModal = (periodId = null) => {
+		setSelectedPeriodID(periodId);
+		setEditPeriod(true);
+		setPeriodModalOpen(true);
+	};
 
 	return (
 		<div>
@@ -225,69 +250,47 @@ const AddProjectile = ({ setOpen }) => {
 								onChange={handleDescriptionChange}
 							/>
 							{/* ------------ EDIT REGION ------------- */}
-							<Grid
-								item
-								xs={6}
-								style={{ maxHeight: "100pt" }}
-								onClick={handleClick}
+							<TextField
+								select
+								label="Period"
+								value={selectedPeriod}
+								onChange={handlePeriodChange}
+								fullWidth
+								margin="dense"
 							>
-								<FormControl fullWidth onClick={handleClick}>
-									<TextField
-										onClick={handleClick}
-										margin="dense"
-										label="Region"
-										id="region"
-										fullWidth
-										select
-										value={selectedRegion}
-										onChange={handleRegionChange}
-										sx={{
-											display: "flex",
-											alignItems: "center",
-										}}
+								{periods.map((period) => (
+									<MenuItem
+										key={period.id}
+										value={period.name}
+										onClick={(event) => handleOpenMenu(event, period)}
 									>
-										{regions1.map((region) => (
-											<MenuItem
-												key={region.name}
-												value={region.name}
-												onClick={handleClick}
-											>
-												{region.name}
-												<IconButton
-													aria-label="more"
-													aria-controls="edit-menu"
-													aria-haspopup="true"
-													onClick={handleEditMenuOpen}
-													style={{ marginLeft: "auto" }}
-												>
-													<MoreHorizIcon />
-												</IconButton>
-											</MenuItem>
-										))}
-										<MenuItem onClick={handleAddmore}>+ Add More</MenuItem>
-									</TextField>
-								</FormControl>
-							</Grid>
-
-							<Menu
-								id="edit-menu"
-								anchorEl={editMenuAnchor}
-								open={Boolean(editMenuAnchor)}
-								onClose={handleEditMenuClose}
-							>
-								<MenuItem onClick={handleEditRegion}>
-									<ListItemIcon>
-										<EditIcon fontSize="small" />
-									</ListItemIcon>
-									<ListItemText>Edit</ListItemText>
+										{period.name}
+									</MenuItem>
+								))}
+								<MenuItem onClick={() => handleOpenPeriodModal()}>
+									+ Add New Period
 								</MenuItem>
-								<MenuItem onClick={handleDeleteRegion}>
-									<ListItemIcon>
-										<DeleteIcon fontSize="small" />
-									</ListItemIcon>
-									<ListItemText>Delete</ListItemText>
+							</TextField>
+							<Menu
+								id="simple-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={handleCloseMenu}
+							>
+								<MenuItem
+									onClick={() => {
+										handleOpenPeriodModal(currentPeriod.id);
+										handleCloseMenu();
+									}}
+								>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem onClick={handleDeletePeriod}>
+									<DeleteIcon fontSize="small" /> Delete
 								</MenuItem>
 							</Menu>
+
 							{/* ------------ EDIT REGION ------------- */}
 						</Grid>
 						<Grid item xs={6}>
@@ -357,6 +360,18 @@ const AddProjectile = ({ setOpen }) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
+			{editPeriod && (
+				<PeriodModal
+					setEditPeriod={setEditPeriod}
+					selectedPeriod={selectedPeriod}
+					selectedPeriodID={selectedPeriodID}
+					periods={periods}
+					setPeriods={setPeriods}
+					updatePeriodsList={updatePeriodsList}
+					periodModalOpen={periodModalOpen}
+					setPeriodModalOpen={setPeriodModalOpen}
+				/>
+			)}
 		</div>
 	);
 };

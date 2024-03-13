@@ -59,7 +59,7 @@ app.use(bodyParser.json());
 app.use(
 	cors({
 		origin: "http://localhost:8080", // Replace with your frontend's URL
-		methods: ["POST", "GET", "DELETE", "PATCH"],
+		methods: ["POST", "GET", "DELETE", "PATCH", "PUT"],
 		credentials: true, // Enable credentials (cookies, authorization headers)
 	}),
 );
