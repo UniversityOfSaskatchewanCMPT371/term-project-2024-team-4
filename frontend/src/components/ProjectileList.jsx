@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import Site from "./Site";
-import ProjectileModal from "./ProjectileModal";
 import { useState, useEffect } from "react";
+import ProjectileModal from "./ProjectileModal";
+import { Link } from "react-router-dom";
 import {
 	Grid,
 	Card,
@@ -14,20 +14,23 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useLocation } from "react-router-dom";
 
-export default function ProjectileList(query) {
+export default function ProjectileList({ query }) {
 	const [open, setOpen] = useState(false);
 	const [data, setData] = useState([]);
+
 	const inComingSiteInfo = useLocation();
-	//Used for opening the create new artifact page
-	const createArtifactClick = () => {
+
+	// the action to take when the new site button is pressed
+	const handleClick1 = () => {
 		setOpen(true);
-		console.info("Create Artifact button clicked!");
+		console.log("Add card clicked!");
 	};
 
-	const handleClick2 = (id) => () => {
+	const handleClick2 = (item) => () => {
 		// event handler
-		console.log("Card clicked! ID:", id);
-		Site.refreshPage(); // Tell the Site page to refresh
+		console.log("Card clicked! ID:", item.id);
+
+		//Site.refreshPage(); // Tell the Catalogue1 to refresh
 	};
 
 	useEffect(() => {
@@ -35,11 +38,11 @@ export default function ProjectileList(query) {
 
 		//console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed
 
-		fetch("http://localhost:3000/artifacts")
+		fetch("http://localhost:3000/projectilePoints")
 			.then((response) => response.json())
 			.then((json) => setData(json))
 			.catch((error) => console.error("Error fetching data:", error));
-	}, []);
+	}, [open]);
 
 	//Filter data based on search query (mock)
 	const filteredData = data?.filter((item) =>
@@ -52,8 +55,7 @@ export default function ProjectileList(query) {
 				<Box display="flex">
 					<Grid container spacing={2}>
 						<Grid item xs={12} sm={6} md={3}>
-							{/*This Button is for the creation of new artifacts*/}
-							<ButtonBase onClick={createArtifactClick}>
+							<ButtonBase onClick={handleClick1}>
 								<Card>
 									<CardContent style={{ textAlign: "center" }}>
 										<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
@@ -68,7 +70,7 @@ export default function ProjectileList(query) {
 									{/*This section is for displaying all the found artifacts*/}
 									<Card onClick={handleClick2(item.id)}>
 										<CardContent>
-											<Typography variant="h5" component="div">
+											<Typography variant="h5" component="h3">
 												{item.name}
 											</Typography>
 											<Typography variant="body2" component="p">
