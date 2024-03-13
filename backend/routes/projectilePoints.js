@@ -79,6 +79,8 @@ router.get("/", async (req, res) => {
 			.getRepository(ProjectilePoint)
 			.find({
 				relations: [
+					"site",
+					"artifactType",
 					"culture",
 					"bladeShape",
 					"baseShape",
@@ -101,6 +103,8 @@ router.get("/:id", async (req, res) => {
 			.findOne({
 				where: { id },
 				relations: [
+					"site",
+					"artifactType",
 					"culture",
 					"bladeShape",
 					"baseShape",
