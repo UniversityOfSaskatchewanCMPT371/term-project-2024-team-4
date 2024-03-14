@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const initializeDefaultCatalogue = require('../config/initialize');
-const dataSource = require('../config/db');
+const initializeDefaultCatalogue = require("../config/initialize");
+const dataSource = require("../config/db");
 
 /**
  * Module dependencies.
@@ -32,25 +32,30 @@ var server = http.createServer(app);
 // server.on("error", onError);
 // server.on("listening", onListening);
 // First, initialize the database connection
-dataSource.initialize().then(() => {
-	console.log("Connected to DB successfully!");
-  
-	// After successful database connection, initialize the default catalogue
-	initializeDefaultCatalogue().then(() => {
-	  console.log("Default catalogue initialization successful.");
-  
-	  // Once the catalogue is initialized, then start listening on the provided port
-	  server.listen(port, "0.0.0.0");
-	  server.on("error", onError);
-	  server.on("listening", onListening);
-	}).catch(error => {
-	  console.error("Failed to initialize default catalogue:", error);
-	  process.exit(1); // Exit if cannot initialize the catalogue
+dataSource
+	.initialize()
+	.then(() => {
+		console.log("Connected to DB successfully!");
+
+		// After successful database connection, initialize the default catalogue
+		initializeDefaultCatalogue()
+			.then(() => {
+				console.log("Default catalogue initialization successful.");
+
+				// Once the catalogue is initialized, then start listening on the provided port
+				server.listen(port, "0.0.0.0");
+				server.on("error", onError);
+				server.on("listening", onListening);
+			})
+			.catch((error) => {
+				console.error("Failed to initialize default catalogue:", error);
+				process.exit(1); // Exit if cannot initialize the catalogue
+			});
+	})
+	.catch((error) => {
+		console.error("Database connection failed:", error);
+		process.exit(1); // Exit if cannot connect to the database
 	});
-  }).catch(error => {
-	console.error("Database connection failed:", error);
-	process.exit(1); // Exit if cannot connect to the database
-  });
 
 /**
  * Normalize a port into a number, string, or false.
@@ -85,16 +90,16 @@ function onError(error) {
 
 	// handle specific listen errors with friendly messages
 	switch (error.code) {
-	case "EACCES":
-		console.error(bind + " requires elevated privileges");
-		process.exit(1);
-		break;
-	case "EADDRINUSE":
-		console.error(bind + " is already in use");
-		process.exit(1);
-		break;
-	default:
-		throw error;
+		case "EACCES":
+			console.error(bind + " requires elevated privileges");
+			process.exit(1);
+			break;
+		case "EADDRINUSE":
+			console.error(bind + " is already in use");
+			process.exit(1);
+			break;
+		default:
+			throw error;
 	}
 }
 

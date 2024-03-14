@@ -27,8 +27,8 @@ import CrossSectionModal from "./CrossSectionModal.jsx";
 import BladeShapeModal from "./BladeShapeModal.jsx";
 import HaftingShapeModal from "./HaftingShapeModal.jsx";
 
-// eslint-disable-next-line no-unused-vars
-const AddProjectile = ({ setOpen }) => {
+// eslint-disable-next-line no-unused-vars, react/prop-types
+const AddProjectile = ({ setOpenAdd }) => {
 	const inComingSiteInfo = useLocation();
 
 	const siteID = inComingSiteInfo.state.info.id;
@@ -119,7 +119,7 @@ const AddProjectile = ({ setOpen }) => {
 
 	// const PlaceholderText = "Add Information";
 	const handleClose = () => {
-		setOpen(false);
+		setOpenAdd(false);
 		// window.location.reload();
 	};
 
@@ -170,13 +170,13 @@ const AddProjectile = ({ setOpen }) => {
 			.post("http://localhost:3000/projectilePoints", newProjectilePoint)
 			.then((response) => {
 				console.log("New projectile point added successfully:", response.data);
+				handleClose();
 			})
 			.catch((error) => {
 				console.error("Error adding new  projectile point:", error);
 			});
-		setOpen(true);
+		//setOpen(true);
 		console.log("Submitted:", newProjectilePoint);
-		handleClose();
 	};
 
 	// const handleClick = () => {
@@ -820,12 +820,11 @@ const AddProjectile = ({ setOpen }) => {
 								fullWidth
 								select
 								value={artifactTypeID}
-								onChange={(e) => setartifactTypeID(parseInt(e.target.value))}
+								onChange={(e) => setartifactTypeID(e.target.value)}
 							>
-								<MenuItem value="1">Lithic</MenuItem>
-								<MenuItem value="2">Ceramic</MenuItem>
-								<MenuItem value="3">Faunal</MenuItem>
-								<MenuItem value="4">Shale</MenuItem>
+								<MenuItem value="Lithic">Lithic</MenuItem>
+								<MenuItem value="Ceramic">Ceramic</MenuItem>
+								<MenuItem value="Faunal">Faunal</MenuItem>
 							</TextField>
 							{/* ------------ Start of CrossSectionModal  ------------- */}
 							<TextField

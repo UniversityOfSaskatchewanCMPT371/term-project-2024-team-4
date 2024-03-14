@@ -39,19 +39,19 @@ export default function ProjectileList({ query, siteId }) {
 	};
 
 	useEffect(() => {
-		async function fetchSites() {
+		async function fetchprojectilePoints() {
 			try {
 				const response = await axios.get(
 					"http://localhost:3000/projectilePoints",
 				);
 				setData(response.data);
 			} catch (error) {
-				log.error("Error fetching sites:", error);
+				log.error("Error fetching projectilepoints:", error);
 			}
 		}
 
-		fetchSites();
-	}, []);
+		fetchprojectilePoints();
+	}, [openAdd]);
 
 	const siteData = data?.filter((item) => item.site.id == siteId);
 
@@ -97,7 +97,7 @@ export default function ProjectileList({ query, siteId }) {
 				</Box>
 			</Grid>
 			<Typography>
-				{openAdd && <ProjectileModal setOpen={setOpenAdd} />}
+				{openAdd && <ProjectileModal setOpenAdd={setOpenAdd} />}
 			</Typography>
 			<Typography>
 				{openView && (
