@@ -35,12 +35,12 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const siteName = inComingSiteInfo.state.info.name;
 
 	const [name, setName] = useState("");
-	const [description, setDescription] = useState("Description"); // for testing
+	const [description, setDescription] = useState(""); // for testing
 	const [location, setLocation] = useState("");
-	const [dimensions, setDimensions] = useState("2h x 4w x 7l"); // for testing
-	const [photoFilePath, setPhotoFilePath] = useState("/folder/images"); // for testing
+	const [dimensions, setDimensions] = useState(""); // for testing
+	const [photoFilePath, setPhotoFilePath] = useState(""); // for testing
 	// const [subtype, setSubtype] = useState("");
-	const [artifactTypeID, setartifactTypeID] = useState(0);
+	const [artifactTypeID, setartifactTypeID] = useState("");
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
 	const [baseShapeID, setBaseShapeID] = useState(0);
@@ -159,11 +159,11 @@ const AddProjectile = ({ setOpenAdd }) => {
 			siteId: siteID,
 			artifactTypeId: artifactTypeID,
 			// subtype,
-			cultureId: selectedCultureID,
-			bladeShapdeId: selectedBladeShapeID,
-			baseShapeId: selectedBaseShapeID,
-			haftingShapeId: selectedHaftingShapeID,
-			crossSectionId: selectedCrossSectionID,
+			cultureId: cultureID,
+			bladeShapdeId: bladeShapeID,
+			baseShapeId: baseShapeID,
+			haftingShapeId: haftingShapeID,
+			crossSectionId: crossSectionID,
 		};
 
 		axios
@@ -206,11 +206,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("http://localhost:3000/periods")
 			.then((response) => {
 				setPeriods(response.data);
+				const filteredPeriod = response.data.find(
+					(period) => period.name === selectedPeriod,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredPeriod) {
+					log.info(filteredPeriod);
+					setPeriodID(filteredPeriod.id);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching periods:", error);
 			});
-	}, []);
+	}, [selectedPeriod]);
 
 	// Function to update the list of periods after an edit or addition
 	const updatePeriodsList = (newPeriod) => {
@@ -265,11 +274,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("http://localhost:3000/cultures")
 			.then((response) => {
 				setCultures(response.data);
+				const filteredCulture = response.data.find(
+					(culture) => culture.name === selectedCulture,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredCulture) {
+					log.info(filteredCulture);
+					setCultureID(filteredCulture.id);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching cultures:", error);
 			});
-	}, []);
+	}, [selectedCulture]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -329,11 +347,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("http://localhost:3000/baseShapes")
 			.then((response) => {
 				setBaseShapes(response.data);
+				const filteredBaseShape = response.data.find(
+					(baseShape) => baseShape.name === selectedBaseShape,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredBaseShape) {
+					log.info(filteredBaseShape);
+					setBaseShapeID(filteredBaseShape.id);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching base shapes:", error);
 			});
-	}, []);
+	}, [selectedBaseShape]);
 
 	// This function opens the BaseShapeModal for editing an existing base shape or adding a new one.
 	const handleOpenBaseShapeModal = (baseShapeId = null) => {
@@ -395,11 +422,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("http://localhost:3000/crossSections")
 			.then((response) => {
 				setCrossSections(response.data);
+				const filteredCrossSection = response.data.find(
+					(crossSection) => crossSection.name === selectedCrossSection,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredCrossSection) {
+					log.info(filteredCrossSection);
+					setCrossSectionID(filteredCrossSection.id);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching cross sections:", error);
 			});
-	}, []);
+	}, [selectedCrossSection]);
 
 	// This function opens the CrossSectionModal for editing an existing cross sections or adding a new one.
 	const handleOpenCrossSectionModal = (crossSectionId = null) => {
@@ -462,11 +498,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("http://localhost:3000/bladeShapes")
 			.then((response) => {
 				setBladeShapes(response.data);
+				const filteredBladeShape = response.data.find(
+					(bladeShape) => bladeShape.name === selectedBladeShape,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredBladeShape) {
+					log.info(filteredBladeShape);
+					setBladeShapeID(filteredBladeShape.id);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching blade shapes:", error);
 			});
-	}, []);
+	}, [selectedBladeShape]);
 
 	// This function opens the BladeShapeModal for editing an existing blade shape or adding a new one.
 	const handleOpenBladeShapeModal = (bladeShapeId = null) => {
@@ -528,11 +573,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("http://localhost:3000/haftingShapes")
 			.then((response) => {
 				setHaftingShapes(response.data);
+				const filteredHaftingShape = response.data.find(
+					(haftingShape) => haftingShape.name === selectedHaftingShape,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredHaftingShape) {
+					log.info(filteredHaftingShape);
+					setHaftingShapeID(filteredHaftingShape.id);
+				}
 			})
 			.catch((error) => {
 				console.error("Error fetching hafting shapes:", error);
 			});
-	}, []);
+	}, [selectedHaftingShape]);
 
 	// This function opens the HaftingShapeModal for editing an existing hafting shape or adding a new one.
 	const handleOpenHaftingShapeModal = (haftingShapeID = null) => {
