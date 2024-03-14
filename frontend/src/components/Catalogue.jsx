@@ -67,10 +67,12 @@ const Catalogue = () => {
 		<BaseLayout>
 			<Grid item xs={12}>
 				<Grid>
-					<Typography variant="h4">
+					<Typography sx={{ marginBottom: 2 }} variant="h4">
 						{catalogueName || "Base Catalogue"}
 					</Typography>
-					<Typography>{catalogueDescription}</Typography>
+					<Typography sx={{ marginBottom: 4 }}>
+						{catalogueDescription}
+					</Typography>
 				</Grid>
 
 				<Grid container spacing={2}>
@@ -78,9 +80,10 @@ const Catalogue = () => {
 						{/*Search Bar*/}
 						<form noValidate autoComplete="off">
 							<TextField
-								id="search"
+								sx={{ marginBottom: 4 }}
+								id="standard-basic"
 								label="Search"
-								variant="outlined"
+								variant="standard"
 								fullWidth
 								value={searchValue}
 								onChange={handleSearch}
@@ -95,7 +98,7 @@ const Catalogue = () => {
 						</form>
 					</Grid>
 				</Grid>
-				<Grid container spacing={2} style={{ marginTop: 5 }}>
+				<Grid container spacing={2} sx={{ marginBottom: 4 }}>
 					{" "}
 					{/* Adjusted marginTop */}
 					<Grid item xs={6} sm={3}>

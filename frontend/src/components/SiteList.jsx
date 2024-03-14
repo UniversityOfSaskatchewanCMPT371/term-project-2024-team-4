@@ -4,14 +4,25 @@ import React, { useState, useEffect } from "react";
 import SiteModal from "./SiteModal";
 import { Link } from "react-router-dom";
 import {
+	styled,
 	Grid,
 	Card,
 	CardContent,
 	ButtonBase,
 	Typography,
 	Box,
+	Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+
+// create Item component and styling, based on Paper MUI component
+const Item = styled(Paper)(({ theme }) => ({
+	backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+	...theme.typography.body2,
+	padding: theme.spacing(1),
+	textAlign: "center",
+	color: theme.palette.text.secondary,
+}));
 
 export default function SiteList({ query }) {
 	const [open, setOpen] = useState(false);
@@ -43,47 +54,49 @@ export default function SiteList({ query }) {
 
 	return (
 		<div>
-			<Grid maxWidth="md" style={{ marginTop: 20, marginLeft: -10 }}>
-				<Box display="flex">
-					<Grid container spacing={2}>
-						<Grid item xs={12} sm={6} md={3}>
-							<ButtonBase onClick={handleClick1}>
-								<Card>
-									<CardContent style={{ textAlign: "center" }}>
-										<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
-									</CardContent>
-								</Card>
-							</ButtonBase>
-						</Grid>
-						{filteredData &&
-							filteredData.map((item, key) => (
-								<Grid item xs={12} sm={6} md={3} key={item.id}>
-									<ButtonBase onClick={handleClick2(item)}>
-										{/* <Link to={"/addnewprojectile"} state={{key}}> */}
+			<Item variant="outlined" sx={{ mt: "40px", minHeight: "500px" }}>
+				<Grid maxWidth="md" style={{ marginTop: 20, marginLeft: -10 }}>
+					<Box display="flex">
+						<Grid container spacing={2}>
+							<Grid item xs={12} sm={6} md={3}>
+								<ButtonBase onClick={handleClick1}>
+									<Card>
+										<CardContent style={{ textAlign: "center" }}>
+											<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
+										</CardContent>
+									</Card>
+								</ButtonBase>
+							</Grid>
+							{filteredData &&
+								filteredData.map((item, key) => (
+									<Grid item xs={12} sm={6} md={3} key={item.id}>
+										<ButtonBase onClick={handleClick2(item)}>
+											{/* <Link to={"/addnewprojectile"} state={{key}}> */}
 
-										{/*<Link to="/addnewprojectile" state={{ some: item }}>*/
-										/*This is the original line of code, if things don't work add it back*/}
-										<Link to="/site" state={{ info: item }}>
-											<Card>
-												<CardContent>
-													<Typography variant="h5" component="h3">
-														{item.name}
-													</Typography>
-													<Typography color="textSecondary" gutterBottom>
-														{item.location}
-													</Typography>
-													<Typography variant="body2" component="p">
-														{item.id}
-													</Typography>
-												</CardContent>
-											</Card>
-										</Link>
-									</ButtonBase>
-								</Grid>
-							))}
-					</Grid>
-				</Box>
-			</Grid>
+											{/*<Link to="/addnewprojectile" state={{ some: item }}>*/
+											/*This is the original line of code, if things don't work add it back*/}
+											<Link to="/site" state={{ info: item }}>
+												<Card>
+													<CardContent>
+														<Typography variant="h5" component="h3">
+															{item.name}
+														</Typography>
+														<Typography color="textSecondary" gutterBottom>
+															{item.location}
+														</Typography>
+														<Typography variant="body2" component="p">
+															{item.id}
+														</Typography>
+													</CardContent>
+												</Card>
+											</Link>
+										</ButtonBase>
+									</Grid>
+								))}
+						</Grid>
+					</Box>
+				</Grid>
+			</Item>
 			<Typography>{open && <SiteModal setOpen={setOpen} />}</Typography>
 		</div>
 	);

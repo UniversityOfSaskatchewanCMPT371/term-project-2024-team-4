@@ -61,8 +61,10 @@ const Site = () => {
 		<BaseLayout>
 			<Grid item xs={12}>
 				<Grid>
-					<Typography variant="h4">{siteName}</Typography>
-					<Typography>{siteDescription}</Typography>
+					<Typography variant="h4" sx={{ marginBottom: 2 }}>
+						{siteName}
+					</Typography>
+					<Typography sx={{ marginBottom: 4 }}>{siteDescription}</Typography>
 				</Grid>
 
 				<Grid container spacing={2}>
@@ -70,9 +72,10 @@ const Site = () => {
 						{/*Search Bar*/}
 						<form noValidate autoComplete="off">
 							<TextField
+								sx={{ marginBottom: 2 }}
 								id="search"
 								label="Search"
-								variant="outlined"
+								variant="standard"
 								fullWidth
 								value={searchValue}
 								onChange={handleSearch}
@@ -87,7 +90,7 @@ const Site = () => {
 						</form>
 					</Grid>
 				</Grid>
-				<Grid container spacing={2} style={{ marginTop: 5 }}>
+				<Grid container spacing={2} sx={{ marginBottom: 4 }}>
 					{" "}
 					{/* Adjusted marginTop */}
 					<Grid item xs={6} sm={3}>
