@@ -155,11 +155,11 @@ const SiteModal = ({ setOpen }) => {
 			<Dialog
 				open={true}
 				onClose={handleClose}
-				maxWidth="md"
+				maxWidth="sm"
 				fullWidth
 				PaperProps={{ style: { maxHeight: "80vh" } }}
 			>
-				<DialogTitle>Create a site</DialogTitle>
+				<DialogTitle>Create a Site</DialogTitle>
 				<DialogContent style={{ minHeight: "300px" }}>
 					<TextField
 						autoFocus
@@ -181,11 +181,7 @@ const SiteModal = ({ setOpen }) => {
 						onChange={handleDescription}
 					/>
 
-					<Grid
-						container
-						spacing={2}
-						style={{ marginTop: 10, height: "100pt" }}
-					>
+					<Grid container spacing={2}>
 						<Grid item xs={6}>
 							<TextField
 								margin="dense"
