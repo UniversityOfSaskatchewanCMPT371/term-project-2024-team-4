@@ -46,7 +46,7 @@ export default function HaftingShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
-		if (setEditHaftingShape) selectedHaftingShape(false);
+		if (setEditHaftingShape) setEditHaftingShape(false);
 		logger.debug(
 			`HaftingShapeModal closed, mode: ${selectedHaftingShape ? "edit" : "add"}.`,
 		);
