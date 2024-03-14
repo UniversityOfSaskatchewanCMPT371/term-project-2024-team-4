@@ -72,12 +72,12 @@ export default function ProjectileList({ query, siteId }) {
 	return (
 		<div>
 			<Item variant="outlined" sx={{ mt: "40px", minHeight: "500px" }}>
-				<Grid maxWidth="md" style={{ marginTop: 20, marginLeft: -10 }}>
+				<Grid maxWidth="md" style={{ padding: 30 }}>
 					<Box display="flex">
-						<Grid container spacing={2}>
+						<Grid container spacing={5}>
 							<Grid item xs={12} sm={6} md={3}>
 								<ButtonBase onClick={handleClick1}>
-									<Card>
+									<Card sx={{ minWidth: 170, minHeight: 150 }}>
 										<CardContent style={{ textAlign: "center" }}>
 											<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
 											{/*<CreateArtifact style={{ fontSize: 80, color: "lightgrey" }} />*/}
@@ -90,7 +90,7 @@ export default function ProjectileList({ query, siteId }) {
 									<Grid item xs={12} sm={6} md={3} key={item.id}>
 										{/*This section is for displaying all the found artifacts*/}
 										<ButtonBase onClick={handleClick2(item)}>
-											<Card>
+											<Card sx={{ minWidth: 170, minHeight: 150 }}>
 												<CardContent>
 													<Typography variant="h5" component="h3">
 														{item.name}
