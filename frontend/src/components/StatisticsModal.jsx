@@ -16,7 +16,7 @@ import Divider from "@mui/material/Divider";
 
 //eslint-disable-next-line react/prop-types
 function StatisticsModal({ modalOpen, closeModal }) {
-	const [stats, setStats] = useState([]);
+	const [stats, setStats] = useState({});
 
 	useEffect(() => {
 		async function statsGetter() {
@@ -24,66 +24,52 @@ function StatisticsModal({ modalOpen, closeModal }) {
 				const response = await axios.get(
 					"http://localhost:3000/aggregateStatisticsGenerators/catalogue/1",
 				);
+				// console.log(response.data);
 				setStats(response.data);
-				log.info(stats);
-				console.log(stats);
 			} catch (error) {
 				log.error("Error fetching statistics: ", error);
 			}
 		}
 		statsGetter();
-	}, [open]);
+	}, [stats]);
 
 	return (
 		<>
-			<Dialog open={modalOpen} onClose={closeModal} fullWidth maxWidth="lx">
+			<Dialog open={modalOpen} onClose={closeModal} fullWidth maxWidth="lg">
 				<DialogTitle>Statistics</DialogTitle>
 				<DialogContent style={{ height: "800px" }}>
 					<Grid container spacing={1}>
 						<Grid item xs={6}>
-							<Box height={730} sx={{ border: "2px solid black" }}>
+							<Box height={730} sx={{ border: "1px solid black" }}>
 								<Typography id="modal-modal-title" variant="h6" component="h2">
 									Material Statistics
 								</Typography>
 							</Box>
 						</Grid>
 						<Grid item xs={6}>
-							<Box height={730} sx={{ border: "2px solid black" }}>
+							<Box height={730} sx={{ border: "1px solid black" }}>
 								<Typography id="modal-modal-title" variant="h6" component="h2">
 									Point Statistics
 									<PieChart
 										series={[
 											{
+												//TODO: Make this so that it grabs all of the points and makes a section for all of them
+
+												//TODO: Add more pie charts for different things (cultures, dimensions, sites point numbers, etc.)
 												data: [
 													{
-														id: stats
-															.get("materialDataMap")
-															.get("Material Types")[0],
-														value: stats
-															.get("materialDataMap")
-															.get("Projectile Percentages")[0],
-														label: stats
-															.get("materialDataMap")
-															.get("Material Types")[0],
+														id: 1,
+														value:
+															stats?.["Projectile Data"]?.["Projectile Count"],
+														label: "point2",
 													},
 												],
 											},
 										]}
+										width={400}
+										height={200}
 									/>
 								</Typography>
-								<PieChart
-									series={[
-										{
-											data: [
-												{ id: 0, value: 10, label: "AAAAA" },
-												{ id: 1, value: 15, label: "Kill me" },
-												{ id: 2, value: 20, label: "Yes" },
-											],
-										},
-									]}
-									width={400}
-									height={200}
-								/>
 							</Box>
 						</Grid>
 					</Grid>

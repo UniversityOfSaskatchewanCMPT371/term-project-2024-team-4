@@ -329,13 +329,11 @@ function aggregateSiteStatistics(siteId) {
  *                                             "Projectile Data":{"Projectile Count":[int], "Projectile Shapes": {"Base Shapes": [String], "Blade Shapes": [String], "Hafting Shapes": [String], "Cross Sections": [String]},
  * 											   "Projectile Types":[String], "Projectile Percentages":[floats], "Average Dimensions":[float]}}
  */
-function aggregateCatalogueStatistics(catalogueId) {
+async function aggregateCatalogueStatistics(catalogueId) {
 	if (catalogueId === undefined) {
 		console.debug("aggregateCatalogueStatistics() received an empty input");
 		return null;
 	}
-	const test = { params: { id: catalogueId } };
-
 	const catalogueStatisticsMap = new Map();
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
@@ -432,7 +430,7 @@ function aggregateCatalogueStatistics(catalogueId) {
 		);
 		projectileDataMap.set("Projectile Count", artifactCount);
 		projectileShapeMap.set("Blade Shapes", bladeShapeArray);
-		projectileShapeMap.set("Base Shapes", bladeShapeArray);
+		projectileShapeMap.set("Base Shapes", baseShapeArray);
 		projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
 		projectileShapeMap.set("Cross Sections", crossSectionArray);
 		projectileDataMap.set("Projectile Shapes", projectileShapeMap);
@@ -450,7 +448,12 @@ function aggregateCatalogueStatistics(catalogueId) {
 
 		return catalogueStatisticsMap;
 	}
-	return fetchCatalogue();
+	try {
+		const resultMap = await fetchCatalogue();
+		return resultMap;
+	} catch (error) {
+		console.log("AG error at bottom");
+	}
 }
 
 //TODO: Not now, not enough time, but there is some repeated code that can be placed into a seperate call function. specifically, in aggregatePointTypeStatistics() and aggregateSiteStatistics(),

@@ -28,7 +28,6 @@ function StatisticsPage() {
 				const response = await axios.get(
 					"http://localhost:3000/projectilePoints",
 				);
-				console.log(response.data[0]);
 				setData(response.data);
 			} catch (error) {
 				log.error("Error fetching projectile points: ", error);

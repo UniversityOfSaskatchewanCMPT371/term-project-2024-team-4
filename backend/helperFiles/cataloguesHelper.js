@@ -62,7 +62,6 @@ async function getCatalogueFromId(req) {
 		});
 
 		if (catalogue) {
-			console.log("CH 56: " + catalogue.sites);
 			return catalogue;
 			//res.json(catalogue);
 		} else {

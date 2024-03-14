@@ -49,7 +49,19 @@ router.get("/catalogue/:id", async (req, res) => {
 	if (aggregateCatalogueStatistics === null) {
 		res.json({ message: "aggregateCatalogueStatistics() Got Empty Input" });
 	}
-	res.json(aggregateCatalogueStatistics);
+	const resultMapToObject = deepMapToObject(aggregateCatalogueStatistics);
+
+	res.json(resultMapToObject);
+	// res.json(aggregateCatalogueStatistics);
 });
+
+//Helper function for deep map conversion for statistics
+function deepMapToObject(map) {
+	const out = {};
+	map.forEach((value, key) => {
+		out[key] = value instanceof Map ? deepMapToObject(value) : value;
+	});
+	return out;
+}
 
 module.exports = router;
