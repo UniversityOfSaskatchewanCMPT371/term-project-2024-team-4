@@ -43,31 +43,11 @@ const Site = () => {
 		}
 
 		fetchSite();
-	}, []);
+	}, [siteID]);
 
 	const handleSearch = (event) => {
 		setSearchValue(event.target.value);
 	};
-
-	// useEffect(() => {
-	// 	// console.log(inComingInfo.state.name);
-
-	// 	//Not sure what this is for, because this file should only be used for sites, right? | Jorden
-	// 	if (props.props === "catalogue") {
-	// 		console.log("Searching Catalogue for:", searchValue);
-	// 	} else if (props.props === "site") {
-	// 		console.log("Searching Site for:", searchValue);
-	// 	}
-
-	// 	// This is a test to see if the props are being passed correctly
-	// 	if (inComingInfo != null) {
-	// 		//console.log(locationx.state);
-	// 		//console.log(locationx.state.name);
-	// 		log.info(inComingInfo.state.info);
-	// 	} else {
-	// 		log.warn("Site information null");
-	// 	}
-	// }, [searchValue, props.props]);
 
 	const handleSortChange = (event) => {
 		setSortValue(event.target.value);
@@ -76,16 +56,6 @@ const Site = () => {
 	const handleFilterChange = (event) => {
 		setFilterValue(event.target.value);
 	};
-
-	//Used to refresh the page after a new artifact is added
-	// const refreshPage = () => {
-	// 	console.info("Site page refreshed");
-	// 	window.location.reload();
-	// };
-
-	// const sendInfo = () => {
-	// 	return inComingInfo.state.info;
-	// };
 
 	return (
 		<BaseLayout>

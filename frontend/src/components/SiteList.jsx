@@ -26,8 +26,6 @@ export default function SiteList({ query }) {
 	const handleClick2 = (item) => () => {
 		// event handler
 		console.log("Card clicked! ID:", item.id);
-
-		//Catalogue1.refreshPage(); // Tell the Catalogue1 to refresh
 	};
 
 	useEffect(() => {

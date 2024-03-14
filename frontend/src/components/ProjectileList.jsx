@@ -34,8 +34,6 @@ export default function ProjectileList({ query, siteId }) {
 		setProjectilePointId(item.id);
 		setOpenView(true);
 		console.log("Card clicked! ID:", item.id);
-
-		//Site.refreshPage(); // Tell the Catalogue1 to refresh
 	};
 
 	useEffect(() => {
