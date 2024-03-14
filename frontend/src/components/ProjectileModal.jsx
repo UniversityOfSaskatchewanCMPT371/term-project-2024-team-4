@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import FileUpload from "./UploadPicture";
+import FileUpload from "./UploadPicture"; // for uploadiung photo files
 import { useLocation } from "react-router-dom";
 import log from "../logger.js";
 import {
@@ -35,11 +35,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const siteName = inComingSiteInfo.state.info.name;
 
 	const [name, setName] = useState("");
-	const [description, setDescription] = useState(""); // for testing
+	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
-	const [dimensions, setDimensions] = useState(""); // for testing
-	const [photoFilePath, setPhotoFilePath] = useState(""); // for testing
-	// const [subtype, setSubtype] = useState("");
+	const [dimensions, setDimensions] = useState("");
+	const [photoFilePath, setPhotoFilePath] = useState("");
 	const [artifactTypeID, setartifactTypeID] = useState("");
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
@@ -115,12 +114,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [selectedHaftingShapeID, setSelectedHaftingShapeID] = useState(null);
 	// -----------------------------------------------------------------------------------------
 
-	// const [currentProjectiles, setCurrentProjectiles] = useState([]);
-
-	// const PlaceholderText = "Add Information";
 	const handleClose = () => {
 		setOpenAdd(false);
-		// window.location.reload();
 	};
 
 	const handleNameChange = (event) => {
@@ -143,10 +138,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setPhotoFilePath(event.target.value);
 	};
 
-	// const handleSubtypeChange = (event) => {
-	// 	setSubtype(event.target.value);
-	// };
-
 	const handleSubmit = () => {
 		log.info("Adding new projectile");
 
@@ -158,9 +149,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 			photo: photoFilePath,
 			siteId: siteID,
 			artifactTypeId: artifactTypeID,
-			// subtype,
 			cultureId: cultureID,
-			bladeShapdeId: bladeShapeID,
+			bladeShapeId: bladeShapeID,
 			baseShapeId: baseShapeID,
 			haftingShapeId: haftingShapeID,
 			crossSectionId: crossSectionID,
@@ -178,26 +168,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 		//setOpen(true);
 		console.log("Submitted:", newProjectilePoint);
 	};
-
-	// const handleClick = () => {
-	// 	fetch("http://localhost:3000/sites")
-	// 		.then((response) => response.json())
-	// 		.then((json) => setCurrentProjectiles(json))
-	// 		.catch((error) => console.error("Error fetching data:", error));
-	// };
-
-	// useEffect(() => {
-	// 	handleClick();
-	// }, [handleClick]);
-
-	// useEffect(() => {
-	// 	console.log(name);
-	// 	console.log(location);
-	// 	console.log(dimensions);
-	// 	console.log(artifactTypeID);
-	// 	//setSiteID(some.id);
-	// 	// eslint-disable-next-line react-hooks/exhaustive-deps
-	// }, [dimensions, name, location, artifactTypeID]);
 
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
@@ -647,7 +617,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 				onClose={handleClose}
 				maxWidth="md" //
 				fullWidth
-				PaperProps={{ style: { maxHeight: "80vh" } }}
 			>
 				<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
 				<DialogContent style={{ minHeight: "300px" }}>
@@ -857,14 +826,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 								value={photoFilePath}
 								onChange={handlePhotoFilePathChange}
 							/>
-							{/* <TextField
-								margin="dense"
-								id="subtype"
-								label="Subtype"
-								fullWidth
-								value={subtype}
-								onChange={handleSubtypeChange}
-							/> */}
 							{/*Should be renamed(maybe just drop the ID?)  also, Menu items will need to be dynamic at some point*/}
 							<TextField
 								margin="dense"
