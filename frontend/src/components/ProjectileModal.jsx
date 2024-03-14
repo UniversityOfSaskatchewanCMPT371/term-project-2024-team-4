@@ -612,12 +612,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ----------------- End of HaftingShapeModalfunctions ---------------------
 	return (
 		<div>
-			<Dialog
-				open={true}
-				onClose={handleClose}
-				maxWidth="md" //
-				fullWidth
-			>
+			<Dialog open={true} onClose={handleClose} maxWidth="md" fullWidth>
 				<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
 				<DialogContent style={{ minHeight: "300px" }}>
 					<Grid container spacing={2} sx={{ paddingTop: 0 }}>
@@ -635,7 +630,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								id="description"
 								label="Description"
 								multiline
-								rows={10}
+								rows={7}
 								fullWidth
 								value={description}
 								onChange={handleDescriptionChange}
