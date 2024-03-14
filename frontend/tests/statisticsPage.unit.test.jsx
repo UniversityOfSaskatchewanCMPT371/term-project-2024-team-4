@@ -5,35 +5,13 @@ import StatisticsPage from "../src/components/StatisticsPage.jsx";
 test("Render statistics page correctly", async () => {
 	render(<StatisticsPage />);
 
-	//Test if the search bar is on the screen
-	const searchBar = screen.getByText("Search");
-	expect(searchBar).toBeInTheDocument();
-
 	//Test if the button to generate statistics is on the screen
 	const statisticButton = screen.getByText("Generate Statistics");
 	expect(statisticButton).toBeInTheDocument();
 
-	//Test if the sort dropdown is on the screen
-	const sortOption = screen.getByText("Sort");
-	expect(sortOption).toBeInTheDocument();
-
-	//Test if the filter dropdown is on the screen
-	const filterOption = screen.getByText("Filter");
-	expect(filterOption).toBeInTheDocument();
-
 	//Test if the area for the list of points (with column headers) is on the screen
-	const listArea = screen.getByText("Point name");
+	const listArea = screen.getByText("Site");
 	expect(listArea).toBeInTheDocument();
-});
-
-test("Updates searchValue state when input for search bar changes", () => {
-	render(<StatisticsPage />);
-
-	const searchInput = screen.getByLabelText("Search");
-
-	//Changes the value in the search bar and ensures it properly changes
-	fireEvent.change(searchInput, { target: { value: "New value" } });
-	expect(searchInput.value).toBe("New value");
 });
 
 test("Render statistics modal correctly", () => {

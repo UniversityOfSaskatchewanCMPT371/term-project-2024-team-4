@@ -35,7 +35,7 @@ async function getAllSites() {
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
 		const sites = await siteRepository.find({
-			relations: ["catalogue", "region"],
+			relations: ["catalogue", "region", "artifacts"],
 		});
 		return sites;
 		//res.json(sites);

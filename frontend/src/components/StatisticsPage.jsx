@@ -23,21 +23,33 @@ function StatisticsPage() {
 	const [data, setData] = useState([]);
 
 	useEffect(() => {
+		async function pointsGetter() {
+			try {
+				const response = await axios.get(
+					"http://localhost:3000/projectilePoints",
+				);
+				console.log(response.data[0]);
+				setData(response.data);
+			} catch (error) {
+				log.error("Error fetching projectile points: ", error);
+			}
+		}
+		pointsGetter();
 		// Fetch data from JSON server on component mount
 
 		//console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed
 
-		fetch("http://localhost:3000/projectilePoints")
-			.then((response) => response.json())
-			.then((json) => setData(json))
-			.catch((error) => console.error("Error fetching data:", error));
-	}, [open]);
+		// axios
+		// 	.get("http://localhost:3000/projectilePoints")
+		// 	.then((response) => response.json())
+		// 	.then((json) => setData(json))
+		// 	.catch((error) => console.error("Error fetching data:", error));
+	}, []);
 
 	const rows1 = data.map((item) => ({
 		id: item.id,
-		name: item.name,
-		location: item.location,
 		site: item.site.name,
+		location: item.location,
 		culture: item.culture.name,
 		bladeShape: item.bladeShape.name,
 		baseShape: item.baseShape.name,
@@ -49,8 +61,8 @@ function StatisticsPage() {
 	const columns = [
 		{ field: "id", headerName: "ID", width: 10 },
 		{
-			field: "name",
-			headerName: "Point Name",
+			field: "site",
+			headerName: "Site",
 			width: 250,
 		},
 		{
@@ -64,13 +76,8 @@ function StatisticsPage() {
 			width: 150,
 		},
 		{
-			field: "site",
-			headerName: "Site",
-			width: 250,
-		},
-		{
 			field: "culture",
-			headerName: "Cuture",
+			headerName: "Culture",
 			width: 150,
 		},
 		{
@@ -97,15 +104,6 @@ function StatisticsPage() {
 			field: "crossSection",
 			headerName: "Cross Section",
 			width: 200,
-		},
-	];
-	const rows = [
-		{
-			id: 1,
-			name: "Point 1",
-			location: "Canada",
-			period: "Early",
-			site: "Site 1",
 		},
 	];
 

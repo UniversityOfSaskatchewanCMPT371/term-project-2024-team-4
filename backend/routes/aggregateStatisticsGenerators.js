@@ -37,7 +37,9 @@ router.get("/site/:id", async (req, res) => {
 //GET: Catalogue Aggregate Statistics
 router.get("/catalogue/:id", async (req, res) => {
 	const aggregateCatalogueStatistics =
-		await aggregateStatisticsConstroller.aggregateCatalogueStatistics(req);
+		await aggregateStatisticsConstroller.aggregateCatalogueStatistics(
+			parseInt(req.params.id),
+		);
 	if (aggregateCatalogueStatistics === "Catalogue not found") {
 		res.json({ message: "Catalogue not found" });
 	}

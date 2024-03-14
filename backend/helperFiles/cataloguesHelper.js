@@ -49,10 +49,20 @@ async function getCatalogueFromId(req) {
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const catalogue = await catalogueRepository.findOne({
 			where: { id: parseInt(req.params.id) },
-			relations: ["sites"],
+			relations: [
+				"sites",
+				"sites.artifacts",
+				"sites.artifacts.artifactType",
+				"sites.artifacts.artifactType.materials",
+				"sites.artifacts.bladeShape",
+				"sites.artifacts.baseShape",
+				"sites.artifacts.haftingShape",
+				"sites.artifacts.crossSection",
+			],
 		});
 
 		if (catalogue) {
+			console.log("CH 56: " + catalogue.sites);
 			return catalogue;
 			//res.json(catalogue);
 		} else {

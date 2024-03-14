@@ -116,6 +116,8 @@ async function getProjectilePointFromId(req) {
 			.findOne({
 				where: { id },
 				relations: [
+					"site",
+					"artifactType",
 					"culture",
 					"bladeShape",
 					"baseShape",
