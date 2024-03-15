@@ -18,7 +18,7 @@ const Catalogue = () => {
 	const [catalogueDescription, setCatalogueDescription] = useState("");
 
 	const [searchValue, setSearchValue] = useState("");
-	const [sortValue, setSortValue] = useState("newest"); // does nothing atm
+	const [sortValue, setSortValue] = useState("newest"); // default to "newest" sorting
 	const [filterValue, setFilterValue] = useState(""); // does nothing atm
 
 	useEffect(() => {
@@ -114,8 +114,13 @@ const Catalogue = () => {
 							size="small"
 						>
 							<MenuItem value="newest">Newest</MenuItem>
-							<MenuItem value="descendant">Descendant</MenuItem>
-							<MenuItem value="ascending">Ascending</MenuItem>
+							<MenuItem value="oldest">Oldest</MenuItem>
+							<MenuItem value="alphabetical_ascending">
+								Alphabetical Ascending
+							</MenuItem>
+							<MenuItem value="alphabetical_descending">
+								Alphabetical Descending
+							</MenuItem>
 						</TextField>
 					</Grid>
 					<Grid item xs={6} sm={3}>
@@ -140,7 +145,7 @@ const Catalogue = () => {
 			</Grid>
 			<Grid item xs={12}>
 				{/* Note: this shows all the sites attached to the catalogue oldest first(as of March 9th, 2023) */}
-				<SiteList query={searchValue} />
+				<SiteList query={searchValue} sortValue={sortValue} />
 			</Grid>
 		</BaseLayout>
 	);
