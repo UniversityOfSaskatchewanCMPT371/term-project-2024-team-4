@@ -1,6 +1,7 @@
 import { useState } from "react";
 import logger from "../logger.js";
 import axios from "axios";
+import { BarChart } from "@mui/x-charts/BarChart";
 
 // MUI
 import Button from "@mui/material/Button";
