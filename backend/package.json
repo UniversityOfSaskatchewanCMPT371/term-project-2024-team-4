@@ -8,6 +8,8 @@
 		"devstart": "npm run build && nodemon --legacy-watch ./bin/www",
 		"serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
 		"test": "jest",
+		"unit-test": "jest --testMatch \"**/*.unit.test.js\"",
+		"integ-test": "jest --testMatch \"**/*.integ.test.js\"",
 		"lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
 		"lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
 		"format": "prettier --check .",
