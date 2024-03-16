@@ -12,7 +12,7 @@ router.post('api', authenticateAdmin, (req,res) => { admin only action });
 
  */
 
-const { logger } = require("./logger");
+const { logger } = require("../config/logger");
 const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
