@@ -133,9 +133,7 @@ const SiteModal = ({ setOpen }) => {
 			.catch((error) => {
 				console.error("Error adding new site:", error);
 			});
-		setOpen(true);
 		console.log("Submitted:", newSite);
-		handleClose();
 	};
 
 	const handleClick = () => {

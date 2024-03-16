@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const artifactsHelper = require("../helperFiles/artifactsHelper.js");
 
+//TODO add express-validator
+
 // POST: Create a new Artifact
 router.post("/", async (req, res) => {
 	const artifact = await artifactsHelper.newArtifact(req);

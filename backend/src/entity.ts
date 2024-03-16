@@ -12,7 +12,10 @@ import {
 	CreateDateColumn,
 } from "typeorm";
 
-// Catalogue
+/**
+ * Represents a catalogue of archaeological sites.
+ * Each catalogue can contain multiple sites.
+ */
 @Entity()
 export class Catalogue {
 	@CreateDateColumn()
@@ -31,10 +34,11 @@ export class Catalogue {
 	sites: Site[];
 }
 
-// Region
+/**
+ * Represents the region that a site belongs to.
+ */
 @Entity()
 export class Region {
-	
 	@PrimaryGeneratedColumn()
 	id: number;
 
@@ -48,11 +52,14 @@ export class Region {
 	sites: Site[];
 }
 
-// Site
+/**
+ * Represents the site where archaeological artifacts (projectile points) were found.
+ * Each site can contain multiple artifacts.
+ */
 @Entity()
 export class Site {
 	@CreateDateColumn()
-	createdDate: Date
+	createdDate: Date;
 
 	@PrimaryGeneratedColumn()
 	id: number;
@@ -76,7 +83,11 @@ export class Site {
 	artifacts: Artifact[];
 }
 
-// Period Entity
+/**
+ * Represents the time period that archaeological artifacts (projectile points)
+ * belong to.
+ * Each period can have multiple artifacts belonging to it.
+ */
 @Entity()
 export class Period {
 	@PrimaryGeneratedColumn()
@@ -95,7 +106,11 @@ export class Period {
 	cultures: Culture[];
 }
 
-// Culture Entity
+/**
+ * Represents the culture (design of projectile points to help identify the culture or civilization
+ * that created them) that archaeological artifacts (projectile points) belong to.
+ * Each culture can have multiple artifacts belonging to it.
+ */
 @Entity()
 export class Culture {
 	@PrimaryGeneratedColumn()
@@ -130,7 +145,9 @@ export class Culture {
 	crossSections: CrossSection[];
 }
 
-// Shape Entity (Blade Shape)
+/**
+ * Represents the shape of the blade of the artifacts (projectile points)
+ */
 @Entity()
 export class BladeShape {
 	@PrimaryGeneratedColumn()
@@ -149,7 +166,9 @@ export class BladeShape {
 	projectilePoints: ProjectilePoint[];
 }
 
-// Shape Entity (Base Shape)
+/**
+ * Represents the shape of the base of the artifacts (projectile points)
+ */
 @Entity()
 export class BaseShape {
 	@PrimaryGeneratedColumn()
@@ -168,7 +187,10 @@ export class BaseShape {
 	projectilePoints: ProjectilePoint[];
 }
 
-// Shape Entity (Hafting Shape)
+/**
+ * Represents the hafting shape (the design or form at the base of the projectile point where
+ * it is attached or secured to a shaft or handle, commonly known as hafting) of the artifacts (projectile points)
+ */
 @Entity()
 export class HaftingShape {
 	@PrimaryGeneratedColumn()
@@ -187,7 +209,9 @@ export class HaftingShape {
 	projectilePoints: ProjectilePoint[];
 }
 
-// Shape Entity (Cross Section)
+/**
+ * Represents the cross-section of the artifacts (projectile points)
+ */
 @Entity()
 export class CrossSection {
 	@PrimaryGeneratedColumn()
@@ -227,8 +251,8 @@ export class ArtifactType {
 @TableInheritance({ column: { type: "varchar", name: "subtype" } })
 export class Artifact {
 	@CreateDateColumn()
-	createdDate: Date
-	
+	createdDate: Date;
+
 	@PrimaryGeneratedColumn()
 	id: number;
 
