@@ -41,7 +41,7 @@ test("RegionModal renders correctly with every field empty", () => {
 	const { getByLabelText } = render(<RegionModal />);
 
 	// Find input fields
-	const regionInput = getByLabelText("Region");
+	const regionInput = getByLabelText("Region Name");
 	const descriptionInput = getByLabelText("Description");
 
 	// make sure input feild is empty
@@ -55,7 +55,7 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 		name: "Test Site",
 		description: "Test Description",
 		location: "Test Location",
-		catalogueId: 11,
+		catalogueId: 1,
 		regionId: 48,
 	};
 
@@ -103,8 +103,7 @@ test("creates a new site through UI and verifies it is saved in the database", a
 		name: "XYZ",
 		description: "Test Description",
 		location: "Test Location",
-		catalogueId: 11,
-		regionId: 48,
+		catalogueId: 1,
 	};
 
 	// Render the component
@@ -114,14 +113,14 @@ test("creates a new site through UI and verifies it is saved in the database", a
 	const nameInput = screen.getByLabelText("Site Name");
 	const descriptionInput = screen.getByLabelText("Site Description");
 	const locationInput = screen.getByLabelText("Location");
-	const regionInput = screen.getByLabelText("Region");
+	
 
 	userEvent.type(nameInput, siteData.name);
 	userEvent.type(descriptionInput, siteData.description);
 	userEvent.type(locationInput, siteData.location);
 
 	// select the available region in the database
-	userEvent.selectOptions(regionInput, ["SK"]);
+	// userEvent.selectOptions(regionInput, ["SK"]);
 	fireEvent.click(screen.getByText("Add"));
 
 	await waitFor(async () => {

@@ -7,6 +7,10 @@ import axios from "axios";
 axios.defaults.baseURL = "http://localhost:8080";
 axios.defaults.withCredentials = true;
 
+/**
+ * Main App component which contains the routing paths
+ * @returns App React component
+ */
 function App() {
 	return (
 		<UserContextProvider>
