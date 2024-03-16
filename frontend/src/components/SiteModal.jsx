@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import axios from "axios";
 import log from "../logger.js";
@@ -18,29 +20,42 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import RegionModal from "./RegionModal";
 
-// eslint-disable-next-line react/prop-types
+/**
+ * SiteModal functional component for creating and editing site information.
+ *
+ * @param {Object} props - The component props.
+ * @param {function} props.setOpen - Function to control the modal visibility.
+ * @pre None
+ * @post Renders a form allowing users to create or edit site details. Communicates with backend services to update site information.
+ * @returns {JSX.Element} The rendered modal component.
+ */
 const SiteModal = ({ setOpen }) => {
 	const [name, setSiteName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [regionID, setRegionID] = useState(0);
 
+	/**
+	 * Closes the modal and resets the parent's state.
+	 *
+	 * @pre None
+	 * @post Sets the parent component's open state to false.
+	 */
 	const handleClose = () => {
 		setOpen(false);
 	};
 
-	const handleNameChange = (event) => {
-		setSiteName(event.target.value);
-	};
+	// Handlers for updating state based on form input
+	const handleNameChange = (event) => setSiteName(event.target.value);
+	const handleDescriptionChange = (event) => setDescription(event.target.value);
+	const handleLocationChange = (event) => setLocation(event.target.value);
 
-	const handleDescriptionChange = (event) => {
-		setDescription(event.target.value);
-	};
-
-	const handleLocationChange = (event) => {
-		setLocation(event.target.value);
-	};
-
+	/**
+	 * Submits the new or edited site information to the backend.
+	 *
+	 * @pre Form data (name, description, location) must be filled out.
+	 * @post Sends the site data to the backend and closes the modal if successful. Logs the action. Handles any errors.
+	 */
 	const handleSubmit = () => {
 		const newSite = {
 			name,
@@ -59,26 +74,23 @@ const SiteModal = ({ setOpen }) => {
 			.catch((error) => {
 				console.error("Error adding new site:", error);
 			});
-		setOpen(true);
-		console.log("Submitted:", newSite);
-		handleClose();
 	};
 
-	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
+	// Site selection and menu functionality
 	const [anchorEl, setAnchorEl] = useState(null);
-	const [currentRegion, setCurrentRegion] = useState(null); // The period currently selected in the dropdown
-
-	// ------------ For state variables for editing periods through the PeriodModal ------------
+	const [currentRegion, setCurrentRegion] = useState(null);
 	const [regions, setRegions] = useState([]);
 	const [selectedRegion, setSelectedRegion] = useState("");
 	const [editRegion, setEditRegion] = useState(false);
 	const [regionModalOpen, setRegionModalOpen] = useState(false);
 	const [selectedRegionID, setSelectedRegionID] = useState(null);
-	// -----------------------------------------------------------------------------------------
 
-	// ---------------- Start of RegionModal functions --------------------
-
-	// This function fetches cultures when the component mounts. This ensures the dropdown for cultures is always up-to-date.
+	/**
+	 * Fetches Site information from the backend when the component mounts.
+	 *
+	 * @pre Axios must be configured correctly.
+	 * @post Updates the regions state with the fetched data and selects the current region if matched.
+	 */
 	useEffect(() => {
 		axios
 			.get("http://localhost:3000/regions")
@@ -87,16 +99,12 @@ const SiteModal = ({ setOpen }) => {
 				const filteredRegion = response.data.find(
 					(region) => region.name === selectedRegion,
 				);
-
-				// Check if period with the provided name was found
 				if (filteredRegion) {
 					log.info(filteredRegion);
 					setRegionID(filteredRegion.id);
 				}
 			})
-			.catch((error) => {
-				console.error("Error fetching cultures:", error);
-			});
+			.catch((error) => console.error("Error fetching regions:", error));
 	}, [selectedRegion]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
@@ -245,7 +253,7 @@ const SiteModal = ({ setOpen }) => {
 									<DeleteIcon fontSize="small" /> Delete
 								</MenuItem>
 							</Menu>
-							{/* ------------ End of PeriodModal  ------------- */}
+							{/* ------------ End of SiteModal  ------------- */}
 						</Grid>
 					</Grid>
 				</DialogContent>
