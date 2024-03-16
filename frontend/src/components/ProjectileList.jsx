@@ -16,7 +16,6 @@ import {
 	Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import { useLocation } from "react-router-dom";
 
 // create Item component and styling, based on Paper MUI component
 const Item = styled(Paper)(({ theme }) => ({
@@ -32,8 +31,6 @@ export default function ProjectileList({ query, siteId }) {
 	const [openView, setOpenView] = useState(false);
 	const [projectilePointId, setProjectilePointId] = useState(0);
 	const [data, setData] = useState([]);
-
-	const inComingSiteInfo = useLocation();
 
 	// the action to take when the new site button is pressed
 	const handleClick1 = () => {

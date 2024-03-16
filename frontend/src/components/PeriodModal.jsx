@@ -59,13 +59,7 @@ export default function PeriodModal({
 		}
 
 		setErrors(newErrors);
-		if (!isValid) {
-			logger.error("Validation failed: ", newErrors);
-			throw new Error(
-				"Validation failed. Start and End dates must be integers.",
-			);
-		}
-		return isValid;
+		return isValid; // Return the validation result instead of throwing an error
 	};
 
 	/**

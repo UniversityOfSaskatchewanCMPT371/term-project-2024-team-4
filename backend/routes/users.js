@@ -5,16 +5,11 @@ const dataSource = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const registerUser = require("../helpers/register");
-const crypto = require("crypto");
 const { logger } = require("../config/logger");
+require("dotenv").config();
 
-// Function to generate a secure random string
-function generateJWTSecret(length = 64) {
-	return crypto.randomBytes(length).toString("hex");
-}
-
-// Generate a JWT secret
-const JWT_SECRET = generateJWTSecret();
+// JWT Secret is in .env file
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
  * POST /api/users

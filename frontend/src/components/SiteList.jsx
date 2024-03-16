@@ -15,7 +15,10 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-// create Item component and styling, based on Paper MUI component
+/**
+ * Item component styled from the Paper MUI component.
+ * Intended for use in displaying individual site data as cards.
+ */
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
 	...theme.typography.body2,
@@ -24,30 +27,59 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary,
 }));
 
+/**
+ * SiteList functional component displays a list of sites.
+ * Includes functionality to add a new site and view existing sites.
+ *
+ * @param {Object} props - The component props.
+ * @param {string} props.query - The search query used to filter displayed sites.
+ * @pre None
+ * @post Renders a list of site cards filtered by the provided query. Each card is clickable.
+ * @returns {JSX.Element} The rendered component with a list of site cards.
+ */
 export default function SiteList({ query }) {
-	const [open, setOpen] = useState(false);
-	const [data, setData] = useState([]); // contain the all available sites in the database.
+	const [open, setOpen] = useState(false); // Controls the visibility of the SiteModal.
+	const [data, setData] = useState([]); // Stores the list of sites.
 
-	// the action to take when the new site button is pressed
+	/**
+	 * Opens the SiteModal when the new site button is clicked.
+	 *
+	 * @pre None
+	 * @post Sets the 'open' state to true, making the SiteModal visible.
+	 */
 	const handleClick1 = () => {
 		setOpen(true);
 		console.log("Add card clicked!");
 	};
-	// The action to take when an already existing site is clicked on
+
+	/**
+	 * Logs the click action when an existing site card is clicked.
+	 *
+	 * @param {Object} item - The site data associated with the clicked card.
+	 * @returns {Function} An event handler function for the click event.
+	 * @pre None
+	 * @post Logs the clicked site's ID to the console.
+	 */
 	const handleClick2 = (item) => () => {
-		// event handler
 		console.log("Card clicked! ID:", item.id);
 	};
 
+	/**
+	 * Fetches the list of sites from the backend upon component mount.
+	 *
+	 * @pre None
+	 * @post Sets the 'data' state to the list of fetched sites. Catches and logs any errors.
+	 */
 	useEffect(() => {
-		// Fetch data from JSON server on component mount
 		fetch("http://localhost:3000/sites")
 			.then((response) => response.json())
 			.then((json) => setData(json))
 			.catch((error) => console.error("Error fetching data:", error));
-	}, [open]);
+	}, [open]); // Depend on 'open' to refetch when the modal is closed.
 
-	//Filter data based on search query (mock)
+	/**
+	 * Filters the fetched sites data based on the search query.
+	 */
 	const filteredData = data?.filter((item) =>
 		item.name.toLowerCase().includes(query.toLowerCase()),
 	);
@@ -68,13 +100,9 @@ export default function SiteList({ query }) {
 								</ButtonBase>
 							</Grid>
 							{filteredData &&
-								filteredData.map((item, key) => (
+								filteredData.map((item) => (
 									<Grid item xs={12} sm={6} md={3} key={item.id}>
 										<ButtonBase onClick={handleClick2(item)}>
-											{/* <Link to={"/addnewprojectile"} state={{key}}> */}
-
-											{/*<Link to="/addnewprojectile" state={{ some: item }}>*/
-											/*This is the original line of code, if things don't work add it back*/}
 											<Link to="/site" state={{ info: item }}>
 												<Card sx={{ minWidth: 170, minHeight: 150 }}>
 													<CardContent>
@@ -97,7 +125,7 @@ export default function SiteList({ query }) {
 					</Box>
 				</Grid>
 			</Item>
-			<Typography>{open && <SiteModal setOpen={setOpen} />}</Typography>
+			{open && <SiteModal setOpen={setOpen} />}
 		</div>
 	);
 }

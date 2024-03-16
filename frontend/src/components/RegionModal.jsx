@@ -1,69 +1,106 @@
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+} from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import log from "../logger";
 
+/**
+ * RegionModal Component
+ * A modal component used to add a new region or edit an existing one.
+ *
+ * @pre
+ * - Props `setEditRegion`, `updateRegionsList` must be provided and be functions.
+ * - Props `selectedRegion`, `selectedRegionDescription`, and `selectedRegionID` must be strings or null.
+ *
+ * @post
+ * - Upon successful save, the regions list in the parent component is updated.
+ * - The modal will close and the editing state will reset.
+ *
+ * @param {Object} props - Component props:
+ *   - setEditRegion: Function to update the edit state of the region.
+ *   - selectedRegion: The current name of the region being edited (if any).
+ *   - selectedRegionDescription: The current description of the region being edited.
+ *   - selectedRegionID: The ID of the region being edited, if applicable.
+ *   - updateRegionsList: Function to update the list of regions after adding/editing.
+ * @returns {JSX.Element} A rendered modal component for region addition or editing.
+ */
 export default function RegionModal({
 	setEditRegion,
 	selectedRegion,
-	selectedDescription,
+	selectedRegionDescription,
 	selectedRegionID,
+	updateRegionsList,
 }) {
-	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [name, setName] = useState(selectedRegion); // Initialize name state with selectedRegion
-	const [description, setDescription] = useState(selectedDescription); // Initialize description state with selectedDescription
+	const [open, setOpen] = useState(true);
+	const [regionName, setRegionName] = useState(selectedRegion || "");
+	const [description, setDescription] = useState(
+		selectedRegionDescription || "",
+	);
 
+	/**
+	 * handleSave function
+	 * Handles the save action when the 'Save' button is clicked.
+	 *
+	 * @pre
+	 * - `regionName` and `description` states must be initialized.
+	 *
+	 * @post
+	 * - Makes a PUT or POST HTTP request to save the region data.
+	 * - Updates the region list in the parent component on success.
+	 * - Closes the modal and resets the editing state.
+	 */
 	const handleSave = () => {
-		const updatedRegion = {
-			name,
-			description,
-		};
+		const updatedRegion = { name: regionName, description };
+		const requestUrl = `http://localhost:3000/regions/${selectedRegionID || ""}`;
+		const requestMethod = selectedRegionID ? axios.put : axios.post;
 
-		if (selectedRegion) {
-			axios
-				.put(`http://localhost:3000/regions/${selectedRegionID}`, updatedRegion)
-				.then((response) => {
-					console.log("Region updated successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating region:", error);
-				});
-		}
-
-		setOpen(false); // Close the dialog
-		setEditRegion(false);
-
-		if (!selectedRegion) {
-			axios
-				.post("http://localhost:3000/regions", updatedRegion)
-				.then((response) => {
-					console.log("Region created successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating region:", error);
-				});
-		}
+		requestMethod(requestUrl, updatedRegion)
+			.then((response) => {
+				log.info("Region saved successfully: ", response.data);
+				updateRegionsList(response.data);
+				handleClose();
+			})
+			.catch((error) => {
+				log.error("Error saving region: ", error);
+				alert("Error saving region. See console for details.");
+			});
 	};
 
+	/**
+	 * handleClose function
+	 * Closes the modal and resets the region editing state.
+	 *
+	 * @post
+	 * - The `open` state is set to false.
+	 * - The `setEditRegion` prop function is called with false.
+	 */
 	const handleClose = () => {
-		setOpen(false); // Close the dialog
+		setOpen(false);
 		setEditRegion(false);
 	};
 
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedRegionID ? "Edit Region" : "Add New Region"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="name"
-						label="Region"
+						label="Region Name"
 						variant="outlined"
 						fullWidth
-						value={name} // Use value instead of defaultValue
-						onChange={(e) => setName(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
+						value={regionName}
+						onChange={(e) => setRegionName(e.target.value)}
+						margin="normal"
 					/>
-					<br />
 					<TextField
 						id="description"
 						label="Description"
@@ -72,12 +109,16 @@ export default function RegionModal({
 						maxRows={10}
 						variant="outlined"
 						fullWidth
-						value={description} // Use value instead of defaultValue
-						onChange={(e) => setDescription(e.target.value)} // Handle change in description field
-						style={{ marginBottom: "15px" }}
+						value={description}
+						onChange={(e) => setDescription(e.target.value)}
+						margin="normal"
 					/>
-					<br />
-					<Button onClick={handleSave} variant="contained" color="primary">
+					<Button
+						onClick={handleSave}
+						variant="contained"
+						color="primary"
+						style={{ marginTop: "20px" }}
+					>
 						Save
 					</Button>
 				</DialogContent>

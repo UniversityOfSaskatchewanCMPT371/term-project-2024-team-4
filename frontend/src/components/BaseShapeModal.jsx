@@ -2,7 +2,7 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
-import logger from "../logger";
+import log from "../logger";
 
 /**
  * Component for editing or adding a new base shape.
@@ -48,7 +48,7 @@ export default function BaseShapeModal({
 
 		apiCall
 			.then((response) => {
-				logger.info(
+				log.info(
 					`Base shape ${selectedBaseShapeID ? "updated" : "created"} successfully: `,
 					response.data,
 				);
@@ -56,7 +56,7 @@ export default function BaseShapeModal({
 				handleClose();
 			})
 			.catch((error) => {
-				logger.error("Error saving Base Shape: ", error);
+				log.error("Error saving Base Shape: ", error);
 			});
 	};
 
@@ -66,7 +66,7 @@ export default function BaseShapeModal({
 	const handleClose = () => {
 		setOpen(false);
 		if (setEditBaseShape) setEditBaseShape(false);
-		logger.debug(
+		log.debug(
 			`BaseShapeModal closed, mode: ${selectedBaseShapeID ? "edit" : "add"}.`,
 		);
 	};
