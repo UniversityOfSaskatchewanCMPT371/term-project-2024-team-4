@@ -9,7 +9,9 @@ axios.defaults.withCredentials = true;
 
 /**
  * Main App component which contains the routing paths
- * @returns App React component
+ * @pre None
+ * @post Renders main parent App component
+ * @returns {JSX.Element} App React component
  */
 function App() {
 	return (

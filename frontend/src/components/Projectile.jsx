@@ -10,8 +10,16 @@ import {
 	Typography,
 } from "@mui/material";
 
-// eslint-disable-next-line no-unused-vars
-const AddProjectile = ({ setOpen, projectilePointId }) => {
+/**
+ * Modal for viewing projectile point details
+ * @param {function} setOpen toggle modal visibility
+ * @param {integer} projectilePointId ID of projectile point to be viewed
+ * @pre None
+ * @post Renders modal with projectile point details
+ * @returns {JSX.Element} ViewProjectile React component
+ */
+// eslint-disable-next-line no-unused-vars, react/prop-types
+const ViewProjectile = ({ setOpen, projectilePointId }) => {
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
@@ -24,15 +32,21 @@ const AddProjectile = ({ setOpen, projectilePointId }) => {
 	const [haftingShapeName, setHaftingShapeName] = useState("");
 	const [crossSectionName, setCrossSectionName] = useState("");
 
+	/**
+	 * Set modal visibility to false
+	 */
 	const handleClose = () => {
 		setOpen(false);
-		// window.location.reload();
 	};
 
+	/**
+	 * Fetch projectile point using ID
+	 */
 	useEffect(() => {
 		axios
 			.get(`http://localhost:3000/projectilePoints/${projectilePointId}`)
 			.then((response) => {
+				log.info("Projectile point: ", response.data);
 				setName(response.data.name);
 				setDescription(response.data.description);
 				setLocation(response.data.location);
@@ -46,7 +60,7 @@ const AddProjectile = ({ setOpen, projectilePointId }) => {
 				setCrossSectionName(response.data.crossSection.name);
 			})
 			.catch((error) => {
-				console.error("Error fetching projectile point:", error);
+				log.error("Error fetching projectile point: ", error);
 			});
 	}, []);
 
@@ -111,4 +125,4 @@ const AddProjectile = ({ setOpen, projectilePointId }) => {
 	);
 };
 
-export default AddProjectile;
+export default ViewProjectile;
