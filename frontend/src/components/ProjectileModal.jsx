@@ -1,6 +1,7 @@
+/* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import axios from "axios";
-import FileUpload from "./UploadPicture"; // for uploadiung photo files
+// import FileUpload from "./UploadPicture"; // for future uploading photo files implementation
 import { useLocation } from "react-router-dom";
 import log from "../logger.js";
 import {
@@ -28,6 +29,13 @@ import CrossSectionModal from "./CrossSectionModal.jsx";
 import BladeShapeModal from "./BladeShapeModal.jsx";
 import HaftingShapeModal from "./HaftingShapeModal.jsx";
 
+/**
+ * Modal for adding a new projectile point to a site
+ * @param {boolean} setOpenAdd
+ * @pre A site should exist in database
+ * @post Renders add projectile modal and saves submitted projectile point in database
+ * @returns {JSX.Element} AddProjectile React component
+ */
 // eslint-disable-next-line no-unused-vars, react/prop-types
 const AddProjectile = ({ setOpenAdd }) => {
 	const inComingSiteInfo = useLocation();
@@ -46,7 +54,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [baseShapeID, setBaseShapeID] = useState(0);
 	const [haftingShapeID, setHaftingShapeID] = useState(0);
 	const [crossSectionID, setCrossSectionID] = useState(0);
-	const [materialID, setMaterialID] = useState(0);
+	const [materialID, setMaterialID] = useState(0); // for future implementation of adding materials
 	const [periodID, setPeriodID] = useState(0); // not needed for adding projectile point, for testing only
 
 	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
