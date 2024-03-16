@@ -26,7 +26,7 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function SiteList({ query }) {
 	const [open, setOpen] = useState(false);
-	const [data, setData] = useState([]);
+	const [data, setData] = useState([]); // contain the all available sites in the database.
 
 	// the action to take when the new site button is pressed
 	const handleClick1 = () => {

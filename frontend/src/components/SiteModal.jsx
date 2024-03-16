@@ -120,7 +120,7 @@ const SiteModal = ({ setOpen }) => {
 			name,
 			description,
 			location,
-			catalogueId: 1,
+			catalogueId: 11,
 			regionId: selectedRegionID,
 		};
 

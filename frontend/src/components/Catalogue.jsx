@@ -24,7 +24,7 @@ const Catalogue = () => {
 	useEffect(() => {
 		async function fetchCatalogue() {
 			try {
-				const response = await axios.get("http://localhost:3000/catalogues/1");
+				const response = await axios.get("http://localhost:3000/catalogues/11");
 				setCatalogueName(response.data.name);
 				setCatalogueDescription(response.data.description);
 			} catch (error) {
