@@ -13,6 +13,10 @@ import {
 	MenuItem,
 } from "@mui/material";
 
+/**
+ * Default catalogue main page for viewing and adding sites
+ * @returns Catalogue React component
+ */
 const Catalogue = () => {
 	const [catalogueName, setCatalogueName] = useState("");
 	const [catalogueDescription, setCatalogueDescription] = useState("");
@@ -21,51 +25,52 @@ const Catalogue = () => {
 	const [sortValue, setSortValue] = useState("newest"); // does nothing atm
 	const [filterValue, setFilterValue] = useState(""); // does nothing atm
 
+	/**
+	 * Fetch default catalogue initialized in database
+	 */
 	useEffect(() => {
 		async function fetchCatalogue() {
 			try {
 				const response = await axios.get("http://localhost:3000/catalogues/1");
+				log.info("Default catalogue: ", response.data);
 				setCatalogueName(response.data.name);
 				setCatalogueDescription(response.data.description);
 			} catch (error) {
-				log.error("Error fetching catalogue:", error);
+				log.error("Error fetching default catalogue: ", error);
 			}
 		}
 
 		fetchCatalogue();
 	}, []);
 
+	/**
+	 * Set search value every textfield input change
+	 * @param {object} event input textfield event object
+	 */
 	const handleSearch = (event) => {
 		setSearchValue(event.target.value);
 	};
 
-	// useEffect(() => {
-	// 	console.log(props.props);
-
-	// 	if (props.props === "catalogue") {
-	// 		console.log("Searching Catalogue for:", searchValue);
-	// 	} else if (props.props === "site") {
-	// 		console.log("Searching Site for:", searchValue);
-	// 	}
-	// }, [searchValue, props.props]);
-
+	/**
+	 * Set sort value every dropdown selection change
+	 * @param {object} event dropwdown selected object value
+	 */
 	const handleSortChange = (event) => {
 		setSortValue(event.target.value);
 	};
 
+	/**
+	 * Set search value every dropdown selection change
+	 * @param {object} event dropwdown selected object value
+	 */
 	const handleFilterChange = (event) => {
 		setFilterValue(event.target.value);
 	};
 
-	//This function is here to refresh the page after a new site is added
-	// const refreshPage = () => {
-	// 	console.info("Catalogue1 page refreshed");
-	// 	window.location.reload();
-	// };
-
 	return (
 		<BaseLayout>
 			<Grid item xs={12}>
+				{/* Default catalogue labels */}
 				<Grid>
 					<Typography sx={{ marginBottom: 2 }} variant="h4">
 						{catalogueName || "Base Catalogue"}
@@ -74,10 +79,9 @@ const Catalogue = () => {
 						{catalogueDescription}
 					</Typography>
 				</Grid>
-
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
-						{/*Search Bar*/}
+						{/*Search bar*/}
 						<form noValidate autoComplete="off">
 							<TextField
 								sx={{ marginBottom: 4 }}
@@ -99,8 +103,6 @@ const Catalogue = () => {
 					</Grid>
 				</Grid>
 				<Grid container spacing={2} sx={{ marginBottom: 4 }}>
-					{" "}
-					{/* Adjusted marginTop */}
 					<Grid item xs={6} sm={3}>
 						{/*Sort widget*/}
 						<TextField

@@ -1,9 +1,15 @@
+// eslint-disable-next-line no-unused-vars
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
 import Box from "@mui/material/Box";
 import Sidebar from "./Sidebar";
 
-// this page serves as a base that all other pages will be loaded into
+/**
+ * This page serves as a base that all other pages will be loaded into
+ * @param {object} children page content to be rendered
+ * @returns BaseLayout React component
+ */
+// eslint-disable-next-line react/prop-types
 const BaseLayout = ({ children }) => {
 	return (
 		<>
