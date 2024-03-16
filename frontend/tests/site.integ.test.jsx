@@ -113,7 +113,6 @@ test("creates a new site through UI and verifies it is saved in the database", a
 	const nameInput = screen.getByLabelText("Site Name");
 	const descriptionInput = screen.getByLabelText("Site Description");
 	const locationInput = screen.getByLabelText("Location");
-	
 
 	userEvent.type(nameInput, siteData.name);
 	userEvent.type(descriptionInput, siteData.description);
