@@ -3,11 +3,6 @@ import log from "../logger.js";
 import axios from "axios";
 import Sidebar from "./Sidebar.jsx";
 import StatisticsModal from "./StatisticsModal.jsx";
-// import {
-// 	aggregateSiteStatistics,
-// 	aggregateCatalogueStatistics,
-// 	aggregatePointTypeStatistics,
-// } from "../../../backend/controllers/aggregateStatisticsController.js";
 
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box } from "@mui/material";
@@ -23,6 +18,9 @@ function StatisticsPage() {
 	const [data, setData] = useState([]);
 
 	useEffect(() => {
+		/**
+		 * Gets all projectile points in the catalogue for display and places them in the state of the component
+		 */
 		async function pointsGetter() {
 			try {
 				const response = await axios.get(
@@ -34,17 +32,9 @@ function StatisticsPage() {
 			}
 		}
 		pointsGetter();
-		// Fetch data from JSON server on component mount
-
-		//console.log("Fetching data from JSON server" + fetch("http://localhost:3000/artifacts")!=null); //debugging, should be removed
-
-		// axios
-		// 	.get("http://localhost:3000/projectilePoints")
-		// 	.then((response) => response.json())
-		// 	.then((json) => setData(json))
-		// 	.catch((error) => console.error("Error fetching data:", error));
 	}, []);
 
+	//Converts all the points into objects with fields for every column in the data grid
 	const rows1 = data.map((item) => ({
 		id: item.id,
 		site: item.site.name,
@@ -56,7 +46,7 @@ function StatisticsPage() {
 		crossSection: item.crossSection.name,
 	}));
 
-	//Holds all the information for the header rows of the table
+	//Holds all the information for the header row of the table and defines the fields for the data from projectile points.
 	const columns = [
 		{ field: "id", headerName: "ID", width: 10 },
 		{
@@ -108,10 +98,12 @@ function StatisticsPage() {
 
 	const openModal = () => {
 		setModalOpen(true);
+		log.info("Statistics Modal opened");
 	};
 
 	const closeModal = () => {
 		setModalOpen(false);
+		log.info("Statistics Modal closed");
 	};
 
 	return (

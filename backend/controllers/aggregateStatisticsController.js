@@ -225,7 +225,7 @@ function averageProjectilePointDimensions(artifactArray) {
  *                                             "Projectile Data":{"Projectile Count":[int], "Projectile Shapes": {"Base Shapes": [String], "Blade Shapes": [String], "Hafting Shapes": [String], "Cross Sections": [String]},
  * 											   "Projectile Types":[String], "Projectile Percentages":[floats], "Average Dimensions":[float]}}
  */
-function aggregateSiteStatistics(siteId) {
+async function aggregateSiteStatistics(siteId) {
 	if (siteId === undefined) {
 		console.debug("aggregateCatalogueStatistics() received an empty input");
 		return null;
@@ -234,7 +234,9 @@ function aggregateSiteStatistics(siteId) {
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
 
-	const currentSiteRes = sitesHelper.getSiteFromId({ params: { id: siteId } });
+	const currentSiteRes = await sitesHelper.getSiteFromId({
+		params: { id: siteId },
+	});
 	if (currentSiteRes === "Site not found") {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
@@ -245,7 +247,7 @@ function aggregateSiteStatistics(siteId) {
 		console.error("aggregateCatalogueStatistics() encountered an error");
 		return currentSiteRes;
 	}
-	const { artifacts } = currentSiteRes.body;
+	const { artifacts } = currentSiteRes;
 
 	//contains a list of each type of material, no duplicates
 	const materialTypeArray = new Array();
@@ -320,8 +322,6 @@ function aggregateSiteStatistics(siteId) {
 	return siteSatisticsMap;
 }
 
-//TODO: Change function above to be like the one below
-
 /**
  * Given a catalogue Id, calculate the aggregate statistics for that catalogue
  * @param catalogueId (a number related to a specific catalogue)
@@ -338,128 +338,108 @@ async function aggregateCatalogueStatistics(catalogueId) {
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
 
-	async function fetchCatalogue() {
-		const currentCatalogueRes = cataloguesHelper.getCatalogueFromId({
-			params: { id: catalogueId },
-		});
-		const cat = await currentCatalogueRes;
-		if (cat === "Catalogue not found") {
-			console.debug(
-				"aggregateCatalogueStatistics() received a catalog that doesnt exist",
+	const currentCatalogueRes = cataloguesHelper.getCatalogueFromId({
+		params: { id: catalogueId },
+	});
+	const cat = await currentCatalogueRes;
+	if (cat === "Catalogue not found") {
+		console.debug(
+			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
+		);
+		return "Catalogue not found";
+	}
+	if (cat instanceof Error) {
+		console.error("aggregateCatalogueStatistics() encountered an error");
+		return cat;
+	}
+	const { sites } = cat;
+
+	//contains a list of each type of material, no duplicates
+	const materialTypeArray = new Array();
+	//contains every material, can have duplicates. needed for material percentage.
+	const materialArray = new Array();
+	//contains every artifact, can have duplicates
+	const artifactArray = new Array();
+
+	const projectileShapeMap = new Map();
+	const projectileTypeArray = new Array();
+	const bladeShapeArray = new Array();
+	const baseShapeArray = new Array();
+	const haftingShapeArray = new Array();
+	const crossSectionArray = new Array();
+
+	var artifactCount = 0;
+
+	for (let i = 0; i < sites.length; i++) {
+		assert.equal(Object.hasOwn(sites[i], "artifacts"), true);
+		const currentSite = sites[i];
+		for (let j = 0; j < currentSite.artifacts.length; j++) {
+			assert.equal(
+				Object.hasOwn(currentSite.artifacts[j], "artifactType"),
+				true,
 			);
-			return "Catalogue not found";
-		}
-		if (cat instanceof Error) {
-			console.error("aggregateCatalogueStatistics() encountered an error");
-			return cat;
-		}
-		const { sites } = cat;
-
-		//contains a list of each type of material, no duplicates
-		const materialTypeArray = new Array();
-		//contains every material, can have duplicates. needed for material percentage.
-		const materialArray = new Array();
-		//contains every artifact, can have duplicates
-		const artifactArray = new Array();
-
-		const projectileShapeMap = new Map();
-		const projectileTypeArray = new Array();
-		const bladeShapeArray = new Array();
-		const baseShapeArray = new Array();
-		const haftingShapeArray = new Array();
-		const crossSectionArray = new Array();
-
-		var artifactCount = 0;
-
-		for (let i = 0; i < sites.length; i++) {
-			assert.equal(Object.hasOwn(sites[i], "artifacts"), true);
-			const currentSite = sites[i];
-			for (let j = 0; j < currentSite.artifacts.length; j++) {
-				assert.equal(
-					Object.hasOwn(currentSite.artifacts[j], "artifactType"),
-					true,
-				);
-				assert.equal(
-					Object.hasOwn(currentSite.artifacts[j].artifactType, "id"),
-					true,
-				);
-				artifactCount += 1;
-				const currentArtifact = currentSite.artifacts[j];
-				artifactArray.push(currentArtifact);
-				//the artifact type contains a list of materials
-				for (
-					let k = 0;
-					k < currentArtifact.artifactType.materials.length;
-					k++
-				) {
-					const currentMaterial = currentArtifact.artifactType.materials[k];
-					materialArray.push(currentMaterial.name);
-					//only add a material to the array if it hasnt been added already.
-					if (materialTypeArray.indexOf(currentMaterial.name) == -1) {
-						materialTypeArray.push(currentMaterial.name);
-					}
-				}
-				if (
-					projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1
-				) {
-					projectileTypeArray.push(currentArtifact.artifactType.id);
-				}
-				if (bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1) {
-					bladeShapeArray.push(currentArtifact.bladeShape.name);
-				}
-				if (baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1) {
-					baseShapeArray.push(currentArtifact.baseShape.name);
-				}
-				if (
-					haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1
-				) {
-					haftingShapeArray.push(currentArtifact.haftingShape.name);
-				}
-				if (
-					crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1
-				) {
-					crossSectionArray.push(currentArtifact.crossSection.name);
+			assert.equal(
+				Object.hasOwn(currentSite.artifacts[j].artifactType, "id"),
+				true,
+			);
+			artifactCount += 1;
+			const currentArtifact = currentSite.artifacts[j];
+			artifactArray.push(currentArtifact);
+			//the artifact type contains a list of materials
+			for (let k = 0; k < currentArtifact.artifactType.materials.length; k++) {
+				const currentMaterial = currentArtifact.artifactType.materials[k];
+				materialArray.push(currentMaterial.name);
+				//only add a material to the array if it hasnt been added already.
+				if (materialTypeArray.indexOf(currentMaterial.name) == -1) {
+					materialTypeArray.push(currentMaterial.name);
 				}
 			}
+			if (projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1) {
+				projectileTypeArray.push(currentArtifact.artifactType.id);
+			}
+			if (bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1) {
+				bladeShapeArray.push(currentArtifact.bladeShape.name);
+			}
+			if (baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1) {
+				baseShapeArray.push(currentArtifact.baseShape.name);
+			}
+			if (haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1) {
+				haftingShapeArray.push(currentArtifact.haftingShape.name);
+			}
+			if (crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1) {
+				crossSectionArray.push(currentArtifact.crossSection.name);
+			}
 		}
-		materialDataMap.set("Material Count", materialArray.length);
-		materialDataMap.set("Material Types", materialTypeArray);
-		materialDataMap.set(
-			"Material Percentages",
-			materialPercentage(materialArray),
-		);
-		projectileDataMap.set("Projectile Count", artifactCount);
-		projectileShapeMap.set("Blade Shapes", bladeShapeArray);
-		projectileShapeMap.set("Base Shapes", baseShapeArray);
-		projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
-		projectileShapeMap.set("Cross Sections", crossSectionArray);
-		projectileDataMap.set("Projectile Shapes", projectileShapeMap);
-		projectileDataMap.set(
-			"Projectile Percentages",
-			projectilePointPercentage(artifactArray),
-		);
-		projectileDataMap.set("Projectile Types", projectileTypeArray);
-		projectileDataMap.set(
-			"Average Dimensions",
-			averageProjectilePointDimensions(artifactArray),
-		);
-		catalogueStatisticsMap.set("Material Data", materialDataMap);
-		catalogueStatisticsMap.set("Projectile Data", projectileDataMap);
+	}
+	materialDataMap.set("Material Count", materialArray.length);
+	materialDataMap.set("Material Types", materialTypeArray);
+	materialDataMap.set(
+		"Material Percentages",
+		materialPercentage(materialArray),
+	);
+	projectileDataMap.set("Projectile Count", artifactCount);
+	projectileShapeMap.set("Blade Shapes", bladeShapeArray);
+	projectileShapeMap.set("Base Shapes", baseShapeArray);
+	projectileShapeMap.set("Hafting Shapes", haftingShapeArray);
+	projectileShapeMap.set("Cross Sections", crossSectionArray);
+	projectileDataMap.set("Projectile Shapes", projectileShapeMap);
+	projectileDataMap.set(
+		"Projectile Percentages",
+		projectilePointPercentage(artifactArray),
+	);
+	projectileDataMap.set("Projectile Types", projectileTypeArray);
+	projectileDataMap.set(
+		"Average Dimensions",
+		averageProjectilePointDimensions(artifactArray),
+	);
+	catalogueStatisticsMap.set("Material Data", materialDataMap);
+	catalogueStatisticsMap.set("Projectile Data", projectileDataMap);
 
-		return catalogueStatisticsMap;
-	}
-	try {
-		const resultMap = await fetchCatalogue();
-		return resultMap;
-	} catch (error) {
-		console.log("AG error at bottom");
-	}
+	return catalogueStatisticsMap;
 }
 
 //TODO: Not now, not enough time, but there is some repeated code that can be placed into a seperate call function. specifically, in aggregatePointTypeStatistics() and aggregateSiteStatistics(),
 //some code parses a list of artifacts and complites data about them in the same way, a function could be written to somplify it and make it more modular.
-
-//TODO: Change function below to be like the one above
 
 /**
  * Given a point type, calculate the aggregate statistics for that point type
@@ -467,7 +447,7 @@ async function aggregateCatalogueStatistics(catalogueId) {
  * @returns {Map} a map containing the keys: {"MaterialData":{"MaterialCount":[int], "MaterialTypes":[String], "MaterialPercentages":[floats]},
  *                                             "ProjectileData":{"ProjectileCount":[int], "ProjectileTypes":[String], "ProjectilePercentages":[floats], "AverageDimensions":[float]}}
  */
-function aggregatePointTypeStatistics(pointType) {
+async function aggregatePointTypeStatistics(pointType) {
 	if (pointType === undefined) {
 		console.debug("aggregateCatalogueStatistics() received an empty input");
 		return null;
@@ -477,7 +457,7 @@ function aggregatePointTypeStatistics(pointType) {
 	const materialDataMap = new Map();
 	const projectileDataMap = new Map();
 
-	const currentPointTypeRes = artifactTypesHelper.getArtifactTypeFromId({
+	const currentPointTypeRes = await artifactTypesHelper.getArtifactTypeFromId({
 		params: { id: pointType },
 	});
 	if (currentPointTypeRes === "ArtifactType not found") {
@@ -490,7 +470,7 @@ function aggregatePointTypeStatistics(pointType) {
 		console.error("aggregateCatalogueStatistics() encountered an error");
 		return currentPointTypeRes;
 	}
-	const { artifacts } = currentPointTypeRes.body;
+	const { artifacts } = currentPointTypeRes;
 
 	//contains a list of each type of material, no duplicates
 	const materialTypeArray = new Array();

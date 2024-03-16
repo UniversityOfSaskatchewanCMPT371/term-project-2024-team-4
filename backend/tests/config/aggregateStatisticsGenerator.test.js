@@ -67,12 +67,12 @@ const cataloguesHelper = require("../../helperFiles/cataloguesHelper");
 const sitesHelper = require("../../helperFiles/sitesHelper");
 
 describe("Tests for the function: materialPercentage()", () => {
-	test("Attempt to calculate percentages with an empty list", () => {
-		const percentages = materialPercentage([]);
+	test("Attempt to calculate percentages with an empty list", async () => {
+		const percentages = await materialPercentage([]);
 		expect(percentages).toBe(null);
 	});
 
-	test("Attempt to calculate percentages wssssssith a populated list expecting correct return", () => {
+	test("Attempt to calculate percentages wssssssith a populated list expecting correct return", async () => {
 		const materialArray = new Array(
 			"Type 1",
 			"Type 1",
@@ -95,7 +95,7 @@ describe("Tests for the function: materialPercentage()", () => {
 			"Type 4",
 			"Type 4",
 		);
-		const percentages = materialPercentage(materialArray);
+		const percentages = await materialPercentage(materialArray);
 		expect(parseFloat(percentages.get("Type 1"))).toBe(0.25);
 		expect(parseFloat(percentages.get("Type 2"))).toBe(0.25);
 		expect(parseFloat(percentages.get("Type 3"))).toBe(0.25);
@@ -104,12 +104,12 @@ describe("Tests for the function: materialPercentage()", () => {
 });
 
 describe("Tests for the function: projectilePointPercentage()", () => {
-	test("Attempt to calculate percentages with an empty list", () => {
-		const percentages = projectilePointPercentage([]);
+	test("Attempt to calculate percentages with an empty list", async () => {
+		const percentages = await projectilePointPercentage([]);
 		expect(percentages).toEqual(null);
 	});
 
-	test("Attempt to calculate percentages with a populated list expecting correct return", () => {
+	test("Attempt to calculate percentages with a populated list expecting correct return", async () => {
 		const projectile1 = {
 			bladeShape: { name: "Triangular" },
 			baseShape: { name: "Straight" },
@@ -145,46 +145,63 @@ describe("Tests for the function: projectilePointPercentage()", () => {
 			crossSection: { name: "Flat" },
 		};
 
-		const percentages = projectilePointPercentage([
+		const percentages = await projectilePointPercentage([
 			projectile1,
 			projectile2,
 			projectile3,
 			projectile4,
 			projectile5,
 		]);
+		// expect(percentages["Blade Shape"]["Triangular"]).toEqual("0.20");
 		expect(percentages.get("Blade Shape").get("Triangular")).toEqual("0.20");
+		// expect(percentages["Blade Shape"]["Excurvate"]).toEqual("0.20");
 		expect(percentages.get("Blade Shape").get("Excurvate")).toEqual("0.20");
+		// expect(percentages["Blade Shape"]["Incurvate"]).toEqual("0.40");
 		expect(percentages.get("Blade Shape").get("Incurvate")).toEqual("0.40");
+		// expect(percentages["Blade Shape"]["Ovate"]).toEqual("0.20");
 		expect(percentages.get("Blade Shape").get("Ovate")).toEqual("0.20");
+		// expect(percentages["Base Shape"]["Straight"]).toEqual("0.40");
 		expect(percentages.get("Base Shape").get("Straight")).toEqual("0.40");
+		// expect(percentages["Base Shape"]["Concave"]).toEqual("0.40");
 		expect(percentages.get("Base Shape").get("Concave")).toEqual("0.40");
+		// expect(percentages["Base Shape"]["Convex"]).toEqual("0.20");
 		expect(percentages.get("Base Shape").get("Convex")).toEqual("0.20");
+		// expect(percentages["Hafting Shape"]["Straight"]).toEqual("0.20");
 		expect(percentages.get("Hafting Shape").get("Straight")).toEqual("0.20");
+		// expect(percentages["Hafting Shape"]["Basally Concave"]).toEqual("0.20");
 		expect(percentages.get("Hafting Shape").get("Basally Concave")).toEqual(
 			"0.20",
 		);
+		// expect(percentages["Hafting Shape"]["Expanding"]).toEqual("0.20");
 		expect(percentages.get("Hafting Shape").get("Expanding")).toEqual("0.20");
+		// expect(percentages["Hafting Shape"]["Contracting"]).toEqual("0.20");
 		expect(percentages.get("Hafting Shape").get("Contracting")).toEqual("0.20");
+		// expect(percentages["Hafting Shape"]["Side Notched"]).toEqual("0.20");
 		expect(percentages.get("Hafting Shape").get("Side-Notched")).toEqual(
 			"0.20",
 		);
+		// expect(percentages["Cross Section"]["Rhomboid"]).toEqual("0.20");
 		expect(percentages.get("Cross Section").get("Rhomboid")).toEqual("0.20");
+		// expect(percentages["Cross Section"]["Lemicular"]).toEqual("0.20");
 		expect(percentages.get("Cross Section").get("Lemicular")).toEqual("0.20");
+		// expect(percentages["Cross Section"]["Plano-Convex"]).toEqual("0.20");
 		expect(percentages.get("Cross Section").get("Plano-Convex")).toEqual(
 			"0.20",
 		);
+		// expect(percentages["Cross Section"]["Flutex"]).toEqual("0.20");
 		expect(percentages.get("Cross Section").get("Flutex")).toEqual("0.20");
+		// expect(percentages["Cross Section"]["Flat"]).toEqual("0.20");
 		expect(percentages.get("Cross Section").get("Flat")).toEqual("0.20");
 	});
 });
 
 describe("Tests for the function: averageProjectilePointDimensions()", () => {
-	test("Calculate the average dimensions on an empty set of data", () => {
-		const averageDimensions = averageProjectilePointDimensions([]);
+	test("Calculate the average dimensions on an empty set of data", async () => {
+		const averageDimensions = await averageProjectilePointDimensions([]);
 		expect(averageDimensions).toEqual(null);
 	});
 
-	test("Calculate the average dimensions on a small set of data", () => {
+	test("Calculate the average dimensions on a small set of data", async () => {
 		const projectilePoint1 = {
 			id: 1,
 			name: "projectilePoint1",
@@ -232,7 +249,7 @@ describe("Tests for the function: averageProjectilePointDimensions()", () => {
 			haftingShape: 3,
 			crossSection: 3,
 		};
-		const averageDimensions = averageProjectilePointDimensions([
+		const averageDimensions = await averageProjectilePointDimensions([
 			projectilePoint1,
 			projectilePoint2,
 			projectilePoint3,
@@ -568,9 +585,19 @@ crossSection3.cultures.push(culture1);
 crossSection3.projectilePoints.push(projectilePoint3, projectilePoint5);
 
 describe("Tests for function: aggregateSiteStatistics()", () => {
-	test("Correctly acquiring the data?", () => {
+	test("Correctly acquiring the data?", async () => {
 		//initializing some dummy data to work with using a mock call of the get site route function
-		let body = {
+		// let body = {
+		// 	id: 1,
+		// 	name: "Site1",
+		// 	description: "This is Site 1",
+		// 	location: "This is Site 1's location",
+		// 	catalogue: catalogue1,
+		// 	region: region1,
+		// 	artifacts: [projectilePoint1, projectilePoint2, projectilePoint3],
+		// };
+
+		sitesHelper.getSiteFromId = jest.fn().mockReturnValueOnce({
 			id: 1,
 			name: "Site1",
 			description: "This is Site 1",
@@ -578,13 +605,9 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 			catalogue: catalogue1,
 			region: region1,
 			artifacts: [projectilePoint1, projectilePoint2, projectilePoint3],
-		};
-
-		sitesHelper.getSiteFromId = jest.fn().mockReturnValueOnce({
-			body,
 		});
 
-		const siteStatistics = aggregateSiteStatistics(1);
+		const siteStatistics = await aggregateSiteStatistics(1);
 		expect(siteStatistics.get("Material Data").get("Material Count")).toEqual(
 			3,
 		);
@@ -706,32 +729,35 @@ describe("Tests for function: aggregateSiteStatistics()", () => {
 		).toEqual([2.9, 4.97, 0.43]);
 	});
 
-	test("does it properly handle an empty input", () => {
-		const siteStatistics = aggregateSiteStatistics();
+	test("does it properly handle an empty input", async () => {
+		const siteStatistics = await aggregateSiteStatistics();
 		expect(siteStatistics).toEqual(null);
 	});
 
-	test("does it properly handle a site that doesnt exist", () => {
+	test("does it properly handle a site that doesnt exist", async () => {
 		sitesHelper.getSiteFromId = jest.fn().mockReturnValueOnce("Site not found");
-		const siteStatistics = aggregateSiteStatistics(3);
+		const siteStatistics = await aggregateSiteStatistics(3);
 		expect(siteStatistics).toEqual("Site not found");
 	});
 });
 
 describe("Tests for function: aggregateCatalogueStatistics()", () => {
-	test("Correctly acquiring the data for a catalogue?", () => {
-		let body = {
+	test("Correctly acquiring the data for a catalogue?", async () => {
+		// let body = {
+		// 	id: 1,
+		// 	name: "Catalogue1",
+		// 	description: "This is Catalogue 1",
+		// 	sites: [site1, site2],
+		// };
+
+		cataloguesHelper.getCatalogueFromId = jest.fn().mockReturnValueOnce({
 			id: 1,
 			name: "Catalogue1",
 			description: "This is Catalogue 1",
 			sites: [site1, site2],
-		};
-
-		cataloguesHelper.getCatalogueFromId = jest.fn().mockReturnValueOnce({
-			body,
 		});
 		console.log("Correctly acquiring the data for a catalogue?");
-		const catalogueStatistics = aggregateCatalogueStatistics(1);
+		const catalogueStatistics = await aggregateCatalogueStatistics(1);
 		console.log(catalogueStatistics);
 		console.log(
 			catalogueStatistics
@@ -876,31 +902,33 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 		).toEqual([3.18, 4.54, 0.38]);
 	});
 
-	test("does it properly handle an empty input", () => {
-		const siteStatistics = aggregateCatalogueStatistics();
+	test("does it properly handle an empty input", async () => {
+		const siteStatistics = await aggregateCatalogueStatistics();
 		expect(siteStatistics).toEqual(null);
 	});
 
-	test("does it properly handle a catalogue that doesnt exist", () => {
+	test("does it properly handle a catalogue that doesnt exist", async () => {
 		cataloguesHelper.getCatalogueFromId = jest
 			.fn()
 			.mockReturnValueOnce("Catalogue not found");
-		const siteStatistics = aggregateCatalogueStatistics(3);
+		const siteStatistics = await aggregateCatalogueStatistics(3);
 		expect(siteStatistics).toEqual("Catalogue not found");
 	});
 });
 
 describe("Tests for function: aggregatePointTypeStatistics()", () => {
-	test("Correctly acquiring the data for a pointType?", () => {
+	test("Correctly acquiring the data for a pointType?", async () => {
 		const body = {
 			id: "Ceramic",
 			materials: [material2],
 			artifacts: [projectilePoint2, projectilePoint4],
 		};
 		artifactTypesHelper.getArtifactTypeFromId = jest.fn().mockReturnValueOnce({
-			body,
+			id: "Ceramic",
+			materials: [material2],
+			artifacts: [projectilePoint2, projectilePoint4],
 		});
-		const pointTypeStatistics = aggregatePointTypeStatistics(1);
+		const pointTypeStatistics = await aggregatePointTypeStatistics(1);
 		expect(
 			pointTypeStatistics.get("Material Data").get("Material Count"),
 		).toEqual(2);
@@ -966,16 +994,16 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 		).toEqual([2.75, 5.05, 0.45]);
 	});
 
-	test("does it properly handle an empty input", () => {
-		const pointTypeStatistics = aggregatePointTypeStatistics();
+	test("does it properly handle an empty input", async () => {
+		const pointTypeStatistics = await aggregatePointTypeStatistics();
 		expect(pointTypeStatistics).toEqual(null);
 	});
 
-	test("does it properly handle a pointType that doesnt exist", () => {
+	test("does it properly handle a pointType that doesnt exist", async () => {
 		artifactTypesHelper.getArtifactTypeFromId = jest
 			.fn()
 			.mockReturnValueOnce("ArtifactType not found");
-		const pointTypeStatistics = aggregatePointTypeStatistics(51);
+		const pointTypeStatistics = await aggregatePointTypeStatistics(51);
 		expect(pointTypeStatistics).toEqual("ArtifactType not found");
 	});
 });

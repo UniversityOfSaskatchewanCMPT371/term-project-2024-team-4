@@ -7,25 +7,29 @@ import Typography from "@mui/material/Typography";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-// import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
-import Divider from "@mui/material/Divider";
 
 //eslint-disable-next-line react/prop-types
 function StatisticsModal({ modalOpen, closeModal }) {
 	const [stats, setStats] = useState({});
 
 	useEffect(() => {
+		/**
+		 * Gets statistics from aggregateStatisticsController.js and places in the state for the component
+		 */
 		async function statsGetter() {
 			try {
 				const response = await axios.get(
 					"http://localhost:3000/aggregateStatisticsGenerators/catalogue/1",
 				);
-				// console.log(response.data);
+				log.debug("Response data before setStats(): " + response.data);
 				setStats(response.data);
+				log.debug(
+					"stats variable after setState(response.data) is called: " + stats,
+				);
 			} catch (error) {
 				log.error("Error fetching statistics: ", error);
 			}
