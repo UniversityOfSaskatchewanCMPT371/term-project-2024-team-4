@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
-import logger from "../logger";
+import log from "../logger";
 
 /**
  * Modal component for adding or editing cultures.
@@ -43,12 +43,12 @@ export default function CultureModal({
 	 * Handles the save action when the form is submitted.
 	 * Validates the form, updates the culture, and closes the modal.
 	 */ const handleSave = () => {
-		logger.debug(
+		log.debug(
 			`Saving culture: ${cultureName} with period ID: ${selectedPeriodID}`,
 		);
 		if (!selectedPeriodID) {
 			alert("Please select a period to proceed.");
-			logger.warn("Attempted to save culture without selecting a period.");
+			log.warn("Attempted to save culture without selecting a period.");
 			return;
 		}
 
@@ -68,14 +68,14 @@ export default function CultureModal({
 
 		axiosCall
 			.then((response) => {
-				logger.info(
+				log.info(
 					`Culture processed successfully: ${JSON.stringify(response.data)}`,
 				);
 				updateCulturesList(response.data);
 				handleClose();
 			})
 			.catch((error) => {
-				logger.error(`Error processing culture: ${error}`);
+				log.error(`Error processing culture: ${error}`);
 			});
 	};
 

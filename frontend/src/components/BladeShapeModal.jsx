@@ -2,7 +2,7 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
-import logger from "../logger";
+import log from "../logger";
 
 /**
  * Modal component for adding or editing blade shapes.
@@ -46,7 +46,7 @@ export default function BladeShapeModal({
 
 		apiCall
 			.then((response) => {
-				logger.info(
+				log.info(
 					`Blade shape ${selectedBladeShapeID ? "updated" : "created"} successfully: `,
 					response.data,
 				);
@@ -54,7 +54,7 @@ export default function BladeShapeModal({
 				handleClose();
 			})
 			.catch((error) => {
-				logger.error("Error saving Base Shape: ", error);
+				log.error("Error saving Base Shape: ", error);
 			});
 	};
 
@@ -64,7 +64,7 @@ export default function BladeShapeModal({
 	const handleClose = () => {
 		setOpen(false);
 		if (setEditBladeShape) setEditBladeShape(false);
-		logger.debug(
+		log.debug(
 			`BladeShapeModal closed, mode: ${selectedBladeShapeID ? "edit" : "add"}.`,
 		);
 	};

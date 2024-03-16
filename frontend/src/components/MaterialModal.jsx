@@ -7,7 +7,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
-import logger from "../logger";
+import log from "../logger";
 
 export default function CultureModal({
 	setEditMaterial,
@@ -28,12 +28,12 @@ export default function CultureModal({
 	 * Handles the save action when the form is submitted.
 	 * Validates the form, updates the material, and closes the modal.
 	 */ const handleSave = () => {
-		logger.debug(
+		log.debug(
 			`Saving culture: ${materialName} with artifact type ID: ${selectedArtifactTypeID}`,
 		);
 		if (!selectedArtifactTypeID) {
 			alert("Please select an artifact type to proceed.");
-			logger.warn(
+			log.warn(
 				"Attempted to save material without selecting an artifact type.",
 			);
 			return;
@@ -55,14 +55,14 @@ export default function CultureModal({
 
 		axiosCall
 			.then((response) => {
-				logger.info(
+				log.info(
 					`Material processed successfully: ${JSON.stringify(response.data)}`,
 				);
 				updateMaterialList(response.data);
 				handleClose();
 			})
 			.catch((error) => {
-				logger.error(`Error processing material: ${error}`);
+				log.error(`Error processing material: ${error}`);
 			});
 	};
 

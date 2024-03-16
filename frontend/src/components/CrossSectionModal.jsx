@@ -2,7 +2,7 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
-import logger from "../logger";
+import log from "../logger";
 
 /**
  * Modal component for adding or editing cross sections.
@@ -46,7 +46,7 @@ export default function CrossSectionModal({
 
 		apiCall
 			.then((response) => {
-				logger.info(
+				log.info(
 					`Cross Section ${selectedCrossSection ? "updated" : "created"} successfully: `,
 					response.data,
 				);
@@ -54,7 +54,7 @@ export default function CrossSectionModal({
 				handleClose();
 			})
 			.catch((error) => {
-				logger.error("Error saving Cross Section: ", error);
+				log.error("Error saving Cross Section: ", error);
 			});
 	};
 
@@ -64,7 +64,7 @@ export default function CrossSectionModal({
 	const handleClose = () => {
 		setOpen(false);
 		if (setEditCrossSection) setEditCrossSection(false);
-		logger.debug(
+		log.debug(
 			`BaseShapeModal closed, mode: ${selectedCrossSectionID ? "edit" : "add"}.`,
 		);
 	};
