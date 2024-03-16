@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ProjectileModal from "./ProjectileModal";
@@ -17,7 +15,9 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 
-// create Item component and styling, based on Paper MUI component
+/**
+ * Create styled Item component, based on Paper MUI component
+ */
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
 	...theme.typography.body2,
@@ -26,22 +26,36 @@ const Item = styled(Paper)(({ theme }) => ({
 	color: theme.palette.text.secondary,
 }));
 
+/**
+ * Displays all projectiles for a selected site
+ * @param {string} query projectile name for searching
+ * @param {integer} siteId ID of site to view projectiles
+ * @pre Site should exist in database
+ * @post Renders projectile points cards
+ * @returns {JSX.Element} ProjectileList React component
+ */
+// eslint-disable-next-line react/prop-types
 export default function ProjectileList({ query, siteId }) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openView, setOpenView] = useState(false);
 	const [projectilePointId, setProjectilePointId] = useState(0);
 	const [data, setData] = useState([]);
 
-	// the action to take when the new site button is pressed
+	/**
+	 * Toggle add projectile modal visibility to true
+	 */
 	const handleClick1 = () => {
 		setOpenAdd(true);
-		console.log("Add card clicked!");
+		log.info("Add card clicked!");
 	};
 
+	/**
+	 * Toggle view projectile modal visibility to true
+	 */
 	const handleClick2 = (item) => () => {
 		setProjectilePointId(item.id);
 		setOpenView(true);
-		console.log("Card clicked! ID:", item.id);
+		log.info("Card clicked! ID:", item.id);
 	};
 
 	useEffect(() => {
@@ -50,19 +64,22 @@ export default function ProjectileList({ query, siteId }) {
 				const response = await axios.get(
 					"http://localhost:3000/projectilePoints",
 				);
+				log.info("Projectile points: ", response.data);
 				setData(response.data);
 			} catch (error) {
-				log.error("Error fetching projectilepoints:", error);
+				log.error("Error fetching projectile points:", error);
 			}
 		}
 
 		fetchprojectilePoints();
 	}, [openAdd]);
 
+	// Filter projectile points to current selected site
 	const siteData = data?.filter((item) => item.site.id == siteId);
 
-	//Filter data based on search query (mock)
+	// Filter data based on search query (mock)
 	const filteredData = siteData?.filter((item) =>
+		// eslint-disable-next-line react/prop-types
 		item.name.toLowerCase().includes(query.toLowerCase()),
 	);
 
@@ -83,7 +100,7 @@ export default function ProjectileList({ query, siteId }) {
 								</ButtonBase>
 							</Grid>
 							{filteredData &&
-								filteredData.map((item, key) => (
+								filteredData.map((item) => (
 									<Grid item xs={12} sm={6} md={3} key={item.id}>
 										{/*This section is for displaying all the found artifacts*/}
 										<ButtonBase onClick={handleClick2(item)}>
@@ -118,5 +135,3 @@ export default function ProjectileList({ query, siteId }) {
 		</div>
 	);
 }
-
-//

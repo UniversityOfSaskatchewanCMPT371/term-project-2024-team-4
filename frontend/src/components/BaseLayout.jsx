@@ -7,7 +7,9 @@ import Sidebar from "./Sidebar";
 /**
  * This page serves as a base that all other pages will be loaded into
  * @param {object} children page content to be rendered
- * @returns BaseLayout React component
+ * @pre None
+ * @post Renders base layout containing sidebar and dashboard for children components
+ * @returns {JSX.Element} BaseLayout React component
  */
 // eslint-disable-next-line react/prop-types
 const BaseLayout = ({ children }) => {

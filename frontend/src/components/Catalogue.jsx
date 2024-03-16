@@ -15,7 +15,9 @@ import {
 
 /**
  * Default catalogue main page for viewing and adding sites
- * @returns Catalogue React component
+ * @pre A default catalogue should be inialized in database with ID 1
+ * @post Renders default catalogue page
+ * @returns {JSX.Element} Catalogue React component
  */
 const Catalogue = () => {
 	const [catalogueName, setCatalogueName] = useState("");
