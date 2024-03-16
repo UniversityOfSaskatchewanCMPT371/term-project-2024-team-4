@@ -1,48 +1,49 @@
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogContent,
+	DialogTitle,
+} from "@mui/material";
 import { useState } from "react";
 import axios from "axios";
+import log from "../logger";
 
 export default function RegionModal({
 	setEditRegion,
 	selectedRegion,
-	selectedDescription,
+	selectedRegionDescription,
 	selectedRegionID,
+	updateRegionsList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [name, setName] = useState(selectedRegion); // Initialize name state with selectedRegion
-	const [description, setDescription] = useState(selectedDescription); // Initialize description state with selectedDescription
+	const [regionName, setRegionName] = useState(selectedRegion || ""); // Initialize name state with selectedRegion
+	const [description, setDescription] = useState(
+		selectedRegionDescription || "",
+	);
 
 	const handleSave = () => {
 		const updatedRegion = {
-			name,
+			name: regionName,
 			description,
 		};
 
-		if (selectedRegion) {
-			axios
-				.put(`http://localhost:3000/regions/${selectedRegionID}`, updatedRegion)
-				.then((response) => {
-					console.log("Region updated successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating region:", error);
-				});
-		}
+		const requestUrl = `http://localhost:3000/regions/${
+			selectedRegionID || ""
+		}`;
+		const requestMethod = selectedRegionID ? axios.put : axios.post;
 
-		setOpen(false); // Close the dialog
-		setEditRegion(false);
-
-		if (!selectedRegion) {
-			axios
-				.post("http://localhost:3000/regions", updatedRegion)
-				.then((response) => {
-					console.log("Region created successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error updating region:", error);
-				});
-		}
+		requestMethod(requestUrl, updatedRegion)
+			.then((response) => {
+				log.info("Region saved successfully: ", response.data);
+				updateRegionsList(response.data);
+				handleClose();
+			})
+			.catch((error) => {
+				log.error("Error saving region: ", error);
+				alert("Error saving region. See console for details.");
+			});
 	};
 
 	const handleClose = () => {
@@ -53,17 +54,19 @@ export default function RegionModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedRegionID ? "Edit Region" : "Add New Region"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="name"
-						label="Region"
+						label="Region Name"
 						variant="outlined"
 						fullWidth
-						value={name} // Use value instead of defaultValue
-						onChange={(e) => setName(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
+						value={regionName} // Use value instead of defaultValue
+						onChange={(e) => setRegionName(e.target.value)} // Handle change in name field
+						margin="normal"
 					/>
-					<br />
 					<TextField
 						id="description"
 						label="Description"
@@ -74,10 +77,15 @@ export default function RegionModal({
 						fullWidth
 						value={description} // Use value instead of defaultValue
 						onChange={(e) => setDescription(e.target.value)} // Handle change in description field
-						style={{ marginBottom: "15px" }}
+						margin="normal"
 					/>
 					<br />
-					<Button onClick={handleSave} variant="contained" color="primary">
+					<Button
+						onClick={handleSave}
+						variant="contained"
+						color="primary"
+						style={{ marginTop: "20px" }}
+					>
 						Save
 					</Button>
 				</DialogContent>

@@ -1,6 +1,6 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import axios from "axios";
+import log from "../logger.js";
 import {
 	Button,
 	Dialog,
@@ -10,109 +10,35 @@ import {
 	TextField,
 	MenuItem,
 	Grid,
-	FormControl,
 	IconButton,
 	Menu,
-	ListItemIcon,
-	ListItemText,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import EditRegion from "./RegionModal";
+import RegionModal from "./RegionModal";
 
 // eslint-disable-next-line react/prop-types
 const SiteModal = ({ setOpen }) => {
 	const [name, setSiteName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
-	const [selectedRegion, setSelectedRegion] = useState(null);
-	const [regions1, setRegions1] = useState([]);
-	const [editMenuAnchor, setEditMenuAnchor] = useState(null);
-	const [editRegion, setEditRegion] = useState(false);
-	const [description1, setDescription1] = useState("");
-	const [selectedRegionID, setselectedRegionID] = useState(0);
+	const [regionID, setRegionID] = useState(0);
 
 	const handleClose = () => {
 		setOpen(false);
 	};
 
-	const handleAddmore = () => {
-		console.log("Add more");
-		setEditRegion(true);
+	const handleNameChange = (event) => {
+		setSiteName(event.target.value);
 	};
 
-	const handleSiteNameChange = (e) => {
-		setSiteName(e.target.value);
-		console.log("Site name is: " + e.target.value);
+	const handleDescriptionChange = (event) => {
+		setDescription(event.target.value);
 	};
 
-	const handleDescription = (e) => {
-		setDescription(e.target.value);
-	};
-
-	const handleDescriptionChange = (e) => {
-		const name = e.target.value;
-		axios
-			// Gets the regions from the database
-			.get("http://localhost:3000/regions")
-			.then((response) => {
-				const filteredRegion = response.data.find(
-					(region) => region.name === name,
-				);
-
-				// Check if a region with the provided name was found
-				if (filteredRegion) {
-					const description = filteredRegion.description;
-					setselectedRegionID(filteredRegion.id);
-					setDescription1(description);
-				} else {
-					console.log("Region not found");
-				}
-			})
-			.catch((error) => {
-				console.error("Error fetching regions:", error);
-			});
-	};
-
-	const handleLocationChange = (e) => {
-		setLocation(e.target.value);
-		console.log("Location is: " + e.target.value);
-	};
-
-	const handleRegionChange = (e) => {
-		const regionValue = e.target.value;
-		setSelectedRegion(regionValue);
-		handleDescriptionChange(e);
-	};
-
-	const handleEditMenuOpen = (event) => {
-		setEditMenuAnchor(event.currentTarget);
-	};
-
-	const handleEditMenuClose = () => {
-		setEditMenuAnchor(null);
-	};
-
-	const handleEditRegion = () => {
-		// Implement edit region functionality here
-		setEditRegion(true);
-		handleEditMenuClose();
-	};
-
-	const handleDeleteRegion = () => {
-		// Implement delete region functionality here
-		if (selectedRegion) {
-			axios
-				.delete(`http://localhost:3000/regions/${selectedRegionID}`)
-				.then((response) => {
-					console.log("Region delete successfully:", response.data);
-				})
-				.catch((error) => {
-					console.error("Error deleting region:", error);
-				});
-		}
-		handleEditMenuClose();
+	const handleLocationChange = (event) => {
+		setLocation(event.target.value);
 	};
 
 	const handleSubmit = () => {
@@ -121,7 +47,7 @@ const SiteModal = ({ setOpen }) => {
 			description,
 			location,
 			catalogueId: 1,
-			regionId: selectedRegionID,
+			regionId: regionID,
 		};
 
 		axios
@@ -138,17 +64,101 @@ const SiteModal = ({ setOpen }) => {
 		handleClose();
 	};
 
-	const handleClick = () => {
-		fetch("http://localhost:3000/regions")
-			.then((response) => response.json())
-			.then((json) => setRegions1(json))
-			.then(console.log(regions1))
-			.catch((error) => console.error("Error fetching data:", error));
+	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [currentRegion, setCurrentRegion] = useState(null); // The period currently selected in the dropdown
+
+	// ------------ For state variables for editing periods through the PeriodModal ------------
+	const [regions, setRegions] = useState([]);
+	const [selectedRegion, setSelectedRegion] = useState("");
+	const [editRegion, setEditRegion] = useState(false);
+	const [regionModalOpen, setRegionModalOpen] = useState(false);
+	const [selectedRegionID, setSelectedRegionID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ---------------- Start of RegionModal functions --------------------
+
+	// This function fetches cultures when the component mounts. This ensures the dropdown for cultures is always up-to-date.
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/regions")
+			.then((response) => {
+				setRegions(response.data);
+				const filteredRegion = response.data.find(
+					(region) => region.name === selectedRegion,
+				);
+
+				// Check if period with the provided name was found
+				if (filteredRegion) {
+					log.info(filteredRegion);
+					setRegionID(filteredRegion.id);
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching cultures:", error);
+			});
+	}, [selectedRegion]);
+
+	// This function opens the CultureModal for editing an existing culture or adding a new one.
+	// If a cultureId is provided, the modal is configured for editing that culture.
+	// If no cultureId is provided, the modal is configured for adding a new culture.
+	const handleOpenRegionModal = (regionId = null) => {
+		setSelectedRegionID(regionId);
+		setEditRegion(true);
+		setRegionModalOpen(true);
 	};
 
-	useEffect(() => {
-		handleClick();
-	}, [handleClick]);
+	// This function handles the selection of a culture from the dropdown menu.
+	// Also prepares to show options for editing or deleting the selected culture.
+	const handleOpenMenu = (event, region) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setCurrentRegion(region);
+	};
+
+	// Function to close the dropdown menu
+	const handleCloseMenu = () => {
+		setAnchorEl(null);
+		setCurrentRegion(null);
+	};
+
+	// This function the selectedCulture state when a user selects a different culture from the dropdown
+	const handleRegionChange = (event) => {
+		setSelectedRegion(event.target.value);
+	};
+
+	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
+	const updateRegionsList = (newRegion) => {
+		setRegions((prevRegions) => {
+			const index = prevRegions.findIndex(
+				(region) => region.id === newRegion.id,
+			);
+			if (index > -1) {
+				// Update existing region
+				const updatedRegions = [...prevRegions];
+				updatedRegions[index] = newRegion;
+				return updatedRegions;
+			} else {
+				// Else, add the new region to the list
+				return [...prevRegions, newRegion];
+			}
+		});
+	};
+	// This function handles delete a culture from the server and updates the local list.
+	const handleDeleteRegion = () => {
+		if (currentRegion && currentRegion.id) {
+			axios
+				.delete(`http://localhost:3000/regions/${currentRegion.id}`)
+				.then(() => {
+					setRegions(regions.filter((r) => r.id !== currentRegion.id));
+					handleCloseMenu();
+				})
+				.catch((error) => {
+					console.error("Error deleting region:", error);
+				});
+		}
+	};
+	// ---------------- End of RegionModal functions --------------------
 
 	return (
 		<div>
@@ -168,7 +178,7 @@ const SiteModal = ({ setOpen }) => {
 						label="Site Name"
 						fullWidth
 						value={name}
-						onChange={handleSiteNameChange}
+						onChange={handleNameChange}
 					/>
 					<TextField
 						margin="dense"
@@ -178,9 +188,8 @@ const SiteModal = ({ setOpen }) => {
 						multiline
 						rows={10}
 						value={description}
-						onChange={handleDescription}
+						onChange={handleDescriptionChange}
 					/>
-
 					<Grid container spacing={2}>
 						<Grid item xs={6}>
 							<TextField
@@ -192,71 +201,53 @@ const SiteModal = ({ setOpen }) => {
 								onChange={handleLocationChange}
 							/>
 						</Grid>
-
-						<Grid
-							item
-							xs={6}
-							style={{ maxHeight: "100pt" }}
-							onClick={handleClick}
-						>
-							<FormControl fullWidth onClick={handleClick}>
-								<TextField
-									onClick={handleClick}
-									margin="dense"
-									label="Region"
-									id="region"
-									fullWidth
-									select
-									value={selectedRegion}
-									onChange={handleRegionChange}
-									sx={{
-										display: "flex",
-										alignItems: "center",
+						<Grid item xs={6}>
+							{/* ------------ Start of RegionModal ------------- */}
+							<TextField
+								select
+								label="Region"
+								value={selectedRegion}
+								onChange={handleRegionChange}
+								fullWidth
+								margin="dense"
+							>
+								{regions.map((region) => (
+									<MenuItem key={region.id} value={region.name}>
+										{region.name}
+										<IconButton
+											size="small"
+											onClick={(event) => handleOpenMenu(event, region)}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
+								<MenuItem onClick={() => handleOpenRegionModal()}>
+									+ Add New Region
+								</MenuItem>
+							</TextField>
+							<Menu
+								id="region-menu"
+								anchorEl={anchorEl}
+								open={Boolean(anchorEl)}
+								onClose={handleCloseMenu}
+							>
+								<MenuItem
+									onClick={() => {
+										handleOpenRegionModal(currentRegion.id);
+										handleCloseMenu();
 									}}
 								>
-									{regions1.map((region) => (
-										<MenuItem
-											key={region.name}
-											value={region.name}
-											onClick={handleClick}
-										>
-											{region.name}
-											<IconButton
-												aria-label="more"
-												aria-controls="edit-menu"
-												aria-haspopup="true"
-												onClick={handleEditMenuOpen}
-												style={{ marginLeft: "auto" }}
-											>
-												<MoreHorizIcon />
-											</IconButton>
-										</MenuItem>
-									))}
-									<MenuItem onClick={handleAddmore}>+ Add More</MenuItem>
-								</TextField>
-							</FormControl>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem onClick={handleDeleteRegion}>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
+							{/* ------------ End of PeriodModal  ------------- */}
 						</Grid>
 					</Grid>
-
-					<Menu
-						id="edit-menu"
-						anchorEl={editMenuAnchor}
-						open={Boolean(editMenuAnchor)}
-						onClose={handleEditMenuClose}
-					>
-						<MenuItem onClick={handleEditRegion}>
-							<ListItemIcon>
-								<EditIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Edit</ListItemText>
-						</MenuItem>
-						<MenuItem onClick={handleDeleteRegion}>
-							<ListItemIcon>
-								<DeleteIcon fontSize="small" />
-							</ListItemIcon>
-							<ListItemText>Delete</ListItemText>
-						</MenuItem>
-					</Menu>
 				</DialogContent>
 				<DialogActions>
 					<Button onClick={handleClose} color="primary">
@@ -268,11 +259,15 @@ const SiteModal = ({ setOpen }) => {
 				</DialogActions>
 			</Dialog>
 			{editRegion && (
-				<EditRegion
+				<RegionModal
 					setEditRegion={setEditRegion}
 					selectedRegion={selectedRegion}
-					selectedDescription={description1}
 					selectedRegionID={selectedRegionID}
+					regions={regions}
+					setRegions={setRegions}
+					updateRegionsList={updateRegionsList}
+					regionModalOpen={regionModalOpen}
+					setRegionModalOpen={setRegionModalOpen}
 				/>
 			)}
 		</div>

@@ -22,6 +22,7 @@ import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 // Dropdown menu modal components
 import PeriodModal from "./PeriodModal.jsx";
 import CultureModal from "./CultureModal.jsx";
+import MaterialModal from "./MaterialModal.jsx";
 import BaseShapeModal from "./BaseShapeModal.jsx";
 import CrossSectionModal from "./CrossSectionModal.jsx";
 import BladeShapeModal from "./BladeShapeModal.jsx";
@@ -39,13 +40,13 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [location, setLocation] = useState("");
 	const [dimensions, setDimensions] = useState("");
 	const [photoFilePath, setPhotoFilePath] = useState("");
-	const [artifactTypeID, setartifactTypeID] = useState("");
+	const [artifactTypeID, setArtifactTypeID] = useState("");
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
 	const [baseShapeID, setBaseShapeID] = useState(0);
 	const [haftingShapeID, setHaftingShapeID] = useState(0);
 	const [crossSectionID, setCrossSectionID] = useState(0);
-
+	const [materialID, setMaterialID] = useState(0);
 	const [periodID, setPeriodID] = useState(0); // not needed for adding projectile point, for testing only
 
 	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
@@ -112,6 +113,16 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [haftingShapeModalOpen, setHaftingShapeModalOpen] = useState(false);
 	const [editHaftingShape, setEditHaftingShape] = useState(false);
 	const [selectedHaftingShapeID, setSelectedHaftingShapeID] = useState(null);
+	// -----------------------------------------------------------------------------------------
+
+	// ---------- For state variables for editing Material through the MaterialModal --------
+	const [materials, setMaterials] = useState([]);
+	const [selectedMaterial, setSelectedMaterial] = useState("");
+	const [materialModalOpen, setMaterialModalOpen] = useState(false);
+	const [editMaterial, setEditMaterial] = useState(false);
+	const [selectedMaterialID, setSelectedMaterialID] = useState(null);
+
+	const [artifactTypes, setArtifactTypes] = useState([]);
 	// -----------------------------------------------------------------------------------------
 
 	const handleClose = () => {
@@ -610,6 +621,101 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	// ----------------- End of HaftingShapeModalfunctions ---------------------
+
+	// ---------------- Start of MaterialModal functions --------------------
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/materials")
+			.then((response) => {
+				setMaterials(response.data);
+				const filteredMaterial = response.data.find(
+					(material) => material.name === selectedMaterial,
+				);
+
+				// Check if artifactType with the provided name was found
+				if (filteredMaterial) {
+					log.info(filteredMaterial);
+					setMaterialID(filteredMaterial.id);
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching material:", error);
+			});
+
+		axios
+			.get("http://localhost:3000/artifactTypes")
+			.then((response) => {
+				setArtifactTypes(response.data);
+			})
+			.catch((error) => {
+				console.error("Error fetching artifact types:", error);
+			});
+	}, [selectedMaterial]);
+
+	useEffect(() => {
+		axios
+			.get("http://localhost:3000/materials")
+			.then((response) => {
+				setMaterials(response.data);
+				const filteredMaterial = response.data.find(
+					(material) => material.name === selectedMaterial,
+				);
+
+				// Check if artifactType with the provided name was found
+				if (filteredMaterial) {
+					log.info(filteredMaterial);
+					setMaterialID(filteredMaterial.id);
+				}
+			})
+			.catch((error) => {
+				console.error("Error fetching material:", error);
+			});
+	}, [selectedMaterial]);
+
+	const handleOpenMaterialModal = (materialID = null) => {
+		setSelectedMaterialID(materialID);
+		setEditMaterial(true);
+		setMaterialModalOpen(true);
+	};
+
+	const handleOpenEditMaterialMenu = (event, material) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setAnchorEl(event.currentTarget);
+		setSelectedMaterialID(material.id);
+	};
+
+	const handleMaterialChange = (event) => {
+		// setMaterialID(event.target.id);
+		setSelectedMaterial(event.target.value);
+	};
+
+	const updateMaterialList = (newMaterial) => {
+		setMaterials((prev) => {
+			const index = prev.findIndex((c) => c.id === newMaterial.id);
+			if (index > -1) {
+				return prev.map((c) => (c.id === newMaterial.id ? newMaterial : c));
+			} else {
+				return [...prev, newMaterial];
+			}
+		});
+	};
+
+	const handleDeleteMaterial = () => {
+		axios
+			.delete(`http://localhost:3000/materials/${selectedMaterialID}`)
+			.then(() => {
+				setMaterials(
+					materials.filter((material) => material.id !== selectedMaterialID),
+				);
+				handleCloseMenu();
+			})
+			.catch((error) => {
+				console.error("Error deleting material:", error);
+				handleCloseMenu();
+			});
+	};
+	// ---------------- End of MaterialModal functions --------------------
+
 	return (
 		<div>
 			<Dialog open={true} onClose={handleClose} maxWidth="md" fullWidth>
@@ -630,7 +736,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								id="description"
 								label="Description"
 								multiline
-								rows={7}
+								rows={4}
 								fullWidth
 								value={description}
 								onChange={handleDescriptionChange}
@@ -736,6 +842,108 @@ const AddProjectile = ({ setOpenAdd }) => {
 								</Menu>
 							</TextField>
 							{/* ------------ End of CultureModal  ------------- */}
+							{/*Should be renamed(maybe just drop the ID?)  also, Menu items will need to be dynamic at some point*/}
+							<TextField
+								margin="dense"
+								id="artifactTypeID"
+								label="ArtifactTypeID"
+								variant="outlined"
+								fullWidth
+								select
+								value={artifactTypeID}
+								onChange={(e) => setArtifactTypeID(e.target.value)}
+							>
+								<MenuItem value="Lithic">Lithic</MenuItem>
+								<MenuItem value="Ceramic">Ceramic</MenuItem>
+								<MenuItem value="Faunal">Faunal</MenuItem>
+							</TextField>
+							{/* ------------ Start of MaterialModal  ------------- */}
+							<TextField
+								select
+								label="Material"
+								value={selectedMaterial}
+								onChange={handleMaterialChange}
+								fullWidth
+								margin="dense"
+							>
+								{materials.map((material) => (
+									<MenuItem key={material.id} value={material.name}>
+										{material.name}
+										<IconButton
+											size="small"
+											onClick={(event) =>
+												handleOpenEditMaterialMenu(event, material)
+											}
+											style={{ marginLeft: "auto" }}
+										>
+											<MoreHorizIcon />
+										</IconButton>
+									</MenuItem>
+								))}
+
+								<MenuItem onClick={() => handleOpenMaterialModal()}>
+									+ Add New Material
+								</MenuItem>
+								<Menu
+									id="material-menu"
+									anchorEl={anchorEl}
+									keepMounted
+									open={Boolean(anchorEl)}
+									onClose={() => {
+										setAnchorEl(null);
+									}}
+								>
+									<MenuItem
+										onClick={() => {
+											setEditMaterial(true);
+											setMaterialModalOpen(true);
+											setAnchorEl(null);
+										}}
+									>
+										<EditIcon fontSize="small" /> Edit
+									</MenuItem>
+									<MenuItem
+										onClick={() => {
+											handleDeleteMaterial();
+											setAnchorEl(null);
+										}}
+									>
+										<DeleteIcon fontSize="small" /> Delete
+									</MenuItem>
+								</Menu>
+							</TextField>
+							{/* ------------ End of MaterialModal  ------------- */}
+						</Grid>
+						<Grid item xs={6}>
+							{/*This should removed, as the location is attached to the site*/}
+							<TextField
+								margin="dense"
+								id="location"
+								label="Location"
+								fullWidth
+								value={location}
+								onChange={handleLocationChange}
+							/>
+							{/* The dimensions should be three different fields(length, width, height and )
+						if you are making this change, make sure the database was changed to hold a list of
+						float/double and not a string*/}
+							<TextField
+								margin="dense"
+								id="dimensions"
+								label="Dimensions"
+								fullWidth
+								value={dimensions}
+								onChange={handleDimensionsChange}
+							/>
+							{/* <FileUpload margin="dense" /> */}
+							<TextField
+								margin="dense"
+								id="photoFilePath"
+								label="Photo File Path"
+								fullWidth
+								value={photoFilePath}
+								onChange={handlePhotoFilePathChange}
+							/>
 							{/* ------------ Start of BaseShapeModal  ------------- */}
 							<TextField
 								select
@@ -790,52 +998,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 								</Menu>
 							</TextField>
 							{/* ------------ End of BaseShapeModal  ------------- */}
-						</Grid>
-						<Grid item xs={6}>
-							{/*This should removed, as the location is attached to the site*/}
-							<TextField
-								margin="dense"
-								id="location"
-								label="Location"
-								fullWidth
-								value={location}
-								onChange={handleLocationChange}
-							/>
-							{/* The dimensions should be three different fields(length, width, height and )
-						if you are making this change, make sure the database was changed to hold a list of
-						float/double and not a string*/}
-							<TextField
-								margin="dense"
-								id="dimensions"
-								label="Dimensions"
-								fullWidth
-								value={dimensions}
-								onChange={handleDimensionsChange}
-							/>
-							{/* <FileUpload margin="dense" /> */}
-							<TextField
-								margin="dense"
-								id="photoFilePath"
-								label="Photo File Path"
-								fullWidth
-								value={photoFilePath}
-								onChange={handlePhotoFilePathChange}
-							/>
-							{/*Should be renamed(maybe just drop the ID?)  also, Menu items will need to be dynamic at some point*/}
-							<TextField
-								margin="dense"
-								id="artifactTypeID"
-								label="ArtifactTypeID"
-								variant="outlined"
-								fullWidth
-								select
-								value={artifactTypeID}
-								onChange={(e) => setartifactTypeID(e.target.value)}
-							>
-								<MenuItem value="Lithic">Lithic</MenuItem>
-								<MenuItem value="Ceramic">Ceramic</MenuItem>
-								<MenuItem value="Faunal">Faunal</MenuItem>
-							</TextField>
 							{/* ------------ Start of CrossSectionModal  ------------- */}
 							<TextField
 								select
@@ -1033,6 +1195,15 @@ const AddProjectile = ({ setOpenAdd }) => {
 					periods={periods}
 					cultureModalOpen={cultureModalOpen}
 					setCultureModalOpen={setCultureModalOpen}
+				/>
+			)}
+			{editMaterial && (
+				<MaterialModal
+					setEditMaterial={setEditMaterial}
+					selectedMaterial={selectedMaterial}
+					selectedMaterialID={selectedMaterialID}
+					updateMaterialList={updateMaterialList}
+					artifactTypes={artifactTypes}
 				/>
 			)}
 			{editBaseShape && (
