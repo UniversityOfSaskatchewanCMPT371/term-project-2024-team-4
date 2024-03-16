@@ -59,3 +59,16 @@ services:
       - ./frontend:/frontend
     ports:
       - "8080:8080"
+
+  # optional testing service
+  testing:
+    profiles:
+      - testing
+    build:
+      context: ./testing
+      dockerfile: dockerfile
+    volumes:
+      - /testing/node_modules
+      - ./testing:/testing
+    stdin_open: true
+    tty: true
