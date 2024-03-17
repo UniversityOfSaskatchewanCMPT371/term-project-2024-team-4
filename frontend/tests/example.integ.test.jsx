@@ -10,4 +10,3 @@ describe("Example Frontend Integration Test", () => {
 		expect(1).toBe(1);
 	});
 });
-
