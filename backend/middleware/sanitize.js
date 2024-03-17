@@ -15,6 +15,8 @@ router.post('api', userValidationRules(), validate, (req, res) => {})
 
 // import modules
 const { body, validationResult } = require("express-validator");
+const { logger } = require("../config/logger");
+const assert = require("assert");
 
 /* Define all Validation and Sanitization Rules */
 // Note: escape() will change symbols into HTML
@@ -195,15 +197,25 @@ const nameDescValidationRules = () => {
 const validate = (req, res, next) => {
 	const errors = validationResult(req);
 
+	// assumption: validationResult returns a result object
+	assert.ok(errors, "validationResult should return an object");
+
 	// if no errors, proceed with API
 	if (errors.isEmpty()) {
+		logger.debug("Validation succeeded for request", req.path);
 		return next();
 	}
+
+	// assumption: errors are in an array
+	assert(Array.isArray(errors.array()), "Expected errors to be an array");
 
 	// otherwise, extract error messages and return error message
 	const extractedErrors = [];
 	errors.array().map((err) => extractedErrors.push({ [err.param]: err.msg }));
 
+	logger.error("Validation failed for request:", req.path, {
+		errors: extractedErrors,
+	});
 	return res.status(422).json({
 		errors: extractedErrors,
 	});
