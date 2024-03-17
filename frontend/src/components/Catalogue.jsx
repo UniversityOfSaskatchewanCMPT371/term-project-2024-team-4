@@ -33,7 +33,7 @@ const Catalogue = () => {
 	useEffect(() => {
 		async function fetchCatalogue() {
 			try {
-				const response = await axios.get("http://localhost:3000/catalogues/11");
+				const response = await axios.get("http://localhost:3000/catalogues/1");
 				log.info("Default catalogue: ", response.data);
 				setCatalogueName(response.data.name);
 				setCatalogueDescription(response.data.description);
