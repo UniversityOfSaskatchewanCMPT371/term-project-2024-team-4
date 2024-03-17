@@ -918,11 +918,6 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 
 describe("Tests for function: aggregatePointTypeStatistics()", () => {
 	test("Correctly acquiring the data for a pointType?", async () => {
-		const body = {
-			id: "Ceramic",
-			materials: [material2],
-			artifacts: [projectilePoint2, projectilePoint4],
-		};
 		artifactTypesHelper.getArtifactTypeFromId = jest.fn().mockReturnValueOnce({
 			id: "Ceramic",
 			materials: [material2],
