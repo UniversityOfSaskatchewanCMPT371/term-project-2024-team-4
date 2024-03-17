@@ -135,6 +135,7 @@ test.describe("Aggregate Statisitics Tests", () => {
 
 		const closeButton = page.locator("text=CLOSE");
 		await expect(closeButton).toBeVisible();
+		await closeButton.click();
 
 		const modalWindow = await page.getByRole("dialog", { name: "Statistics" });
 		await expect(modalWindow).toBeHidden();
