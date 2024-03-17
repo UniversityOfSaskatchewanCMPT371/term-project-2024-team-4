@@ -14,22 +14,23 @@ describe("Login Integration Tests", () => {
 	});
 
 	test("Login Test with success", async () => {
-
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "admin");
-		// Submit login 
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "admin");
+		// Submit login
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect(responseStatus).toBe(200);
 
+		await expect(responseStatus).toBe(200);
 	});
 });
 
@@ -45,64 +46,66 @@ describe("Empty username input tests With :", () => {
 	afterAll(async () => {
 		await browser.close();
 	});
-	
-	test("empty password", async () => {
 
+	test("empty password", async () => {
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "");
-		await page.type("input[name=\"password\"]", "");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "");
+		await page.type('input[name="password"]', "");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
-	
-    
+
+		await expect([400, 401]).toContain(responseStatus);
 	});
-    
+
 	test("Correct password", async () => {
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "");
-		await page.type("input[name=\"password\"]", "admin");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "");
+		await page.type('input[name="password"]', "admin");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
-    
+
+		await expect([400, 401]).toContain(responseStatus);
 	});
-    
+
 	test("Incorrect password", async () => {
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "");
-		await page.type("input[name=\"password\"]", "xyzzzz");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "");
+		await page.type('input[name="password"]', "xyzzzz");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
-	
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-
 });
 
 describe("Empty password input tests", () => {
@@ -117,64 +120,69 @@ describe("Empty password input tests", () => {
 	afterAll(async () => {
 		await browser.close();
 	});
-	
-	test("empty username ", async ()=> {
-		//here we do test for empty username with empty password 
+
+	test("empty username ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "");
-		await page.type("input[name=\"password\"]", "");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "");
+		await page.type('input[name="password"]', "");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
 
-	test("Correct username ", async ()=> {
-		//here we do test for correct password with empty password 
+	test("Correct username ", async () => {
+		//here we do test for correct password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
 
-	test("incorrect username ", async ()=> {
-		//here we do test for incorrect password with empty password 
+	test("incorrect username ", async () => {
+		//here we do test for incorrect password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invalid_user");
-		await page.type("input[name=\"password\"]", "");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "invalid_user");
+		await page.type('input[name="password"]', "");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-
 });
 
 describe("correct username input tests", () => {
@@ -190,65 +198,69 @@ describe("correct username input tests", () => {
 		await browser.close();
 	});
 
-	test("incorrect password ", async ()=> {
-		//here we do test for incorrect password with empty password 
+	test("incorrect password ", async () => {
+		//here we do test for incorrect password with empty password
 		await page.goto("http://localhost:8080");
 
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "wrong");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "wrong");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
+
 		await expect([401]).toContain(responseStatus);
-
-	});
-	
-	test("empty password ", async ()=> {
-		//here we do test for empty username with empty password 
-		await page.goto("http://localhost:8080");
-		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "");
-		
-		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
-		]);
-		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
-
 	});
 
-	test("Correct password ", async ()=> {
-		//here we do test for correct password with empty password 
+	test("empty password ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "admin");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
+
+		await expect([400, 401]).toContain(responseStatus);
+	});
+
+	test("Correct password ", async () => {
+		//here we do test for correct password with empty password
+		await page.goto("http://localhost:8080");
+		await page.click("text=Login");
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "admin");
+
+		var [response] = await Promise.all([
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
+		]);
+		var responseStatus = response.status();
+
 		await expect([200]).toContain(responseStatus);
-
 	});
-
-
 });
 
 describe("Correct password input tests", () => {
@@ -264,65 +276,68 @@ describe("Correct password input tests", () => {
 		await browser.close();
 	});
 
-	test("incorrect username ", async ()=> {
-		//here we do test for correct password with empty password 
+	test("incorrect username ", async () => {
+		//here we do test for correct password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "wrong");
-		await page.type("input[name=\"password\"]", "admin");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "wrong");
+		await page.type('input[name="password"]', "admin");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
+
 		await expect([401]).toContain(responseStatus);
-		
-
-	});
-	
-	test("empty username ", async ()=> {
-		//here we do test for empty username with empty password 
-		await page.goto("http://localhost:8080");
-		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "");
-		await page.type("input[name=\"password\"]", "admin");
-		
-		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
-		]);
-		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
-
 	});
 
-	test("Correct username ", async ()=> {
-		//here we do test for correct password with empty password 
+	test("empty username ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "admin");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "");
+		await page.type('input[name="password"]', "admin");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
+
+		await expect([400, 401]).toContain(responseStatus);
+	});
+
+	test("Correct username ", async () => {
+		//here we do test for correct password with empty password
+		await page.goto("http://localhost:8080");
+		await page.click("text=Login");
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "admin");
+
+		var [response] = await Promise.all([
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
+		]);
+		var responseStatus = response.status();
+
 		await expect([200]).toContain(responseStatus);
-
 	});
-
-
 });
 
 describe("InCorrect password input tests", () => {
@@ -337,64 +352,68 @@ describe("InCorrect password input tests", () => {
 	afterAll(async () => {
 		await browser.close();
 	});
-	
-	test("empty username ", async ()=> {
-		//here we do test for empty username with empty password 
+
+	test("empty username ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "");
-		await page.type("input[name=\"password\"]", "invalid_password");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "");
+		await page.type('input[name="password"]', "invalid_password");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
-
+		await expect([400, 401]).toContain(responseStatus);
 	});
 
-	test("Correct username ", async ()=> {
-		//here we do test for correct password with empty password 
+	test("Correct username ", async () => {
+		//here we do test for correct password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "invalid_password");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type('input[name="password"]', "invalid_password");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-	test("incorrect username ", async ()=> {
-		//here we do test for incorrect password with empty password 
+	test("incorrect username ", async () => {
+		//here we do test for incorrect password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invalid_username");
-		await page.type("input[name=\"password\"]", "invalid_password");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "invalid_username");
+		await page.type('input[name="password"]', "invalid_password");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-
 });
 describe("Incorrect username input tests", () => {
 	let browser;
@@ -408,63 +427,68 @@ describe("Incorrect username input tests", () => {
 	afterAll(async () => {
 		await browser.close();
 	});
-	
-	test("empty password ", async ()=> {
-		//here we do test for empty username with empty password 
+
+	test("empty password ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invalid_username");
-		await page.type("input[name=\"password\"]", "");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "invalid_username");
+		await page.type('input[name="password"]', "");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
 
-	test("Correct password ", async ()=> {
-		//here we do test for correct password with empty password 
+	test("Correct password ", async () => {
+		//here we do test for correct password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invalid_username");
-		await page.type("input[name=\"password\"]", "admin");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "invalid_username");
+		await page.type('input[name="password"]', "admin");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-	test("incorrect password ", async ()=> {
-		//here we do test for incorrect password with empty password 
+	test("incorrect password ", async () => {
+		//here we do test for incorrect password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invalid_username");
-		await page.type("input[name=\"password\"]", "invalid_password");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "invalid_username");
+		await page.type('input[name="password"]', "invalid_password");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-
 });
 
 describe("Testin using long inputs ", () => {
@@ -479,61 +503,73 @@ describe("Testin using long inputs ", () => {
 	afterAll(async () => {
 		await browser.close();
 	});
-	
-	test("300 letter username ", async ()=> {
-		//here we do test for empty username with empty password 
+
+	test("300 letter username ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduser");
-		await page.type("input[name=\"password\"]", "admin");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type(
+			'input[name="username"]',
+			"invaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduser",
+		);
+		await page.type('input[name="password"]', "admin");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	}, 100000);
 
-	test("300 letter password ", async ()=> {
+	test("300 letter password ", async () => {
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "admin");
-		await page.type("input[name=\"password\"]", "invaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduser");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "admin");
+		await page.type(
+			'input[name="password"]',
+			"invaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduserinvaliduser",
+		);
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
-	},100000);
+		await expect([400, 401]).toContain(responseStatus);
+	}, 100000);
 
 	test("Maximum length of username and password fields", async () => {
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "a".repeat(255)); // Max allowed characters for username
-		await page.type("input[name=\"password\"]", "b".repeat(255)); // Max allowed characters for password
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "a".repeat(255)); // Max allowed characters for username
+		await page.type('input[name="password"]', "b".repeat(255)); // Max allowed characters for password
 
 		const [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			page.locator("[type=submit]").click(),
 		]);
 		const responseStatus = response.status();
 
 		await expect([400, 401]).toContain(responseStatus);
 	}, 10000);
-
 });
 
 describe("Number inputs short and long input tests", () => {
@@ -548,61 +584,66 @@ describe("Number inputs short and long input tests", () => {
 	afterAll(async () => {
 		await browser.close();
 	});
-	
-	test("Short number inputs  ", async ()=> {
-		//here we do test for empty username with empty password 
+
+	test("Short number inputs  ", async () => {
+		//here we do test for empty username with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "5455656565656565656565");
-		await page.type("input[name=\"password\"]", "555555554998");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "5455656565656565656565");
+		await page.type('input[name="password"]', "555555554998");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
 
-	test("Long number inputs", async ()=> {
-		//here we do test for correct password with empty password 
+	test("Long number inputs", async () => {
+		//here we do test for correct password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "5".repeat(100));
-		await page.type("input[name=\"password\"]", "5".repeat(200));
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "5".repeat(100));
+		await page.type('input[name="password"]', "5".repeat(200));
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-	test("incorrect password ", async ()=> {
-		//here we do test for incorrect password with empty password 
+	test("incorrect password ", async () => {
+		//here we do test for incorrect password with empty password
 		await page.goto("http://localhost:8080");
 		await page.click("text=Login");
-		await page.waitForSelector("input[name=\"username\"]");
-		await page.waitForSelector("input[name=\"password\"]");
-		await page.type("input[name=\"username\"]", "invalid_username");
-		await page.type("input[name=\"password\"]", "invalid_password");
-		
+		await page.waitForSelector('input[name="username"]');
+		await page.waitForSelector('input[name="password"]');
+		await page.type('input[name="username"]', "invalid_username");
+		await page.type('input[name="password"]', "invalid_password");
+
 		var [response] = await Promise.all([
-			page.waitForResponse(resp => resp.url().includes("/users") && resp.request().method() == "POST"),
-			await page.locator("[type=submit]").click()
+			page.waitForResponse(
+				(resp) =>
+					resp.url().includes("/users") && resp.request().method() == "POST",
+			),
+			await page.locator("[type=submit]").click(),
 		]);
 		var responseStatus = response.status();
-            
-		await expect([400,401]).toContain(responseStatus);
 
+		await expect([400, 401]).toContain(responseStatus);
 	});
-
 });
