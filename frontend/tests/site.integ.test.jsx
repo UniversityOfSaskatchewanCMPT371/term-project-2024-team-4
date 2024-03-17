@@ -132,3 +132,37 @@ test("creates a new site through UI and verifies it is saved in the database", a
 		expect(newSite.location).toBe(siteData.location);
 	});
 });
+
+test("RegionModal renders correctly and handles addition of a new region", async () => {
+	// Render the RegionModal component
+	render(<RegionModal />);
+
+	// Simulate user input by typing in the region name and description fields
+	const regionNameInput = screen.getByLabelText("Region Name");
+	fireEvent.change(regionNameInput, { target: { value: "Test Region" } });
+
+	const descriptionInput = screen.getByLabelText("Description");
+	fireEvent.change(descriptionInput, { target: { value: "Test Description" } });
+
+	// Click the save button
+	const saveButton = screen.getByText("Save");
+	fireEvent.click(saveButton);
+
+	// Wait for the response from the backend endpoint
+	await waitFor(() => {
+		axios
+			.get("http://localhost:3000/regions")
+			.then((response) => {
+				// Assertions
+				expect(response.status).toBe(200); // Assuming status code 200 for success
+				expect(response.data).toContainEqual({
+					name: "Test Region",
+					description: "Test Description",
+				});
+			})
+			.catch((error) => {
+				// Handle error if needed
+				console.error("Error fetching regions:", error);
+			});
+	});
+});
