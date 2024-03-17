@@ -1,13 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Site from "../src/components/Site.jsx";
+import Sidebar from "../src/components/Sidebar.jsx";
+import { MemoryRouter } from "react-router-dom";
 
-describe("Site", () => {
+describe("Sidebar", () => {
 	it("renders correctly", () => {
-		render(<Site />);
+		render(
+			<MemoryRouter>
+				<Sidebar />
+			</MemoryRouter>,
+		);
 
-		// Sidebar
 		expect(screen.getByText(/pcubed/i)).toBeInTheDocument();
 		expect(screen.getByTestId("HomeIcon")).toBeInTheDocument();
 		expect(screen.getByText(/home/i)).toBeInTheDocument();
@@ -21,26 +25,5 @@ describe("Site", () => {
 		expect(screen.getByText(/settings/i)).toBeInTheDocument();
 		expect(screen.getByTestId("LoginIcon")).toBeInTheDocument();
 		expect(screen.getByText(/login/i)).toBeInTheDocument();
-
-		// Search bar
-		expect(
-			screen.getByRole("textbox", {
-				name: /search/i,
-			}),
-		).toBeInTheDocument();
-
-		// Sort combobox
-		expect(
-			screen.getByRole("combobox", {
-				name: /sort/i,
-			}),
-		).toBeInTheDocument();
-
-		// Filter comboboc
-		expect(
-			screen.getByRole("combobox", {
-				name: /filter/i,
-			}),
-		).toBeInTheDocument();
 	});
 });

@@ -62,7 +62,7 @@ const ViewProjectile = ({ setOpen, projectilePointId }) => {
 			.catch((error) => {
 				log.error("Error fetching projectile point: ", error);
 			});
-	}, []);
+	}, [projectilePointId]);
 
 	return (
 		<Dialog

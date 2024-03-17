@@ -9,11 +9,22 @@ const {
 const express = require("express");
 const router = express.Router();
 const myDatabase = require("../config/db");
+const { logger } = require("../config/logger");
 
-// POST: Create a new ProjectilePoint
-// This endpoint handles the creation of a new ProjectilePoint.
-// It extracts various properties from the request body, including related entities like Culture and BladeShape.
-// Each related entity is fetched from the database to ensure it exists before associating it with the new ProjectilePoint.
+/**
+ * POST: Creates a new Projectile Point
+ * Extracts various properties from request body including related entities like Culture and Bladeshape.
+ * Each related entity is fetched from the database to ensure it exists before associating it with the new Projectile Point
+ * @param {*} req - req.body contains: name,
+ * 					location, description, dimensions, photo,
+ * 					siteId, artifactTypeId, cultureId, bladeShapeId,
+ * 					baseShapeId, haftingShapeId, crossSectionId
+ * @param {*} res - response to client
+ * @precond all referenced entities (foreign-key IDs) must exist in the database
+ * @postcond
+ * 	Succesful: Returns newly created Projectile Point with 201 status code
+ * 	Failure: Error; 500 status code
+ */
 router.post("/", async (req, res) => {
 	const {
 		name,
@@ -68,11 +79,21 @@ router.post("/", async (req, res) => {
 		await myDatabase.getRepository(ProjectilePoint).save(projectilePoint);
 		res.status(201).json(projectilePoint);
 	} catch (error) {
-		console.error("Error creating ProjectilePoint:", error);
+		logger.error("Error creating ProjectilePoint:", error);
 		res.status(500).json({ error: error.message });
 	}
 });
 
+/**
+ * GET: Fetch ALL Projectile Points
+ * Retrieves all projectile points including their related entities
+ * @param {*} req - unused
+ * @param {*} res - response to client contains an array of Projectile Points
+ * @precond Database is accessible
+ * @postcond
+ * 	Succesful: Returns an array of ALL projectile points
+ *	Failure: Returns an error message
+ */
 router.get("/", async (req, res) => {
 	try {
 		const projectilePoints = await myDatabase
@@ -90,11 +111,20 @@ router.get("/", async (req, res) => {
 			});
 		res.json(projectilePoints);
 	} catch (error) {
-		console.error("Error fetching ProjectilePoints:", error);
+		logger.error("Error fetching ProjectilePoints:", error);
 		res.json({ error: error.message });
 	}
 });
 
+/**
+ * GET: Fetch a SINGLE projectile point given an ID
+ * @param {*} req - req URL parameter contains a valid projectile point ID
+ * @param {*} res - response to client contains the single projectile point from the ID
+ * @precond the given projectile point ID exists in the database
+ * @postcond
+ * 	Succesful: Returns requested Projectile Point
+ * 	Failure: Returns an error message related to the issue
+ */
 router.get("/:id", async (req, res) => {
 	const { id } = req.params;
 	try {
@@ -113,16 +143,26 @@ router.get("/:id", async (req, res) => {
 				],
 			});
 		if (!projectilePoint) {
+			logger.warn(`Projectile Point with ID${id} was not found in database`);
 			return res.json({ message: "ProjectilePoint not found" });
 		}
 		res.json(projectilePoint);
 	} catch (error) {
-		console.error("Error fetching ProjectilePoint:", error);
+		logger.error("Error fetching ProjectilePoint:", error);
 		res.json({ error: error.message });
 	}
 });
 
-// PUT: Update a ProjectilePoint
+/**
+ * PUT: Update a SINGLE, EXISTING Projectile Point
+ * @param {*} req - req URL parameter contains a valid Projectile Point ID.
+ * 					req body contains same details as when creating a Projectile Point
+ * @param {*} res - Response to client
+ * @precond specified Projectile Point ID exists in the database
+ * @postcond
+ * 	Succesful: returns updated projectile point
+ * 	Failure: Returns an error message related to the issue
+ */
 router.put("/:id", async (req, res) => {
 	const { id } = req.params;
 	const {
@@ -146,6 +186,7 @@ router.put("/:id", async (req, res) => {
 			.getRepository(ProjectilePoint)
 			.findOneBy({ id });
 		if (!projectilePoint) {
+			logger.warn(`Projectile Point with ID ${id} was not found`);
 			return res.json({ message: "ProjectilePoint not found" });
 		}
 
@@ -180,11 +221,20 @@ router.put("/:id", async (req, res) => {
 
 		res.json(projectilePoint);
 	} catch (error) {
-		console.error("Error updating ProjectilePoint:", error);
+		logger.error("Error updating ProjectilePoint:", error);
 		res.json({ error: error.message });
 	}
 });
 
+/**
+ * DELETE: delete a single, EXISTING Projectile Point
+ * @param {*} req - req URL parameter contains a valid Projectile POint ID
+ * @param {*} res - response to client
+ * @precond specified Projectile Point ID exists in the database
+ * @postcond
+ * 	Succesful: ProjectilePoint is deleted; empty response is sent
+ *  Failure: Returns an error message related to the issue
+ */
 router.delete("/:id", async (req, res) => {
 	const { id } = req.params;
 	try {
@@ -192,10 +242,11 @@ router.delete("/:id", async (req, res) => {
 		if (result.affected > 0) {
 			res.send();
 		} else {
+			logger.warn(`Projectile Point with ID${id} was not found`);
 			res.json({ message: "ProjectilePoint not found" });
 		}
 	} catch (error) {
-		console.error("Error deleting ProjectilePoint:", error);
+		logger.error("Error deleting ProjectilePoint:", error);
 		res.json({ error: error.message });
 	}
 });

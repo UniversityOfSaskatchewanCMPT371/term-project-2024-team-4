@@ -62,7 +62,7 @@ test.describe("Login Smoke Tests", () => {
             // Submit login 
             var [response] = await Promise.all([
                 page.waitForResponse(resp => resp.url().includes('/users') && resp.request().method() == "POST"),
-                await page.locator("[type=submit]").click()
+                await page.locator('button[type="submit"]:has-text("Login")').click()
             ]);
             
             // Expect the right response

@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 const { Artifact, Site, ArtifactType } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
