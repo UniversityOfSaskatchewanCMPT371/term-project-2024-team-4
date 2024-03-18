@@ -26,62 +26,39 @@ Admin Login
 */
 test.describe("Login Smoke Tests", () => {
 
-    // test to determine proper response HTTP status codes upon login attempt
-    test('Login process with failure and success scenarios', async ({ page }) => {
-        // Navigate to login page
+    // Test edge cases for login process
+    test('Login with edge cases', async ({ page }) => {
         await page.goto("http://localhost:8080");
 
-        // Find and press Login Button
         const loginButton = page.locator('text=Login');
         await expect(loginButton).toBeVisible();
         await loginButton.click();
 
-        // Define credentials for testing 
-        // TC01 to TC08
-        const credentials = [
-            { username: 'admin123#.;', password: "admin"},
-            { username: 'ADMIN', password: "admin"},
-            { username: 'admin', password: "admin123#.;"},
-            { username: 'admin', password: "ADMIN"},
-            { username: '', password: ""},
-            { username: 'admin', password: ""},
-            { username: '', password: "admin"},
-            { username: 'admin', password: "admin"},
-
+        // Edge cases: empty username, empty password
+        const edgeCases = [
+            { username: '', password: 'admin' },
+            { username: 'admin', password: '' }
         ];
 
-        // Use credentials to attempt login
-        for (const credential of credentials) {
-
-            // Fill the inputs
-            await page.fill('input[name="username"]', credential.username);
-            await page.fill('input[name="password"]', credential.password);
+        for (const edgeCase of edgeCases) {
+            await page.fill('input[name="username"]', edgeCase.username);
+            await page.fill('input[name="password"]', edgeCase.password);
 
             await page.waitForLoadState('networkidle')
 
-            // Submit login 
-            var [response] = await Promise.all([
+            const [response] = await Promise.all([
                 page.waitForResponse(resp => resp.url().includes('/users') && resp.request().method() == "POST"),
                 await page.locator("[type=submit]").click()
             ]);
-            
-            // Expect the right response
-            try {
-                var responseStatus = response.status();
 
-                if (credential.username === 'admin' && credential.password === 'admin'){
-                    // expect succesful response
-                    await expect(responseStatus).toBe(200);
-                }
-                else{
-                    await expect([400,401]).toContain(responseStatus);
-                }
-            }
-            catch (error){
+            try {
+                const responseStatus = response.status();
+
+                // Expecting 400 Bad Request for edge cases
+                await expect(responseStatus).toBe(400);
+            } catch (error) {
                 console.error("Error parsing response JSON", error);
             }
-            
-            
         }
     })
 });

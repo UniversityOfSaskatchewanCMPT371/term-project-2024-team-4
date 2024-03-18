@@ -49,7 +49,8 @@ jobs:
       - name: Run Prettier Formatting Check
         working-directory: ./backend
         run: npm run format
-      
+          
+        # @TODO need to change JWT_SECRET to be private
       - name: Set up PostgreSQL
         working-directory: ./backend
         run: |
@@ -58,6 +59,7 @@ jobs:
           echo "DB_USER=test-user" >> $GITHUB_ENV
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
+          echo "JWT_SECRET=1234abc" >> $GITHUB_ENV
 
       - name: Build & Check if Backend Runs
         working-directory: ./backend
@@ -152,6 +154,7 @@ jobs:
         working-directory: ./backend
         run: npm ci
       
+        # @TODO need to change JWT_SECRET to be private
       - name: Set up PostgreSQL
         working-directory: ./backend
         run: |
@@ -160,6 +163,7 @@ jobs:
           echo "DB_USER=test-user" >> $GITHUB_ENV
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
+          echo "JWT_SECRET=1234abc" >> $GITHUB_ENV
       
       - name: Install Frontend Dependencies
         working-directory: ./frontend
