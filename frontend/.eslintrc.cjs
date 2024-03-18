@@ -44,7 +44,11 @@ module.exports = {
 			env: {
 				"vitest-globals/env": true,
 			},
-			extends: ["plugin:vitest-globals/recommended"],
+			extends: [
+				"plugin:vitest-globals/recommended",
+				"prettier",
+				"eslint-config-prettier",
+			],
 			rules: {
 				"no-unused-expressions": "off",
 				"react/prop-types": "off",
