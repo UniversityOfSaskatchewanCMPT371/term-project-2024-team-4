@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
 import axios from "axios";
+import { Link } from "react-router-dom";
 // MUI
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -23,7 +24,9 @@ import { styled } from "@mui/material/styles";
 
 const drawerWidth = 240;
 
-// create SidebarList component and styling, based on List MUI component
+/**
+ * Styled List component for the sidebar navigation.
+ */
 const SidebarList = styled(List)(() => ({
 	padding: "10px",
 	// selected and (selected + hover) states
@@ -44,17 +47,32 @@ const SidebarList = styled(List)(() => ({
 	},
 }));
 
-// create SidebarIcon component and styling, based on ListItemIcon MUI component
+/**
+ * Styled Icon component for the sidebar navigation.
+ */
 const SidebarIcon = styled(ListItemIcon)(() => ({
 	minWidth: "47px",
 }));
 
+/**
+ * Sidebar functional component
+ * Renders a navigation drawer with links and actions for the application.
+ *
+ * @pre None
+ * @post Creates a sidebar with navigation options. User's login status is checked on component mount.
+ * @returns {JSX.Element} A rendered sidebar component containing navigation links.
+ */
 function Sidebar() {
 	const [modalVisible, setModalShow] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 	useEffect(() => {
-		// Check if user is logged in
+		/**
+		 * Checks the user's login status with the backend and updates state accordingly.
+		 *
+		 * @pre axios must be configured correctly.
+		 * @post Updates isLoggedIn state based on response from backend.
+		 */
 		const checkLoginStatus = async () => {
 			try {
 				const response = await axios.get("http://localhost:3000/users");
@@ -67,21 +85,47 @@ function Sidebar() {
 		checkLoginStatus();
 	}, []);
 
+	/**
+	 * Logs the sidebar item clicked by the user.
+	 *
+	 * @param {Event} event - The click event from a sidebar item.
+	 * @pre None
+	 * @post Logs the text content of the clicked sidebar item.
+	 */
 	const handleClick = (event) => {
 		logger.info(event.target.innerText + " Sidebar navigation clicked");
 	};
 
+	/**
+	 * Opens the login modal and logs the action.
+	 *
+	 * @param {Event} event - The click event from the login sidebar item.
+	 * @pre None
+	 * @post Sets modalVisible to true and logs the event.
+	 */
 	const setModalVisible = (event) => {
 		handleClick(event);
 		setModalShow(true);
 		logger.info("LoginModal visible");
 	};
 
+	/**
+	 * Closes the login modal and logs the action.
+	 *
+	 * @pre None
+	 * @post Sets modalVisible to false and logs the closure of the modal.
+	 */
 	const closeModal = () => {
 		setModalShow(false);
 		logger.info("LoginModal closed");
 	};
 
+	/**
+	 * Handles the user logout process.
+	 *
+	 * @pre axios must be configured correctly.
+	 * @post Sends a logout request to the backend, logs out the user, and reloads the page.
+	 */
 	const handleLogout = async () => {
 		try {
 			await axios.post("http://localhost:3000/users/logout");
@@ -118,14 +162,16 @@ function Sidebar() {
 					</Typography>
 				</Toolbar>
 				<SidebarList>
-					<ListItem key="Home" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<HomeIcon />
-							</SidebarIcon>
-							<ListItemText primary="Home" />
-						</ListItemButton>
-					</ListItem>
+					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+						<ListItem key="Home" disablePadding onClick={handleClick}>
+							<ListItemButton>
+								<SidebarIcon>
+									<HomeIcon />
+								</SidebarIcon>
+								<ListItemText primary="Home" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 					<ListItem key="Connect" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
