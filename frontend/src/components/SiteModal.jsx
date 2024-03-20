@@ -9,7 +9,10 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	FormControl,
+	InputLabel,
 	TextField,
+	Select,
 	MenuItem,
 	Grid,
 	IconButton,
@@ -211,30 +214,32 @@ const SiteModal = ({ setOpen }) => {
 						</Grid>
 						<Grid item xs={6}>
 							{/* ------------ Start of RegionModal ------------- */}
-							<TextField
-								select
-								label="Region"
-								value={selectedRegion}
-								onChange={handleRegionChange}
-								fullWidth
-								margin="dense"
-							>
-								{regions.map((region) => (
-									<MenuItem key={region.id} value={region.name}>
-										{region.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleOpenMenu(event, region)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1, width: "100%" }}>
+								<InputLabel>Region</InputLabel>
+								<Select
+									id="region"
+									label="Region"
+									value={selectedRegion}
+									onChange={handleRegionChange}
+									renderValue={(selected) => selected}
+								>
+									{regions.map((region) => (
+										<MenuItem key={region.id} value={region.name}>
+											{region.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleOpenMenu(event, region)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenRegionModal()}>
+										+ Add New Region
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenRegionModal()}>
-									+ Add New Region
-								</MenuItem>
-							</TextField>
+								</Select>
+							</FormControl>
 							<Menu
 								id="region-menu"
 								anchorEl={anchorEl}
