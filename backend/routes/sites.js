@@ -2,7 +2,7 @@ const { Site } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
 const myDatabase = require("../config/db");
-const logger = require("../config/logger");
+const { logger } = require("../config/logger");
 
 /**
  * POST: Create a new Site
