@@ -24,6 +24,7 @@ export default function CultureModal({
 		selectedMaterialDescription || "",
 	);
 	const [selectedArtifactTypeID, setSelectedArtifactTypeID] = useState("");
+	const [errors, setErrors] = useState({ selectedArtifactType: "" });
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -33,7 +34,9 @@ export default function CultureModal({
 			`Saving culture: ${materialName} with artifact type ID: ${selectedArtifactTypeID}`,
 		);
 		if (!selectedArtifactTypeID) {
-			alert("Please select an artifact type to proceed.");
+			setErrors({
+				selectedArtifactType: "Please select an artifact type to proceed.",
+			});
 			log.warn(
 				"Attempted to save material without selecting an artifact type.",
 			);
@@ -111,6 +114,7 @@ export default function CultureModal({
 						}}
 						helperText="Please select the artifact type this material belongs to"
 						style={{ marginBottom: "15px" }}
+						error={!!errors.selectedArtifactType}
 					>
 						<option value=""></option>
 						{artifactTypes.map((artifact) => (
