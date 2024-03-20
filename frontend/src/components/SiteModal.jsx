@@ -65,17 +65,17 @@ const SiteModal = ({ setOpen }) => {
 			description,
 			location,
 			catalogueId: 1,
-			regionId: selectedRegionID,
+			regionId: regionID,
 		};
 
 		axios
 			.post("http://localhost:3000/sites", newSite)
 			.then((response) => {
-				console.log("New site added successfully:", response.data);
+				log.info("New site added successfully:", response.data);
 				handleClose();
 			})
 			.catch((error) => {
-				console.error("Error adding new site:", error);
+				log.error("Error adding new site:", error);
 			});
 	};
 
@@ -107,7 +107,7 @@ const SiteModal = ({ setOpen }) => {
 					setRegionID(filteredRegion.id);
 				}
 			})
-			.catch((error) => console.error("Error fetching regions:", error));
+			.catch((error) => log.error("Error fetching regions:", error));
 	}, [selectedRegion]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
@@ -165,7 +165,7 @@ const SiteModal = ({ setOpen }) => {
 					handleCloseMenu();
 				})
 				.catch((error) => {
-					console.error("Error deleting region:", error);
+					log.error("Error deleting region:", error);
 				});
 		}
 	};
