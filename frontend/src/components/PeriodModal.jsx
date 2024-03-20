@@ -1,4 +1,3 @@
-/* eslint-disable react/prop-types */
 import {
 	TextField,
 	Button,
@@ -9,21 +8,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import logger from "../logger";
-/**
- * Represents a modal dialog for adding or editing a period.
- *
- * Pre-conditions:
- * - The modal receives all necessary props for either adding a new period or editing an existing one.
- * - Axios and logger are configured correctly for HTTP requests and logging.
- *
- * Post-conditions:
- * - If input validation passes, a period is either created or updated via an HTTP request.
- * - Appropriate log messages are generated based on the operation's outcome.
- * - Modal is closed upon successful operation or when the user decides to cancel.
- *
- * @param {Object} props - Component props containing functions for modal state management and period list update, and optionally, an existing period's data for editing.
- * @returns {JSX.Element} A rendered modal component for period addition or editing.
- */
+
 export default function PeriodModal({
 	setEditPeriod,
 	selectedPeriod,
@@ -32,44 +17,65 @@ export default function PeriodModal({
 	selectedPeriodID,
 	updatePeriodsList,
 }) {
-	// State setup for period name, start and end dates, and validation errors
 	const [open, setOpen] = useState(true);
 	const [periodName, setPeriodName] = useState(selectedPeriod || "");
 	const [startDate, setStartDate] = useState(selectedPeriodStartDate || "");
 	const [endDate, setEndDate] = useState(selectedPeriodEndDate || "");
-	const [errors, setErrors] = useState({ startDate: "", endDate: "" });
+	const [errors, setErrors] = useState({
+		periodName: "",
+		startDate: "",
+		endDate: "",
+		dateRange: "",
+	});
 
-	/**
-	 * This funciton validates the start and end dates to ensure they are integers.
-	 * Logs an error and throws an exception if validation fails.
-	 *
-	 * @returns {boolean} The result of the validation check.
-	 */
 	const validateDates = () => {
 		let isValid = true;
-		const newErrors = { startDate: "", endDate: "" };
+		const newErrors = {
+			periodName: "",
+			startDate: "",
+			endDate: "",
+			dateRange: "",
+		};
 
-		if (!/^\d+$/.test(startDate)) {
-			newErrors.startDate = "Start date must be an integer.";
+		if (!periodName.trim()) {
+			newErrors.periodName = "Period name is required.";
 			isValid = false;
 		}
 
-		if (!/^\d+$/.test(endDate)) {
-			newErrors.endDate = "End date must be an integer.";
+		if (!startDate.trim()) {
+			newErrors.startDate = "Start date is required.";
+			isValid = false;
+		} else if (!/^\d+$/.test(startDate)) {
+			newErrors.startDate = "Start year must be a positive integer.";
+			isValid = false;
+		} else if (parseInt(startDate, 10) < 0) {
+			newErrors.startDate = "Start year must be greater than or equal to 0.";
+			isValid = false;
+		}
+
+		if (!endDate.trim()) {
+			newErrors.endDate = "End date is required.";
+			isValid = false;
+		} else if (!/^\d+$/.test(endDate)) {
+			newErrors.endDate = "End year must be a positive integer.";
+			isValid = false;
+		} else if (parseInt(endDate, 10) < 0) {
+			newErrors.endDate = "End year must be greater than or equal to 0.";
+			isValid = false;
+		}
+
+		if (parseInt(startDate, 10) > parseInt(endDate, 10)) {
+			newErrors.dateRange = "End year must be greater than start year.";
 			isValid = false;
 		}
 
 		setErrors(newErrors);
-		return isValid; // Return the validation result instead of throwing an error
+		return isValid;
 	};
 
-	/**
-	 * This function handles the save action for both adding a new period and editing an existing one.
-	 * Makes an HTTP request based on the provided period data and updates the period list accordingly.
-	 */
 	const handleSave = () => {
 		if (!validateDates()) {
-			return; // Stop the save process if validation fails
+			return;
 		}
 
 		const updatedPeriod = {
@@ -93,9 +99,6 @@ export default function PeriodModal({
 			});
 	};
 
-	/**
-	 * Closes the modal and resets edit mode.
-	 */
 	const handleClose = () => {
 		setOpen(false);
 		setEditPeriod(false);
@@ -115,6 +118,8 @@ export default function PeriodModal({
 						fullWidth
 						value={periodName}
 						onChange={(e) => setPeriodName(e.target.value)}
+						error={!!errors.periodName}
+						helperText={errors.periodName}
 						margin="normal"
 					/>
 					<TextField
@@ -125,8 +130,8 @@ export default function PeriodModal({
 						fullWidth
 						value={startDate}
 						onChange={(e) => setStartDate(e.target.value)}
-						error={!!errors.startDate}
-						helperText={errors.startDate}
+						error={!!errors.startDate || !!errors.dateRange}
+						helperText={errors.startDate || errors.dateRange}
 						margin="normal"
 					/>
 					<TextField
@@ -137,8 +142,8 @@ export default function PeriodModal({
 						fullWidth
 						value={endDate}
 						onChange={(e) => setEndDate(e.target.value)}
-						error={!!errors.endDate}
-						helperText={errors.endDate}
+						error={!!errors.endDate || !!errors.dateRange}
+						helperText={errors.endDate || errors.dateRange}
 						margin="normal"
 					/>
 					<Button
@@ -148,6 +153,14 @@ export default function PeriodModal({
 						style={{ marginTop: "20px" }}
 					>
 						Save
+					</Button>
+					<Button
+						onClick={handleClose}
+						variant="outlined"
+						color="primary"
+						style={{ marginTop: "20px", marginLeft: "10px" }}
+					>
+						Cancel
 					</Button>
 				</DialogContent>
 			</Dialog>
