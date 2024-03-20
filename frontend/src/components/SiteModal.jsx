@@ -9,7 +9,10 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	FormControl,
+	InputLabel,
 	TextField,
+	Select,
 	MenuItem,
 	Grid,
 	IconButton,
@@ -62,17 +65,17 @@ const SiteModal = ({ setOpen }) => {
 			description,
 			location,
 			catalogueId: 1,
-			regionId: selectedRegionID,
+			regionId: regionID,
 		};
 
 		axios
 			.post("http://localhost:3000/sites", newSite)
 			.then((response) => {
-				console.log("New site added successfully:", response.data);
+				log.info("New site added successfully:", response.data);
 				handleClose();
 			})
 			.catch((error) => {
-				console.error("Error adding new site:", error);
+				log.error("Error adding new site:", error);
 			});
 	};
 
@@ -104,7 +107,7 @@ const SiteModal = ({ setOpen }) => {
 					setRegionID(filteredRegion.id);
 				}
 			})
-			.catch((error) => console.error("Error fetching regions:", error));
+			.catch((error) => log.error("Error fetching regions:", error));
 	}, [selectedRegion]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
@@ -162,7 +165,7 @@ const SiteModal = ({ setOpen }) => {
 					handleCloseMenu();
 				})
 				.catch((error) => {
-					console.error("Error deleting region:", error);
+					log.error("Error deleting region:", error);
 				});
 		}
 	};
@@ -211,30 +214,32 @@ const SiteModal = ({ setOpen }) => {
 						</Grid>
 						<Grid item xs={6}>
 							{/* ------------ Start of RegionModal ------------- */}
-							<TextField
-								select
-								label="Region"
-								value={selectedRegion}
-								onChange={handleRegionChange}
-								fullWidth
-								margin="dense"
-							>
-								{regions.map((region) => (
-									<MenuItem key={region.id} value={region.name}>
-										{region.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleOpenMenu(event, region)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1, width: "100%" }}>
+								<InputLabel>Region</InputLabel>
+								<Select
+									id="region"
+									label="Region"
+									value={selectedRegion}
+									onChange={handleRegionChange}
+									renderValue={(selected) => selected}
+								>
+									{regions.map((region) => (
+										<MenuItem key={region.id} value={region.name}>
+											{region.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleOpenMenu(event, region)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenRegionModal()}>
+										+ Add New Region
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenRegionModal()}>
-									+ Add New Region
-								</MenuItem>
-							</TextField>
+								</Select>
+							</FormControl>
 							<Menu
 								id="region-menu"
 								anchorEl={anchorEl}
