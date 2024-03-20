@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import {
 	TextField,
 	Button,
@@ -9,6 +10,21 @@ import { useState } from "react";
 import axios from "axios";
 import logger from "../logger";
 
+/**
+ * Represents a modal dialog for adding or editing a period.
+ *
+ * Pre-conditions:
+ * - The modal receives all necessary props for either adding a new period or editing an existing one.
+ * - Axios and logger are configured correctly for HTTP requests and logging.
+ *
+ * Post-conditions:
+ * - If input validation passes, a period is either created or updated via an HTTP request.
+ * - Appropriate log messages are generated based on the operation's outcome.
+ * - Modal is closed upon successful operation or when the user decides to cancel.
+ *
+ * @param {Object} props - Component props containing functions for modal state management and period list update, and optionally, an existing period's data for editing.
+ * @returns {JSX.Element} A rendered modal component for period addition or editing.
+ */
 export default function PeriodModal({
 	setEditPeriod,
 	selectedPeriod,
