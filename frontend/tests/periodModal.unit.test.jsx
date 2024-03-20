@@ -61,14 +61,14 @@ describe("PeriodModal", () => {
 			/>,
 		);
 		fireEvent.change(screen.getByLabelText(/Start Year/i), {
-			target: { value: "not a year" },
+			target: { value: "not" },
 		});
 		fireEvent.change(screen.getByLabelText(/End Year/i), {
-			target: { value: "not a year" },
+			target: { value: "not" },
 		});
 		fireEvent.click(screen.getByRole("button", { name: /save/i }));
-		await screen.findByText("Start date must be an integer.");
-		await screen.findByText("End date must be an integer.");
+		await screen.findByText("Start date is required.");
+		await screen.findByText("End date is required.");
 	});
 
 	it("calls axios.post when saving a new period", async () => {
