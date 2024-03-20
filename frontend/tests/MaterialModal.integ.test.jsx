@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
-import { waitFor } from "@testing-library/react";
+import { waitFor, screen } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import axios from "axios";
 
 import { render, fireEvent } from "@testing-library/react";
-import CultureModal from "../src/components/CultureModal";
+import MaterialModal from "../src/components/MaterialModal";
 
-describe("CultureModal", () => {
+describe("MaterialModal", () => {
 	it("renders correctly", () => {
 		const props = {
 			setEditMaterial: vi.fn(),
@@ -18,7 +18,7 @@ describe("CultureModal", () => {
 			artifactTypes: [],
 		};
 
-		const { getByLabelText, getByText } = render(<CultureModal {...props} />);
+		const { getByLabelText, getByText } = render(<MaterialModal {...props} />);
 
 		expect(getByLabelText("Material Name")).toBeInTheDocument();
 		expect(getByLabelText("Material Description")).toBeInTheDocument();
@@ -39,13 +39,13 @@ describe("CultureModal", () => {
 			],
 		};
 
-		const { getByText } = render(<CultureModal {...props} />);
+		const { getByText } = render(<MaterialModal {...props} />);
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
 		expect(props.updateMaterialList).not.toHaveBeenCalled();
 	});
 
-	it("alerts the user if no artifact type is selected", () => {
+	it("alerts the user if no artifact type is selected", async () => {
 		const props = {
 			setEditMaterial: vi.fn(),
 			selectedMaterial: "",
@@ -58,11 +58,11 @@ describe("CultureModal", () => {
 			],
 		};
 
-		const { getByText } = render(<CultureModal {...props} />);
+		const { getByText } = render(<MaterialModal {...props} />);
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
-		expect(window.alert).toHaveBeenCalledWith(
-			"Please select an artifact type to proceed.",
+		await screen.findAllByText(
+			"Please select the artifact type this material belongs to",
 		);
 	});
 
@@ -83,7 +83,7 @@ describe("CultureModal", () => {
 			.spyOn(axios, "post")
 			.mockResolvedValueOnce({ data: { id: "123", name: "Material 1" } });
 
-		const { getByText, getByLabelText } = render(<CultureModal {...props} />);
+		const { getByText, getByLabelText } = render(<MaterialModal {...props} />);
 
 		const nameInput = getByLabelText("Material Name");
 		fireEvent.change(nameInput, { target: { value: "Test Material" } });
