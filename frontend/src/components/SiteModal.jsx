@@ -219,6 +219,7 @@ const SiteModal = ({ setOpen }) => {
 								<Select
 									id="region"
 									label="Region"
+									labelId="region-label"
 									value={selectedRegion}
 									onChange={handleRegionChange}
 									renderValue={(selected) => selected}
