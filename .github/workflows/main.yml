@@ -186,6 +186,14 @@ jobs:
         working-directory: ./testing
         run: npx playwright install chromium # only uses chromium for tests (CURRENTLY)
       
+      - name: Health Check for Backend Server
+        run: |
+          until curl --output /dev/null --silent --head --fail http://localhost:3000; do
+            printf '.'
+            sleep 5
+          done
+          echo "Backend server is up and running!"
+      
       - name: Run smoke tests
         working-directory: ./testing/smoke-test
         run: npx playwright test
