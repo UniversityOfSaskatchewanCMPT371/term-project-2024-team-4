@@ -215,7 +215,7 @@ const SiteModal = ({ setOpen }) => {
 						<Grid item xs={6}>
 							{/* ------------ Start of RegionModal ------------- */}
 							<FormControl sx={{ mt: 1, width: "100%" }}>
-								<InputLabel>Region</InputLabel>
+								<InputLabel id="region-label">Region</InputLabel>
 								<Select
 									id="region"
 									label="Region"
