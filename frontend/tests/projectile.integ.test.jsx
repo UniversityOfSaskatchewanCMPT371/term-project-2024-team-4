@@ -87,14 +87,18 @@ test("Prevents saving when end year is less than start year", async () => {
 	fireEvent.change(endDateInput, { target: { value: "2021" } });
 
 	// Click save button
-	const saveButton = screen.getByRole("button", { name: "Save" });
-	fireEvent.click(saveButton);
+	// const saveButton = screen.getByRole("button", { name: "Save" });
+	// fireEvent.click(saveButton);
+	fireEvent.click(screen.getByRole("button", { name: /save/i }));
+	await screen.findAllByText("End year must be greater than start year.");
 
 	// Assert that an alert message appears
-	const alertMessage = await screen.findByText(
+	/**
+	 * const alertMessage = await screen.findByText(
 		"End year must be greater than start year",
 	);
 	expect(alertMessage).toBeInTheDocument();
+	 */
 });
 
 test("Prevents saving when start year or end year is negative", async () => {
@@ -112,12 +116,17 @@ test("Prevents saving when start year or end year is negative", async () => {
 	fireEvent.change(endDateInput, { target: { value: "-2021" } });
 
 	// Click save button
-	const saveButton = screen.getByRole("button", { name: "Save" });
-	fireEvent.click(saveButton);
+	fireEvent.click(screen.getByRole("button", { name: /save/i }));
+	// fireEvent.click(saveButton);
 
 	// Assert that an alert message appears
-	const alertMessage = await screen.findByText(
+	/*
+		const alertMessage = await screen.findByText(
 		"Start and end years must be greater than or equal to 0",
 	);
 	expect(alertMessage).toBeInTheDocument();
+
+	*/
+	await screen.findByText("Start year must be a positive integer.");
+	await screen.findByText("End year must be a positive integer.");
 });
