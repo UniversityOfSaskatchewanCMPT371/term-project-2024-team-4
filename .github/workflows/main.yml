@@ -8,8 +8,8 @@ on:
 
 jobs:
 
-  ### Build and Unit Test Backend
-  build-and-test-backend:
+  ### Build & Check Formatting in Backend
+  build-backend:
     runs-on: ubuntu-latest
 
     # Set up postgres
@@ -69,23 +69,8 @@ jobs:
           sleep 5
           kill $SERVER_PID
       
-      - name: Run Backend Unit Tests
-        working-directory: ./backend
-        run: npm run build && npm run unit-test
-
-      - name: Zip Backend
-        working-directory: ./backend
-        run: zip release.zip ./* -r
-      
-      - name: Upload Backend Build and Test Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: backend-artifact
-          path: backend/release.zip
-
-
-  ### Build and Unit Test Frontend (react.js)
-  build-and-test-frontend:
+  ### Build & Check formatting in frontend
+  build-frontend:
     runs-on: ubuntu-latest
     steps:
         - uses: actions/checkout@v3
@@ -114,24 +99,11 @@ jobs:
           run: |
             npm run build
 
-        - name: Run Frontend Unit Tests
-          working-directory: ./frontend
-          run: npm run unit-test
-
-        - name: Zip Frontend
-          working-directory: ./frontend
-          run: zip release.zip ./* -r
-        
-        - name: Upload Frontend Build and Test Artifact
-          uses: actions/upload-artifact@v2
-          with:
-            name: frontend-artifact
-            path: frontend/release.zip
-  
-  ### Integration, End-to-end, smoke tests
-  integration-e2e-smoke-tests:
+  ### Run all services to do smoke, unit, integration, coverage, and e2e tests
+  ### Also upload all test documents as artifacts
+  tests:
     runs-on: ubuntu-latest
-    needs: [build-and-test-backend, build-and-test-frontend]
+    needs: [build-backend, build-frontend]
     # Set up postgres
     services:
       postgres:
@@ -185,26 +157,63 @@ jobs:
       - name: Install Playwright Browsers
         working-directory: ./testing
         run: npx playwright install chromium # only uses chromium for tests (CURRENTLY)
-      
-      - name: Health Check for Backend Server
+
+      - name: Backend/Database Connection Health Check
         run: |
-          until curl --output /dev/null --silent --head --fail http://localhost:3000; do
-            printf '.'
-            sleep 5
+          echo "Waiting for backend to be ready..."
+          until $(curl --output /dev/null --silent --head --fail http://localhost:3000/health); do
+              printf '.'
+              sleep 5
           done
-          echo "Backend server is up and running!"
-      
+          echo "Backend is up and running!"
+        working-directory: ./backend
+
+        
+        # Run Smoke Tests First
       - name: Run smoke tests
         working-directory: ./testing/smoke-test
         run: npx playwright test
+        
+        ### Run all backend tests
+      - name: Run Backend Unit Tests
+        working-directory: ./backend
+        run: npm run build && npm run unit-test
       
       - name: Run Backend Integration Tests
         working-directory: ./backend
         run: npm run integ-test
-
+      
+      - name: Run Backend Coverage Test
+        working-directory: ./backend
+        run: npm run coverage
+          
+        ### Run all frontend tests
+      - name: Run Frontend Unit Tests
+        working-directory: ./frontend
+        run: npm run unit-test
+      
       - name: Run Frontend Integration Tests
         working-directory: ./frontend
         run: npm run integ-test
+
+      - name: Run Frontend Coverage Test
+        working-directory: ./frontend
+        run: npm run coverage
+        
+        ### Run all E2E Tests
+        
+        ### Upload Testing Reports as Artifacts
+      - name: Upload Backend Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend-test-reports
+          path: backend/test-report/
+        
+      - name: Upload Frontend Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-test-reports
+          path: frontend/test-report/
       
       - name: Cleanup
         if: always()

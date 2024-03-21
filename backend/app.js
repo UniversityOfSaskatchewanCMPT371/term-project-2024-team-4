@@ -8,6 +8,7 @@ const cors = require("cors");
 // const { synchModels } = require("./models");
 // const dataSource = require("./config/db");
 
+const healthRouter = require("./routes/health");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 
@@ -64,6 +65,7 @@ app.use(
 	}),
 );
 
+app.use("/", healthRouter);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 

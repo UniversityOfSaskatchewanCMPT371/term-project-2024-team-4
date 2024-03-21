@@ -8,9 +8,9 @@
 		"devstart": "npm run build && nodemon --legacy-watch ./bin/www",
 		"serverstart": "DEBUG=express-locallibrary-tutorial:* npm run devstart",
 		"test": "jest",
-		"unit-test": "jest --testMatch \"**/*.unit.test.js\"",
-		"integ-test": "jest --testMatch \"**/*.integ.test.js\"",
-		"coverage": "jest --coverage",
+		"unit-test": "jest --config ./config/jest.unit.config.js",
+		"integ-test": "jest --config ./config/jest.integ.config.js",
+		"coverage": "jest --coverage --coverageDirectory ./test-report/coverage",
 		"lint": "eslint . --ext .js,.jsx,.ts,.tsx --max-warnings=0",
 		"lint:fix": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
 		"format": "prettier --check .",
@@ -29,6 +29,7 @@
 		"express": "^4.18.2",
 		"express-validator": "^7.0.1",
 		"http-errors": "~1.6.3",
+		"jest-html-reporter": "^3.10.2",
 		"jsonwebtoken": "^9.0.2",
 		"morgan": "~1.9.1",
 		"pg": "^8.11.3",
@@ -48,10 +49,5 @@
 		"prettier": "^3.2.5",
 		"supertest": "^6.3.4",
 		"typescript": "^5.3.3"
-	},
-	"jest": {
-		"testMatch": [
-			"**/tests/**/*.test.js"
-		]
 	}
 }
