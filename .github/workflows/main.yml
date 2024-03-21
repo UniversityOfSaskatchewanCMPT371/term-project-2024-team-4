@@ -72,6 +72,12 @@ jobs:
       - name: Run Backend Unit Tests
         working-directory: ./backend
         run: npm run build && npm run unit-test
+      
+      - name: Upload Backend Unit Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit-test-report.html
+          path: backend/test-report/unit-test-report.html
 
   ### Build and Unit Test Frontend (react.js)
   build-and-test-frontend:
@@ -106,6 +112,12 @@ jobs:
         - name: Run Frontend Unit Tests
           working-directory: ./frontend
           run: npm run unit-test
+        
+        - name: Upload Frontend Unit Test Reports
+          uses: actions/upload-artifact@v2
+          with:
+            name: unit-test-report
+            path: frontend/test-report/unit/
 
   ### Integration, End-to-end, smoke tests
   integration-e2e-smoke-tests:
