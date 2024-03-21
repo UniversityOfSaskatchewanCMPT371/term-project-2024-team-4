@@ -69,16 +69,6 @@ jobs:
           sleep 5
           kill $SERVER_PID
       
-      - name: Run Backend Unit Tests
-        working-directory: ./backend
-        run: npm run build && npm run unit-test
-      
-      - name: Upload Backend Unit Test Reports
-        uses: actions/upload-artifact@v2
-        with:
-          name: unit-test-report.html
-          path: backend/test-report/unit-test-report.html
-
   ### Build and Unit Test Frontend (react.js)
   build-and-test-frontend:
     runs-on: ubuntu-latest
@@ -108,16 +98,6 @@ jobs:
           working-directory: ./frontend
           run: |
             npm run build
-
-        - name: Run Frontend Unit Tests
-          working-directory: ./frontend
-          run: npm run unit-test
-        
-        - name: Upload Frontend Unit Test Reports
-          uses: actions/upload-artifact@v2
-          with:
-            name: unit-test-report
-            path: frontend/test-report/unit/
 
   ### Integration, End-to-end, smoke tests
   integration-e2e-smoke-tests:
@@ -176,18 +156,44 @@ jobs:
       - name: Install Playwright Browsers
         working-directory: ./testing
         run: npx playwright install chromium # only uses chromium for tests (CURRENTLY)
-      
+        
+        # Run Smoke Tests First
       - name: Run smoke tests
         working-directory: ./testing/smoke-test
         run: npx playwright test
+        
+        ### Run all backend tests
+      - name: Run Backend Unit Tests
+        working-directory: ./backend
+        run: npm run build && npm run unit-test
       
       - name: Run Backend Integration Tests
         working-directory: ./backend
         run: npm run integ-test
-
+          
+        ### Run all frontend tests
+      - name: Run Frontend Unit Tests
+        working-directory: ./frontend
+        run: npm run unit-test
+      
       - name: Run Frontend Integration Tests
         working-directory: ./frontend
         run: npm run integ-test
+        
+        ### Run all E2E Tests
+        
+        ### Upload Testing Reports as Artifacts
+      - name: Upload Backend Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend-test-reports
+          path: backend/test-report/
+        
+      - name: Upload Frontend Test Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend-test-reports
+          path: frontend/test-report/
       
       - name: Cleanup
         if: always()
