@@ -8,11 +8,11 @@ export default defineConfig({
 		globals: true,
 		environment: "jsdom",
 		setupFiles: ["/tests/setup.js"],
-		reporters: ['verbose'], 
+		reporters: ["verbose"],
 		coverage: {
-			reporters: ['html', 'text'],
-			reportsDirectory: './test-report/coverage'
-		}
+			reporters: ["html", "text"],
+			reportsDirectory: "./test-report/coverage",
+		},
 	},
 	server: {
 		watch: {
