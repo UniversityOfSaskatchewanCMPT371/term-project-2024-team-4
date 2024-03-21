@@ -1,13 +1,13 @@
+/* eslint-disable indent */
 const { Artifact, Site, ArtifactType } = require("../dist/entity");
 const myDatabase = require("../config/db");
+const { logger } = require("../config/logger.js");
+const assert = require("node:assert/strict");
 
 /**
- * Creates a new artifact in the database
- * @param {*} req - the request
+ *
  */
 async function newArtifact(req) {
-	console.log("creating new artifact: " + req.body);
-	// Extract the information from the request body
 	const {
 		name,
 		location,
@@ -18,20 +18,28 @@ async function newArtifact(req) {
 		artifactTypeId,
 		subtype,
 	} = req.body;
+
+	assert.ok(
+		name &&
+			location &&
+			description &&
+			dimensions &&
+			photo &&
+			siteId &&
+			artifactTypeId,
+		"Required artifact data fields are missing.",
+	);
+
 	try {
-		// Use database connection to get the necessary repositories
 		const artifactRepository = await myDatabase.getRepository(Artifact);
 		const site = await myDatabase.getRepository(Site).findOneBy({ id: siteId });
 		const artifactType = await myDatabase
 			.getRepository(ArtifactType)
 			.findOneBy({ id: artifactTypeId });
-		// If the site or artifactType is not found, return a 404
-		if (!site || !artifactType) {
-			return "Site or ArtifactType not found";
-			//return res.json({ message: "Site or ArtifactType not found" });
-		}
 
-		// If the site and artifactType exist, creates a new Artifact entity with the given information
+		assert.ok(site, "Site not found.");
+		assert.ok(artifactType, "ArtifactType not found.");
+
 		const artifact = artifactRepository.create({
 			name,
 			location,
@@ -42,72 +50,59 @@ async function newArtifact(req) {
 			artifactType,
 			subtype,
 		});
-		// Save the new Artifact entity to the database
+
 		await artifactRepository.save(artifact);
+		logger.info("New artifact created: " + name);
 		return artifact;
-		//res.json(artifact);
 	} catch (error) {
-		console.error("Error creating Artifact:", error);
+		logger.error("Error creating Artifact: " + error.message);
 		return error;
-		//res.json({ error: error.message });
 	}
 }
 
 /**
- * Gets all artifacts in the database.
+ *
  */
 async function getAllArtifacts() {
-	console.log("Getting All Artifacts");
 	try {
 		const artifactRepository = await myDatabase.getRepository(Artifact);
 		const artifacts = await artifactRepository.find({
-			relations: ["site", "artifactType", "site.artifacts"],
+			relations: ["site", "artifactType"],
 		});
-		if (Artifact) {
-			return artifacts;
-			//res.json(artifacts);
-		} else {
-			return "Artifacts not found";
-		}
+
+		assert.ok(artifacts.length > 0, "No artifacts found.");
+		logger.info("Fetched all artifacts.");
+		return artifacts;
 	} catch (error) {
-		console.error("Error fetching Artifacts:", error);
+		logger.error("Error fetching Artifacts: " + error.message);
 		return error;
-		//res.json({ error: error.message });
 	}
 }
 
 /**
- * get a single artifact that matches the given id
- * @param {*} req - the id requested
+ *
  */
 async function getArtifactFromId(req) {
-	console.log("Getting artifact from id: " + req.params);
 	const { id } = req.params;
 	try {
 		const artifact = await myDatabase.getRepository(Artifact).findOne({
 			where: { id },
 			relations: ["site", "artifactType"],
 		});
-		if (!artifact) {
-			return "Artifact not found";
-			//res.json({ message: "Artifact not found" });
-		} else {
-			return artifact;
-			//res.json(artifact);
-		}
+
+		assert.ok(artifact, "Artifact not found");
+		logger.info(`Fetched artifact with ID: ${id}`);
+		return artifact;
 	} catch (error) {
-		console.error("Error fetching Artifacts:", error);
+		logger.error(`Error fetching Artifact with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
 	}
 }
 
 /**
- * update a given artifact with new given information
- * @param {*} req - the request
+ *
  */
 async function updateArtifact(req) {
-	console.log("Updating Artifact Id: " + req.params);
 	const { id } = req.params;
 	const {
 		name,
@@ -123,73 +118,50 @@ async function updateArtifact(req) {
 		const artifactRepository = await myDatabase.getRepository(Artifact);
 		let artifact = await artifactRepository.findOneBy({ id });
 
-		if (!artifact) {
-			return "Artifact not found";
-			//return res.json({ message: "Artifact not found" });
-		}
+		assert.ok(artifact, "Artifact not found");
 
-		if (siteId) {
-			const site = await myDatabase
-				.getRepository(Site)
-				.findOneBy({ id: siteId });
-			if (!site) {
-				return "Site not found";
-				//return res.json({ message: "Site not found" });
-			}
-			artifact.site = site;
-		}
+		const site = siteId
+			? await myDatabase.getRepository(Site).findOneBy({ id: siteId })
+			: null;
+		const artifactType = artifactTypeId
+			? await myDatabase
+					.getRepository(ArtifactType)
+					.findOneBy({ id: artifactTypeId })
+			: null;
 
-		if (artifactTypeId) {
-			const artifactType = await myDatabase
-				.getRepository(ArtifactType)
-				.findOneBy({ id: artifactTypeId });
-			if (!artifactType) {
-				return "ArtifactType not found";
-				//return res.json({ message: "ArtifactType not found" });
-			}
-			artifact.artifactType = artifactType;
-		}
-
-		// Update fields
-		artifact.name = name;
-		artifact.location = location;
-		artifact.description = description;
-		artifact.dimensions = dimensions;
-		artifact.photo = photo;
-		artifact.subtype = subtype;
+		artifact.name = name || artifact.name;
+		artifact.location = location || artifact.location;
+		artifact.description = description || artifact.description;
+		artifact.dimensions = dimensions || artifact.dimensions;
+		artifact.photo = photo || artifact.photo;
+		artifact.site = site || artifact.site;
+		artifact.artifactType = artifactType || artifact.artifactType;
+		artifact.subtype = subtype || artifact.subtype;
 
 		await artifactRepository.save(artifact);
+		logger.info(`Updated artifact with ID: ${id}`);
 		return artifact;
-		//res.json(artifact);
 	} catch (error) {
-		console.error("Error updating Artifact:", error);
+		logger.error(`Error updating Artifact with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
 	}
 }
 
 /**
- * deletes the artifact that matches the given id.
- * @param {*} req - the request
+ *
  */
 async function deleteArtifact(req) {
-	console.log("Deleting Artifact Id: " + req.params);
 	const { id } = req.params;
 	try {
 		const artifactRepository = await myDatabase.getRepository(Artifact);
 		const deleteResult = await artifactRepository.delete(id);
 
-		if (deleteResult.affected > 0) {
-			return;
-			//res.send();
-		} else {
-			return "Artifact not found";
-			//res.json({ message: "Artifact not found" });
-		}
+		assert.strictEqual(deleteResult.affected > 0, true, "Artifact not found");
+		logger.info(`Deleted artifact with ID: ${id}`);
+		return;
 	} catch (error) {
-		console.error("Error deleting Artifact:", error);
+		logger.error(`Error deleting Artifact with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
 	}
 }
 

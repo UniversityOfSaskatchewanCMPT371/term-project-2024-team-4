@@ -1,97 +1,93 @@
-const { BladeShape } = require("../dist/entity");
 const express = require("express");
+const assert = require("node:assert/strict");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const bladeShapeHelper = require("../helperFiles/bladeShapesHelper.js");
 
-// POST: Create a new BladeShape
+/**
+ * POST: Creates a new BladeShape.
+ * @route POST /bladeShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used to return the created BladeShape.
+ * @pre 'name' field should be provided in the body and must be unique.
+ * @post A new BladeShape is created in the database.
+ * @return Returns the newly created BladeShape object.
+ */
 router.post("/", async (req, res) => {
-	const { name } = req.body;
-	try {
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const newBladeShape = bladeShapeRepository.create({ name });
-		await bladeShapeRepository.save(newBladeShape);
-		res.json(newBladeShape);
-	} catch (error) {
-		console.error("Error creating new BladeShape:", error);
-		res.json({ error: error.message });
+	const response = await bladeShapeHelper.newBladeShape(req);
+	if (response instanceof Error) {
+		res
+			.status(response instanceof assert.AssertionError ? 400 : 500)
+			.json({ error: response.message });
 	}
+	res.json(response);
 });
 
-// GET: Fetch all BladeShapes
+/**
+ * GET: Fetches all BladeShapes.
+ * @route GET /bladeShapes
+ * @param req Express request object.
+ * @param res Express response object used to return all BladeShapes.
+ * @pre None.
+ * @post Retrieves all BladeShapes from the database.
+ * @return Returns an array of BladeShape objects.
+ */
 router.get("/", async (req, res) => {
-	try {
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		/**
-     * bladeShapeRepository.createQueryBuilder(BladeShape)
-    .leftJoinAndSelect("culture.bladeShapes", "culture")
-    .getMany();
-     */
-		const bladeShapes = await bladeShapeRepository.find({
-			relations: ["cultures", "projectilePoints"],
-		});
-		res.json(bladeShapes);
-	} catch (error) {
-		console.error("Error fetching BladeShapes:", error);
-		res.json({ error: error.message });
+	const response = await bladeShapeHelper.getAllBladeShapes();
+	if (response instanceof Error) {
+		res.status(500).json({ error: response.message });
 	}
+	res.json(response);
 });
 
-// GET: Fetch all BladeShapes by ID
+/**
+ * GET: Fetches a BladeShape by ID.
+ * @route GET /bladeShapes/:id
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @param res Express response object used to return a specific BladeShape.
+ * @pre The BladeShape with the provided ID must exist in the database.
+ * @post Retrieves a specific BladeShape from the database based on its ID.
+ * @return Returns a BladeShape object or a message indicating the BladeShape was not found.
+ */
 router.get("/:id", async (req, res) => {
-	try {
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const bladeShape = await bladeShapeRepository.findOne({
-			where: { id: parseInt(req.params.id) },
-			relations: ["cultures", "projectilePoints"],
-		});
-		if (bladeShape) {
-			res.json(bladeShape);
-		} else {
-			res.send("BladeShape not found");
-		}
-	} catch (error) {
-		console.error("Error fetching BladeShape:", error);
-		res.json({ error: error.message });
+	const response = await bladeShapeHelper.getBladeShapeById(req);
+	if (response instanceof Error) {
+		res.status(500).json({ error: response.message });
 	}
+	res.json(response);
 });
 
-// PUT: Update an existing BladeShape
+/**
+ * PUT: Updates an existing BladeShape.
+ * @route PUT /bladeShapes/:id
+ * @param req Express request object containing the new 'name' for the BladeShape.
+ * @param res Express response object used for returning the updated BladeShape.
+ * @pre The BladeShape with the given ID must exist in the database.
+ * @post Updates and returns the specified BladeShape in the database.
+ * @return Returns the updated BladeShape object or a message indicating the BladeShape was not found.
+ */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name } = req.body;
-	try {
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		let bladeShapeToUpdate = await bladeShapeRepository.findOneBy({
-			id: parseInt(id),
-		});
-		if (bladeShapeToUpdate) {
-			bladeShapeToUpdate.name = name;
-			await bladeShapeRepository.save(bladeShapeToUpdate);
-			res.json(bladeShapeToUpdate);
-		} else {
-			res.json({ message: "BladeShape not found" });
-		}
-	} catch (error) {
-		console.error("Error updating BladeShape:", error);
-		res.json({ error: error.message });
+	const response = await bladeShapeHelper.updateBladeShape(req);
+	if (response instanceof Error) {
+		res.status(500).json({ error: response.message });
 	}
+	res.json(response);
 });
 
-// DELETE: Remove a BladeShape
+/**
+ * DELETE: Removes a BladeShape by ID.
+ * @route DELETE /bladeShapes/:id
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @param res Express response object used for signaling the result of the deletion operation.
+ * @pre The BladeShape with the given ID must exist in the database.
+ * @post Deletes the specified BladeShape from the database.
+ * @return Returns a message indicating success or failure of the deletion.
+ */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const deleteResult = await bladeShapeRepository.delete(id);
-		if (deleteResult.affected > 0) {
-			res.send();
-		} else {
-			res.json({ message: "BladeShape not found" });
-		}
-	} catch (error) {
-		console.error("Error deleting BladeShape:", error);
-		res.json({ error: error.message });
+	const response = await bladeShapeHelper.deleteBladeShape(req);
+	if (response instanceof Error) {
+		res.status(500).json({ error: response.message });
 	}
+	res.status(204).send(); // No Content
 });
 
 module.exports = router;

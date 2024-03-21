@@ -248,6 +248,7 @@ async function aggregateSiteStatistics(siteId) {
 		return currentSiteRes;
 	}
 	const { artifacts } = currentSiteRes;
+	console.log("new 251: " + currentSiteRes.artifacts.artifactType);
 
 	//contains a list of each type of material, no duplicates
 	const materialTypeArray = new Array();
@@ -342,7 +343,7 @@ async function aggregateCatalogueStatistics(catalogueId) {
 		params: { id: catalogueId },
 	});
 	const cat = await currentCatalogueRes;
-	if (cat === "Catalogue not found") {
+	if (cat instanceof assert.AssertionError) {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
 		);
@@ -352,7 +353,9 @@ async function aggregateCatalogueStatistics(catalogueId) {
 		console.error("aggregateCatalogueStatistics() encountered an error");
 		return cat;
 	}
+	console.log("355: " + cat);
 	const { sites } = cat;
+	console.log("357: " + sites);
 
 	//contains a list of each type of material, no duplicates
 	const materialTypeArray = new Array();
@@ -460,7 +463,7 @@ async function aggregatePointTypeStatistics(pointType) {
 	const currentPointTypeRes = await artifactTypesHelper.getArtifactTypeFromId({
 		params: { id: pointType },
 	});
-	if (currentPointTypeRes === "ArtifactType not found") {
+	if (currentPointTypeRes instanceof assert.AssertionError) {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
 		);

@@ -53,7 +53,7 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 		});
 
 		test("Should have entries of all 0 or null for an empty catalogue", async () => {
-			const createdCatalog = await cataloguesHelper.createNewCatalogue({
+			const createdCatalog = await cataloguesHelper.newCatalogue({
 				body: {
 					name: "Empty Test Catalogue",
 					description: "This is an empty Test Catalogue",
@@ -99,7 +99,7 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 				params: { id: createdCatalog.id },
 			});
 			console.log("line 42: " + testCatalogue);
-			assert.equal(testCatalogue, "Catalogue not found");
+			assert.equal(testCatalogue.message, "Catalogue not found");
 		});
 	});
 
@@ -342,7 +342,7 @@ describe("Testing aggregatePointTypeStatistics()", () => {
 			const projectileShapes = new Map();
 			const projectilePercentages = new Map();
 
-			materialDataMap.set("Material Count", 0);
+			materialDataMap.set("Material Count", 1);
 			materialPercentages.set("Test Lithic Material", 1.0);
 			materialDataMap.set("Material Percentages", materialPercentages);
 			materialDataMap.set("Material Types", ["Test Lithic Material"]);

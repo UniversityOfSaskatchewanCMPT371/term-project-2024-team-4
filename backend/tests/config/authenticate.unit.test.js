@@ -3,7 +3,7 @@
  */
 
 const jwt = require("jsonwebtoken");
-const authenticateAdmin = require("../../config/authenticate");
+const authenticateAdmin = require("../../middleware/authenticate");
 require("dotenv").config();
 
 describe("Admin Authentication Middleware Test ", () => {

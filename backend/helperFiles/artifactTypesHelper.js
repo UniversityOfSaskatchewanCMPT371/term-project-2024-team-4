@@ -1,33 +1,35 @@
 const { ArtifactType } = require("../dist/entity");
 const myDatabase = require("../config/db");
+const assert = require("node:assert/strict");
+const { logger } = require("../config/logger.js");
 
 /**
  *
  * @param {*} req
  */
 async function newArtifactType(req) {
-	const { id } = req.body; // 'Lithic', 'Ceramic', or 'Faunal'
+	const { id } = req.body;
 	try {
+		assert(
+			["Lithic", "Ceramic", "Faunal"].includes(id),
+			"Invalid ArtifactType ID.",
+		);
 		const artifactTypeRepository = await myDatabase.getRepository(ArtifactType);
-		// Validate the id
-		if (!["Lithic", "Ceramic", "Faunal"].includes(id)) {
-			return "Invalid ArtifactType ID.";
-			//return res.json({ message: "Invalid ArtifactType ID." });
-		}
-		// Check if the ArtifactType already exists
+
 		const existingType = await artifactTypeRepository.findOneBy({ id });
-		if (existingType) {
-			return "ArtifactType already exists.";
-			//return res.json({ message: "ArtifactType already exists." });
-		}
+		assert(!existingType, "ArtifactType already exists.");
+
 		const artifactType = artifactTypeRepository.create({ id });
 		await artifactTypeRepository.save(artifactType);
+		// res.status(201).json(artifactType);
+		logger.info(`New ArtifactType created: ${id}`);
 		return artifactType;
-		//res.json(artifactType);
 	} catch (error) {
-		console.error("Error creating ArtifactType:", error);
+		logger.error(`Error creating ArtifactType: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res
+		// .status(error instanceof assert.AssertionError ? 400 : 500)
+		// .json({ message: error.message });
 	}
 }
 
@@ -41,12 +43,15 @@ async function getAllArtifactTypes() {
 		const artifactTypes = await artifactTypeRepository.find({
 			relations: ["materials", "artifacts"],
 		});
+
+		assert(artifactTypes.length > 0, "No ArtifactTypes found.");
+		// res.json(artifactTypes);
+		logger.info("Fetched all ArtifactTypes.");
 		return artifactTypes;
-		//res.json(artifactTypes);
 	} catch (error) {
-		console.error("Error fetching ArtifactTypes:", error);
+		logger.error(`Error fetching ArtifactTypes: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 
@@ -60,19 +65,25 @@ async function getArtifactTypeFromId(req) {
 		const artifactTypeRepository = await myDatabase.getRepository(ArtifactType);
 		const artifactType = await artifactTypeRepository.findOne({
 			where: { id },
-			relations: ["materials", "artifacts"],
+			relations: [
+				"materials",
+				"artifacts",
+				"artifacts.artifactType",
+				"artifacts.artifactType.materials",
+				"artifacts.baseShape",
+				"artifacts.bladeShape",
+				"artifacts.haftingShape",
+				"artifacts.crossSection",
+			],
 		});
-		if (artifactType) {
-			return artifactType;
-			//res.json(artifactType);
-		} else {
-			return "ArtifactType not found";
-			//res.json({ message: "ArtifactType not found" });
-		}
+		assert(artifactType, "ArtifactType not found");
+		// res.json(artifactType);
+		logger.info(`Fetched ArtifactType with ID: ${id}`);
+		return artifactType;
 	} catch (error) {
-		console.error("Error fetching ArtifactType:", error);
+		logger.error(`Error fetching ArtifactType with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 
@@ -85,17 +96,15 @@ async function deleteArtifactType(req) {
 	try {
 		const artifactTypeRepository = await myDatabase.getRepository(ArtifactType);
 		const result = await artifactTypeRepository.delete(id);
-		if (result.affected > 0) {
-			return;
-			//res.send();
-		} else {
-			return "ArtifactType not found";
-			//res.json({ message: "ArtifactType not found" });
-		}
+
+		assert(result.affected > 0, "ArtifactType not found");
+		// res.status(204).send(); // No Content
+		logger.info(`Deleted ArtifactType with ID: ${id}`);
+		return;
 	} catch (error) {
-		console.error("Error deleting ArtifactType:", error);
+		logger.error(`Error deleting ArtifactType with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 

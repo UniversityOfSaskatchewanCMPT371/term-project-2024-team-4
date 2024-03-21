@@ -35,7 +35,17 @@ async function getAllSites() {
 	try {
 		const siteRepository = await myDatabase.getRepository(Site);
 		const sites = await siteRepository.find({
-			relations: ["catalogue", "region", "artifacts"],
+			relations: [
+				"catalogue",
+				"region",
+				"artifacts",
+				"artifacts.artifactType",
+				"artifacts.artifactType.materials",
+				"artifacts.baseShape",
+				"artifacts.bladeShape",
+				"artifacts.haftingShape",
+				"artifacts.crossSection",
+			],
 		});
 		return sites;
 		//res.json(sites);
@@ -56,7 +66,17 @@ async function getSiteFromId(req) {
 		const siteRepository = await myDatabase.getRepository(Site);
 		const site = await siteRepository.findOne({
 			where: { id: parseInt(req.params.id) },
-			relations: ["catalogue", "region", "artifacts"],
+			relations: [
+				"catalogue",
+				"region",
+				"artifacts",
+				"artifacts.artifactType",
+				"artifacts.artifactType.materials",
+				"artifacts.baseShape",
+				"artifacts.bladeShape",
+				"artifacts.haftingShape",
+				"artifacts.crossSection",
+			],
 		});
 		if (site) {
 			return site;

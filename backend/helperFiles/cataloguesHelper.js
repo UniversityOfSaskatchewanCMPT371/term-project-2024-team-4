@@ -1,21 +1,24 @@
 const { Catalogue } = require("../dist/entity");
 const myDatabase = require("../config/db");
+const assert = require("node:assert/strict");
+const { logger } = require("../config/logger.js");
 
 /**
  *
  * @returns
  */
 async function getAllCatalogues() {
-	console.log("Getting all Catalogues");
 	try {
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const catalogues = await catalogueRepository.find();
+		assert(catalogues.length > 0, "No catalogues found.");
+		// res.json(catalogues);
+		logger.info("Fetched all catalogues.");
 		return catalogues;
-		//res.json(catalogues);
 	} catch (error) {
-		console.error("Error fetching catalogues:", error);
+		logger.error(`Error fetching catalogues: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 
@@ -23,19 +26,22 @@ async function getAllCatalogues() {
  *
  * @param {*} req
  */
-async function createNewCatalogue(req) {
-	console.log("Creating new Catalogue: " + req.body);
+async function newCatalogue(req) {
 	const { name, description } = req.body;
 	try {
+		assert(name && description, "Both name and description are required.");
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const newCatalogue = catalogueRepository.create({ name, description });
 		await catalogueRepository.save(newCatalogue);
+		// res.json(newCatalogue);
+		logger.info(`New catalogue created: ${name}`);
 		return newCatalogue;
-		//res.json(newCatalogue);
 	} catch (error) {
-		console.error("Error creating new catalogue:", error);
+		logger.error(`Error creating new catalogue: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res
+		// 	.status(error instanceof assert.AssertionError ? 400 : 500)
+		// 	.json({ error: error.message });
 	}
 }
 
@@ -44,11 +50,12 @@ async function createNewCatalogue(req) {
  * @param {*} req
  */
 async function getCatalogueFromId(req) {
-	console.log("Getting catalogue from Id: " + req.params.id);
 	try {
+		const id = parseInt(req.params.id);
+		assert(!isNaN(id), "Invalid ID provided");
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const catalogue = await catalogueRepository.findOne({
-			where: { id: parseInt(req.params.id) },
+			where: { id },
 			relations: [
 				"sites",
 				"sites.artifacts",
@@ -60,18 +67,16 @@ async function getCatalogueFromId(req) {
 				"sites.artifacts.crossSection",
 			],
 		});
-
-		if (catalogue) {
-			return catalogue;
-			//res.json(catalogue);
-		} else {
-			return "Catalogue not found";
-			//res.send("Catalogue not found");
-		}
+		assert(catalogue, "Catalogue not found");
+		// res.json(catalogue);
+		logger.info(`Fetched catalogue with ID: ${id}`);
+		return catalogue;
 	} catch (error) {
-		console.error("Error fetching catalogue:", error);
+		logger.error(
+			`Error fetching catalogue with ID ${req.params.id}: ${error.message}`,
+		);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 
@@ -80,28 +85,27 @@ async function getCatalogueFromId(req) {
  * @param {*} req
  */
 async function updateCatalogue(req) {
-	console.log("Updating Catalogue Id: " + req.params);
 	const { id } = req.params;
 	const { name, description } = req.body;
 	try {
+		const idInt = parseInt(id);
+		assert(
+			!isNaN(idInt) && name && description,
+			"Valid ID, name, and description are required.",
+		);
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
-		let catalogueToUpdate = await catalogueRepository.findOneBy({
-			id: parseInt(id),
-		});
-		if (catalogueToUpdate) {
-			catalogueToUpdate.name = name;
-			catalogueToUpdate.description = description;
-			await catalogueRepository.save(catalogueToUpdate);
-			return catalogueToUpdate;
-			//res.json(catalogueToUpdate);
-		} else {
-			return "Catalogue not found";
-			//res.json({ message: "Catalogue not found" });
-		}
+		let catalogueToUpdate = await catalogueRepository.findOneBy({ id: idInt });
+		assert(catalogueToUpdate, "Catalogue not found");
+		catalogueToUpdate.name = name;
+		catalogueToUpdate.description = description;
+		await catalogueRepository.save(catalogueToUpdate);
+		// res.json(catalogueToUpdate);
+		logger.info(`Updated catalogue with ID: ${id}`);
+		return catalogueToUpdate;
 	} catch (error) {
-		console.error("Error updating catalogue:", error);
+		logger.error(`Error updating catalogue with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 
@@ -110,28 +114,25 @@ async function updateCatalogue(req) {
  * @param {*} req
  */
 async function deleteCatalogue(req) {
-	console.log("Deleting Catalogue Id: " + req.params.id);
 	const id = parseInt(req.params.id);
 	try {
+		assert(!isNaN(id), "Invalid ID provided for deletion");
 		const catalogueRepository = await myDatabase.getRepository(Catalogue);
 		const deleteResult = await catalogueRepository.delete(id);
-		if (deleteResult.affected > 0) {
-			return;
-			//res.send();
-		} else {
-			return "Catalogue not found";
-			//res.json({ message: "Catalogue not found" });
-		}
+		assert(deleteResult.affected > 0, "Catalogue not found for deletion");
+		// res.status(204).send(); // No Content
+		logger.info(`Deleted catalogue with ID: ${id}`);
+		return;
 	} catch (error) {
-		console.error("Error deleting catalogue:", error);
+		logger.error(`Error deleting catalogue with ID ${id}: ${error.message}`);
 		return error;
-		//res.json({ error: error.message });
+		// res.status(500).json({ error: error.message });
 	}
 }
 
 module.exports = {
 	getAllCatalogues,
-	createNewCatalogue,
+	newCatalogue,
 	getCatalogueFromId,
 	updateCatalogue,
 	deleteCatalogue,
