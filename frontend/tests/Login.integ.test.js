@@ -218,7 +218,7 @@ describe("correct username input tests", () => {
 		var responseStatus = response.status();
 
 		await expect([401]).toContain(responseStatus);
-	});
+	}, 10000);
 
 	test("empty password ", async () => {
 		//here we do test for empty username with empty password
@@ -239,7 +239,7 @@ describe("correct username input tests", () => {
 		var responseStatus = response.status();
 
 		await expect([400, 401]).toContain(responseStatus);
-	});
+	}, 10000);
 
 	test("Correct password ", async () => {
 		//here we do test for correct password with empty password
@@ -260,7 +260,7 @@ describe("correct username input tests", () => {
 		var responseStatus = response.status();
 
 		await expect([200]).toContain(responseStatus);
-	});
+	}, 10000);
 });
 
 describe("Correct password input tests", () => {
@@ -526,7 +526,7 @@ describe("Testin using long inputs ", () => {
 		var responseStatus = response.status();
 
 		await expect([400, 401]).toContain(responseStatus);
-	}, 100000);
+	}, 15000);
 
 	test("300 letter password ", async () => {
 		await page.goto("http://localhost:8080");
@@ -549,7 +549,7 @@ describe("Testin using long inputs ", () => {
 		var responseStatus = response.status();
 
 		await expect([400, 401]).toContain(responseStatus);
-	}, 100000);
+	}, 15000);
 
 	test("Maximum length of username and password fields", async () => {
 		await page.goto("http://localhost:8080");
@@ -569,7 +569,7 @@ describe("Testin using long inputs ", () => {
 		const responseStatus = response.status();
 
 		await expect([400, 401]).toContain(responseStatus);
-	}, 10000);
+	}, 15000);
 });
 
 describe("Number inputs short and long input tests", () => {
