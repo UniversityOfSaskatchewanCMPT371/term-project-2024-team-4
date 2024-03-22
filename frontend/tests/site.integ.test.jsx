@@ -54,7 +54,7 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 		description: "Test Description",
 		location: "Test Location",
 		catalogueId: 1,
-		regionId: 48,
+		regionId: 1,
 	};
 
 	try {
@@ -62,9 +62,13 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 		const response = await axios.post("http://localhost:3000/sites", siteData);
 
 		// compare the actual data with respone from backend API.
-		expect(response.data).toHaveProperty("name", "Test Site");
-		expect(response.data).toHaveProperty("description", "Test Description");
-		expect(response.data).toHaveProperty("location", "Test Location");
+		expect(response.data).toMatchObject({
+			name: siteData.name,
+			description: siteData.description,
+			location: siteData.location,
+			catalogue: expect.objectContaining({ id: siteData.catalogueId }),
+			region: expect.objectContaining({ id: siteData.regionId }),
+		});
 
 		//check the post request has already posted again
 		const createdSiteId = response.data.id;
@@ -73,7 +77,13 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 		);
 
 		// Verify that the fetched site matches the posted site data
-		expect(fetchResponse.data).toMatchObject(siteData);
+		expect(fetchResponse.data).toMatchObject({
+			name: siteData.name,
+			description: siteData.description,
+			location: siteData.location,
+			catalogue: expect.any(Object),
+			region: expect.any(Object),
+		});
 	} catch (error) {
 		// Handle any errors that occur during the test
 		console.error("Error creating new site:", error);
@@ -94,13 +104,12 @@ test("returns an error message when required information is missing", async () =
 	}
 });
 
-test("creates a new site through UI and verifies it is saved in the database ( it is not supposted to be there since region is missing intensionaly)", async () => {
-	// create the data to post it through UI
+test("creates a new site through UI and verifies it is not saved (region is missing intentionally)", async () => {
 	const siteData = {
 		name: "XYZ",
 		description: "Test Description",
 		location: "Test Location",
-		catalogueId: 1,
+		catalogueId: 1, // Note: regionId is intentionally left out
 	};
 
 	// Render the component
@@ -116,6 +125,9 @@ test("creates a new site through UI and verifies it is saved in the database ( i
 	userEvent.type(locationInput, siteData.location);
 
 	fireEvent.click(screen.getByText("Add"));
+
+	const errorMessage = await screen.findByText("Region is required");
+	expect(errorMessage).toBeInTheDocument();
 
 	await waitFor(
 		async () => {

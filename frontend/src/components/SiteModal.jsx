@@ -60,6 +60,12 @@ const SiteModal = ({ setOpen }) => {
 	 * @post Sends the site data to the backend and closes the modal if successful. Logs the action. Handles any errors.
 	 */
 	const handleSubmit = () => {
+		if (!regionID) {
+			// Check if the region is selected
+			setRegionError("Region is required"); // Set the region error message
+			return; // Prevent form submission
+		}
+		setRegionError(""); // Clear any existing error message
 		const newSite = {
 			name,
 			description,
@@ -87,6 +93,7 @@ const SiteModal = ({ setOpen }) => {
 	const [editRegion, setEditRegion] = useState(false);
 	const [regionModalOpen, setRegionModalOpen] = useState(false);
 	const [selectedRegionID, setSelectedRegionID] = useState(null);
+	const [regionError, setRegionError] = useState("");
 
 	/**
 	 * Fetches Site information from the backend when the component mounts.
@@ -223,6 +230,7 @@ const SiteModal = ({ setOpen }) => {
 									value={selectedRegion}
 									onChange={handleRegionChange}
 									renderValue={(selected) => selected}
+									error={Boolean(regionError)}
 								>
 									{regions.map((region) => (
 										<MenuItem key={region.id} value={region.name}>
@@ -240,6 +248,7 @@ const SiteModal = ({ setOpen }) => {
 										+ Add New Region
 									</MenuItem>
 								</Select>
+								{regionError && <p style={{ color: "red" }}>{regionError}</p>}
 							</FormControl>
 							<Menu
 								id="region-menu"
