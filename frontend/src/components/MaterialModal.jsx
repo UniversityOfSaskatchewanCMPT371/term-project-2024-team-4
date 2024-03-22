@@ -10,7 +10,7 @@ import { useState } from "react";
 import axios from "axios";
 import log from "../logger";
 
-export default function CultureModal({
+export default function MaterialModal({
 	setEditMaterial,
 	selectedMaterial,
 	selectedMaterialDescription,
