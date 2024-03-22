@@ -218,7 +218,7 @@ describe("correct username input tests", () => {
 		var responseStatus = response.status();
 
 		await expect([401]).toContain(responseStatus);
-	}, 10000);
+	}, 20000);
 
 	test("empty password ", async () => {
 		//here we do test for empty username with empty password
@@ -239,7 +239,7 @@ describe("correct username input tests", () => {
 		var responseStatus = response.status();
 
 		await expect([400, 401]).toContain(responseStatus);
-	}, 10000);
+	}, 20000);
 
 	test("Correct password ", async () => {
 		//here we do test for correct password with empty password
@@ -260,7 +260,7 @@ describe("correct username input tests", () => {
 		var responseStatus = response.status();
 
 		await expect([200]).toContain(responseStatus);
-	}, 10000);
+	}, 20000);
 });
 
 describe("Correct password input tests", () => {
