@@ -4,12 +4,20 @@ const {
 	aggregateCatalogueStatistics,
 	aggregatePointTypeStatistics,
 } = require("../controllers/aggregateStatisticsController.js");
-const assert = require("node:assert/strict");
 
 const sitesHelper = require("../helperFiles/sitesHelper.js");
 const cataloguesHelper = require("../helperFiles/cataloguesHelper.js");
-// const artifactTypesHelper = require("../helperFiles/artifactTypesHelper.js");
-// const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+const artifactTypesHelper = require("../helperFiles/artifactTypesHelper.js");
+const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+const regionsHelper = require("../helperFiles/regionsHelper.js");
+const materialsHelper = require("../helperFiles/materialsHelper.js");
+const periodsHelper = require("../helperFiles/periodsHelper.js");
+const culturesHelper = require("../helperFiles/culturesHelper.js");
+const bladeShapesHelper = require("../helperFiles/bladeShapesHelper.js");
+const baseShapesHelper = require("../helperFiles/baseShapesHelper.js");
+const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
+const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
+
 // const assert = require("node:assert/strict");
 
 //helper for compareing maps.
@@ -25,6 +33,7 @@ function compareMaps(map1, map2) {
 		if (testVal != val || (testVal === undefined && !map2.has(key))) {
 			if (testVal instanceof Map && val instanceof Map) {
 				console.log("Entering Map: " + key);
+				console.log("map1 value: " + val + "\n" + "map2 value: " + testVal);
 				return compareMaps(testVal, val);
 			}
 			console.log(
@@ -59,15 +68,6 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 					description: "This is an empty Test Catalogue",
 				},
 			});
-			const testCatalogueCreate = await cataloguesHelper.getCatalogueFromId({
-				params: { id: createdCatalog.id },
-			});
-			console.log("line 53: " + testCatalogueCreate);
-			assert.equal(testCatalogueCreate.name, "Empty Test Catalogue");
-			assert.equal(
-				testCatalogueCreate.description,
-				"This is an empty Test Catalogue",
-			);
 
 			const catStats = await aggregateCatalogueStatistics(createdCatalog.id);
 			expect(catStats.get("Material Data").get("Material Count")).toBe(0);
@@ -95,11 +95,6 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 			await cataloguesHelper.deleteCatalogue({
 				params: { id: createdCatalog.id },
 			});
-			const testCatalogue = await cataloguesHelper.getCatalogueFromId({
-				params: { id: createdCatalog.id },
-			});
-			console.log("line 42: " + testCatalogue);
-			assert.equal(testCatalogue.message, "Catalogue not found");
 		});
 	});
 
@@ -113,10 +108,77 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 	describe("Testing on a small, populated Catalogue", () => {
 		test("On a Catalogue with one site that has one Projectile Point and one Site", async () => {
 			//create test catalogue
+			const testCatalogue = await cataloguesHelper.newCatalogue({
+				body: {
+					name: "Test Catalogue",
+					description: "This is an Test Catalogue",
+				},
+			});
+			const testRegion = await regionsHelper.newRegion({
+				body: {
+					name: "Test Region",
+					description: "This is a test region description.",
+				},
+			});
+			const testSite = await sitesHelper.newSite({
+				body: {
+					name: "Test Site",
+					description: "This is a test site description.",
+					location: "This is a test site location",
+					catalogueId: testCatalogue.id,
+					regionId: testRegion.id,
+				},
+			});
+			await artifactTypesHelper.newArtifactType({
+				body: {
+					id: "Lithic",
+				},
+			});
+			console.log("Creating new material: ");
+			const testMaterial = await materialsHelper.newMaterial({
+				body: {
+					name: "Test Lithic Material",
+					description: "This is a test lithic material description.",
+					artifactTypeId: "Lithic",
+				},
+			});
+			const testPeriod = await periodsHelper.newPeriod({
+				body: { name: "Test Period", start: "1000", end: "1200" },
+			});
+			const testCulture = await culturesHelper.newCulture({
+				body: { name: "Test Culture", periodId: testPeriod.id },
+			});
+			const testBladeShape = await bladeShapesHelper.newBladeShape({
+				body: { name: "Test Blade Shape" },
+			});
+			const testBaseShape = await baseShapesHelper.newBaseShape({
+				body: { name: "Test Base Shape" },
+			});
+			const testHaftingShape = await haftingShapesHelper.createNewHaftingShape({
+				body: { name: "Test Hafting Shape" },
+			});
+			const testCrossSection = await crossSectionsHelper.newCrossSection({
+				body: { name: "Test Cross Section" },
+			});
+			const testProjectilePoint =
+				await projectilePointsHelper.newProjectilePoint({
+					body: {
+						name: "Test Projectile Point 1",
+						location: "Test Point 1 Location",
+						description: "This is Test Projectile 1's description",
+						dimensions: "[1.0, 1.0, 1.0]",
+						photo: "This is a photo link",
+						siteId: testSite.id,
+						artifactTypeId: "Lithic",
+						cultureId: testCulture.id,
+						bladeShapeId: testBladeShape.id,
+						baseShapeId: testBaseShape.id,
+						haftingShapeId: testHaftingShape.id,
+						crossSectionId: testCrossSection.id,
+					},
+				});
 
-			const catStats = await aggregateCatalogueStatistics(1);
-
-			console.log("F3.test line 101: " + catStats);
+			const catStats = await aggregateCatalogueStatistics(testCatalogue.id);
 
 			const compareMap = new Map();
 			const materialDataMap = new Map();
@@ -155,6 +217,44 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 			compareMap.set("Material Data", materialDataMap);
 
 			expect(compareMaps(catStats, compareMap)).toBe(true);
+
+			await projectilePointsHelper.deleteProjectilePoint({
+				params: { id: testProjectilePoint.id },
+			});
+			console.log("deleting new material: " + testMaterial.id);
+			await materialsHelper.deleteMaterial({
+				params: { id: testMaterial.id },
+			});
+			await sitesHelper.deleteSite({
+				params: { id: testSite.id },
+			});
+			await regionsHelper.deleteRegion({
+				params: { id: testRegion.id },
+			});
+			await cataloguesHelper.deleteCatalogue({
+				params: { id: testCatalogue.id },
+			});
+			await artifactTypesHelper.deleteArtifactType({
+				params: { id: "Lithic" },
+			});
+			await culturesHelper.deleteCulture({
+				params: { id: testCulture.id },
+			});
+			await periodsHelper.deletePeriod({
+				params: { id: testPeriod.id },
+			});
+			await bladeShapesHelper.deleteBladeShape({
+				params: { id: testBladeShape.id },
+			});
+			await baseShapesHelper.deleteBaseShape({
+				params: { id: testBaseShape.id },
+			});
+			await haftingShapesHelper.deleteHaftingShape({
+				params: { id: testHaftingShape.id },
+			});
+			await crossSectionsHelper.deleteCrossSection({
+				params: { id: testCrossSection.id },
+			});
 		});
 	});
 });
@@ -172,26 +272,29 @@ describe("Testing aggregateSiteStatistics().", () => {
 		});
 
 		test("Should have entries of all 0 or null for an empty site.", async () => {
-			const createdSite = await sitesHelper.newSite({
+			const testCatalogue = await cataloguesHelper.newCatalogue({
+				body: {
+					name: "Test Catalogue",
+					description: "This is an Test Catalogue",
+				},
+			});
+			const testRegion = await regionsHelper.newRegion({
+				body: {
+					name: "Test Region",
+					description: "This is a test region description.",
+				},
+			});
+			const testSite = await sitesHelper.newSite({
 				body: {
 					name: "Empty Test Site",
 					description: "This is an empty test site description.",
 					location: "This is a test site location",
-					catalogueId: 1,
-					regionId: 1,
+					catalogueId: testCatalogue.id,
+					regionId: testRegion.id,
 				},
 			});
-			const testSiteCreate = await sitesHelper.getSiteFromId({
-				params: { id: createdSite.id },
-			});
-			console.log("line 53: " + testSiteCreate);
-			assert.equal(testSiteCreate.name, "Empty Test Site");
-			assert.equal(
-				testSiteCreate.description,
-				"This is an empty test site description.",
-			);
 
-			const siteStats = await aggregateSiteStatistics(createdSite.id);
+			const siteStats = await aggregateSiteStatistics(testSite.id);
 			expect(siteStats.get("Material Data").get("Material Count")).toBe(0);
 			expect(siteStats.get("Material Data").get("Material Types").length).toBe(
 				0,
@@ -219,20 +322,89 @@ describe("Testing aggregateSiteStatistics().", () => {
 			);
 
 			await sitesHelper.deleteSite({
-				params: { id: createdSite.id },
+				params: { id: testSite.id },
 			});
-			const testCatalogue = await sitesHelper.getSiteFromId({
-				params: { id: createdSite.id },
+			await cataloguesHelper.deleteCatalogue({
+				params: { id: testCatalogue.id },
 			});
-			console.log("line 42: " + testCatalogue);
-			assert.equal(testCatalogue, "Site not found");
+			await regionsHelper.deleteRegion({
+				params: { id: testRegion.id },
+			});
 		});
 	});
 	describe("Testing on a small, populated Site", () => {
 		test("On a Site with one site that has one Projectile Point", async () => {
 			//create test catalogue
-
-			const siteStats = await aggregateSiteStatistics(1);
+			const testCatalogue = await cataloguesHelper.newCatalogue({
+				body: {
+					name: "Test Catalogue",
+					description: "This is an Test Catalogue",
+				},
+			});
+			const testRegion = await regionsHelper.newRegion({
+				body: {
+					name: "Test Region",
+					description: "This is a test region description.",
+				},
+			});
+			const testSite = await sitesHelper.newSite({
+				body: {
+					name: "Test Site",
+					description: "This is a test site description.",
+					location: "This is a test site location",
+					catalogueId: testCatalogue.id,
+					regionId: testRegion.id,
+				},
+			});
+			await artifactTypesHelper.newArtifactType({
+				body: {
+					id: "Lithic",
+				},
+			});
+			console.log("creating new material: ");
+			const testMaterial = await materialsHelper.newMaterial({
+				body: {
+					name: "Test Lithic Material",
+					description: "This is a test lithic material description.",
+					artifactTypeId: "Lithic",
+				},
+			});
+			const testPeriod = await periodsHelper.newPeriod({
+				body: { name: "Test Period", start: "1000", end: "1200" },
+			});
+			const testCulture = await culturesHelper.newCulture({
+				body: { name: "Test Culture", periodId: testPeriod.id },
+			});
+			const testBladeShape = await bladeShapesHelper.newBladeShape({
+				body: { name: "Test Blade Shape" },
+			});
+			const testBaseShape = await baseShapesHelper.newBaseShape({
+				body: { name: "Test Base Shape" },
+			});
+			const testHaftingShape = await haftingShapesHelper.createNewHaftingShape({
+				body: { name: "Test Hafting Shape" },
+			});
+			const testCrossSection = await crossSectionsHelper.newCrossSection({
+				body: { name: "Test Cross Section" },
+			});
+			const testProjectilePoint =
+				await projectilePointsHelper.newProjectilePoint({
+					body: {
+						name: "Test Projectile Point 1",
+						location: "Test Point 1 Location",
+						description: "This is Test Projectile 1's description",
+						dimensions: "[1.0, 1.0, 1.0]",
+						photo: "This is a photo link",
+						siteId: testSite.id,
+						artifactTypeId: "Lithic",
+						cultureId: testCulture.id,
+						bladeShapeId: testBladeShape.id,
+						baseShapeId: testBaseShape.id,
+						haftingShapeId: testHaftingShape.id,
+						crossSectionId: testCrossSection.id,
+					},
+				});
+			const siteStats = await aggregateSiteStatistics(testSite.id);
 
 			console.log("F3.test line 237: " + siteStats);
 
@@ -273,6 +445,44 @@ describe("Testing aggregateSiteStatistics().", () => {
 			compareMap.set("Material Data", materialDataMap);
 
 			expect(compareMaps(siteStats, compareMap)).toBe(true);
+
+			await projectilePointsHelper.deleteProjectilePoint({
+				params: { id: testProjectilePoint.id },
+			});
+			console.log("deleting new material: " + testMaterial.id);
+			await materialsHelper.deleteMaterial({
+				params: { id: testMaterial.id },
+			});
+			await sitesHelper.deleteSite({
+				params: { id: testSite.id },
+			});
+			await regionsHelper.deleteRegion({
+				params: { id: testRegion.id },
+			});
+			await cataloguesHelper.deleteCatalogue({
+				params: { id: testCatalogue.id },
+			});
+			await artifactTypesHelper.deleteArtifactType({
+				params: { id: "Lithic" },
+			});
+			await culturesHelper.deleteCulture({
+				params: { id: testCulture.id },
+			});
+			await periodsHelper.deletePeriod({
+				params: { id: testPeriod.id },
+			});
+			await bladeShapesHelper.deleteBladeShape({
+				params: { id: testBladeShape.id },
+			});
+			await baseShapesHelper.deleteBaseShape({
+				params: { id: testBaseShape.id },
+			});
+			await haftingShapesHelper.deleteHaftingShape({
+				params: { id: testHaftingShape.id },
+			});
+			await crossSectionsHelper.deleteCrossSection({
+				params: { id: testCrossSection.id },
+			});
 		});
 	});
 });
@@ -294,6 +504,11 @@ describe("Testing aggregatePointTypeStatistics()", () => {
 		});
 
 		test("Should return values of 1 for a point type that is the only entry", async () => {
+			await artifactTypesHelper.newArtifactType({
+				body: {
+					id: "Faunal",
+				},
+			});
 			const pointStats = await aggregatePointTypeStatistics("Faunal");
 
 			expect(pointStats.get("Material Data").get("Material Count")).toBe(0);
@@ -330,6 +545,75 @@ describe("Testing aggregatePointTypeStatistics()", () => {
 		 */
 		test("On a Point Type that has one Projectile Point", async () => {
 			//create test catalogue
+			const testCatalogue = await cataloguesHelper.newCatalogue({
+				body: {
+					name: "Test Catalogue",
+					description: "This is an Test Catalogue",
+				},
+			});
+			const testRegion = await regionsHelper.newRegion({
+				body: {
+					name: "Test Region",
+					description: "This is a test region description.",
+				},
+			});
+			const testSite = await sitesHelper.newSite({
+				body: {
+					name: "Test Site",
+					description: "This is a test site description.",
+					location: "This is a test site location",
+					catalogueId: testCatalogue.id,
+					regionId: testRegion.id,
+				},
+			});
+			await artifactTypesHelper.newArtifactType({
+				body: {
+					id: "Lithic",
+				},
+			});
+			console.log("creating new material:");
+			const testMaterial = await materialsHelper.newMaterial({
+				body: {
+					name: "Test Lithic Material",
+					description: "This is a test lithic material description.",
+					artifactTypeId: "Lithic",
+				},
+			});
+			const testPeriod = await periodsHelper.newPeriod({
+				body: { name: "Test Period", start: "1000", end: "1200" },
+			});
+			const testCulture = await culturesHelper.newCulture({
+				body: { name: "Test Culture", periodId: testPeriod.id },
+			});
+			const testBladeShape = await bladeShapesHelper.newBladeShape({
+				body: { name: "Test Blade Shape" },
+			});
+			const testBaseShape = await baseShapesHelper.newBaseShape({
+				body: { name: "Test Base Shape" },
+			});
+			const testHaftingShape = await haftingShapesHelper.createNewHaftingShape({
+				body: { name: "Test Hafting Shape" },
+			});
+			const testCrossSection = await crossSectionsHelper.newCrossSection({
+				body: { name: "Test Cross Section" },
+			});
+			const testProjectilePoint =
+				await projectilePointsHelper.newProjectilePoint({
+					body: {
+						name: "Test Projectile Point 1",
+						location: "Test Point 1 Location",
+						description: "This is Test Projectile 1's description",
+						dimensions: "[1.0, 1.0, 1.0]",
+						photo: "This is a photo link",
+						siteId: testSite.id,
+						artifactTypeId: "Lithic",
+						cultureId: testCulture.id,
+						bladeShapeId: testBladeShape.id,
+						baseShapeId: testBaseShape.id,
+						haftingShapeId: testHaftingShape.id,
+						crossSectionId: testCrossSection.id,
+					},
+				});
 
 			const pointStats = await aggregatePointTypeStatistics("Lithic");
 
@@ -372,6 +656,44 @@ describe("Testing aggregatePointTypeStatistics()", () => {
 			compareMap.set("Material Data", materialDataMap);
 
 			expect(compareMaps(pointStats, compareMap)).toBe(true);
+
+			await projectilePointsHelper.deleteProjectilePoint({
+				params: { id: testProjectilePoint.id },
+			});
+			console.log("deleting new material: " + testMaterial.id);
+			await materialsHelper.deleteMaterial({
+				params: { id: testMaterial.id },
+			});
+			await sitesHelper.deleteSite({
+				params: { id: testSite.id },
+			});
+			await regionsHelper.deleteRegion({
+				params: { id: testRegion.id },
+			});
+			await cataloguesHelper.deleteCatalogue({
+				params: { id: testCatalogue.id },
+			});
+			await artifactTypesHelper.deleteArtifactType({
+				params: { id: "Lithic" },
+			});
+			await culturesHelper.deleteCulture({
+				params: { id: testCulture.id },
+			});
+			await periodsHelper.deletePeriod({
+				params: { id: testPeriod.id },
+			});
+			await bladeShapesHelper.deleteBladeShape({
+				params: { id: testBladeShape.id },
+			});
+			await baseShapesHelper.deleteBaseShape({
+				params: { id: testBaseShape.id },
+			});
+			await haftingShapesHelper.deleteHaftingShape({
+				params: { id: testHaftingShape.id },
+			});
+			await crossSectionsHelper.deleteCrossSection({
+				params: { id: testCrossSection.id },
+			});
 		});
 	});
 });

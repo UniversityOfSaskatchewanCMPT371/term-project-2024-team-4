@@ -122,8 +122,10 @@ async function deleteMaterial(req) {
 		const deleteResult = await myDatabase.getRepository(Material).delete(id);
 		if (deleteResult.affected > 0) {
 			// res.send();
+			return;
 		} else {
 			// res.json({ message: "Material not found" });
+			return "Material not found";
 		}
 	} catch (error) {
 		console.error("Error deleting Material:", error);
