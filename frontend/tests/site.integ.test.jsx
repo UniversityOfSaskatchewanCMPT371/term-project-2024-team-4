@@ -133,7 +133,7 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 	await waitFor(
 		async () => {
 			// Get the list of all sites
-			const response = await axios.get("http://127.0.0.1:3000/sites");
+			const response = await axios.get("http://localhost:3000/sites");
 
 			// find the newest site in the database
 
