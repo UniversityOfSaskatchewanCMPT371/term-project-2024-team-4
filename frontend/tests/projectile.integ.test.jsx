@@ -60,7 +60,7 @@ test("PeriodModal saves period correctly", async () => {
 	await waitFor(
 		async () => {
 			// Make API call to fetch the created period
-			const response = await axios.get("http://localhost:3000/periods");
+			const response = await axios.get("http://127.0.0.1:3000/periods");
 			const periods = response.data;
 
 			// Assertions
