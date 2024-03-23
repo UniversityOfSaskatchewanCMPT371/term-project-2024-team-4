@@ -178,33 +178,27 @@ jobs:
       - name: Run Backend Unit Tests
         working-directory: ./backend
         run: npm run build && npm run unit-test
-        continue-on-error: true
       
       - name: Run Backend Integration Tests
         working-directory: ./backend
         run: npm run integ-test -- --test-timeout=10000
-        continue-on-error: true
       
       - name: Run Backend Coverage Test
         working-directory: ./backend
         run: npm run coverage -- --test-timeout=10000
-        continue-on-error: true
           
         ### Run all frontend tests
       - name: Run Frontend Unit Tests
         working-directory: ./frontend
         run: npm run unit-test
-        continue-on-error: true
       
       - name: Run Frontend Integration Tests
         working-directory: ./frontend
         run: npm run integ-test -- --test-timeout=10000
-        continue-on-error: true
 
       - name: Run Frontend Coverage Test
         working-directory: ./frontend
         run: npm run coverage -- --test-timeout=10000
-        continue-on-error: true
         
         ### Run all E2E Tests
         
