@@ -5,6 +5,8 @@ import SiteModal from "../src/components/SiteModal";
 import RegionModal from "../src/components/RegionModal";
 import axios from "axios";
 
+axios.defaults.adapter = "http";
+
 test("SiteModal renders correctly with every field empty", async () => {
 	// Render the SiteModal component
 	const { getByLabelText } = render(<SiteModal setOpen={() => {}} />);
