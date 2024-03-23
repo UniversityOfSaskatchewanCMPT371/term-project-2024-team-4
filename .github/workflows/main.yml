@@ -161,7 +161,7 @@ jobs:
       - name: Backend/Database Connection Health Check
         run: |
           echo "Waiting for backend to be ready..."
-          until $(curl --verbose --output /dev/null --silent --head --fail http://localhost:3000/health); do
+          until $(curl --verbose --output /dev/null --silent --head --fail http://localhost:3000/regions); do
               printf '.'
               sleep 5
           done
