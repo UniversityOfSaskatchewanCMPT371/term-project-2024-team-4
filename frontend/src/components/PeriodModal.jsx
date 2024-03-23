@@ -100,7 +100,7 @@ export default function PeriodModal({
 			end: parseInt(endDate, 10),
 		};
 
-		const requestUrl = `http://localhost:3000/periods/${selectedPeriodID || ""}`;
+		const requestUrl = `http://127.0.0.1:3000/periods/${selectedPeriodID || ""}`;
 		const requestMethod = selectedPeriodID ? axios.put : axios.post;
 
 		requestMethod(requestUrl, updatedPeriod)
