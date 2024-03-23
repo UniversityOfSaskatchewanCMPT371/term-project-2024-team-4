@@ -58,20 +58,7 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 		catalogueId: 1,
 		regionId: 1,
 	};
-
-	// make sure a region exists before trying to create a site
-	const regionData = {
-		name: "region1",
-		description: "desc1",
-	};
-
 	try {
-		// Send a POST request to create a new region
-		const responseRegion = await axios.post(
-			"http://localhost:3000/regions",
-			regionData,
-		);
-		console.log("Region created successfully:", responseRegion.data);
 		// Send a POST request to create a new site
 		const response = await axios.post("http://localhost:3000/sites", siteData);
 
