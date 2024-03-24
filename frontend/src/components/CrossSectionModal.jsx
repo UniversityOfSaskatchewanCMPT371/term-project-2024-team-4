@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import log from "../logger";
 
 /**
@@ -39,11 +39,8 @@ export default function CrossSectionModal({
 		const crossSectionData = { name: crossSection };
 
 		const apiCall = selectedCrossSectionID
-			? axios.put(
-					`http://localhost:3000/crossSections/${selectedCrossSectionID}`,
-					crossSectionData,
-				)
-			: axios.post("http://localhost:3000/crossSections", crossSectionData);
+			? http.put(`/crossSections/${selectedCrossSectionID}`, crossSectionData)
+			: http.post("/crossSections", crossSectionData);
 
 		apiCall
 			.then((response) => {

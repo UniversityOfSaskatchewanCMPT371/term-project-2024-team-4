@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import log from "../logger";
 
 /**
@@ -59,12 +59,12 @@ export default function CultureModal({
 
 		// Decide endpoint and axiosCall based on whether it's an edit or add operation
 		const endpoint = selectedCultureID
-			? `http://localhost:3000/cultures/${selectedCultureID}`
-			: "http://localhost:3000/cultures";
+			? `/cultures/${selectedCultureID}`
+			: "/cultures";
 
 		const axiosCall = selectedCultureID
-			? axios.put(endpoint, updatedCulture)
-			: axios.post(endpoint, updatedCulture);
+			? http.put(endpoint, updatedCulture)
+			: http.post(endpoint, updatedCulture);
 
 		axiosCall
 			.then((response) => {

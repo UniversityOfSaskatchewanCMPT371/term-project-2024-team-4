@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import BladeShapeModal from "../src/components/BladeShapeModal"; // Adjust the import path based on your file structure
-import axios from "axios";
+import http from "../http";
 
 // Mock logger to prevent actual logging during tests
 vi.mock("../logger", () => ({
@@ -11,8 +11,8 @@ vi.mock("../logger", () => ({
 	debug: vi.fn(),
 }));
 
-// Mock axios
-vi.mock("axios", () => ({
+// Mock http
+vi.mock("../http", () => ({
 	default: {
 		post: vi.fn(() => Promise.resolve({ data: {} })),
 		put: vi.fn(() => Promise.resolve({ data: {} })),
@@ -25,8 +25,8 @@ describe("BladeShapeModal", () => {
 	const selectedBladeShapeID = "1";
 
 	beforeEach(() => {
-		axios.post.mockClear();
-		axios.put.mockClear();
+		http.post.mockClear();
+		http.put.mockClear();
 		mockUpdateBladeShapesList.mockClear();
 	});
 
@@ -43,10 +43,10 @@ describe("BladeShapeModal", () => {
 		expect(screen.getByLabelText(/Blade Shape/i)).toBeInTheDocument();
 	});
 
-	it("should call axios.post on save when adding a new blade shape", async () => {
+	it("should call http.post on save when adding a new blade shape", async () => {
 		const newBladeShapeName = "New Blade Shape";
 
-		axios.post.mockResolvedValue({
+		http.post.mockResolvedValue({
 			data: { name: newBladeShapeName, id: "new" },
 		});
 
@@ -65,7 +65,7 @@ describe("BladeShapeModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.post).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.post).toHaveBeenCalledWith(expect.any(String), {
 				name: newBladeShapeName,
 			}),
 		);
@@ -75,10 +75,10 @@ describe("BladeShapeModal", () => {
 		});
 	});
 
-	it("should call axios.put on save when editing an existing blade shape", async () => {
+	it("should call http.put on save when editing an existing blade shape", async () => {
 		const updatedBladeShapeName = "Updated Blade Shape";
 
-		axios.put.mockResolvedValue({
+		http.put.mockResolvedValue({
 			data: { name: updatedBladeShapeName, id: selectedBladeShapeID },
 		});
 
@@ -97,7 +97,7 @@ describe("BladeShapeModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.put).toHaveBeenCalledWith(
+			expect(http.put).toHaveBeenCalledWith(
 				expect.stringContaining(selectedBladeShapeID),
 				{ name: updatedBladeShapeName },
 			),

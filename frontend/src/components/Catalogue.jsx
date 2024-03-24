@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import SiteList from "./SiteList";
 import BaseLayout from "./BaseLayout";
-import axios from "axios";
+import http from "../../http";
 import SearchIcon from "@mui/icons-material/Search";
 import log from "../logger";
 import {
@@ -33,7 +33,7 @@ const Catalogue = () => {
 	useEffect(() => {
 		async function fetchCatalogue() {
 			try {
-				const response = await axios.get("http://localhost:3000/catalogues/1");
+				const response = await http.get("/catalogues/1");
 				log.info("Default catalogue: ", response.data);
 				setCatalogueName(response.data.name);
 				setCatalogueDescription(response.data.description);

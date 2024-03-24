@@ -11,7 +11,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import BaseShapeModal from "../src/components/BaseShapeModal";
-import axios from "axios";
+import http from "../http";
 
 // Mock logger to avoid actual logging during tests
 vi.mock("../logger", () => ({
@@ -20,8 +20,8 @@ vi.mock("../logger", () => ({
 	debug: vi.fn(),
 }));
 
-// Mock axios
-vi.mock("axios", () => ({
+// Mock http
+vi.mock("../http", () => ({
 	default: {
 		post: vi.fn(() => Promise.resolve({ data: {} })),
 		put: vi.fn(() => Promise.resolve({ data: {} })),
@@ -33,8 +33,8 @@ describe("BaseShapeModal", () => {
 	const selectedBaseShapeID = "1";
 
 	beforeEach(() => {
-		axios.post.mockClear();
-		axios.put.mockClear();
+		http.post.mockClear();
+		http.put.mockClear();
 		mockUpdateBaseShapesList.mockClear();
 	});
 
@@ -51,10 +51,10 @@ describe("BaseShapeModal", () => {
 		expect(screen.getByLabelText(/Base Shape/i)).toBeInTheDocument();
 	});
 
-	it("should call axios.post on save when adding a new base shape", async () => {
+	it("should call http.post on save when adding a new base shape", async () => {
 		const newBaseShapeName = "New Base Shape";
 
-		axios.post.mockResolvedValue({
+		http.post.mockResolvedValue({
 			data: { name: newBaseShapeName, id: "new" },
 		});
 
@@ -73,16 +73,16 @@ describe("BaseShapeModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.post).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.post).toHaveBeenCalledWith(expect.any(String), {
 				name: newBaseShapeName,
 			}),
 		);
 	});
 
-	it("should call axios.put on save when editing an existing base shape", async () => {
+	it("should call http.put on save when editing an existing base shape", async () => {
 		const updatedBaseShapeName = "Updated Base Shape";
 
-		axios.put.mockResolvedValue({
+		http.put.mockResolvedValue({
 			data: { name: updatedBaseShapeName, id: selectedBaseShapeID },
 		});
 
@@ -101,7 +101,7 @@ describe("BaseShapeModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.put).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.put).toHaveBeenCalledWith(expect.any(String), {
 				name: updatedBaseShapeName,
 			}),
 		);

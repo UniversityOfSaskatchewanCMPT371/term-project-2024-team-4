@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import HaftingShapeModal from "../src/components/HaftingShapeModal";
-import axios from "axios";
+import http from "../http";
 
 // Mock logger to avoid actual logging during tests
 vi.mock("../logger", () => ({
@@ -11,8 +11,8 @@ vi.mock("../logger", () => ({
 	debug: vi.fn(),
 }));
 
-// Mock axios
-vi.mock("axios", () => ({
+// Mock http
+vi.mock("../http", () => ({
 	default: {
 		post: vi.fn(() => Promise.resolve({ data: {} })),
 		put: vi.fn(() => Promise.resolve({ data: {} })),
@@ -25,8 +25,8 @@ describe("HaftingShapeModal", () => {
 	const selectedHaftingShapeID = "1";
 
 	beforeEach(() => {
-		axios.post.mockClear();
-		axios.put.mockClear();
+		http.post.mockClear();
+		http.put.mockClear();
 		mockUpdateHaftingShapeList.mockClear();
 	});
 
@@ -43,10 +43,10 @@ describe("HaftingShapeModal", () => {
 		expect(screen.getByLabelText(/Hafting Shape/i)).toBeInTheDocument();
 	});
 
-	it("should call axios.post on save when adding a new hafting shape", async () => {
+	it("should call http.post on save when adding a new hafting shape", async () => {
 		const newHaftingShapeName = "New Hafting Shape";
 
-		axios.post.mockResolvedValue({
+		http.post.mockResolvedValue({
 			data: { name: newHaftingShapeName, id: "new" },
 		});
 
@@ -65,17 +65,17 @@ describe("HaftingShapeModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.post).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.post).toHaveBeenCalledWith(expect.any(String), {
 				name: newHaftingShapeName,
 			}),
 		);
 		expect(mockUpdateHaftingShapeList).toHaveBeenCalledWith(expect.any(Object));
 	});
 
-	it("should call axios.put on save when editing an existing hafting shape", async () => {
+	it("should call http.put on save when editing an existing hafting shape", async () => {
 		const updatedHaftingShapeName = "Updated Hafting Shape";
 
-		axios.put.mockResolvedValue({
+		http.put.mockResolvedValue({
 			data: { name: updatedHaftingShapeName, id: selectedHaftingShapeID },
 		});
 
@@ -94,7 +94,7 @@ describe("HaftingShapeModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.put).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.put).toHaveBeenCalledWith(expect.any(String), {
 				name: updatedHaftingShapeName,
 			}),
 		);

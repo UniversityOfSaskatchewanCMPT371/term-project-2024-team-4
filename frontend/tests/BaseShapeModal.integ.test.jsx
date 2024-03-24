@@ -1,9 +1,9 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import axios from "axios";
+import http from "../http";
 import BaseShapeModal from "../src/components/BaseShapeModal";
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("axios");
+vi.mock("../http");
 
 describe("BaseShapeModal", () => {
 	afterEach(() => {
@@ -33,7 +33,7 @@ describe("BaseShapeModal", () => {
 		};
 
 		const mockAxiosPost = vi
-			.spyOn(axios, "post")
+			.spyOn(http, "post")
 			.mockResolvedValueOnce({ data: { id: "1", name: "Base Shape" } });
 
 		const { getByText, getByLabelText } = render(<BaseShapeModal {...props} />);
@@ -44,10 +44,9 @@ describe("BaseShapeModal", () => {
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
 
-		expect(mockAxiosPost).toHaveBeenCalledWith(
-			"http://localhost:3000/baseShapes",
-			{ name: "Test Base Shape" },
-		);
+		expect(mockAxiosPost).toHaveBeenCalledWith("/baseShapes", {
+			name: "Test Base Shape",
+		});
 		await waitFor(() => expect(props.updateBaseShapesList).toHaveBeenCalled());
 		expect(props.setEditBaseShape).toHaveBeenCalledWith(false);
 	});

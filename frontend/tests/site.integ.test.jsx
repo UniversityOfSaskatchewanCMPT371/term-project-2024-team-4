@@ -3,9 +3,7 @@ import { screen, render, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import SiteModal from "../src/components/SiteModal";
 import RegionModal from "../src/components/RegionModal";
-import axios from "axios";
-
-axios.defaults.adapter = "http";
+import http from "../http";
 
 test("SiteModal renders correctly with every field empty", async () => {
 	// Render the SiteModal component
@@ -60,7 +58,7 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 	};
 	try {
 		// Send a POST request to create a new site
-		const response = await axios.post("http://localhost:3000/sites", siteData);
+		const response = await http.post("/sites", siteData);
 
 		// compare the actual data with respone from backend API.
 		expect(response.data).toMatchObject({
@@ -73,9 +71,7 @@ test("creates a new site and verifies it is saved in the database ", async () =>
 
 		//check the post request has already posted again
 		const createdSiteId = response.data.id;
-		const fetchResponse = await axios.get(
-			`http://localhost:3000/sites/${createdSiteId}`,
-		);
+		const fetchResponse = await http.get(`/sites/${createdSiteId}`);
 
 		// Verify that the fetched site matches the posted site data
 		expect(fetchResponse.data).toMatchObject({
@@ -97,7 +93,7 @@ test("returns an error message when required information is missing", async () =
 
 	try {
 		// Send a POST request to create a new site with missing required fields
-		const response = await axios.post("http://localhost:3000/sites", siteData);
+		const response = await http.post("/sites", siteData);
 
 		expect(response.status).not.toBe(200);
 	} catch (error) {
@@ -133,7 +129,7 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 	await waitFor(
 		async () => {
 			// Get the list of all sites
-			const response = await axios.get("http://127.0.0.1:3000/sites");
+			const response = await http.get("/sites");
 
 			// find the newest site in the database
 
@@ -163,8 +159,8 @@ test("RegionModal renders correctly and handles addition of a new region", async
 
 	// Wait for the response from the backend endpoint
 	await waitFor(() => {
-		axios
-			.get("http://localhost:3000/regions")
+		http
+			.get("/regions")
 			.then((response) => {
 				// Assertions
 				expect(response.status).toBe(200); // Assuming status code 200 for success

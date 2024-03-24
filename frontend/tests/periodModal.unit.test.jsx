@@ -4,17 +4,17 @@
  * It tests:
  *  - Initialization and rendering: Ensures all fields and the 'Save' button are present.
  *  - Validation functionality: Checks whether the start and end dates are validated correctly.
- *  - Save functionality: Tests both the creation (POST) and updating (PUT) of periods through Axios.
+ *  - Save functionality: Tests both the creation (POST) and updating (PUT) of periods through http.
  *  - User input response: Validates the component's response to invalid inputs and user interactions.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, fireEvent, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import axios from "axios";
+import http from "../http";
 import PeriodModal from "../src/components/PeriodModal.jsx";
 
-// Mock the axios library for HTTP requests
-vi.mock("axios", () => ({
+// Mock the http library for HTTP requests
+vi.mock("../http", () => ({
 	default: {
 		post: vi.fn(() =>
 			Promise.resolve({
@@ -71,7 +71,7 @@ describe("PeriodModal", () => {
 		await screen.findByText("End date is required.");
 	});
 
-	it("calls axios.post when saving a new period", async () => {
+	it("calls http.post when saving a new period", async () => {
 		render(
 			<PeriodModal
 				setEditPeriod={mockSetEditPeriod}
@@ -92,7 +92,7 @@ describe("PeriodModal", () => {
 		fireEvent.click(screen.getByRole("button", { name: /save/i }));
 
 		await vi.waitFor(() => {
-			expect(vi.mocked(axios.post)).toHaveBeenCalledWith(
+			expect(vi.mocked(http.post)).toHaveBeenCalledWith(
 				expect.anything(),
 				expect.objectContaining({
 					name: "Test Period",

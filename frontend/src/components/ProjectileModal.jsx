@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import http from "../../http.js";
 // import FileUpload from "./UploadPicture"; // for future uploading photo files implementation
 import { useLocation } from "react-router-dom";
 import log from "../logger.js";
@@ -175,8 +175,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 			crossSectionId: crossSectionID,
 		};
 
-		axios
-			.post("http://localhost:3000/projectilePoints", newProjectilePoint)
+		http
+			.post("/projectilePoints", newProjectilePoint)
 			.then((response) => {
 				console.log("New projectile point added successfully:", response.data);
 				handleClose();
@@ -191,8 +191,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/periods")
+		http
+			.get("/periods")
 			.then((response) => {
 				setPeriods(response.data);
 				const filteredPeriod = response.data.find(
@@ -232,8 +232,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// Function to delete a period
 	const handleDeletePeriod = () => {
 		if (currentPeriod && currentPeriod.id) {
-			axios
-				.delete(`http://localhost:3000/periods/${currentPeriod.id}`)
+			http
+				.delete(`/periods/${currentPeriod.id}`)
 				.then(() => {
 					setPeriods(periods.filter((p) => p.id !== currentPeriod.id));
 					handleCloseMenu();
@@ -259,8 +259,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function fetches cultures when the component mounts. This ensures the dropdown for cultures is always up-to-date.
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/cultures")
+		http
+			.get("/cultures")
 			.then((response) => {
 				setCultures(response.data);
 				const filteredCulture = response.data.find(
@@ -314,8 +314,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 	// This function handles delete a culture from the server and updates the local list.
 	const handleDeleteCulture = () => {
-		axios
-			.delete(`http://localhost:3000/cultures/${selectedCultureID}`)
+		http
+			.delete(`/cultures/${selectedCultureID}`)
 			.then(() => {
 				setCultures(
 					cultures.filter((culture) => culture.id !== selectedCultureID),
@@ -332,8 +332,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ---------------- Start of BaseShapeModal functions --------------------
 	// This function fetches all base shapes from the server and updates the local state on mount.
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/baseShapes")
+		http
+			.get("/baseShapes")
 			.then((response) => {
 				setBaseShapes(response.data);
 				const filteredBaseShape = response.data.find(
@@ -385,8 +385,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function handles delete a base shape from the server and updates the local list.
 	const handleDeleteBaseShape = () => {
-		axios
-			.delete(`http://localhost:3000/baseShapes/${selectedBaseShapeID}`)
+		http
+			.delete(`/baseShapes/${selectedBaseShapeID}`)
 			.then(() => {
 				setBaseShapes(
 					baseShapes.filter((shape) => shape.id !== selectedBaseShapeID),
@@ -407,8 +407,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ---------------- Start of CrossSectionModal functions --------------------
 	// This function fetches all cross sections from the server and updates the local state on mount.
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/crossSections")
+		http
+			.get("/crossSections")
 			.then((response) => {
 				setCrossSections(response.data);
 				const filteredCrossSection = response.data.find(
@@ -460,8 +460,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function handles delete a cross section from the server and updates the local list.
 	const handleDeleteCrossSection = () => {
-		axios
-			.delete(`http://localhost:3000/crossSections/${selectedCrossSectionID}`)
+		http
+			.delete(`/crossSections/${selectedCrossSectionID}`)
 			.then(() => {
 				setCrossSections(
 					crossSections.filter(
@@ -483,8 +483,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ---------------- Start of BladeShapeModal functions --------------------
 	// This function fetches all blade shapes from the server and updates the local state on mount.
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/bladeShapes")
+		http
+			.get("/bladeShapes")
 			.then((response) => {
 				setBladeShapes(response.data);
 				const filteredBladeShape = response.data.find(
@@ -536,8 +536,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function handles delete a blade shape from the server and updates the local list.
 	const handleDeleteBladeShape = () => {
-		axios
-			.delete(`http://localhost:3000/bladeShapes/${selectedBladeShapeID}`)
+		http
+			.delete(`/bladeShapes/${selectedBladeShapeID}`)
 			.then(() => {
 				setBladeShapes(
 					bladeShapes.filter((shape) => shape.id !== selectedBladeShapeID),
@@ -558,8 +558,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ---------------- Start of HaftingShapeModal functions --------------------
 	// This function fetches all hafting shapes from the server and updates the local state on mount.
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/haftingShapes")
+		http
+			.get("/haftingShapes")
 			.then((response) => {
 				setHaftingShapes(response.data);
 				const filteredHaftingShape = response.data.find(
@@ -611,8 +611,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function handles delete a hafting shape from the server and updates the local list.
 	const handleDeleteHaftingShape = () => {
-		axios
-			.delete(`http://localhost:3000/haftingShapes/${selectedHaftingShapeID}`)
+		http
+			.delete(`/haftingShapes/${selectedHaftingShapeID}`)
 			.then(() => {
 				setHaftingShapes(
 					haftingShapes.filter((shape) => shape.id !== selectedHaftingShapeID),
@@ -632,8 +632,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// ---------------- Start of MaterialModal functions --------------------
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/materials")
+		http
+			.get("/materials")
 			.then((response) => {
 				setMaterials(response.data);
 				const filteredMaterial = response.data.find(
@@ -650,8 +650,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 				console.error("Error fetching material:", error);
 			});
 
-		axios
-			.get("http://localhost:3000/artifactTypes")
+		http
+			.get("/artifactTypes")
 			.then((response) => {
 				setArtifactTypes(response.data);
 			})
@@ -661,8 +661,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	}, [selectedMaterial]);
 
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/materials")
+		http
+			.get("/materials")
 			.then((response) => {
 				setMaterials(response.data);
 				const filteredMaterial = response.data.find(
@@ -709,8 +709,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	const handleDeleteMaterial = () => {
-		axios
-			.delete(`http://localhost:3000/materials/${selectedMaterialID}`)
+		http
+			.delete(`/materials/${selectedMaterialID}`)
 			.then(() => {
 				setMaterials(
 					materials.filter((material) => material.id !== selectedMaterialID),

@@ -1,6 +1,6 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import axios from "axios";
+import http from "../http";
 import CrossSectionModal from "../src/components/CrossSectionModal";
 
 describe("CrossSectionModal", () => {
@@ -33,7 +33,7 @@ describe("CrossSectionModal", () => {
 		);
 
 		const mockResponseData = { data: { id: "1", name: "Cross Section" } };
-		vi.spyOn(axios, "post").mockResolvedValueOnce(mockResponseData);
+		vi.spyOn(http, "post").mockResolvedValueOnce(mockResponseData);
 
 		const shapeInput = getByLabelText("Cross Section");
 		fireEvent.change(shapeInput, { target: { value: "Test Cross Section" } });
@@ -42,10 +42,9 @@ describe("CrossSectionModal", () => {
 		fireEvent.click(saveButton);
 
 		await waitFor(() =>
-			expect(axios.post).toHaveBeenCalledWith(
-				"http://localhost:3000/crossSections",
-				{ name: "Test Cross Section" },
-			),
+			expect(http.post).toHaveBeenCalledWith("/crossSections", {
+				name: "Test Cross Section",
+			}),
 		);
 		await waitFor(() =>
 			expect(props.updateCrossSectionsList).toHaveBeenCalledWith(

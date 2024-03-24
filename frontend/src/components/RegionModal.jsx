@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import log from "../logger";
 
 /**
@@ -57,8 +57,8 @@ export default function RegionModal({
 	 */
 	const handleSave = () => {
 		const updatedRegion = { name: regionName, description };
-		const requestUrl = `http://localhost:3000/regions/${selectedRegionID || ""}`;
-		const requestMethod = selectedRegionID ? axios.put : axios.post;
+		const requestUrl = `/regions/${selectedRegionID || ""}`;
+		const requestMethod = selectedRegionID ? http.put : http.post;
 
 		requestMethod(requestUrl, updatedRegion)
 			.then((response) => {

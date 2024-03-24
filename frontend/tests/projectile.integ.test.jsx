@@ -3,7 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AddProjectil from "../src/components/ProjectileModal.jsx";
 import PeriodModal from "../src/components/PeriodModal.jsx";
-import axios from "axios";
+import http from "../http";
 
 test("ProjectilePoint renders correctly", async () => {
 	// Define needed data to render the componet. this data should be pre existing in the database.
@@ -60,7 +60,7 @@ test("PeriodModal saves period correctly", async () => {
 	await waitFor(
 		async () => {
 			// Make API call to fetch the created period
-			const response = await axios.get("http://127.0.0.1:3000/periods");
+			const response = await http.get("/periods");
 			const periods = response.data;
 
 			// Assertions

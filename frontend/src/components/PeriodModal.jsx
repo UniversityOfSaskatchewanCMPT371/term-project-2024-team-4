@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import logger from "../logger";
 
 /**
@@ -15,7 +15,7 @@ import logger from "../logger";
  *
  * Pre-conditions:
  * - The modal receives all necessary props for either adding a new period or editing an existing one.
- * - Axios and logger are configured correctly for HTTP requests and logging.
+ * - http and logger are configured correctly for HTTP requests and logging.
  *
  * Post-conditions:
  * - If input validation passes, a period is either created or updated via an HTTP request.
@@ -100,8 +100,8 @@ export default function PeriodModal({
 			end: parseInt(endDate, 10),
 		};
 
-		const requestUrl = `http://127.0.0.1:3000/periods/${selectedPeriodID || ""}`;
-		const requestMethod = selectedPeriodID ? axios.put : axios.post;
+		const requestUrl = `/periods/${selectedPeriodID || ""}`;
+		const requestMethod = selectedPeriodID ? http.put : http.post;
 
 		requestMethod(requestUrl, updatedPeriod)
 			.then((response) => {

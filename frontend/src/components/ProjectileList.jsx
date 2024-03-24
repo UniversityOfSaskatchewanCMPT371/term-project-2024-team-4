@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import http from "../../http.js";
 import ProjectileModal from "./ProjectileModal";
 import Projectile from "./Projectile";
 import log from "../logger.js";
@@ -61,9 +61,7 @@ export default function ProjectileList({ query, siteId }) {
 	useEffect(() => {
 		async function fetchprojectilePoints() {
 			try {
-				const response = await axios.get(
-					"http://localhost:3000/projectilePoints",
-				);
+				const response = await http.get("/projectilePoints");
 				log.info("Projectile points: ", response.data);
 				setData(response.data);
 			} catch (error) {

@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import logger from "../logger";
 
 export default function HaftingShapeModal({
@@ -22,11 +22,8 @@ export default function HaftingShapeModal({
 		const haftingShapeData = { name: haftingShape };
 
 		const apiCall = selectedHaftingShapeID
-			? axios.put(
-					`http://localhost:3000/haftingShapes/${selectedHaftingShapeID}`,
-					haftingShapeData,
-				)
-			: axios.post("http://localhost:3000/haftingShapes", haftingShapeData);
+			? http.put(`/haftingShapes/${selectedHaftingShapeID}`, haftingShapeData)
+			: http.post("/haftingShapes", haftingShapeData);
 
 		apiCall
 			.then((response) => {

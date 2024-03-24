@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { waitFor, screen } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
-import axios from "axios";
+import http from "../http";
 
 import { render, fireEvent } from "@testing-library/react";
 import MaterialModal from "../src/components/MaterialModal";
@@ -80,7 +80,7 @@ describe("MaterialModal", () => {
 		};
 
 		const mockAxiosPost = vi
-			.spyOn(axios, "post")
+			.spyOn(http, "post")
 			.mockResolvedValueOnce({ data: { id: "123", name: "Material 1" } });
 
 		const { getByText, getByLabelText } = render(<MaterialModal {...props} />);

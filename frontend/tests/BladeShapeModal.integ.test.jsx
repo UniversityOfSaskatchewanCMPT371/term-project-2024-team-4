@@ -1,9 +1,9 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import axios from "axios";
+import http from "../http";
 import BladeShapeModal from "../src/components/BladeShapeModal";
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("axios");
+vi.mock("../http");
 
 describe("BladeShapeModal", () => {
 	afterEach(() => {
@@ -35,7 +35,7 @@ describe("BladeShapeModal", () => {
 		};
 
 		const mockAxiosPost = vi
-			.spyOn(axios, "post")
+			.spyOn(http, "post")
 			.mockResolvedValueOnce({ data: { id: "1", name: "Blade Shape" } });
 
 		const { getByText, getByLabelText } = render(
@@ -48,10 +48,9 @@ describe("BladeShapeModal", () => {
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
 
-		expect(mockAxiosPost).toHaveBeenCalledWith(
-			"http://localhost:3000/bladeShapes",
-			{ name: "Test Blade Shape" },
-		);
+		expect(mockAxiosPost).toHaveBeenCalledWith("/bladeShapes", {
+			name: "Test Blade Shape",
+		});
 		await waitFor(() => expect(props.updateBladeShapesList).toHaveBeenCalled());
 		expect(props.setEditBladeShape).toHaveBeenCalledWith(false);
 	});

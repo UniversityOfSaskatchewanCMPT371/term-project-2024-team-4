@@ -1,9 +1,9 @@
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import axios from "axios";
+import http from "../http";
 import HaftingShapeModal from "../src/components/HaftingShapeModal";
 import { describe, it, expect, vi } from "vitest";
 
-vi.mock("axios");
+vi.mock("../http");
 
 describe("HaftingShapeModal", () => {
 	afterEach(() => {
@@ -35,7 +35,7 @@ describe("HaftingShapeModal", () => {
 		};
 
 		const mockAxiosPost = vi
-			.spyOn(axios, "post")
+			.spyOn(http, "post")
 			.mockResolvedValueOnce({ data: { id: "1", name: "Hafting Shape" } });
 
 		const { getByText, getByLabelText } = render(
@@ -48,10 +48,9 @@ describe("HaftingShapeModal", () => {
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
 
-		expect(mockAxiosPost).toHaveBeenCalledWith(
-			"http://localhost:3000/haftingShapes",
-			{ name: "Test Hafting Shape" },
-		);
+		expect(mockAxiosPost).toHaveBeenCalledWith("/haftingShapes", {
+			name: "Test Hafting Shape",
+		});
 		await waitFor(() =>
 			expect(props.updateHaftingShapeList).toHaveBeenCalled(),
 		);

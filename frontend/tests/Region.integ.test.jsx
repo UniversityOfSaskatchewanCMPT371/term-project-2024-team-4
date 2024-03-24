@@ -1,7 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { screen, render, fireEvent, waitFor } from "@testing-library/react";
 import RegionModal from "../src/components/RegionModal";
-import axios from "axios";
+import http from "../http";
 
 test("RegionModal renders correctly with every field empty", () => {
 	// Render the RegionModal component
@@ -24,8 +24,8 @@ test("should edit region on button click", async () => {
 	const setEditRegion = vi.fn();
 	const updateRegionsList = vi.fn();
 
-	// Mocking axios.put
-	vi.spyOn(axios, "put").mockResolvedValue({});
+	// Mocking http.put
+	vi.spyOn(http, "put").mockResolvedValue({});
 
 	const { getByLabelText, getByText } = render(
 		<RegionModal
@@ -50,10 +50,10 @@ test("should edit region on button click", async () => {
 	fireEvent.click(saveButton);
 
 	await waitFor(() => {
-		expect(axios.put).toHaveBeenCalledWith(
-			"http://localhost:3000/regions/123",
-			{ name: "Updated Name", description: "Updated Description" },
-		);
+		expect(http.put).toHaveBeenCalledWith("/regions/123", {
+			name: "Updated Name",
+			description: "Updated Description",
+		});
 		expect(updateRegionsList).toHaveBeenCalled();
 		expect(setEditRegion).toHaveBeenCalledWith(false);
 	});

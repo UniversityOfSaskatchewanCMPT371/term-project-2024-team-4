@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import MaterialModal from "../src/components/MaterialModal";
-import axios from "axios";
+import http from "../http";
 
 vi.mock("../logger", () => ({
 	__esModule: true,
@@ -11,7 +11,7 @@ vi.mock("../logger", () => ({
 	debug: vi.fn(),
 }));
 
-vi.mock("axios");
+vi.mock("../http");
 
 const mockUpdateMaterialList = vi.fn();
 const artifactTypes = [
@@ -43,14 +43,14 @@ describe("MaterialModal", () => {
 		).toBeInTheDocument();
 	});
 
-	it("calls axios.post on save when adding a new material", async () => {
+	it("calls http.post on save when adding a new material", async () => {
 		const newMaterial = {
 			name: "New Material",
 			description: "New Description",
 			artifactTypeId: "1",
 		};
 
-		axios.post.mockResolvedValue({ data: newMaterial });
+		http.post.mockResolvedValue({ data: newMaterial });
 
 		render(
 			<MaterialModal
@@ -74,11 +74,11 @@ describe("MaterialModal", () => {
 		});
 		fireEvent.click(screen.getByText("Save"));
 
-		await waitFor(() => expect(axios.post).toHaveBeenCalled());
+		await waitFor(() => expect(http.post).toHaveBeenCalled());
 		expect(mockUpdateMaterialList).toHaveBeenCalledWith(newMaterial);
 	});
 
-	it("calls axios.put on save when editing an existing material", async () => {
+	it("calls http.put on save when editing an existing material", async () => {
 		const updatedMaterial = {
 			name: "Updated Material",
 			description: "Updated Description",
@@ -86,7 +86,7 @@ describe("MaterialModal", () => {
 		};
 		const selectedMaterialID = "123";
 
-		axios.put.mockResolvedValue({ data: updatedMaterial });
+		http.put.mockResolvedValue({ data: updatedMaterial });
 
 		render(
 			<MaterialModal
@@ -110,7 +110,7 @@ describe("MaterialModal", () => {
 		});
 		fireEvent.click(screen.getByText("Save"));
 
-		await waitFor(() => expect(axios.put).toHaveBeenCalled());
+		await waitFor(() => expect(http.put).toHaveBeenCalled());
 		expect(mockUpdateMaterialList).toHaveBeenCalledWith(updatedMaterial);
 	});
 });

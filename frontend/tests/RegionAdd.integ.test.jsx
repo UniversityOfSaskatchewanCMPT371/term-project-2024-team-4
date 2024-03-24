@@ -1,11 +1,11 @@
 import { test, vi } from "vitest";
 import { render, fireEvent } from "@testing-library/react";
 import SiteModal from "../src/components/SiteModal";
-import axios from "axios";
+import http from "../http";
 
 test("should add a region on button click", async () => {
-	// Mocking axios.post
-	vi.spyOn(axios, "post").mockResolvedValue({});
+	// Mocking http.post
+	vi.spyOn(http, "post").mockResolvedValue({});
 
 	const { getByLabelText } = render(<SiteModal setOpen={vi.fn()} />);
 
@@ -17,7 +17,7 @@ test("should add a region on button click", async () => {
 
 	// Wait for the API call to be made and assertions to pass
 	// await waitFor(() => {
-	//   expect(axios.post).toHaveBeenCalledWith(
+	//   expect(http.post).toHaveBeenCalledWith(
 	//     "http://localhost:3000/regions",
 	//     { name: AddedRegion, description: AddedRegionDescription }
 	//   );
@@ -49,7 +49,7 @@ test("should add a region on button click", async () => {
 
 	// // Wait for the API call to be made and assertions to pass
 	// await waitFor(() => {
-	//   expect(axios.post).toHaveBeenCalledWith(
+	//   expect(http.post).toHaveBeenCalledWith(
 	//     "http://localhost:3000/regions",
 	//     { name: AddedRegion, description: AddedRegionDescription }
 	//   );

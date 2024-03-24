@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import axios from "axios";
+import http from "../http";
 import RegionModal from "../src/components/RegionModal";
 
-vi.mock("axios");
+vi.mock("../http");
 vi.mock("../logger", () => ({
 	info: vi.fn(),
 	error: vi.fn(),
@@ -15,8 +15,8 @@ describe("RegionModal", () => {
 	const mockSetEditRegion = vi.fn();
 
 	beforeEach(() => {
-		axios.post.mockClear();
-		axios.put.mockClear();
+		http.post.mockClear();
+		http.put.mockClear();
 		mockUpdateRegionsList.mockClear();
 		mockSetEditRegion.mockClear();
 	});
@@ -34,11 +34,11 @@ describe("RegionModal", () => {
 		expect(screen.getByText(/Save/)).toBeInTheDocument();
 	});
 
-	it("calls axios.post on save when adding a new region", async () => {
+	it("calls http.post on save when adding a new region", async () => {
 		const newRegionName = "New Region";
 		const newRegionDescription = "A new region description.";
 
-		axios.post.mockResolvedValue({
+		http.post.mockResolvedValue({
 			data: {
 				id: "123",
 				name: newRegionName,
@@ -62,14 +62,14 @@ describe("RegionModal", () => {
 		fireEvent.click(screen.getByText(/Save/));
 
 		await waitFor(() => {
-			expect(axios.post).toHaveBeenCalled();
+			expect(http.post).toHaveBeenCalled();
 			expect(mockUpdateRegionsList).toHaveBeenCalledWith(
 				expect.objectContaining({ id: "123" }),
 			);
 		});
 	});
 
-	it("calls axios.put on save when editing an existing region", async () => {
+	it("calls http.put on save when editing an existing region", async () => {
 		const existingRegionID = "existing-id";
 		const originalRegionName = "Original Region";
 		const originalRegionDescription = "Original description.";
@@ -77,7 +77,7 @@ describe("RegionModal", () => {
 		const updatedRegionDescription = "Updated description.";
 
 		// Mock the PUT response to simulate updating the region successfully
-		axios.put.mockResolvedValue({
+		http.put.mockResolvedValue({
 			data: {
 				id: existingRegionID,
 				name: updatedRegionName,
@@ -106,9 +106,9 @@ describe("RegionModal", () => {
 		// Simulate user clicking the 'Save' button
 		fireEvent.click(screen.getByText(/Save/));
 
-		// Wait for axios.put to be called and verify it was called with the correct arguments
+		// Wait for http.put to be called and verify it was called with the correct arguments
 		await waitFor(() => {
-			expect(axios.put).toHaveBeenCalledWith(
+			expect(http.put).toHaveBeenCalledWith(
 				expect.stringContaining(existingRegionID),
 				expect.objectContaining({
 					name: updatedRegionName,

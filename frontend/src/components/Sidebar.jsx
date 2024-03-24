@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
-import axios from "axios";
+import http from "../../http.js";
 import { Link } from "react-router-dom";
 // MUI
 import Drawer from "@mui/material/Drawer";
@@ -70,12 +70,12 @@ function Sidebar() {
 		/**
 		 * Checks the user's login status with the backend and updates state accordingly.
 		 *
-		 * @pre axios must be configured correctly.
+		 * @pre http must be configured correctly.
 		 * @post Updates isLoggedIn state based on response from backend.
 		 */
 		const checkLoginStatus = async () => {
 			try {
-				const response = await axios.get("http://localhost:3000/users");
+				const response = await http.get("/users");
 				setIsLoggedIn(!!response.data);
 			} catch (error) {
 				console.error("Error checking login status:", error);
@@ -123,12 +123,12 @@ function Sidebar() {
 	/**
 	 * Handles the user logout process.
 	 *
-	 * @pre axios must be configured correctly.
+	 * @pre http must be configured correctly.
 	 * @post Sends a logout request to the backend, logs out the user, and reloads the page.
 	 */
 	const handleLogout = async () => {
 		try {
-			await axios.post("http://localhost:3000/users/logout");
+			await http.post("/users/logout");
 			setIsLoggedIn(false);
 			window.location.reload();
 		} catch (error) {

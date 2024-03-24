@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import ProjectileList from "./ProjectileList";
 import BaseLayout from "./BaseLayout";
-import axios from "axios";
+import axios from "../../http.js";
 import SearchIcon from "@mui/icons-material/Search";
 import log from "../logger.js";
 import {
@@ -43,9 +43,7 @@ const Site = () => {
 	useEffect(() => {
 		async function fetchSite() {
 			try {
-				const response = await axios.get(
-					`http://localhost:3000/sites/${siteID}`,
-				);
+				const response = await axios.get(`/sites/${siteID}`);
 				setSiteName(response.data.name);
 				setSiteDescription(response.data.description);
 			} catch (error) {

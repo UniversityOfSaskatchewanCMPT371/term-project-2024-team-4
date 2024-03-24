@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import CrossSectionModal from "../src/components/CrossSectionModal";
-import axios from "axios";
+import http from "../http";
 
 // Mock logger to prevent actual logging during tests
 vi.mock("../logger", () => ({
@@ -11,8 +11,8 @@ vi.mock("../logger", () => ({
 	debug: vi.fn(),
 }));
 
-// Mock axios
-vi.mock("axios", () => ({
+// Mock http
+vi.mock("../http", () => ({
 	default: {
 		post: vi.fn(() => Promise.resolve({ data: {} })),
 		put: vi.fn(() => Promise.resolve({ data: {} })),
@@ -25,8 +25,8 @@ describe("CrossSectionModal", () => {
 	const selectedCrossSectionID = "1";
 
 	beforeEach(() => {
-		axios.post.mockClear();
-		axios.put.mockClear();
+		http.post.mockClear();
+		http.put.mockClear();
 		mockUpdateCrossSectionsList.mockClear();
 	});
 
@@ -43,10 +43,10 @@ describe("CrossSectionModal", () => {
 		expect(screen.getByLabelText(/Cross Section/i)).toBeInTheDocument();
 	});
 
-	it("should call axios.post on save when adding a new cross section", async () => {
+	it("should call http.post on save when adding a new cross section", async () => {
 		const newCrossSectionName = "New Cross Section";
 
-		axios.post.mockResolvedValue({
+		http.post.mockResolvedValue({
 			data: { name: newCrossSectionName, id: "new" },
 		});
 
@@ -65,7 +65,7 @@ describe("CrossSectionModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.post).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.post).toHaveBeenCalledWith(expect.any(String), {
 				name: newCrossSectionName,
 			}),
 		);
@@ -75,10 +75,10 @@ describe("CrossSectionModal", () => {
 		});
 	});
 
-	it("should call axios.put on save when editing an existing cross section", async () => {
+	it("should call http.put on save when editing an existing cross section", async () => {
 		const updatedCrossSectionName = "Updated Cross Section";
 
-		axios.put.mockResolvedValue({
+		http.put.mockResolvedValue({
 			data: { name: updatedCrossSectionName, id: selectedCrossSectionID },
 		});
 
@@ -97,7 +97,7 @@ describe("CrossSectionModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.put).toHaveBeenCalledWith(
+			expect(http.put).toHaveBeenCalledWith(
 				expect.stringContaining(selectedCrossSectionID),
 				{ name: updatedCrossSectionName },
 			),

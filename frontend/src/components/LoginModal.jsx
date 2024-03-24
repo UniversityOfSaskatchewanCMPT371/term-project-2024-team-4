@@ -1,6 +1,6 @@
 import { useState } from "react";
 import log from "../logger.js";
-import axios from "axios";
+import http from "../../http.js";
 
 // MUI
 import Button from "@mui/material/Button";
@@ -32,7 +32,7 @@ function LoginModal({ modalVisible, closeModal }) {
 		event.preventDefault();
 
 		try {
-			const response = await axios.post("http://localhost:3000/users", {
+			const response = await http.post("/users", {
 				userName,
 				password,
 			});

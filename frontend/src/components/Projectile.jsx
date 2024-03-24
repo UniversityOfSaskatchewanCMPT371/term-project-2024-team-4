@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import http from "../../http.js";
 import log from "../logger.js";
 import {
 	Button,
@@ -43,8 +43,8 @@ const ViewProjectile = ({ setOpen, projectilePointId }) => {
 	 * Fetch projectile point using ID
 	 */
 	useEffect(() => {
-		axios
-			.get(`http://localhost:3000/projectilePoints/${projectilePointId}`)
+		http
+			.get(`/projectilePoints/${projectilePointId}`)
 			.then((response) => {
 				log.info("Projectile point: ", response.data);
 				setName(response.data.name);

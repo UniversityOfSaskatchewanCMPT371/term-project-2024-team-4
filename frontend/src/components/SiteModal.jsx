@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
-import axios from "axios";
+import http from "../../http.js";
 import log from "../logger.js";
 import {
 	Button,
@@ -74,8 +74,8 @@ const SiteModal = ({ setOpen }) => {
 			regionId: regionID,
 		};
 
-		axios
-			.post("http://localhost:3000/sites", newSite)
+		http
+			.post("/sites", newSite)
 			.then((response) => {
 				log.info("New site added successfully:", response.data);
 				handleClose();
@@ -98,12 +98,12 @@ const SiteModal = ({ setOpen }) => {
 	/**
 	 * Fetches Site information from the backend when the component mounts.
 	 *
-	 * @pre Axios must be configured correctly.
+	 * @pre http must be configured correctly.
 	 * @post Updates the regions state with the fetched data and selects the current region if matched.
 	 */
 	useEffect(() => {
-		axios
-			.get("http://localhost:3000/regions")
+		http
+			.get("/regions")
 			.then((response) => {
 				setRegions(response.data);
 				const filteredRegion = response.data.find(
@@ -165,8 +165,8 @@ const SiteModal = ({ setOpen }) => {
 	// This function handles delete a culture from the server and updates the local list.
 	const handleDeleteRegion = () => {
 		if (currentRegion && currentRegion.id) {
-			axios
-				.delete(`http://localhost:3000/regions/${currentRegion.id}`)
+			http
+				.delete(`/regions/${currentRegion.id}`)
 				.then(() => {
 					setRegions(regions.filter((r) => r.id !== currentRegion.id));
 					handleCloseMenu();

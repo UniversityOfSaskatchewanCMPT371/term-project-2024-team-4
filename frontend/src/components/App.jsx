@@ -2,10 +2,6 @@ import { UserContextProvider } from "../context/userContext";
 import { Route, Routes } from "react-router-dom";
 import Catalogue from "./Catalogue";
 import Site from "./Site";
-import axios from "axios";
-
-axios.defaults.baseURL = "http://localhost:8080";
-axios.defaults.withCredentials = true;
 
 /**
  * Main App component which contains the routing paths

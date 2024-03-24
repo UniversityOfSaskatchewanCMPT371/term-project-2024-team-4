@@ -2,7 +2,7 @@
 /* eslint-disable react/prop-types */
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import log from "../logger";
 
 /**
@@ -39,11 +39,8 @@ export default function BladeShapeModal({
 		const bladeShapeData = { name: bladeShape };
 
 		const apiCall = selectedBladeShapeID
-			? axios.put(
-					`http://localhost:3000/bladeShapes/${selectedBladeShapeID}`,
-					bladeShapeData,
-				)
-			: axios.post("http://localhost:3000/bladeShapes", bladeShapeData);
+			? http.put(`/bladeShapes/${selectedBladeShapeID}`, bladeShapeData)
+			: http.post("/bladeShapes", bladeShapeData);
 
 		apiCall
 			.then((response) => {

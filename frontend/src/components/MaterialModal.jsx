@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 } from "@mui/material";
 import { useState } from "react";
-import axios from "axios";
+import http from "../../http";
 import log from "../logger";
 
 export default function MaterialModal({
@@ -50,12 +50,12 @@ export default function MaterialModal({
 
 		// Decide endpoint and axiosCall based on whether it's an edit or add operation
 		const endpoint = selectedMaterialID
-			? `http://localhost:3000/materials/${selectedMaterialID}`
-			: "http://localhost:3000/materials";
+			? `/materials/${selectedMaterialID}`
+			: "/materials";
 
 		const axiosCall = selectedMaterialID
-			? axios.put(endpoint, updatedMaterial)
-			: axios.post(endpoint, updatedMaterial);
+			? http.put(endpoint, updatedMaterial)
+			: http.post(endpoint, updatedMaterial);
 
 		axiosCall
 			.then((response) => {

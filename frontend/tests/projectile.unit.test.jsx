@@ -2,14 +2,14 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import ViewProjectile from "../src/components/Projectile.jsx";
-import axios from "axios";
+import http from "../http";
 
-// Mock axios
-vi.mock("axios");
+// Mock http
+vi.mock("../http");
 
 describe("Projectile", () => {
 	it("renders projectile point details correctly", async () => {
-		// Mock data for the axios response
+		// Mock data for the http response
 		const projectilePointData = {
 			id: 1,
 			name: "Test Point",
@@ -25,12 +25,12 @@ describe("Projectile", () => {
 			crossSection: { name: "Test Cross Section" },
 		};
 
-		// Mock axios get method to return the mock data
-		axios.get.mockResolvedValueOnce({ data: projectilePointData });
+		// Mock http get method to return the mock data
+		http.get.mockResolvedValueOnce({ data: projectilePointData });
 
 		render(<ViewProjectile setOpen={() => {}} projectilePointId={1} />);
 
-		// Wait for axios request to resolve
+		// Wait for http request to resolve
 		await waitFor(() => {
 			// Check if the data is rendered correctly
 			expect(screen.getByText(projectilePointData.name)).toBeInTheDocument();

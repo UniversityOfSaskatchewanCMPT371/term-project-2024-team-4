@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import axios from "axios";
+import http from "../http";
 import CultureModal from "../src/components/CultureModal";
 
 // Mock logger to avoid logging during tests
@@ -12,8 +12,8 @@ vi.mock("../logger", () => ({
 	error: vi.fn(),
 }));
 
-// Mock axios
-vi.mock("axios", () => ({
+// Mock http
+vi.mock("../http", () => ({
 	default: {
 		post: vi.fn(() => Promise.resolve({ data: {} })),
 		put: vi.fn(() => Promise.resolve({ data: {} })),
@@ -28,8 +28,8 @@ const mockPeriods = [
 
 describe("CultureModal", () => {
 	beforeEach(() => {
-		axios.post.mockClear();
-		axios.put.mockClear();
+		http.post.mockClear();
+		http.put.mockClear();
 	});
 
 	it("should render correctly", () => {
@@ -45,8 +45,8 @@ describe("CultureModal", () => {
 		expect(screen.getByText(/Add New Culture/i)).toBeInTheDocument();
 	});
 
-	it("should call axios.post on save when adding a new culture", async () => {
-		axios.post.mockResolvedValue({
+	it("should call http.post on save when adding a new culture", async () => {
+		http.post.mockResolvedValue({
 			data: { name: "New Culture", periodId: "1" },
 		});
 
@@ -69,15 +69,15 @@ describe("CultureModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.post).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.post).toHaveBeenCalledWith(expect.any(String), {
 				name: "New Culture",
 				periodId: "1",
 			}),
 		);
 	});
 
-	it("should call axios.put on save when editing an existing culture", async () => {
-		axios.put.mockResolvedValue({
+	it("should call http.put on save when editing an existing culture", async () => {
+		http.put.mockResolvedValue({
 			data: { name: "Edited Culture", periodId: "2" },
 		});
 
@@ -100,7 +100,7 @@ describe("CultureModal", () => {
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
-			expect(axios.put).toHaveBeenCalledWith(expect.any(String), {
+			expect(http.put).toHaveBeenCalledWith(expect.any(String), {
 				name: "Edited Culture",
 				periodId: "2",
 			}),
