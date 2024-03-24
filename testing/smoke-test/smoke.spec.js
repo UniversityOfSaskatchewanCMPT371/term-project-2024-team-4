@@ -44,13 +44,10 @@ test.describe("Login Smoke Tests", () => {
 
 			await page.waitForLoadState("networkidle");
 
-			const [response] = await Promise.all([
-				page.waitForResponse(
-					(resp) =>
-						resp.url().includes("/users") && resp.request().method() == "POST",
-				),
-				await page.locator("[type=submit]").click(),
-			]);
+            const [response] = await Promise.all([
+                page.waitForResponse(resp => resp.url().includes('/users') && resp.request().method() == "POST"),
+                await page.locator('button[type="submit"]:has-text("Login")').click()
+            ]);
 
 			try {
 				const responseStatus = response.status();

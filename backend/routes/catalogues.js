@@ -12,6 +12,15 @@ const cataloguesHelper = require("../helperFiles/cataloguesHelper.js");
  * @post Retrieves all catalogues from the database.
  * @return Returns an array of Catalogue objects.
  */
+/**
+ * GET: Fetch all catalogues.
+ * @route GET /catalogues
+ * @param req Express request object.
+ * @param res Express response object used to return all catalogues.
+ * @pre None.
+ * @post Retrieves all catalogues from the database.
+ * @return Returns an array of Catalogue objects.
+ */
 router.get("/", async (req, res) => {
 	const response = await cataloguesHelper.getAllCatalogues();
 	if (response instanceof Error) {

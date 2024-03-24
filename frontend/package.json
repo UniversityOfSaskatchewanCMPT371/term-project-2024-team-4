@@ -7,8 +7,8 @@
 		"dev": "vite",
 		"build": "vite build",
 		"test": "vitest",
-		"unit-test": "vitest .unit.test",
-		"integ-test": "vitest .integ.test",
+		"unit-test": "vitest run --config vite.unit.config.js",
+		"integ-test": "vitest run --config vite.integ.config.js",
 		"preview": "vite preview",
 		"test:ui": "vitest --ui",
 		"coverage": "vitest run --coverage",
@@ -32,7 +32,9 @@
 		"puppeteer": "^22.6.0",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.22.0"
+		"react-dropzone": "^14.2.3",
+		"react-router-dom": "^6.22.0",
+		"supertest": "^6.3.4"
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "^6.4.1",
@@ -53,6 +55,6 @@
 		"jsdom": "^24.0.0",
 		"prettier": "^3.2.5",
 		"vite": "^5.0.8",
-		"vitest": "^1.2.2"
+		"vitest": "^1.3.1"
 	}
 }
