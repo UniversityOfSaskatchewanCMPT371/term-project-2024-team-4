@@ -8,6 +8,7 @@ const cors = require("cors");
 // const { synchModels } = require("./models");
 // const dataSource = require("./config/db");
 
+const healthRouter = require("./routes/health");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 
@@ -59,11 +60,12 @@ app.use(bodyParser.json());
 app.use(
 	cors({
 		origin: "http://localhost:8080", // Replace with your frontend's URL
-		methods: ["POST", "GET", "DELETE", "PATCH"],
+		methods: ["POST", "GET", "DELETE", "PATCH", "PUT"],
 		credentials: true, // Enable credentials (cookies, authorization headers)
 	}),
 );
 
+app.use("/", healthRouter);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
