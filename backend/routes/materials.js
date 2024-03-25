@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
 
 // GET: Fetch a single Material
 router.get("/:id", async (req, res) => {
-	const response = await materialsHelper.newMaterial(req);
+	const response = await materialsHelper.getMaterialById(req);
 	if (response === "Material not found") {
 		res.json({ message: "Material not found" });
 	}
@@ -37,7 +37,7 @@ router.get("/:id", async (req, res) => {
 
 // PUT: Update a single Material
 router.put("/:id", async (req, res) => {
-	const response = await materialsHelper.newMaterial(req);
+	const response = await materialsHelper.updateMaterial(req);
 	if (response === "Material not found") {
 		res.json({ message: "Material not found" });
 	}
@@ -52,7 +52,7 @@ router.put("/:id", async (req, res) => {
 
 // DELETE: Delete a single Material
 router.delete("/:id", async (req, res) => {
-	const response = await materialsHelper.newMaterial(req);
+	const response = await materialsHelper.deleteMaterial(req);
 	if (response === "Material not found") {
 		res.json({ message: "Material not found" });
 	}

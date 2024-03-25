@@ -46,7 +46,7 @@ router.put("/:id", async (req, res) => {
 
 // DELETE: Delete an existing Period
 router.delete("/:id", async (req, res) => {
-	const response = await periodsHelper.updatePeriod(req);
+	const response = await periodsHelper.deletePeriod(req);
 	if (response === "Period not found") {
 		res.json({ message: "Period not found" });
 	}

@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 
 // POST: Create a new Region
 router.post("/", async (req, res) => {
-	const response = await regionsHelper.getAllRegions();
+	const response = await regionsHelper.newRegion(req);
 	if (response instanceof Error) {
 		res.json({ error: response.message });
 	}
@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
 // GET: Fetch a Region by ID
 // GET: Fetch a Region by ID
 router.get("/:id", async (req, res) => {
-	const response = await regionsHelper.getAllRegions();
+	const response = await regionsHelper.getRegionById(req);
 	if (response === "Region not found") {
 		res.json({ message: "Region not found" });
 	}
@@ -35,7 +35,7 @@ router.get("/:id", async (req, res) => {
 
 // PUT: Update an existing Region
 router.put("/:id", async (req, res) => {
-	const response = await regionsHelper.getAllRegions();
+	const response = await regionsHelper.updateRegion(req);
 	if (response === "Region not found") {
 		res.json({ message: "Region not found" });
 	}
@@ -47,7 +47,7 @@ router.put("/:id", async (req, res) => {
 
 // DELETE: Remove a Region
 router.delete("/:id", async (req, res) => {
-	const response = await regionsHelper.getAllRegions();
+	const response = await regionsHelper.deleteRegion(req);
 	if (response === "Region not found") {
 		res.json({ message: "Region not found" });
 	}

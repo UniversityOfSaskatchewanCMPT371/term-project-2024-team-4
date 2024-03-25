@@ -83,7 +83,7 @@ router.put("/:id", async (req, res) => {
  * @return Returns a message indicating success or failure of the deletion.
  */
 router.delete("/:id", async (req, res) => {
-	const response = await cataloguesHelper.updateCatalogue(req);
+	const response = await cataloguesHelper.deleteCatalogue(req);
 	if (response instanceof Error) {
 		res.status(500).json({ error: response.message });
 	}
