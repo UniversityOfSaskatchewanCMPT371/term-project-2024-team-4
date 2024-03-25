@@ -911,7 +911,7 @@ describe("Tests for function: aggregateCatalogueStatistics()", () => {
 		cataloguesHelper.getCatalogueFromId = jest
 			.fn()
 			.mockReturnValueOnce("Catalogue not found");
-		const siteStatistics = await aggregateCatalogueStatistics(3);
+		const siteStatistics = await aggregateCatalogueStatistics(99999999999);
 		expect(siteStatistics).toEqual("Catalogue not found");
 	});
 });
@@ -998,7 +998,8 @@ describe("Tests for function: aggregatePointTypeStatistics()", () => {
 		artifactTypesHelper.getArtifactTypeFromId = jest
 			.fn()
 			.mockReturnValueOnce("ArtifactType not found");
-		const pointTypeStatistics = await aggregatePointTypeStatistics(51);
+		const pointTypeStatistics =
+			await aggregatePointTypeStatistics(999999999999999);
 		expect(pointTypeStatistics).toEqual("ArtifactType not found");
 	});
 });
