@@ -64,7 +64,10 @@ router.post("/", async (req, res) => {
 				JWT_SECRET,
 				{},
 			);
-			res.cookie("token", token);
+			res.cookie("token", token, {
+				secure: true,
+				sameSite: "None", // allows cookie to be sent on cross-site requests
+			});
 			logger.info("User successfully logged in");
 			return res
 				.status(200)
@@ -95,7 +98,10 @@ router.post("/", async (req, res) => {
 router.post("/logout", async (req, res) => {
 	try {
 		// Clear the token cookie
-		res.clearCookie("token");
+		res.clearCookie("token", {
+			secure: true,
+			sameSite: "None", // allows cookie to be sent on cross-site requests
+		});
 		// Log successful logout
 		logger.info("User successfully logged out");
 		// Send a success response
