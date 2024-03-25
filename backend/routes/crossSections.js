@@ -1,9 +1,7 @@
-const { CrossSection } = require("../dist/entity");
 const express = require("express");
 const assert = require("node:assert/strict");
-const { logger } = require("../config/logger.js");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
 
 /**
  * POST: Create a new CrossSection.
@@ -14,21 +12,23 @@ const myDatabase = require("../config/db");
  * @post A new CrossSection entity is created in the database.
  * @return Returns the newly created CrossSection object.
  */
+/**
+ * POST: Create a new CrossSection.
+ * @route POST /crossSections
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used for returning the created CrossSection.
+ * @pre 'name' field must be provided and should be unique.
+ * @post A new CrossSection entity is created in the database.
+ * @return Returns the newly created CrossSection object.
+ */
 router.post("/", async (req, res) => {
-	const { name } = req.body;
-	try {
-		assert(name, "CrossSection name is required.");
-		const crossSectionRepository = await myDatabase.getRepository(CrossSection);
-		const newCrossSection = crossSectionRepository.create({ name });
-		await crossSectionRepository.save(newCrossSection);
-		res.json(newCrossSection);
-		logger.info(`New CrossSection created: ${name}`);
-	} catch (error) {
-		logger.error(`Error creating new CrossSection: ${error.message}`);
-		res
-			.status(error instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: error.message });
+	const response = await crossSectionsHelper.newCrossSection(req);
+	if (response instanceof Error) {
+		return res
+			.status(response instanceof assert.AssertionError ? 400 : 500)
+			.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -41,18 +41,11 @@ router.post("/", async (req, res) => {
  * @return Returns an array of CrossSection objects.
  */
 router.get("/", async (req, res) => {
-	try {
-		const crossSectionRepository = await myDatabase.getRepository(CrossSection);
-		const crossSections = await crossSectionRepository.find({
-			relations: ["cultures", "projectilePoints"],
-		});
-		assert(crossSections.length > 0, "No CrossSections found.");
-		res.json(crossSections);
-		logger.info("Fetched all CrossSections.");
-	} catch (error) {
-		logger.error(`Error fetching CrossSections: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await crossSectionsHelper.getAllCrossSections();
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -65,23 +58,11 @@ router.get("/", async (req, res) => {
  * @return Returns a CrossSection object or a message indicating the CrossSection was not found.
  */
 router.get("/:id", async (req, res) => {
-	try {
-		const id = parseInt(req.params.id);
-		assert(!isNaN(id), "Invalid ID provided");
-		const crossSectionRepository = await myDatabase.getRepository(CrossSection);
-		const crossSection = await crossSectionRepository.findOne({
-			where: { id },
-			relations: ["cultures", "projectilePoints"],
-		});
-		assert(crossSection, "CrossSection not found");
-		res.json(crossSection);
-		logger.info(`Fetched CrossSection with ID: ${id}`);
-	} catch (error) {
-		logger.error(
-			`Error fetching CrossSection with ID ${req.params.id}: ${error.message}`,
-		);
-		res.status(500).json({ error: error.message });
+	const response = await crossSectionsHelper.getCrossSectionById(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -94,24 +75,11 @@ router.get("/:id", async (req, res) => {
  * @return Returns the updated CrossSection object or a message indicating the CrossSection was not found.
  */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name } = req.body;
-	try {
-		const idInt = parseInt(id);
-		assert(!isNaN(idInt) && name, "Valid ID and name are required.");
-		const crossSectionRepository = await myDatabase.getRepository(CrossSection);
-		let crossSectionToUpdate = await crossSectionRepository.findOneBy({
-			id: idInt,
-		});
-		assert(crossSectionToUpdate, "CrossSection not found");
-		crossSectionToUpdate.name = name;
-		await crossSectionRepository.save(crossSectionToUpdate);
-		res.json(crossSectionToUpdate);
-		logger.info(`Updated CrossSection with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error updating CrossSection with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await crossSectionsHelper.updateCrossSection(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -124,18 +92,11 @@ router.put("/:id", async (req, res) => {
  * @return Returns a message indicating success or failure of the deletion.
  */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		assert(!isNaN(id), "Invalid ID provided for deletion");
-		const crossSectionRepository = await myDatabase.getRepository(CrossSection);
-		const deleteResult = await crossSectionRepository.delete(id);
-		assert(deleteResult.affected > 0, "CrossSection not found for deletion");
-		res.status(204).send(); // No Content
-		logger.info(`Deleted CrossSection with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error deleting CrossSection with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await crossSectionsHelper.deleteCrossSection(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.status(204).send(); // No Content
 });
 
 module.exports = router;

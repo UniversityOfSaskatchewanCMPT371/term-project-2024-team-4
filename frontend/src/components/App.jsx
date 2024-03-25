@@ -2,6 +2,7 @@ import { UserContextProvider } from "../context/userContext";
 import { Route, Routes } from "react-router-dom";
 import Catalogue from "./Catalogue";
 import Site from "./Site";
+import StatisticsPage from "./StatisticsPage";
 
 /**
  * Main App component which contains the routing paths
@@ -15,7 +16,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Catalogue />} />
 				<Route path="/site" element={<Site />} />
-
+				<Route path="/stats" element={<StatisticsPage />} />
 				{/* Add new routes here as you make new pages - use '/your_path' as path and the coresponding filename in element. */}
 			</Routes>
 		</UserContextProvider>

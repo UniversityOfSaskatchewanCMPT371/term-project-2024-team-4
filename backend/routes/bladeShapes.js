@@ -1,9 +1,7 @@
-const { BladeShape } = require("../dist/entity");
 const express = require("express");
 const assert = require("node:assert/strict");
-const { logger } = require("../config/logger");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const bladeShapeHelper = require("../helperFiles/bladeShapesHelper.js");
 
 /**
  * POST: Creates a new BladeShape.
@@ -14,21 +12,23 @@ const myDatabase = require("../config/db");
  * @post A new BladeShape is created in the database.
  * @return Returns the newly created BladeShape object.
  */
+/**
+ * POST: Creates a new BladeShape.
+ * @route POST /bladeShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used to return the created BladeShape.
+ * @pre 'name' field should be provided in the body and must be unique.
+ * @post A new BladeShape is created in the database.
+ * @return Returns the newly created BladeShape object.
+ */
 router.post("/", async (req, res) => {
-	const { name } = req.body;
-	try {
-		assert(name, "BladeShape name is required.");
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const newBladeShape = bladeShapeRepository.create({ name });
-		await bladeShapeRepository.save(newBladeShape);
-		res.json(newBladeShape);
-		logger.info(`New BladeShape created: ${name}`);
-	} catch (error) {
-		logger.error(`Error creating new BladeShape: ${error.message}`);
-		res
-			.status(error instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: error.message });
+	const response = await bladeShapeHelper.newBladeShape(req);
+	if (response instanceof Error) {
+		return res
+			.status(response instanceof assert.AssertionError ? 400 : 500)
+			.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -41,18 +41,11 @@ router.post("/", async (req, res) => {
  * @return Returns an array of BladeShape objects.
  */
 router.get("/", async (req, res) => {
-	try {
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const bladeShapes = await bladeShapeRepository.find({
-			relations: ["cultures", "projectilePoints"],
-		});
-		assert(bladeShapes.length > 0, "No BladeShapes found.");
-		res.json(bladeShapes);
-		logger.info("Fetched all BladeShapes.");
-	} catch (error) {
-		logger.error(`Error fetching BladeShapes: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await bladeShapeHelper.getAllBladeShapes();
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -65,23 +58,11 @@ router.get("/", async (req, res) => {
  * @return Returns a BladeShape object or a message indicating the BladeShape was not found.
  */
 router.get("/:id", async (req, res) => {
-	try {
-		const id = parseInt(req.params.id);
-		assert(!isNaN(id), "Invalid ID provided");
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const bladeShape = await bladeShapeRepository.findOne({
-			where: { id },
-			relations: ["cultures", "projectilePoints"],
-		});
-		assert(bladeShape, "BladeShape not found");
-		res.json(bladeShape);
-		logger.info(`Fetched BladeShape with ID: ${id}`);
-	} catch (error) {
-		logger.error(
-			`Error fetching BladeShape with ID ${req.params.id}: ${error.message}`,
-		);
-		res.status(500).json({ error: error.message });
+	const response = await bladeShapeHelper.getBladeShapeById(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -94,22 +75,11 @@ router.get("/:id", async (req, res) => {
  * @return Returns the updated BladeShape object or a message indicating the BladeShape was not found.
  */
 router.put("/:id", async (req, res) => {
-	const { id, name } = req.params;
-	try {
-		assert(name, "BladeShape name is required for update.");
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		let bladeShapeToUpdate = await bladeShapeRepository.findOneBy({
-			id: parseInt(id),
-		});
-		assert(bladeShapeToUpdate, "BladeShape not found for update.");
-		bladeShapeToUpdate.name = name;
-		await bladeShapeRepository.save(bladeShapeToUpdate);
-		res.json(bladeShapeToUpdate);
-		logger.info(`Updated BladeShape with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error updating BladeShape with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await bladeShapeHelper.updateBladeShape(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -122,18 +92,11 @@ router.put("/:id", async (req, res) => {
  * @return Returns a message indicating success or failure of the deletion.
  */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		assert(!isNaN(id), "Invalid ID provided for deletion");
-		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);
-		const deleteResult = await bladeShapeRepository.delete(id);
-		assert(deleteResult.affected > 0, "BladeShape not found for deletion");
-		res.status(204).send(); // No Content
-		logger.info(`Deleted BladeShape with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error deleting BladeShape with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await bladeShapeHelper.deleteBladeShape(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.status(204).send(); // No Content
 });
 
 module.exports = router;

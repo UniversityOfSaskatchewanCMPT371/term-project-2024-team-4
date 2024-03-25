@@ -18,7 +18,7 @@ To check if backend is functioning properly.
  */
 router.get("/", function (req, res) {
 	logger.debug("Index page succesfully rendered");
-	res.render("index", { title: "Express" });
+	return res.render("index", { title: "Express" });
 });
 
 /**
@@ -32,7 +32,7 @@ router.get("/", function (req, res) {
  */
 router.get("/helloworld", function (req, res) {
 	logger.debug("Simple message sent to client from backend");
-	res.send("Hello from Backend");
+	return res.send("Hello from Backend");
 });
 
 module.exports = router;

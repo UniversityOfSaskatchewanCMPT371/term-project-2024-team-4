@@ -64,7 +64,10 @@ router.post("/", async (req, res) => {
 				JWT_SECRET,
 				{},
 			);
-			res.cookie("token", token);
+			res.cookie("token", token, {
+				secure: true,
+				sameSite: "None", // allows cookie to be sent on cross-site requests
+			});
 			logger.info("User successfully logged in");
 			return res
 				.status(200)
@@ -95,7 +98,10 @@ router.post("/", async (req, res) => {
 router.post("/logout", async (req, res) => {
 	try {
 		// Clear the token cookie
-		res.clearCookie("token");
+		res.clearCookie("token", {
+			secure: true,
+			sameSite: "None", // allows cookie to be sent on cross-site requests
+		});
 		// Log successful logout
 		logger.info("User successfully logged out");
 		// Send a success response
@@ -131,11 +137,11 @@ router.get("/", async (req, res) => {
 				throw err;
 			}
 
-			res.json(user);
+			return res.json(user);
 		});
 	} else {
 		logger.info("No token provided");
-		res.json(null);
+		return res.json(null);
 	}
 });
 
@@ -237,10 +243,10 @@ router.patch("/:userId", async (req, res) => {
 		// Save updated user
 		await Users.save(user);
 		logger.info("User successfully updated");
-		res.status(200).json({ message: "User successfully updated", user });
+		return res.status(200).json({ message: "User successfully updated", user });
 	} catch (error) {
 		logger.error("Internal server error:", error);
-		res.status(500).json({ message: "Internal server error" });
+		return res.status(500).json({ message: "Internal server error" });
 	}
 });
 

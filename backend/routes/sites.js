@@ -1,36 +1,14 @@
-const { Site } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
-const myDatabase = require("../config/db");
-const { logger } = require("../config/logger");
+const sitesHelper = require("../helperFiles/sitesHelper.js");
 
-/**
- * POST: Create a new Site
- * @param {*} req - Request body must contain valid 'name', 'description', 'location', 'catalogueId', and 'regionId'
- * @param {*} res - Response to client
- * @precond req.body contains 'name', 'description', 'location', 'catalogueId', and 'regionId'
- * @postcond
- * 	Success: Returns the newly created Site object
- * 	Failure: Returns an error message related to issue
- */
+// POST: Create a New Site
 router.post("/", async (req, res) => {
-	const { name, description, location, catalogueId, regionId } = req.body;
-	try {
-		const siteRepository = await myDatabase.getRepository(Site);
-		const newSite = siteRepository.create({
-			name,
-			description,
-			location,
-			catalogue: { id: catalogueId },
-			region: { id: regionId },
-		});
-		await siteRepository.save(newSite);
-		logger.debug(`New site created: ${newSite.id}`);
-		res.json(newSite);
-	} catch (error) {
-		logger.error(`Error creating new Site: ${error.message}`);
-		res.json({ error: error.message });
+	const newSite = await sitesHelper.newSite(req);
+	if (newSite instanceof Error) {
+		return res.json({ error: newSite.message });
 	}
+	return res.json(newSite);
 });
 
 /**
@@ -43,16 +21,11 @@ router.post("/", async (req, res) => {
  * 	Failure: Returns an error message indicating the failure reason
  */
 router.get("/", async (req, res) => {
-	try {
-		const siteRepository = await myDatabase.getRepository(Site);
-		const sites = await siteRepository.find({
-			relations: ["catalogue", "region"],
-		});
-		res.json(sites);
-	} catch (error) {
-		logger.error("Error fetching Sites:", error);
-		res.json({ error: error.message });
+	const sites = await sitesHelper.getAllSites();
+	if (sites instanceof Error) {
+		return res.json({ error: sites.message });
 	}
+	return res.json(sites);
 });
 
 /**
@@ -65,21 +38,14 @@ router.get("/", async (req, res) => {
  * 	Failure: Returns an error message indicating the failure reason
  */
 router.get("/:id", async (req, res) => {
-	try {
-		const siteRepository = await myDatabase.getRepository(Site);
-		const site = await siteRepository.findOne({
-			where: { id: parseInt(req.params.id) },
-			relations: ["catalogue", "region", "artifacts"],
-		});
-		if (site) {
-			res.json(site);
-		} else {
-			res.send("Site not found");
-		}
-	} catch (error) {
-		logger.error("Error fetching Site:", error);
-		res.json({ error: error.message });
+	const site = await sitesHelper.getSiteFromId(req);
+	if (site === "Site not found") {
+		return res.send("Site not found");
 	}
+	if (site instanceof Error) {
+		return res.json({ error: site.message });
+	}
+	return res.json(site);
 });
 
 /**
@@ -92,27 +58,14 @@ router.get("/:id", async (req, res) => {
  * 	Failure: Returns an error message related to issue
  */
 router.put("/:id", async (req, res) => {
-	const { name, description, location, catalogueId, regionId } = req.body;
-	try {
-		const siteRepository = await myDatabase.getRepository(Site);
-		let siteToUpdate = await siteRepository.findOneBy({
-			id: parseInt(req.params.id),
-		});
-		if (siteToUpdate) {
-			siteToUpdate.name = name;
-			siteToUpdate.description = description;
-			siteToUpdate.location = location;
-			siteToUpdate.catalogue = { id: catalogueId };
-			siteToUpdate.region = { id: regionId };
-			await siteRepository.save(siteToUpdate);
-			res.json(siteToUpdate);
-		} else {
-			res.json({ message: "Site not found" });
-		}
-	} catch (error) {
-		logger.error("Error updating Site:", error);
-		res.json({ error: error.message });
+	const siteToUpdate = await sitesHelper.updateSite(req);
+	if (siteToUpdate === "Site not found") {
+		return res.json({ message: "Site not found" });
 	}
+	if (siteToUpdate instanceof Error) {
+		return res.json({ error: siteToUpdate.message });
+	}
+	return res.json(siteToUpdate);
 });
 
 /**
@@ -125,21 +78,14 @@ router.put("/:id", async (req, res) => {
  * 	Failure: Returns an error message related to issue
  */
 router.delete("/:id", async (req, res) => {
-	try {
-		const siteRepository = await myDatabase.getRepository(Site);
-		const deleteResult = await siteRepository.delete(parseInt(req.params.id));
-		if (deleteResult.affected > 0) {
-			res.send();
-		} else {
-			logger.warn(`Site not found for deletion: ${parseInt(req.params.id)}`);
-			res.json({ message: "Site not found" });
-		}
-	} catch (error) {
-		logger.error(
-			`Error deleting Site: ${parseInt(req.params.id)}, Error: ${error.message}`,
-		);
-		res.json({ error: error.message });
+	const result = await sitesHelper.deleteSite(req);
+	if (result === "Site not found") {
+		return res.json({ message: "Site not found" });
 	}
+	if (result instanceof Error) {
+		return res.json({ error: result.message });
+	}
+	return res.send();
 });
 
 module.exports = router;

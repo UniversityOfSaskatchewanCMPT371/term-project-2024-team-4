@@ -1,29 +1,14 @@
-const { Period } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
-const myDatabase = require("../config/db");
-const { logger } = require("../config/logger");
+const periodsHelper = require("../helperFiles/periodsHelper.js");
 
-/**
- * POST: Create a new period
- * @param {*} req - req.body contains valid: name, start, end
- * @param {*} res - response to client
- * @precond req.body contains: name, start, end
- * @postcond
- * 	Success: Returns newly created Period object
- * 	Failure: Returns an error message based on what went wrong
- */
+// POST: Create a New Period
 router.post("/", async (req, res) => {
-	const { name, start, end } = req.body;
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const newPeriod = periodRepository.create({ name, start, end });
-		await periodRepository.save(newPeriod);
-		res.json(newPeriod);
-	} catch (error) {
-		logger.error("Error creating new Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.newPeriod(req);
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -36,14 +21,11 @@ router.post("/", async (req, res) => {
  * 	Failure: Returns an error message based on what went wrong
  */
 router.get("/", async (req, res) => {
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const periods = await periodRepository.find({ relations: ["cultures"] });
-		res.json(periods);
-	} catch (error) {
-		logger.error("Error fetching Periods:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.getAllPeriods();
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -57,22 +39,14 @@ router.get("/", async (req, res) => {
  */
 
 router.get("/:id", async (req, res) => {
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const period = await periodRepository.findOne({
-			where: { id: parseInt(req.params.id) },
-			relations: ["cultures"],
-		});
-		if (period) {
-			res.json(period);
-		} else {
-			logger.warn(`Period with ID${req.params.id} was not found in database`);
-			res.send("Period not found");
-		}
-	} catch (error) {
-		logger.error("Error fetching Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.getPeriodById(req);
+	if (response === "Period not found") {
+		return res.json({ message: "Period not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
 /**
@@ -85,25 +59,14 @@ router.get("/:id", async (req, res) => {
  * 	Failure: Returns an error message based on the issue
  */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name, start, end } = req.body;
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		let periodToUpdate = await periodRepository.findOneBy({ id: parseInt(id) });
-		if (periodToUpdate) {
-			periodToUpdate.name = name;
-			periodToUpdate.start = start;
-			periodToUpdate.end = end;
-			await periodRepository.save(periodToUpdate);
-			res.json(periodToUpdate);
-		} else {
-			logger.warn(`Period with ID${id} was not found in the database`);
-			res.json({ message: "Period not found" });
-		}
-	} catch (error) {
-		logger.error("Error updating Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.updatePeriod(req);
+	if (response === "Period not found") {
+		return res.json({ message: "Period not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
 /**
@@ -116,20 +79,14 @@ router.put("/:id", async (req, res) => {
  * 	Failure: Returns an error message based on the issue
  */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const deleteResult = await periodRepository.delete(id);
-		if (deleteResult.affected > 0) {
-			res.send();
-		} else {
-			logger.warn(`Period with ID${id} was not found in the database`);
-			res.json({ message: "Period not found" });
-		}
-	} catch (error) {
-		logger.error("Error deleting Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.deletePeriod(req);
+	if (response === "Period not found") {
+		return res.json({ message: "Period not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.send();
 });
 
 module.exports = router;

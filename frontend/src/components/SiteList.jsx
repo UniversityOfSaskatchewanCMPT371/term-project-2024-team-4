@@ -14,6 +14,7 @@ import {
 	Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { baseURL } from "../../http";
 
 /**
  * Item component styled from the Paper MUI component.
@@ -71,7 +72,7 @@ export default function SiteList({ query }) {
 	 * @post Sets the 'data' state to the list of fetched sites. Catches and logs any errors.
 	 */
 	useEffect(() => {
-		fetch("http://localhost:3000/sites")
+		fetch(`${baseURL}/sites`)
 			.then((response) => response.json())
 			.then((json) => setData(json))
 			.catch((error) => console.error("Error fetching data:", error));

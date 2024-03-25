@@ -1,9 +1,7 @@
-const { Catalogue } = require("../dist/entity");
 const express = require("express");
 const assert = require("node:assert/strict");
-const { logger } = require("../config/logger.js");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const cataloguesHelper = require("../helperFiles/cataloguesHelper.js");
 
 /**
  * GET: Fetch all catalogues.
@@ -14,17 +12,21 @@ const myDatabase = require("../config/db");
  * @post Retrieves all catalogues from the database.
  * @return Returns an array of Catalogue objects.
  */
+/**
+ * GET: Fetch all catalogues.
+ * @route GET /catalogues
+ * @param req Express request object.
+ * @param res Express response object used to return all catalogues.
+ * @pre None.
+ * @post Retrieves all catalogues from the database.
+ * @return Returns an array of Catalogue objects.
+ */
 router.get("/", async (req, res) => {
-	try {
-		const catalogueRepository = await myDatabase.getRepository(Catalogue);
-		const catalogues = await catalogueRepository.find();
-		assert(catalogues.length > 0, "No catalogues found.");
-		res.json(catalogues);
-		logger.info("Fetched all catalogues.");
-	} catch (error) {
-		logger.error(`Error fetching catalogues: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await cataloguesHelper.getAllCatalogues();
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -37,20 +39,13 @@ router.get("/", async (req, res) => {
  * @return Returns the newly created Catalogue object.
  */
 router.post("/", async (req, res) => {
-	const { name, description } = req.body;
-	try {
-		assert(name && description, "Both name and description are required.");
-		const catalogueRepository = await myDatabase.getRepository(Catalogue);
-		const newCatalogue = catalogueRepository.create({ name, description });
-		await catalogueRepository.save(newCatalogue);
-		res.json(newCatalogue);
-		logger.info(`New catalogue created: ${name}`);
-	} catch (error) {
-		logger.error(`Error creating new catalogue: ${error.message}`);
-		res
-			.status(error instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: error.message });
+	const response = await cataloguesHelper.newCatalogue(req);
+	if (response instanceof Error) {
+		return res
+			.status(response instanceof assert.AssertionError ? 400 : 500)
+			.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -63,23 +58,11 @@ router.post("/", async (req, res) => {
  * @return Returns a Catalogue object or a message indicating the Catalogue was not found.
  */
 router.get("/:id", async (req, res) => {
-	try {
-		const id = parseInt(req.params.id);
-		assert(!isNaN(id), "Invalid ID provided");
-		const catalogueRepository = await myDatabase.getRepository(Catalogue);
-		const catalogue = await catalogueRepository.findOne({
-			where: { id },
-			relations: ["sites"],
-		});
-		assert(catalogue, "Catalogue not found");
-		res.json(catalogue);
-		logger.info(`Fetched catalogue with ID: ${id}`);
-	} catch (error) {
-		logger.error(
-			`Error fetching catalogue with ID ${req.params.id}: ${error.message}`,
-		);
-		res.status(500).json({ error: error.message });
+	const response = await cataloguesHelper.getCatalogueFromId(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -92,26 +75,11 @@ router.get("/:id", async (req, res) => {
  * @return Returns the updated Catalogue object or a message indicating the Catalogue was not found.
  */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name, description } = req.body;
-	try {
-		const idInt = parseInt(id);
-		assert(
-			!isNaN(idInt) && name && description,
-			"Valid ID, name, and description are required.",
-		);
-		const catalogueRepository = await myDatabase.getRepository(Catalogue);
-		let catalogueToUpdate = await catalogueRepository.findOneBy({ id: idInt });
-		assert(catalogueToUpdate, "Catalogue not found");
-		catalogueToUpdate.name = name;
-		catalogueToUpdate.description = description;
-		await catalogueRepository.save(catalogueToUpdate);
-		res.json(catalogueToUpdate);
-		logger.info(`Updated catalogue with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error updating catalogue with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await cataloguesHelper.updateCatalogue(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -124,18 +92,11 @@ router.put("/:id", async (req, res) => {
  * @return Returns a message indicating success or failure of the deletion.
  */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		assert(!isNaN(id), "Invalid ID provided for deletion");
-		const catalogueRepository = await myDatabase.getRepository(Catalogue);
-		const deleteResult = await catalogueRepository.delete(id);
-		assert(deleteResult.affected > 0, "Catalogue not found for deletion");
-		res.status(204).send(); // No Content
-		logger.info(`Deleted catalogue with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error deleting catalogue with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await cataloguesHelper.deleteCatalogue(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.status(204).send(); // No Content
 });
 
 module.exports = router;

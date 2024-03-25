@@ -1,9 +1,7 @@
-const { BaseShape } = require("../dist/entity");
 const express = require("express");
 const assert = require("node:assert/strict");
-const { logger } = require("../config/logger.js");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const baseShapesHelper = require("../helperFiles/baseShapesHelper.js");
 
 /**
  * POST: Create a new BaseShape.
@@ -14,21 +12,23 @@ const myDatabase = require("../config/db");
  * @post A new BaseShape is created and saved in the database.
  * @return Returns the newly created BaseShape object.
  */
+/**
+ * POST: Create a new BaseShape.
+ * @route POST /baseShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used for returning the newly created BaseShape.
+ * @pre The request body must contain a 'name' field.
+ * @post A new BaseShape is created and saved in the database.
+ * @return Returns the newly created BaseShape object.
+ */
 router.post("/", async (req, res) => {
-	const { name } = req.body;
-	try {
-		assert(name, "BaseShape name is required.");
-		const baseShapeRepository = await myDatabase.getRepository(BaseShape);
-		const newBaseShape = baseShapeRepository.create({ name });
-		await baseShapeRepository.save(newBaseShape);
-		res.json(newBaseShape);
-		logger.info(`New BaseShape created: ${name}`);
-	} catch (error) {
-		logger.error(`Error creating new BaseShape: ${error.message}`);
-		res
-			.status(error instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: error.message });
+	const response = await baseShapesHelper.newBaseShape(req);
+	if (response instanceof Error) {
+		return res
+			.status(response instanceof assert.AssertionError ? 400 : 500)
+			.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -41,18 +41,11 @@ router.post("/", async (req, res) => {
  * @return Returns an array of BaseShape objects.
  */
 router.get("/", async (req, res) => {
-	try {
-		const baseShapeRepository = await myDatabase.getRepository(BaseShape);
-		const baseShapes = await baseShapeRepository.find({
-			relations: ["cultures", "projectilePoints"],
-		});
-		assert(baseShapes.length > 0, "No BaseShapes found.");
-		res.json(baseShapes);
-		logger.info("Fetched all BaseShapes.");
-	} catch (error) {
-		logger.error(`Error fetching BaseShapes: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await baseShapesHelper.getAllBaseShapes();
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -65,20 +58,11 @@ router.get("/", async (req, res) => {
  * @return Returns a BaseShape object or a message indicating the BaseShape was not found.
  */
 router.get("/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		const baseShapeRepository = await myDatabase.getRepository(BaseShape);
-		const baseShape = await baseShapeRepository.findOne({
-			where: { id: parseInt(id) },
-			relations: ["cultures", "projectilePoints"],
-		});
-		assert(baseShape, "BaseShape not found");
-		res.json(baseShape);
-		logger.info(`Fetched BaseShape with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error fetching BaseShape with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await baseShapesHelper.getBaseShapeById(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -91,26 +75,13 @@ router.get("/:id", async (req, res) => {
  * @return Returns the updated BaseShape object or a message indicating the BaseShape was not found.
  */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name } = req.body;
-	try {
-		assert(name, "Updated BaseShape name is required.");
-		const baseShapeRepository = await myDatabase.getRepository(BaseShape);
-		let baseShapeToUpdate = await baseShapeRepository.findOneBy({
-			id: parseInt(id),
-		});
-
-		assert(baseShapeToUpdate, "BaseShape not found");
-		baseShapeToUpdate.name = name;
-		await baseShapeRepository.save(baseShapeToUpdate);
-		res.json(baseShapeToUpdate);
-		logger.info(`Updated BaseShape with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error updating BaseShape with ID ${id}: ${error.message}`);
-		res
-			.status(error instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: error.message });
+	const response = await baseShapesHelper.updateBaseShape(req);
+	if (response instanceof Error) {
+		return res
+			.status(response instanceof assert.AssertionError ? 400 : 500)
+			.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
 /**
@@ -123,18 +94,11 @@ router.put("/:id", async (req, res) => {
  * @return Returns a message indicating success or failure of the deletion.
  */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		const baseShapeRepository = await myDatabase.getRepository(BaseShape);
-		const deleteResult = await baseShapeRepository.delete(id);
-
-		assert(deleteResult.affected > 0, "BaseShape not found");
-		res.status(204).send(); // No Content
-		logger.info(`Deleted BaseShape with ID: ${id}`);
-	} catch (error) {
-		logger.error(`Error deleting BaseShape with ID ${id}: ${error.message}`);
-		res.status(500).json({ error: error.message });
+	const response = await baseShapesHelper.deleteBaseShape(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.status(204).send(); // No Content
 });
 
 module.exports = router;
