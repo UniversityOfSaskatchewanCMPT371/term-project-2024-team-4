@@ -15,9 +15,9 @@ const artifactsHelper = require("../helperFiles/artifactsHelper.js");
 router.post("/", async (req, res) => {
 	const response = await artifactsHelper.newArtifact(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.status(201).json(response);
+	return res.status(201).json(response);
 });
 
 /**
@@ -32,9 +32,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const response = await artifactsHelper.getAllArtifacts();
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -49,9 +49,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const response = await artifactsHelper.getArtifactFromId(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -66,9 +66,9 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	const response = await artifactsHelper.updateArtifact(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -83,9 +83,9 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const response = await artifactsHelper.deleteArtifact(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.send(); // No Content
+	return res.send(); // No Content
 });
 
 module.exports = router;

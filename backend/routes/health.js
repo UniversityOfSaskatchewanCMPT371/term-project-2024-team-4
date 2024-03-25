@@ -11,10 +11,10 @@ router.get("/health", async (req, res) => {
 		}
 		// Query to make sure database is responding
 		await myDatabase.query("SELECT 1");
-		res.status(200).send("OK");
+		return res.status(200).send("OK");
 	} catch (error) {
 		logger.error("Health check failed:", error);
-		res.status(500).send("Database connection failed");
+		return res.status(500).send("Database connection failed");
 	}
 });
 

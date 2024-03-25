@@ -23,9 +23,9 @@ const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
 router.post("/", async (req, res) => {
 	const response = await haftingShapesHelper.newHaftingShape(req);
 	if (response instanceof Error) {
-		res.status(400).json({ error: response.message });
+		return res.status(400).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -40,9 +40,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const response = await haftingShapesHelper.getAllHaftingShapes();
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -57,9 +57,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const response = await haftingShapesHelper.getHaftingShapeById(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -74,9 +74,9 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	const response = await haftingShapesHelper.updateHaftingShape(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -91,9 +91,9 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const response = await haftingShapesHelper.deleteHaftingShape(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.status(204).send();
+	return res.status(204).send();
 });
 
 module.exports = router;

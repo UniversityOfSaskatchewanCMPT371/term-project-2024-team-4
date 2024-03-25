@@ -10,9 +10,9 @@ router.post("/", async (req, res) => {
 	const newProjectilePoint =
 		await projectilePointsHelper.newProjectilePoint(req);
 	if (newProjectilePoint instanceof Error) {
-		res.status(500).json({ error: newProjectilePoint.message });
+		return res.status(500).json({ error: newProjectilePoint.message });
 	}
-	res.status(201).json(newProjectilePoint);
+	return res.status(201).json(newProjectilePoint);
 });
 
 /**
@@ -29,9 +29,9 @@ router.get("/", async (req, res) => {
 	const projectilePoints =
 		await projectilePointsHelper.getAllProjectilePoints();
 	if (projectilePoints instanceof Error) {
-		res.json({ error: projectilePoints.message });
+		return res.json({ error: projectilePoints.message });
 	}
-	res.json(projectilePoints);
+	return res.json(projectilePoints);
 });
 
 /**
@@ -50,9 +50,9 @@ router.get("/:id", async (req, res) => {
 		return res.json({ message: "ProjectilePoint not found" });
 	}
 	if (projectilePoint instanceof Error) {
-		res.json({ error: projectilePoint.message });
+		return res.json({ error: projectilePoint.message });
 	}
-	res.json(projectilePoint);
+	return res.json(projectilePoint);
 });
 
 /**
@@ -72,9 +72,9 @@ router.put("/:id", async (req, res) => {
 		return res.json({ message: "ProjectilePoint not found" });
 	}
 	if (projectilePoint instanceof Error) {
-		res.json({ error: projectilePoint.message });
+		return res.json({ error: projectilePoint.message });
 	}
-	res.json(projectilePoint);
+	return res.json(projectilePoint);
 });
 
 /**
@@ -89,10 +89,10 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const result = await projectilePointsHelper.deleteProjectilePoint(req);
 	if (result === "ProjectilePoint not found") {
-		res.json({ message: "ProjectilePoint not found" });
+		return res.json({ message: "ProjectilePoint not found" });
 	}
 	if (result instanceof Error) {
-		res.json({ error: result.message });
+		return res.json({ error: result.message });
 	}
 });
 

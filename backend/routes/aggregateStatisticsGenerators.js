@@ -7,15 +7,17 @@ router.get("/pointType/:id", async (req, res) => {
 	const aggregatePointTypeStatistics =
 		await aggregateStatisticsConstroller.aggregatePointTypeStatistics(req);
 	if (aggregatePointTypeStatistics === "ArtifactType not found") {
-		res.json({ message: "ArtifactType not found" });
+		return res.json({ message: "ArtifactType not found" });
 	}
 	if (aggregatePointTypeStatistics instanceof Error) {
-		res.json({ error: aggregatePointTypeStatistics.message });
+		return res.json({ error: aggregatePointTypeStatistics.message });
 	}
 	if (aggregatePointTypeStatistics === null) {
-		res.json({ message: "aggregatePointTypeStatistics() Got Empty Input" });
+		return res.json({
+			message: "aggregatePointTypeStatistics() Got Empty Input",
+		});
 	}
-	res.json(aggregatePointTypeStatistics);
+	return res.json(aggregatePointTypeStatistics);
 });
 
 //GET: Site Aggregate Statistics
@@ -23,15 +25,15 @@ router.get("/site/:id", async (req, res) => {
 	const aggregateSiteStatistics =
 		await aggregateStatisticsConstroller.aggregateSiteStatistics(req);
 	if (aggregateSiteStatistics === "Site not found") {
-		res.json({ message: "Site not found" });
+		return res.json({ message: "Site not found" });
 	}
 	if (aggregateSiteStatistics instanceof Error) {
-		res.json({ error: aggregateSiteStatistics.message });
+		return res.json({ error: aggregateSiteStatistics.message });
 	}
 	if (aggregateSiteStatistics === null) {
-		res.json({ message: "aggregateSiteStatistics() Got Empty Input" });
+		return res.json({ message: "aggregateSiteStatistics() Got Empty Input" });
 	}
-	res.json(aggregateSiteStatistics);
+	return res.json(aggregateSiteStatistics);
 });
 
 //GET: Catalogue Aggregate Statistics
@@ -41,18 +43,20 @@ router.get("/catalogue/:id", async (req, res) => {
 			parseInt(req.params.id),
 		);
 	if (aggregateCatalogueStatistics === "Catalogue not found") {
-		res.json({ message: "Catalogue not found" });
+		return res.json({ message: "Catalogue not found" });
 	}
 	if (aggregateCatalogueStatistics instanceof Error) {
-		res.json({ error: aggregateCatalogueStatistics.message });
+		return res.json({ error: aggregateCatalogueStatistics.message });
 	}
 	if (aggregateCatalogueStatistics === null) {
-		res.json({ message: "aggregateCatalogueStatistics() Got Empty Input" });
+		return res.json({
+			message: "aggregateCatalogueStatistics() Got Empty Input",
+		});
 	}
 	const resultMapToObject = deepMapToObject(aggregateCatalogueStatistics);
 
-	res.json(resultMapToObject);
-	// res.json(aggregateCatalogueStatistics);
+	return res.json(resultMapToObject);
+	// return res.json(aggregateCatalogueStatistics);
 });
 
 //Helper function for deep map conversion for statistics

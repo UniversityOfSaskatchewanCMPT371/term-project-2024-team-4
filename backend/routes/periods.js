@@ -6,9 +6,9 @@ const periodsHelper = require("../helperFiles/periodsHelper.js");
 router.post("/", async (req, res) => {
 	const response = await periodsHelper.newPeriod(req);
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -23,9 +23,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const response = await periodsHelper.getAllPeriods();
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -41,12 +41,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const response = await periodsHelper.getPeriodById(req);
 	if (response === "Period not found") {
-		res.json({ message: "Period not found" });
+		return res.json({ message: "Period not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -61,12 +61,12 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	const response = await periodsHelper.updatePeriod(req);
 	if (response === "Period not found") {
-		res.json({ message: "Period not found" });
+		return res.json({ message: "Period not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -81,12 +81,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const response = await periodsHelper.deletePeriod(req);
 	if (response === "Period not found") {
-		res.json({ message: "Period not found" });
+		return res.json({ message: "Period not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.send();
+	return res.send();
 });
 
 module.exports = router;

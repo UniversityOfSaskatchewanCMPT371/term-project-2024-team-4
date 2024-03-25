@@ -24,11 +24,11 @@ const culturesHelper = require("../helperFiles/culturesHelper.js");
 router.post("/", async (req, res) => {
 	const response = await culturesHelper.newCulture(req);
 	if (response instanceof Error) {
-		res
+		return res
 			.status(response instanceof assert.AssertionError ? 404 : 400)
 			.json({ error: response.message });
 	}
-	res.status(201).json(response);
+	return res.status(201).json(response);
 });
 
 /**
@@ -43,9 +43,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const response = await culturesHelper.getAllCultures();
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -60,9 +60,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const response = await culturesHelper.getCultureById(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -86,9 +86,9 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	const response = await culturesHelper.updateCulture(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -103,9 +103,9 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const response = await culturesHelper.deleteCulture(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.status(204).send(); // No Content
+	return res.status(204).send(); // No Content
 });
 
 module.exports = router;

@@ -137,11 +137,11 @@ router.get("/", async (req, res) => {
 				throw err;
 			}
 
-			res.json(user);
+			return res.json(user);
 		});
 	} else {
 		logger.info("No token provided");
-		res.json(null);
+		return res.json(null);
 	}
 });
 
@@ -243,10 +243,10 @@ router.patch("/:userId", async (req, res) => {
 		// Save updated user
 		await Users.save(user);
 		logger.info("User successfully updated");
-		res.status(200).json({ message: "User successfully updated", user });
+		return res.status(200).json({ message: "User successfully updated", user });
 	} catch (error) {
 		logger.error("Internal server error:", error);
-		res.status(500).json({ message: "Internal server error" });
+		return res.status(500).json({ message: "Internal server error" });
 	}
 });
 

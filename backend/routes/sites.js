@@ -6,9 +6,9 @@ const sitesHelper = require("../helperFiles/sitesHelper.js");
 router.post("/", async (req, res) => {
 	const newSite = await sitesHelper.newSite(req);
 	if (newSite instanceof Error) {
-		res.json({ error: newSite.message });
+		return res.json({ error: newSite.message });
 	}
-	res.json(newSite);
+	return res.json(newSite);
 });
 
 /**
@@ -23,9 +23,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const sites = await sitesHelper.getAllSites();
 	if (sites instanceof Error) {
-		res.json({ error: sites.message });
+		return res.json({ error: sites.message });
 	}
-	res.json(sites);
+	return res.json(sites);
 });
 
 /**
@@ -40,12 +40,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const site = await sitesHelper.getSiteFromId(req);
 	if (site === "Site not found") {
-		res.send("Site not found");
+		return res.send("Site not found");
 	}
 	if (site instanceof Error) {
-		res.json({ error: site.message });
+		return res.json({ error: site.message });
 	}
-	res.json(site);
+	return res.json(site);
 });
 
 /**
@@ -60,12 +60,12 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	const siteToUpdate = await sitesHelper.updateSite(req);
 	if (siteToUpdate === "Site not found") {
-		res.json({ message: "Site not found" });
+		return res.json({ message: "Site not found" });
 	}
 	if (siteToUpdate instanceof Error) {
-		res.json({ error: siteToUpdate.message });
+		return res.json({ error: siteToUpdate.message });
 	}
-	res.json(siteToUpdate);
+	return res.json(siteToUpdate);
 });
 
 /**
@@ -80,12 +80,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const result = await sitesHelper.deleteSite(req);
 	if (result === "Site not found") {
-		res.json({ message: "Site not found" });
+		return res.json({ message: "Site not found" });
 	}
 	if (result instanceof Error) {
-		res.json({ error: result.message });
+		return res.json({ error: result.message });
 	}
-	res.send();
+	return res.send();
 });
 
 module.exports = router;

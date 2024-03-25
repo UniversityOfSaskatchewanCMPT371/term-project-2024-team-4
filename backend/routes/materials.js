@@ -15,12 +15,12 @@ const materialsHelper = require("../helperFiles/materialsHelper.js");
 router.post("/", async (req, res) => {
 	const response = await materialsHelper.newMaterial(req);
 	if (response === "ArtifactType not found") {
-		res.json({ message: "ArtifactType not found" });
+		return res.json({ message: "ArtifactType not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -35,9 +35,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const response = await materialsHelper.getAllMaterials();
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -52,12 +52,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const response = await materialsHelper.getMaterialById(req);
 	if (response === "Material not found") {
-		res.json({ message: "Material not found" });
+		return res.json({ message: "Material not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 // PUT: Update a single Material
@@ -75,15 +75,15 @@ router.get("/:id", async (req, res) => {
 router.put("/:id", async (req, res) => {
 	const response = await materialsHelper.updateMaterial(req);
 	if (response === "Material not found") {
-		res.json({ message: "Material not found" });
+		return res.json({ message: "Material not found" });
 	}
 	if (response === "ArtifactType not found") {
-		res.json({ message: "ArtifactType not found" });
+		return res.json({ message: "ArtifactType not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -99,12 +99,12 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const response = await materialsHelper.deleteMaterial(req);
 	if (response === "Material not found") {
-		res.json({ message: "Material not found" });
+		return res.json({ message: "Material not found" });
 	}
 	if (response instanceof Error) {
-		res.json({ error: response.message });
+		return res.json({ error: response.message });
 	}
-	res.send();
+	return res.send();
 });
 
 module.exports = router;

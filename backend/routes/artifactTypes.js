@@ -28,7 +28,7 @@ router.post("/", async (req, res) => {
 			.status(response instanceof assert.AssertionError ? 400 : 500)
 			.json({ message: response.message });
 	}
-	res.status(201).json(response);
+	return res.status(201).json(response);
 });
 
 /**
@@ -43,9 +43,9 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
 	const response = await artifactTypesHelper.getAllArtifactTypes();
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -60,9 +60,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
 	const response = await artifactTypesHelper.getArtifactTypeFromId(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.json(response);
+	return res.json(response);
 });
 
 /**
@@ -77,9 +77,9 @@ router.get("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
 	const response = await artifactTypesHelper.deleteArtifactType(req);
 	if (response instanceof Error) {
-		res.status(500).json({ error: response.message });
+		return res.status(500).json({ error: response.message });
 	}
-	res.send(); //No Content
+	return res.send(); //No Content
 });
 
 module.exports = router;
