@@ -14,4 +14,8 @@ COPY package-lock.json /frontend/package-lock.json
 
 # install packages
 RUN npm install 
+
+# Download chromium for Puppeteer browser tests
+# RUN npm install playwright
+# RUN npx playwright install chrome
 CMD ["npm", "run", "dev"]

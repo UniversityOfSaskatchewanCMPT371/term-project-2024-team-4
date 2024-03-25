@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import axios from "axios";
+import http from "../../http";
 
 export const UserContext = createContext({});
 
@@ -9,8 +9,8 @@ export function UserContextProvider({ children }) {
 
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const getData = useCallback(async () => {
-		axios
-			.get("http://localhost:3000/users", { withCredentials: true })
+		http
+			.get("/users", { withCredentials: true })
 			.then(({ data }) => {
 				setUser(data);
 			})

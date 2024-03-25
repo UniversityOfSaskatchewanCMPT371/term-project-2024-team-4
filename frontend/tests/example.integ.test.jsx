@@ -1,4 +1,5 @@
-import { it, describe, expect } from "vitest";
+import { it } from "vitest";
+
 /*
 Example Integration Test to pass the CI Pipeline
 TO BE REMOVED AFTER ACTUAL INTEGRATION TESTS MADE

@@ -1,92 +1,99 @@
-const { HaftingShape } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
 
-// POST: Create a new HaftingShape
+/**
+ * POST: Creates a new HaftingShape.
+ * @route POST /haftingShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used for returning the newly created HaftingShape.
+ * @pre 'name' field must be provided in the request body.
+ * @post A new HaftingShape entity is created in the database.
+ * @return Returns the newly created HaftingShape object.
+ */
+/**
+ * POST: Creates a new HaftingShape.
+ * @route POST /haftingShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used for returning the newly created HaftingShape.
+ * @pre 'name' field must be provided in the request body.
+ * @post A new HaftingShape entity is created in the database.
+ * @return Returns the newly created HaftingShape object.
+ */
 router.post("/", async (req, res) => {
-	const { name } = req.body;
-	try {
-		const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
-		const newHaftingShape = HaftingShapeRepository.create({ name });
-		await HaftingShapeRepository.save(newHaftingShape);
-		res.json(newHaftingShape);
-	} catch (error) {
-		console.error("Error creating new HaftingShape:", error);
-		res.json({ error: error.message });
+	const response = await haftingShapesHelper.newHaftingShape(req);
+	if (response instanceof Error) {
+		return res.status(400).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// GET: Fetch all HaftingShapes
+/**
+ * GET: Fetches all HaftingShapes.
+ * @route GET /haftingShapes
+ * @param req Express request object.
+ * @param res Express response object used to return all HaftingShapes.
+ * @pre None.
+ * @post Retrieves all HaftingShape entities from the database.
+ * @return Returns an array of HaftingShape objects.
+ */
 router.get("/", async (req, res) => {
-	try {
-		const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
-		const HaftingShapes = await HaftingShapeRepository.find({
-			relations: ["cultures", "projectilePoints"],
-		});
-		res.json(HaftingShapes);
-	} catch (error) {
-		console.error("Error fetching HaftingShapes:", error);
-		res.json({ error: error.message });
+	const response = await haftingShapesHelper.getAllHaftingShapes();
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// GET: Fetch all HaftingShapes by ID
+/**
+ * GET: Fetches a HaftingShape by ID.
+ * @route GET /haftingShapes/:id
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @param res Express response object used to return a specific HaftingShape.
+ * @pre The HaftingShape with the given ID must exist in the database.
+ * @post Retrieves a specific HaftingShape from the database based on its ID.
+ * @return Returns a HaftingShape object or a message indicating the HaftingShape was not found.
+ */
 router.get("/:id", async (req, res) => {
-	try {
-		const haftingShapeRepository = await myDatabase.getRepository(HaftingShape);
-		const haftingShape = await haftingShapeRepository.findOne({
-			where: { id: parseInt(req.params.id) },
-			relations: ["cultures", "projectilePoints"],
-		});
-		if (haftingShape) {
-			res.json(haftingShape);
-		} else {
-			res.send("HaftingShape not found");
-		}
-	} catch (error) {
-		console.error("Error fetching HaftingShape:", error);
-		res.json({ error: error.message });
+	const response = await haftingShapesHelper.getHaftingShapeById(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// PUT: Update an existing HaftingShape
+/**
+ * PUT: Updates an existing HaftingShape.
+ * @route PUT /haftingShapes/:id
+ * @param req Express request object containing the new 'name' for the HaftingShape.
+ * @param res Express response object used for returning the updated HaftingShape.
+ * @pre The HaftingShape with the given ID must exist in the database.
+ * @post Updates and returns the specified HaftingShape in the database.
+ * @return Returns the updated HaftingShape object or a message indicating the HaftingShape was not found.
+ */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name } = req.body;
-	try {
-		const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
-		let HaftingShapeToUpdate = await HaftingShapeRepository.findOneBy({
-			id: parseInt(id),
-		});
-		if (HaftingShapeToUpdate) {
-			HaftingShapeToUpdate.name = name;
-			await HaftingShapeRepository.save(HaftingShapeToUpdate);
-			res.json(HaftingShapeToUpdate);
-		} else {
-			res.json({ message: "HaftingShape not found" });
-		}
-	} catch (error) {
-		console.error("Error updating HaftingShape:", error);
-		res.json({ error: error.message });
+	const response = await haftingShapesHelper.updateHaftingShape(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// DELETE: Remove a HaftingShape
+/**
+ * DELETE: Removes a HaftingShape by ID.
+ * @route DELETE /haftingShapes/:id
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @param res Express response object used for signaling the result of the deletion operation.
+ * @pre The HaftingShape with the given ID must exist in the database.
+ * @post Deletes the specified HaftingShape from the database.
+ * @return Returns a message indicating success or failure of the deletion.
+ */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		const HaftingShapeRepository = await myDatabase.getRepository(HaftingShape);
-		const deleteResult = await HaftingShapeRepository.delete(id);
-		if (deleteResult.affected > 0) {
-			res.send();
-		} else {
-			res.json({ message: "HaftingShape not found" });
-		}
-	} catch (error) {
-		console.error("Error deleting HaftingShape:", error);
-		res.json({ error: error.message });
+	const response = await haftingShapesHelper.deleteHaftingShape(req);
+	if (response instanceof Error) {
+		return res.status(500).json({ error: response.message });
 	}
+	return res.status(204).send();
 });
 
 module.exports = router;

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import logger from "../logger.js";
-import axios from "axios";
+import log from "../logger.js";
+import http from "../../http.js";
 
 // MUI
 import Button from "@mui/material/Button";
@@ -11,16 +11,28 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
+/**
+ * Modal for admin user login
+ * @param {boolean} modalVisible to set modal visibility
+ * @param {function} closeModal hide modal
+ * @pre None
+ * @post Renders login modal
+ * @returns {JSX.Element} LoginModal React component
+ */
 // eslint-disable-next-line react/prop-types
 function LoginModal({ modalVisible, closeModal }) {
 	const [userName, setUserName] = useState();
 	const [password, setPassword] = useState();
 
+	/**
+	 * Submit login information for authentication
+	 * @param {object} event login form values
+	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		try {
-			const response = await axios.post("http://localhost:3000/users", {
+			const response = await http.post("/users", {
 				userName,
 				password,
 			});
@@ -29,8 +41,8 @@ function LoginModal({ modalVisible, closeModal }) {
 			 * These loggers are for testing to make sure that the information is properly passed
 			 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
 			 */
-			logger.info("Username entered: " + userName);
-			logger.info("Password entered: " + password);
+			log.info("Username entered: " + userName);
+			log.info("Password entered: " + password);
 
 			if (response.status === 200) {
 				// Login successful
@@ -59,14 +71,16 @@ function LoginModal({ modalVisible, closeModal }) {
 	};
 
 	/**
-	 * This is for when the username is entered into the textbox to update the state of the component
+	 * Set user name value every textfield input change
+	 * @param {object} event input textfield event object
 	 */
 	const userNameChanged = (event) => {
 		setUserName(event.target.value);
 	};
 
 	/**
-	 * For when the password is entered into the texbox to update the state of the component
+	 * Set password value every textfield input change
+	 * @param {object} event input textfield event object
 	 */
 	const passwordChanged = (event) => {
 		setPassword(event.target.value);

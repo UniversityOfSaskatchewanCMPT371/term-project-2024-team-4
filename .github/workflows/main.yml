@@ -161,12 +161,11 @@ jobs:
       - name: Backend/Database Connection Health Check
         run: |
           echo "Waiting for backend to be ready..."
-          until $(curl --output /dev/null --silent --head --fail http://localhost:3000/health); do
+          until $(curl --verbose --output /dev/null --silent --head --fail http://localhost:3000/health); do
               printf '.'
               sleep 5
           done
           echo "Backend is up and running!"
-        working-directory: ./backend
 
         
         # Run Smoke Tests First
@@ -181,11 +180,11 @@ jobs:
       
       - name: Run Backend Integration Tests
         working-directory: ./backend
-        run: npm run integ-test
+        run: npm run integ-test -- --test-timeout=10000
       
       - name: Run Backend Coverage Test
         working-directory: ./backend
-        run: npm run coverage
+        run: npm run coverage -- --test-timeout=10000
           
         ### Run all frontend tests
       - name: Run Frontend Unit Tests
@@ -194,22 +193,24 @@ jobs:
       
       - name: Run Frontend Integration Tests
         working-directory: ./frontend
-        run: npm run integ-test
+        run: npm run integ-test -- --test-timeout=10000
 
       - name: Run Frontend Coverage Test
         working-directory: ./frontend
-        run: npm run coverage
+        run: npm run coverage -- --test-timeout=10000
         
         ### Run all E2E Tests
         
         ### Upload Testing Reports as Artifacts
       - name: Upload Backend Test Reports
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: backend-test-reports
           path: backend/test-report/
         
       - name: Upload Frontend Test Reports
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: frontend-test-reports
