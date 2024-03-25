@@ -1,6 +1,6 @@
 import log from "../logger.js";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import http from "../../http.js";
 
 import { PieChart } from "@mui/x-charts/PieChart";
 import Typography from "@mui/material/Typography";
@@ -22,8 +22,8 @@ function StatisticsModal({ modalOpen, closeModal }) {
 		 */
 		async function statsGetter() {
 			try {
-				const response = await axios.get(
-					"http://localhost:3000/aggregateStatisticsGenerators/catalogue/1",
+				const response = await http.get(
+					"/aggregateStatisticsGenerators/catalogue/1",
 				);
 				log.debug("Response data before setStats(): " + response.data);
 				setStats(response.data);

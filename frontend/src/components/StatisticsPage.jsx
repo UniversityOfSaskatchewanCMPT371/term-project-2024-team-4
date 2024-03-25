@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import log from "../logger.js";
-import axios from "axios";
+import http from "../../http.js";
 import Sidebar from "./Sidebar.jsx";
 import StatisticsModal from "./StatisticsModal.jsx";
 
@@ -23,9 +23,7 @@ function StatisticsPage() {
 		 */
 		async function pointsGetter() {
 			try {
-				const response = await axios.get(
-					"http://localhost:3000/projectilePoints",
-				);
+				const response = await http.get("/projectilePoints");
 				setData(response.data);
 			} catch (error) {
 				log.error("Error fetching projectile points: ", error);
