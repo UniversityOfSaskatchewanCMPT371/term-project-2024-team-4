@@ -12,6 +12,15 @@ const bladeShapeHelper = require("../helperFiles/bladeShapesHelper.js");
  * @post A new BladeShape is created in the database.
  * @return Returns the newly created BladeShape object.
  */
+/**
+ * POST: Creates a new BladeShape.
+ * @route POST /bladeShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used to return the created BladeShape.
+ * @pre 'name' field should be provided in the body and must be unique.
+ * @post A new BladeShape is created in the database.
+ * @return Returns the newly created BladeShape object.
+ */
 router.post("/", async (req, res) => {
 	const response = await bladeShapeHelper.newBladeShape(req);
 	if (response instanceof Error) {

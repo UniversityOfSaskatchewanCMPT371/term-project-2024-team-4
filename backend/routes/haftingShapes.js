@@ -1,7 +1,18 @@
 const express = require("express");
+const assert = require("node:assert/strict");
+const { logger } = require("../config/logger.js");
 const router = express.Router();
 const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
 
+/**
+ * POST: Creates a new HaftingShape.
+ * @route POST /haftingShapes
+ * @param req Express request object, expecting 'name' in the request body.
+ * @param res Express response object used for returning the newly created HaftingShape.
+ * @pre 'name' field must be provided in the request body.
+ * @post A new HaftingShape entity is created in the database.
+ * @return Returns the newly created HaftingShape object.
+ */
 /**
  * POST: Creates a new HaftingShape.
  * @route POST /haftingShapes

@@ -11,7 +11,15 @@ router.post("/", async (req, res) => {
 	res.json(newSite);
 });
 
-// GET: Fetch All Sites
+/**
+ * GET: Fetch ALL Sites
+ * @param {*} req - unused
+ * @param {*} res - Response object to send back data to the client
+ * @precond Database is accessible
+ * @postcond
+ * 	Success: Returns ALL Site entities from the database
+ * 	Failure: Returns an error message indicating the failure reason
+ */
 router.get("/", async (req, res) => {
 	const sites = await sitesHelper.getAllSites();
 	if (sites instanceof Error) {
@@ -20,7 +28,15 @@ router.get("/", async (req, res) => {
 	res.json(sites);
 });
 
-// GET: Fetch a Site by ID
+/**
+ * GET: Fetch a SINGLE Site by ID
+ * @param {*} req - req URL parameter contains the Site ID
+ * @param {*} res - Response to client
+ * @precond Request URL parameter contains a valid Site ID that exists in the database
+ * @postcond
+ * 	Success: Returns the SINGLE requested Site object including its relations to 'catalogue', 'region', and 'artifacts'
+ * 	Failure: Returns an error message indicating the failure reason
+ */
 router.get("/:id", async (req, res) => {
 	const site = await sitesHelper.getSiteFromId(req);
 	if (site === "Site not found") {
@@ -32,7 +48,15 @@ router.get("/:id", async (req, res) => {
 	res.json(site);
 });
 
-// PUT: Update an existing Site
+/**
+ * PUT: Update an existing Site
+ * @param {*} req - req URL parameter contains the Site ID, body contains valid 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @param {*} res - Response to client
+ * @precond Request URL parameter and body contain an existing Site ID and valid updates for 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @postcond
+ * 	Success: Returns the updated Site object
+ * 	Failure: Returns an error message related to issue
+ */
 router.put("/:id", async (req, res) => {
 	const siteToUpdate = await sitesHelper.updateSite(req);
 	if (siteToUpdate === "Site not found") {
@@ -44,7 +68,15 @@ router.put("/:id", async (req, res) => {
 	res.json(siteToUpdate);
 });
 
-// DELETE: Remove a Site
+/**
+ * DELETE: Delete a SINGLE existing Site by ID
+ * @param {*} req - Req URL parameter contains the Site ID
+ * @param {*} res - Response to the client
+ * @precond Site ID from req URL parameter exists in the database
+ * @postcond
+ * 	Success: Site is deleted from the database; sends an empty response
+ * 	Failure: Returns an error message related to issue
+ */
 router.delete("/:id", async (req, res) => {
 	const result = await sitesHelper.deleteSite(req);
 	if (result === "Site not found") {
