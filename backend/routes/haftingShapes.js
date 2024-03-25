@@ -1,6 +1,4 @@
 const express = require("express");
-const assert = require("node:assert/strict");
-const { logger } = require("../config/logger.js");
 const router = express.Router();
 const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
 
