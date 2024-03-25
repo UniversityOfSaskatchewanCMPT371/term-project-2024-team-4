@@ -237,9 +237,12 @@ async function aggregateSiteStatistics(siteId) {
 	const currentSiteRes = await sitesHelper.getSiteFromId({
 		params: { id: siteId },
 	});
-	if (currentSiteRes === "Site not found") {
+	if (
+		currentSiteRes instanceof assert.AssertionError ||
+		currentSiteRes === "Site not found"
+	) {
 		console.debug(
-			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
+			"aggregateSiteStatistics() received a catalog that doesnt exist",
 		);
 		return "Site not found";
 	}
@@ -343,7 +346,7 @@ async function aggregateCatalogueStatistics(catalogueId) {
 		params: { id: catalogueId },
 	});
 	const cat = await currentCatalogueRes;
-	if (cat instanceof assert.AssertionError) {
+	if (cat instanceof assert.AssertionError || cat === "Catalogue not found") {
 		console.debug(
 			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
 		);
@@ -463,9 +466,12 @@ async function aggregatePointTypeStatistics(pointType) {
 	const currentPointTypeRes = await artifactTypesHelper.getArtifactTypeFromId({
 		params: { id: pointType },
 	});
-	if (currentPointTypeRes instanceof assert.AssertionError) {
+	if (
+		currentPointTypeRes instanceof assert.AssertionError ||
+		currentPointTypeRes === "ArtifactType not found"
+	) {
 		console.debug(
-			"aggregateCatalogueStatistics() received a catalog that doesnt exist",
+			"aggregatePointTypeStatistics() received an ArtifactType that doesnt exist",
 		);
 		return "ArtifactType not found";
 	}

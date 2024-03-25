@@ -1,9 +1,14 @@
 import { screen, render, fireEvent } from "@testing-library/react";
 import { test, expect } from "vitest";
 import StatisticsPage from "../src/components/StatisticsPage.jsx";
+import { MemoryRouter } from "react-router-dom";
 
 test("Render statistics page correctly", async () => {
-	render(<StatisticsPage />);
+	render(
+		<MemoryRouter>
+			<StatisticsPage />
+		</MemoryRouter>,
+	);
 
 	//Test if the button to generate statistics is on the screen
 	const statisticButton = screen.getByText("Generate Statistics");
@@ -15,7 +20,11 @@ test("Render statistics page correctly", async () => {
 });
 
 test("Render statistics modal correctly", () => {
-	render(<StatisticsPage />);
+	render(
+		<MemoryRouter>
+			<StatisticsPage />
+		</MemoryRouter>,
+	);
 
 	//Click on the generate statistics button to open the modal
 	fireEvent.click(screen.getByRole("button", { name: "Generate Statistics" }));
