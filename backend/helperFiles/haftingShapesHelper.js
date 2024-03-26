@@ -6,7 +6,7 @@ const { logger } = require("../config/logger.js");
 /**
  *
  */
-async function createNewHaftingShape(req) {
+async function newHaftingShape(req) {
 	const { name } = req.body;
 	try {
 		assert(name, "HaftingShape name is required.");
@@ -105,7 +105,7 @@ async function deleteHaftingShape(req) {
 }
 
 module.exports = {
-	createNewHaftingShape,
+	newHaftingShape,
 	getAllHaftingShapes,
 	getHaftingShapeById,
 	updateHaftingShape,
