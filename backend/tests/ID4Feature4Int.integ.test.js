@@ -154,7 +154,7 @@ describe("Testing aggregateCatalogueStatistics().", () => {
 			const testBaseShape = await baseShapesHelper.newBaseShape({
 				body: { name: "Test Base Shape" },
 			});
-			const testHaftingShape = await haftingShapesHelper.createNewHaftingShape({
+			const testHaftingShape = await haftingShapesHelper.newHaftingShape({
 				body: { name: "Test Hafting Shape" },
 			});
 			const testCrossSection = await crossSectionsHelper.newCrossSection({
