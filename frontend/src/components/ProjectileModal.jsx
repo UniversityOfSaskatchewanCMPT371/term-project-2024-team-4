@@ -294,7 +294,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("/cultures")
 			.then((response) => {
 				setCultures(response.data);
-				const filteredCulture = allCultures.find(
+				const filteredCulture = response.data.find(
 					(culture) => culture.name === selectedCulture,
 				);
 
@@ -302,13 +302,12 @@ const AddProjectile = ({ setOpenAdd }) => {
 				if (filteredCulture) {
 					log.info(filteredCulture);
 					setCultureID(filteredCulture.id);
-					setSelectedPeriod(filteredCulture.period);
 				}
 			})
 			.catch((error) => {
 				console.error("Error fetching cultures:", error);
 			});
-	}, [selectedCulture, allCultures]);
+	}, [selectedCulture]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -330,17 +329,12 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
 	const handleCultureChange = (event) => {
 		const selectedCultureName = event.target.value;
-		setSelectedCulture(selectedCultureName);
-
+		setCultureID(event.target.id);
+		setSelectedCulture(event.target.value);
 		// Find the selected culture object based on the selected name
 		const selectedCulture = cultures.find(
 			(culture) => culture.name === selectedCultureName,
 		);
-
-		let relatedCultures = [];
-		if (selectedCulture && selectedCulture.cultures) {
-			relatedCultures = selectedCulture.cultures;
-		}
 
 		// If a culture is found and it has an associated period
 		if (selectedCulture && selectedCulture.period) {
