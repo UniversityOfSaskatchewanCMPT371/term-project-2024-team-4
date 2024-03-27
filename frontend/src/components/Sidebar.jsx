@@ -196,14 +196,23 @@ function Sidebar() {
 							</ListItemButton>
 						</ListItem>
 					</Link>
-					<ListItem key="Data Management" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<FolderCopyIcon />
-							</SidebarIcon>
-							<ListItemText primary="Data Management" />
-						</ListItemButton>
-					</ListItem>
+					<Link
+						to="/managePeriods"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Periods Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
 					<ListItem key="Settings" disablePadding onClick={handleClick}>
