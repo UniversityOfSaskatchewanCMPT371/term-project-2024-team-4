@@ -81,6 +81,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [editPeriod, setEditPeriod] = useState(false);
 	const [periodModalOpen, setPeriodModalOpen] = useState(false);
 	const [selectedPeriodID, setSelectedPeriodID] = useState(null);
+	const [allCultures, setAllCultures] = useState([]);
+
 	// -----------------------------------------------------------------------------------------
 
 	// ------------ For state variables for editing cultures through the CultureModal ----------
@@ -245,7 +247,44 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	const handlePeriodChange = (event) => {
-		setSelectedPeriod(event.target.value);
+		const selectedPeriodName = event.target.value.trim();
+		setSelectedPeriod(selectedPeriodName);
+
+		// Find the selected period from the periods state using the selected period name
+		const selectedPeriod = periods.find(
+			(period) => period.name.trim() === selectedPeriodName,
+		);
+
+		let relatedCultures = [];
+		if (selectedPeriod && selectedPeriod.cultures) {
+			// Directly use the cultures nested within the found period
+			relatedCultures = selectedPeriod.cultures;
+		}
+
+		// Update the cultures dropdown based on the selected period
+		setCultures(relatedCultures);
+
+		// If there's exactly one culture associated with the selected period, automatically select its name
+		if (relatedCultures.length === 1) {
+			setSelectedCulture(relatedCultures[0].name.trim()); // Set the selectedCulture to the culture's name instead of ID
+			updateRelatedFields(relatedCultures[0].id); // But still use the ID when updating related fields
+		} else {
+			setSelectedCulture(""); // Reset if there's no single match or no cultures at all
+		}
+	};
+
+	const updateRelatedFields = (cultureId) => {
+		const selectedCulture = allCultures.find(
+			(culture) => culture.id === cultureId,
+		);
+		if (selectedCulture) {
+			// Set the corresponding state for each attribute
+			setBladeShapeID(selectedCulture.bladeShapeId);
+			setBaseShapeID(selectedCulture.baseShapeId);
+			setHaftingShapeID(selectedCulture.haftingShapeId);
+			setCrossSectionID(selectedCulture.crossSectionId);
+			// Add other fields as necessary
+		}
 	};
 
 	const handleOpenPeriodModal = (periodId = null) => {
@@ -263,7 +302,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("/cultures")
 			.then((response) => {
 				setCultures(response.data);
-				const filteredCulture = response.data.find(
+				const filteredCulture = allCultures.find(
 					(culture) => culture.name === selectedCulture,
 				);
 
@@ -271,12 +310,13 @@ const AddProjectile = ({ setOpenAdd }) => {
 				if (filteredCulture) {
 					log.info(filteredCulture);
 					setCultureID(filteredCulture.id);
+					setSelectedPeriod(filteredCulture.period);
 				}
 			})
 			.catch((error) => {
 				console.error("Error fetching cultures:", error);
 			});
-	}, [selectedCulture]);
+	}, [selectedCulture, allCultures]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -297,8 +337,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
 	const handleCultureChange = (event) => {
-		setCultureID(event.target.id);
-		setSelectedCulture(event.target.value);
+		const selectedCultureId = event.target.value;
+		setSelectedCulture(selectedCultureId);
+		updateRelatedFields(selectedCultureId);
 	};
 
 	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
@@ -873,6 +914,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								onChange={handleMaterialChange}
 								fullWidth
 								margin="dense"
+								disabled={!selectedPeriod || !selectedCulture}
 							>
 								{materials.map((material) => (
 									<MenuItem key={material.id} value={material.name}>
@@ -931,6 +973,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								fullWidth
 								value={location}
 								onChange={handleLocationChange}
+								disabled={!selectedPeriod || !selectedCulture}
 							/>
 							{/* The dimensions should be three different fields(length, width, height and )
 						if you are making this change, make sure the database was changed to hold a list of
@@ -960,6 +1003,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								margin="dense"
 								value={selectedBaseShape}
 								onChange={handleBaseShapeChange}
+								disabled={!selectedPeriod || !selectedCulture}
 							>
 								{baseShapes.map((shape) => (
 									<MenuItem key={shape.id} value={shape.name}>
@@ -1014,6 +1058,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								margin="dense"
 								value={selectedCrossSection}
 								onChange={handleCrossSectionChange}
+								disabled={!selectedPeriod || !selectedCulture}
 							>
 								{crossSections.map((crossSect) => (
 									<MenuItem key={crossSect.id} value={crossSect.name}>
@@ -1070,6 +1115,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								margin="dense"
 								value={selectedBladeShape}
 								onChange={handleBladeShapeChange}
+								disabled={!selectedPeriod || !selectedCulture}
 							>
 								{bladeShapes.map((shape) => (
 									<MenuItem key={shape.id} value={shape.name}>
@@ -1124,6 +1170,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								margin="dense"
 								value={selectedHaftingShape}
 								onChange={handleHaftingShapeChange}
+								disabled={!selectedPeriod || !selectedCulture}
 							>
 								{haftingShapes.map((shape) => (
 									<MenuItem key={shape.id} value={shape.name}>
