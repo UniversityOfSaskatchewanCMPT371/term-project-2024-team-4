@@ -380,27 +380,53 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
-	const handleCultureChange = (event) => {
+	const handleCultureChange = async (event) => {
 		const selectedCultureName = event.target.value;
-		setCultureID(event.target.id);
-		setSelectedCulture(event.target.value);
+		const selectedCultureId = event.target.id;
+		setCultureID(selectedCultureId);
+		setSelectedCulture(selectedCultureName);
+
 		// Find the selected culture object based on the selected name
 		const selectedCulture = cultures.find(
 			(culture) => culture.name === selectedCultureName,
 		);
 
-		// If a culture is found and it has an associated period
 		if (selectedCulture && selectedCulture.period) {
-			// filter the periods dropdown to only include the period associated with the selected culture,
+			// Filter the periods dropdown to only include the period associated with the selected culture
 			setPeriods([selectedCulture.period]);
 			// Automatically select this period in the periods dropdown
 			setSelectedPeriod(selectedCulture.period.name);
 		} else {
-			// If no culture is selected or if the selected culture has no associated period,
-			// reset the periods dropdown to the full list of periods.
+			// Reset the periods dropdown to the full list of periods
 			setPeriods(allPeriods);
 			setSelectedPeriod("");
 		}
+
+		// Fetch and update shape data based on the selected culture
+		fetchShapeData(
+			`/bladeShapes?cultureId=${selectedCultureId}`,
+			setBladeShapes,
+			setSelectedBladeShape,
+			setSelectedBladeShapeID,
+		);
+		fetchShapeData(
+			`/baseShapes?cultureId=${selectedCultureId}`,
+			setBaseShapes,
+			setSelectedBaseShape,
+			setSelectedBaseShapeID,
+		);
+		fetchShapeData(
+			`/crossSections?cultureId=${selectedCultureId}`,
+			setCrossSections,
+			setSelectedCrossSection,
+			setSelectedCrossSectionID,
+		);
+		fetchShapeData(
+			`/haftingShapes?cultureId=${selectedCultureId}`,
+			setHaftingShapes,
+			setSelectedHaftingShape,
+			setSelectedHaftingShapeID,
+		);
 	};
 
 	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
