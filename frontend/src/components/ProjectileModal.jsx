@@ -267,6 +267,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 		if (relatedCultures.length === 1) {
 			setSelectedCulture(relatedCultures[0].name.trim());
 			updateRelatedFields(relatedCultures[0].id);
+		} else {
 			setSelectedCulture("");
 		}
 	};
