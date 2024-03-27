@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 /**
  * POST: Creates a new HaftingShape.
@@ -11,16 +12,7 @@ const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
  * @post A new HaftingShape entity is created in the database.
  * @return Returns the newly created HaftingShape object.
  */
-/**
- * POST: Creates a new HaftingShape.
- * @route POST /haftingShapes
- * @param req Express request object, expecting 'name' in the request body.
- * @param res Express response object used for returning the newly created HaftingShape.
- * @pre 'name' field must be provided in the request body.
- * @post A new HaftingShape entity is created in the database.
- * @return Returns the newly created HaftingShape object.
- */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await haftingShapesHelper.newHaftingShape(req);
 	if (response instanceof Error) {
 		return res.status(400).json({ error: response.message });
@@ -71,7 +63,7 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified HaftingShape in the database.
  * @return Returns the updated HaftingShape object or a message indicating the HaftingShape was not found.
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await haftingShapesHelper.updateHaftingShape(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });
@@ -88,7 +80,7 @@ router.put("/:id", async (req, res) => {
  * @post Deletes the specified HaftingShape from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await haftingShapesHelper.deleteHaftingShape(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });

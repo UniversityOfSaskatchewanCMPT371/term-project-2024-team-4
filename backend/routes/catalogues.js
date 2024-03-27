@@ -2,16 +2,8 @@ const express = require("express");
 const assert = require("node:assert/strict");
 const router = express.Router();
 const cataloguesHelper = require("../helperFiles/cataloguesHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
-/**
- * GET: Fetch all catalogues.
- * @route GET /catalogues
- * @param req Express request object.
- * @param res Express response object used to return all catalogues.
- * @pre None.
- * @post Retrieves all catalogues from the database.
- * @return Returns an array of Catalogue objects.
- */
 /**
  * GET: Fetch all catalogues.
  * @route GET /catalogues
@@ -38,7 +30,7 @@ router.get("/", async (req, res) => {
  * @post A new Catalogue is created and saved in the database.
  * @return Returns the newly created Catalogue object.
  */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await cataloguesHelper.newCatalogue(req);
 	if (response instanceof Error) {
 		return res
@@ -74,7 +66,7 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified Catalogue in the database.
  * @return Returns the updated Catalogue object or a message indicating the Catalogue was not found.
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await cataloguesHelper.updateCatalogue(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });
@@ -91,7 +83,7 @@ router.put("/:id", async (req, res) => {
  * @post Deletes the specified Catalogue from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await cataloguesHelper.deleteCatalogue(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });

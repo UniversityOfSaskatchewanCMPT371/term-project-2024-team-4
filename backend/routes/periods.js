@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const periodsHelper = require("../helperFiles/periodsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 // POST: Create a New Period
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await periodsHelper.newPeriod(req);
 	if (response instanceof Error) {
 		return res.json({ error: response.message });
@@ -58,7 +59,7 @@ router.get("/:id", async (req, res) => {
  * 	Success: Returns the updated Period object
  * 	Failure: Returns an error message based on the issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await periodsHelper.updatePeriod(req);
 	if (response === "Period not found") {
 		return res.json({ message: "Period not found" });
@@ -78,7 +79,7 @@ router.put("/:id", async (req, res) => {
  * 	Succesful: Period is deleted from database; empty response sent
  * 	Failure: Returns an error message based on the issue
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await periodsHelper.deletePeriod(req);
 	if (response === "Period not found") {
 		return res.json({ message: "Period not found" });

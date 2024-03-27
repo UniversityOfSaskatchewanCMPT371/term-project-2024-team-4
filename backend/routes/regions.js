@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const regionsHelper = require("../helperFiles/regionsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 // GET: Fetch all Regions
 router.get("/", async (req, res) => {
@@ -20,7 +21,7 @@ router.get("/", async (req, res) => {
  * 	Success: Returns the newly created Region object
  * 	Failure: Returns an error message indicating the failure reason
  */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await regionsHelper.newRegion(req);
 	if (response instanceof Error) {
 		return res.json({ error: response.message });
@@ -57,7 +58,7 @@ router.get("/:id", async (req, res) => {
  * 	Success: Returns the updated Region object
  * 	Failure: Returns an error related to issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await regionsHelper.updateRegion(req);
 	if (response === "Region not found") {
 		return res.json({ message: "Region not found" });
@@ -77,7 +78,7 @@ router.put("/:id", async (req, res) => {
  * 	Success: Region is deleted from the database; sends an empty response
  * 	Failure: Returns an error message indicating the failure reason
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await regionsHelper.deleteRegion(req);
 	if (response === "Region not found") {
 		return res.json({ message: "Region not found" });
