@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const materialsHelper = require("../helperFiles/materialsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
-// POST: create a new Material
 /**
  * POST: Create a new Material
  * @param {*} req - req.body containing material: name, description, artifactTypeId
@@ -12,7 +12,7 @@ const materialsHelper = require("../helperFiles/materialsHelper.js");
  *  Succesful: Returns newly created Material object
  * 	Failure: Returns error message based on what went wrong
  */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await materialsHelper.newMaterial(req);
 	if (response === "ArtifactType not found") {
 		return res.json({ message: "ArtifactType not found" });
@@ -72,7 +72,7 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: Returns the updated Material object
  * 	Failure: Returns an error message relating to the issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await materialsHelper.updateMaterial(req);
 	if (response === "Material not found") {
 		return res.json({ message: "Material not found" });
@@ -96,7 +96,7 @@ router.put("/:id", async (req, res) => {
  * 	Failure: Returns an error message relating to the issue
  */
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await materialsHelper.deleteMaterial(req);
 	if (response === "Material not found") {
 		return res.json({ message: "Material not found" });

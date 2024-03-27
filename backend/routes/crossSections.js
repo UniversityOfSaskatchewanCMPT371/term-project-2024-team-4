@@ -2,6 +2,7 @@ const express = require("express");
 const assert = require("node:assert/strict");
 const router = express.Router();
 const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 /**
  * POST: Create a new CrossSection.
@@ -12,16 +13,7 @@ const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
  * @post A new CrossSection entity is created in the database.
  * @return Returns the newly created CrossSection object.
  */
-/**
- * POST: Create a new CrossSection.
- * @route POST /crossSections
- * @param req Express request object, expecting 'name' in the request body.
- * @param res Express response object used for returning the created CrossSection.
- * @pre 'name' field must be provided and should be unique.
- * @post A new CrossSection entity is created in the database.
- * @return Returns the newly created CrossSection object.
- */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await crossSectionsHelper.newCrossSection(req);
 	if (response instanceof Error) {
 		return res
@@ -74,7 +66,7 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified CrossSection in the database.
  * @return Returns the updated CrossSection object or a message indicating the CrossSection was not found.
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await crossSectionsHelper.updateCrossSection(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });
@@ -91,7 +83,7 @@ router.put("/:id", async (req, res) => {
  * @post Deletes the specified CrossSection from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await crossSectionsHelper.deleteCrossSection(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });

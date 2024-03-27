@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const sitesHelper = require("../helperFiles/sitesHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 // POST: Create a New Site
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const newSite = await sitesHelper.newSite(req);
 	if (newSite instanceof Error) {
 		return res.json({ error: newSite.message });
@@ -57,7 +58,7 @@ router.get("/:id", async (req, res) => {
  * 	Success: Returns the updated Site object
  * 	Failure: Returns an error message related to issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const siteToUpdate = await sitesHelper.updateSite(req);
 	if (siteToUpdate === "Site not found") {
 		return res.json({ message: "Site not found" });
@@ -77,7 +78,7 @@ router.put("/:id", async (req, res) => {
  * 	Success: Site is deleted from the database; sends an empty response
  * 	Failure: Returns an error message related to issue
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const result = await sitesHelper.deleteSite(req);
 	if (result === "Site not found") {
 		return res.json({ message: "Site not found" });

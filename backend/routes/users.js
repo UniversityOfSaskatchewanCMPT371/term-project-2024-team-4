@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const registerUser = require("../helpers/register");
 const { logger } = require("../config/logger");
 require("dotenv").config();
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 // JWT Secret is in .env file
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -95,7 +96,7 @@ router.post("/", async (req, res) => {
  * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
  */
 // POST route for user logout
-router.post("/logout", async (req, res) => {
+router.post("/logout", authenticateAdmin, async (req, res) => {
 	try {
 		// Clear the token cookie
 		res.clearCookie("token", {
@@ -165,7 +166,7 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
  * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
  */
 // PATCH route for admin to update username and password
-router.patch("/:userId", async (req, res) => {
+router.patch("/:userId", authenticateAdmin, async (req, res) => {
 	const { userId } = req.params;
 	const { userName, password } = req.body;
 	// Check if userId is provided

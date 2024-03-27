@@ -32,7 +32,7 @@ const authenticateAdmin = (req, res, next) => {
 
 	if (!token) {
 		// no token = not admin, return 400 status
-		logger.info("Invalid Token: No token provided");
+		logger.warn("Invalid Token: No token provided");
 		return res
 			.status(401)
 			.json({ message: "Access denied. No token provided" });
@@ -48,7 +48,7 @@ const authenticateAdmin = (req, res, next) => {
 		next();
 	} catch (error) {
 		// invalid token, return 400 status
-		logger.info("Invalid Token: Token provided was invalid");
+		logger.warn("Invalid Token: Token provided was invalid");
 		return res
 			.status(401)
 			.json({ message: "Access denied. Invalid token provided." });

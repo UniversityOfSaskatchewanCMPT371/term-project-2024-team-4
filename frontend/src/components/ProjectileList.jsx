@@ -14,7 +14,8 @@ import {
 	Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 /**
  * Create styled Item component, based on Paper MUI component
  */
@@ -40,7 +41,7 @@ export default function ProjectileList({ query, siteId }) {
 	const [openView, setOpenView] = useState(false);
 	const [projectilePointId, setProjectilePointId] = useState(0);
 	const [data, setData] = useState([]);
-
+	const { user } = useContext(UserContext);
 	/**
 	 * Toggle add projectile modal visibility to true
 	 */
@@ -87,16 +88,18 @@ export default function ProjectileList({ query, siteId }) {
 				<Grid maxWidth="md" style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>
-							<Grid item xs={12} sm={6} md={3}>
-								<ButtonBase onClick={handleClick1}>
-									<Card sx={{ minWidth: 170, minHeight: 150 }}>
-										<CardContent style={{ textAlign: "center" }}>
-											<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
-											{/*<CreateArtifact style={{ fontSize: 80, color: "lightgrey" }} />*/}
-										</CardContent>
-									</Card>
-								</ButtonBase>
-							</Grid>
+							{user && user.userName && (
+								<Grid item xs={12} sm={6} md={3}>
+									<ButtonBase onClick={handleClick1}>
+										<Card sx={{ minWidth: 170, minHeight: 150 }}>
+											<CardContent style={{ textAlign: "center" }}>
+												<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
+												{/*<CreateArtifact style={{ fontSize: 80, color: "lightgrey" }} />*/}
+											</CardContent>
+										</Card>
+									</ButtonBase>
+								</Grid>
+							)}
 							{filteredData &&
 								filteredData.map((item) => (
 									<Grid item xs={12} sm={6} md={3} key={item.id}>

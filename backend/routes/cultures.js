@@ -2,6 +2,7 @@ const express = require("express");
 const assert = require("node:assert/strict");
 const router = express.Router();
 const culturesHelper = require("../helperFiles/culturesHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 /**
  * POST: Creates a new Culture.
@@ -12,16 +13,7 @@ const culturesHelper = require("../helperFiles/culturesHelper.js");
  * @post A new Culture entity associated with the specified Period is created in the database.
  * @return Returns the newly created Culture object or an error message if creation fails.
  */
-/**
- * POST: Creates a new Culture.
- * @route POST /cultures
- * @param req Express request object, expecting 'name' and 'periodId' in the request body.
- * @param res Express response object used for returning the newly created Culture.
- * @pre 'name' field must be provided and 'periodId' must reference an existing Period.
- * @post A new Culture entity associated with the specified Period is created in the database.
- * @return Returns the newly created Culture object or an error message if creation fails.
- */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await culturesHelper.newCulture(req);
 	if (response instanceof Error) {
 		return res
@@ -74,16 +66,7 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified Culture in the database.
  * @return Returns the updated Culture object or a message indicating the Culture or Period was not found.
  */
-/**
- * PUT: Updates an existing Culture.
- * @route PUT /cultures/:id
- * @param req Express request object containing the new 'name' and 'periodId' for the Culture.
- * @param res Express response object used for returning the updated Culture.
- * @pre The Culture with the given ID must exist in the database, and 'periodId' must reference an existing Period if provided.
- * @post Updates and returns the specified Culture in the database.
- * @return Returns the updated Culture object or a message indicating the Culture or Period was not found.
- */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await culturesHelper.updateCulture(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });
@@ -100,7 +83,7 @@ router.put("/:id", async (req, res) => {
  * @post Deletes the specified Culture from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await culturesHelper.deleteCulture(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });

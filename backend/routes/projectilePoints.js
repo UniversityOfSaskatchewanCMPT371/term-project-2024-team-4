@@ -1,12 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 // POST: Create a new ProjectilePoint
 // This endpoint handles the creation of a new ProjectilePoint.
 // It extracts various properties from the request body, including related entities like Culture and BladeShape.
 // Each related entity is fetched from the database to ensure it exists before associating it with the new ProjectilePoint.
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const newProjectilePoint =
 		await projectilePointsHelper.newProjectilePoint(req);
 	if (newProjectilePoint instanceof Error) {
@@ -65,7 +66,7 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: returns updated projectile point
  * 	Failure: Returns an error message related to the issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const projectilePoint =
 		await projectilePointsHelper.updateProjectilePoint(req);
 	if (projectilePoint === "ProjectilePoint not found") {
@@ -86,7 +87,7 @@ router.put("/:id", async (req, res) => {
  * 	Succesful: ProjectilePoint is deleted; empty response is sent
  *  Failure: Returns an error message related to the issue
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const result = await projectilePointsHelper.deleteProjectilePoint(req);
 	if (result === "ProjectilePoint not found") {
 		return res.json({ message: "ProjectilePoint not found" });

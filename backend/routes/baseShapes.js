@@ -2,6 +2,7 @@ const express = require("express");
 const assert = require("node:assert/strict");
 const router = express.Router();
 const baseShapesHelper = require("../helperFiles/baseShapesHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 /**
  * POST: Create a new BaseShape.
@@ -12,16 +13,7 @@ const baseShapesHelper = require("../helperFiles/baseShapesHelper.js");
  * @post A new BaseShape is created and saved in the database.
  * @return Returns the newly created BaseShape object.
  */
-/**
- * POST: Create a new BaseShape.
- * @route POST /baseShapes
- * @param req Express request object, expecting 'name' in the request body.
- * @param res Express response object used for returning the newly created BaseShape.
- * @pre The request body must contain a 'name' field.
- * @post A new BaseShape is created and saved in the database.
- * @return Returns the newly created BaseShape object.
- */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await baseShapesHelper.newBaseShape(req);
 	if (response instanceof Error) {
 		return res
@@ -74,7 +66,7 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified BaseShape in the database.
  * @return Returns the updated BaseShape object or a message indicating the BaseShape was not found.
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await baseShapesHelper.updateBaseShape(req);
 	if (response instanceof Error) {
 		return res
@@ -93,7 +85,7 @@ router.put("/:id", async (req, res) => {
  * @post Deletes the specified BaseShape from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await baseShapesHelper.deleteBaseShape(req);
 	if (response instanceof Error) {
 		return res.status(500).json({ error: response.message });
