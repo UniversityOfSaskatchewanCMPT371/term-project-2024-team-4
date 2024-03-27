@@ -257,33 +257,25 @@ const AddProjectile = ({ setOpenAdd }) => {
 			(period) => period.name.trim() === selectedPeriodName,
 		);
 
-		let relatedCultures = [];
-		if (selectedPeriod && selectedPeriod.cultures) {
-			relatedCultures = selectedPeriod.cultures;
-		}
+		if (selectedPeriod?.cultures?.length > 0) {
+			const relatedCulture = selectedPeriod.cultures[0];
+			setSelectedCulture(relatedCulture.name.trim());
 
-		// Update the cultures dropdown based on the selected period
-		setCultures(relatedCultures);
-
-		// If there's one culture associated with the selected period, automatically select its name
-		if (relatedCultures.length >= 1) {
-			setSelectedCulture(relatedCultures[0].name.trim());
-			updateRelatedFields(relatedCultures[0].id);
+			// Setting related shape states
+			if (relatedCulture.bladeShapes?.length > 0) {
+				setSelectedBladeShapeID(relatedCulture.bladeShapes[0].id);
+			}
+			if (relatedCulture.baseShapes?.length > 0) {
+				setSelectedBaseShapeID(relatedCulture.baseShapes[0].id);
+			}
+			if (relatedCulture.crossSections?.length > 0) {
+				setSelectedCrossSectionID(relatedCulture.crossSections[0].id);
+			}
+			if (relatedCulture.haftingShapes?.length > 0) {
+				setSelectedHaftingShapeID(relatedCulture.haftingShapes[0].id);
+			}
 		} else {
 			setSelectedCulture("");
-		}
-	};
-
-	const updateRelatedFields = (cultureId) => {
-		const selectedCulture = allCultures.find(
-			(culture) => culture.id === cultureId,
-		);
-		if (selectedCulture) {
-			// Set the corresponding state for each attribute
-			setBladeShapeID(selectedCulture.bladeShapeId);
-			setBaseShapeID(selectedCulture.baseShapeId);
-			setHaftingShapeID(selectedCulture.haftingShapeId);
-			setCrossSectionID(selectedCulture.crossSectionId);
 		}
 	};
 
@@ -345,12 +337,18 @@ const AddProjectile = ({ setOpenAdd }) => {
 			(culture) => culture.name === selectedCultureName,
 		);
 
+		let relatedCultures = [];
+		if (selectedCulture && selectedCulture.cultures) {
+			relatedCultures = selectedCulture.cultures;
+		}
+
 		// If a culture is found and it has an associated period
 		if (selectedCulture && selectedCulture.period) {
 			// filter the periods dropdown to only include the period associated with the selected culture,
 			setPeriods([selectedCulture.period]);
 			// Automatically select this period in the periods dropdown
 			setSelectedPeriod(selectedCulture.period.name);
+			// updateRelatedFields(relatedCultures[0].id);
 		} else {
 			// If no culture is selected or if the selected culture has no associated period,
 			// reset the periods dropdown to the full list of periods.
