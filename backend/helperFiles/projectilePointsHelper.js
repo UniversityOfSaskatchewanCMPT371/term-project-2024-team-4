@@ -18,7 +18,6 @@ async function newProjectilePoint(req) {
 		location,
 		description,
 		dimensions,
-		photo,
 		siteId,
 		artifactTypeId,
 		cultureId,
@@ -28,7 +27,9 @@ async function newProjectilePoint(req) {
 		crossSectionId,
 	} = req.body;
 
-	console.log("Creating new Projectile Point: " + req.body);
+	const photo = req.file ? req.file.path : null;
+
+	console.log("Creating new Projectile Point: " +  JSON.stringify(req.body));
 
 	try {
 		// Fetch related entities by their IDs

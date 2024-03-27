@@ -1,12 +1,25 @@
 const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+const multer = require("multer");
+const path = require("path");
+
+const storage = multer.diskStorage({
+	destination: "./uploads/",
+	filename: function (req, file, cb) {
+	  cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+	},
+});
+  
+// Multer middleware
+const upload = multer({ storage });
 
 // POST: Create a new ProjectilePoint
 // This endpoint handles the creation of a new ProjectilePoint.
 // It extracts various properties from the request body, including related entities like Culture and BladeShape.
 // Each related entity is fetched from the database to ensure it exists before associating it with the new ProjectilePoint.
-router.post("/", async (req, res) => {
+router.post("/", upload.single("photo"), async (req, res) => {
+	console.log("Uploaded file:", req.file);
 	const newProjectilePoint =
 		await projectilePointsHelper.newProjectilePoint(req);
 	if (newProjectilePoint instanceof Error) {

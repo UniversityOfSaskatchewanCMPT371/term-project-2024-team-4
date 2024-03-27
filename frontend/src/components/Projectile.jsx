@@ -88,7 +88,12 @@ const ViewProjectile = ({ setOpen, projectilePointId }) => {
 							{dimensions}
 						</Typography>
 						<Typography variant="h4" component="h2">
-							{photoFilePath}
+							{photoFilePath && (
+								<a href={`http://localhost:3000/${photoFilePath}`} target="_blank" rel="noopener noreferrer">
+									<img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />
+								</a>
+							)}
+							{/* {photoFilePath && <img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />} */}
 						</Typography>
 						<Typography variant="h4" component="h2">
 							{artifactTypeID}

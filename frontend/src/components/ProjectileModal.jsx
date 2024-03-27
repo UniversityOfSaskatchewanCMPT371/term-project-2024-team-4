@@ -47,7 +47,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [dimensions, setDimensions] = useState("");
-	const [photoFilePath, setPhotoFilePath] = useState("");
+	const [photoFilePath, setPhotoFilePath] = useState(null);
 	const [artifactTypeID, setArtifactTypeID] = useState("");
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
@@ -154,29 +154,30 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	const handlePhotoFilePathChange = (event) => {
-		setPhotoFilePath(event.target.value);
+		setPhotoFilePath(event.target.files[0]);
 	};
+	
 
 	const handleSubmit = () => {
 		log.info("Adding new projectile");
 
-		const newProjectilePoint = {
-			name: siteID + "-" + name,
-			location,
-			description,
-			dimensions,
-			photo: photoFilePath,
-			siteId: siteID,
-			artifactTypeId: artifactTypeID,
-			cultureId: cultureID,
-			bladeShapeId: bladeShapeID,
-			baseShapeId: baseShapeID,
-			haftingShapeId: haftingShapeID,
-			crossSectionId: crossSectionID,
-		};
+		
+		const formData = new FormData();
+		formData.append("name", siteID + "-" + name);
+		formData.append("location", location);
+		formData.append("description", description);
+		formData.append("dimensions", dimensions);
+		formData.append("photo", photoFilePath);
+		formData.append("siteId", siteID);
+		formData.append("artifactTypeId", artifactTypeID);
+		formData.append("cultureId", cultureID);
+		formData.append("bladeShapeId", bladeShapeID);
+		formData.append("baseShapeId", baseShapeID);
+		formData.append("haftingShapeId", haftingShapeID);
+		formData.append("crossSectionId", crossSectionID);
 
 		http
-			.post("/projectilePoints", newProjectilePoint)
+			.post("/projectilePoints", formData)
 			.then((response) => {
 				console.log("New projectile point added successfully:", response.data);
 				handleClose();
@@ -185,8 +186,23 @@ const AddProjectile = ({ setOpenAdd }) => {
 				console.error("Error adding new  projectile point:", error);
 			});
 		//setOpen(true);
-		console.log("Submitted:", newProjectilePoint);
+		console.log("Submitted:", formData);
 	};
+
+	// const newProjectilePoint = {
+	// 	name: siteID + "-" + name,
+	// 	location,
+	// 	description,
+	// 	dimensions,
+	// 	photo: photoFilePath,
+	// 	siteId: siteID,
+	// 	artifactTypeId: artifactTypeID,
+	// 	cultureId: cultureID,
+	// 	bladeShapeId: bladeShapeID,
+	// 	baseShapeId: baseShapeID,
+	// 	haftingShapeId: haftingShapeID,
+	// 	crossSectionId: crossSectionID,
+	// };
 
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
@@ -944,14 +960,19 @@ const AddProjectile = ({ setOpenAdd }) => {
 								onChange={handleDimensionsChange}
 							/>
 							{/* <FileUpload margin="dense" /> */}
-							<TextField
+							{/* <TextField
 								margin="dense"
 								id="photoFilePath"
 								label="Photo File Path"
 								fullWidth
+								type="file"
 								value={photoFilePath}
 								onChange={handlePhotoFilePathChange}
-							/>
+							/> */}
+							<label>
+        Upload Photo:
+								<input type="file" onChange={handlePhotoFilePathChange} />
+							</label>
 							{/* ------------ Start of BaseShapeModal  ------------- */}
 							<TextField
 								select
