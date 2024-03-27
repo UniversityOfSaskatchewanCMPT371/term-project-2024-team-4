@@ -2,12 +2,13 @@ require("reflect-metadata");
 const createError = require("http-errors");
 const express = require("express");
 const path = require("path");
-const cookieParser = require("cookie-parser");
 const { morganIntegration } = require("./config/logger");
 const cors = require("cors");
+
 // const { synchModels } = require("./models");
 // const dataSource = require("./config/db");
 
+const healthRouter = require("./routes/health");
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 
@@ -26,7 +27,12 @@ const artifactTypeRouter = require("./routes/artifactTypes");
 const artifactRouter = require("./routes/artifacts");
 const materialRouter = require("./routes/materials");
 
+const aggregateStatisticsGeneratorRouter = require("./routes/aggregateStatisticsGenerators");
+
 const projectilePointsRouter = require("./routes/projectilePoints");
+
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 
 const app = express();
 
@@ -39,7 +45,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(cors());
 
 // Synchronize models with the database
 // synchModels()
@@ -50,6 +55,19 @@ app.use(cors());
 //     console.error("Database synchronization failed:", error);
 //   });
 
+// Middleware
+app.use(bodyParser.json());
+
+// Use CORS middleware
+app.use(
+	cors({
+		origin: "http://localhost:8080", // Replace with your frontend's URL
+		methods: ["POST", "GET", "DELETE", "PATCH", "PUT"],
+		credentials: true, // Enable credentials (cookies, authorization headers)
+	}),
+);
+
+app.use("/", healthRouter);
 app.use("/", indexRouter);
 app.use("/users", usersRouter);
 
@@ -69,6 +87,8 @@ app.use("/artifacts", artifactRouter);
 app.use("/materials", materialRouter);
 
 app.use("/projectilepoints", projectilePointsRouter);
+
+app.use("/aggregateStatisticsGenerators", aggregateStatisticsGeneratorRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

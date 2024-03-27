@@ -1,114 +1,110 @@
-const { Material, ArtifactType } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const materialsHelper = require("../helperFiles/materialsHelper.js");
 
 // POST: create a new Material
+/**
+ * POST: Create a new Material
+ * @param {*} req - req.body containing material: name, description, artifactTypeId
+ * @param {*} res - response to client
+ * @precond req.body contains valid fields: name, description, artifactTypeId
+ * @postcond
+ *  Succesful: Returns newly created Material object
+ * 	Failure: Returns error message based on what went wrong
+ */
 router.post("/", async (req, res) => {
-	const { name, description, artifactTypeId } = req.body;
-	try {
-		let artifactType = null;
-		if (artifactTypeId) {
-			artifactType = await myDatabase
-				.getRepository(ArtifactType)
-				.findOneBy({ id: artifactTypeId });
-			if (!artifactType) {
-				return res.json({ message: "ArtifactType not found" });
-			}
-		}
-
-		const newMaterial = myDatabase.getRepository(Material).create({
-			name,
-			description,
-			artifactType,
-		});
-
-		await myDatabase.getRepository(Material).save(newMaterial);
-		res.json(newMaterial);
-	} catch (error) {
-		console.error("Error creating Material:", error);
-		res.json({ error: error.message });
+	const response = await materialsHelper.newMaterial(req);
+	if (response === "ArtifactType not found") {
+		return res.json({ message: "ArtifactType not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
-// GET: Fetch all Materials
+/**
+ * GET: Fetch ALL materials
+ * @param {*} req - unused
+ * @param {*} res - response to client containing all materials
+ * @precond Database is accessible
+ * @postcond
+ * 	Succesful: Returns an array of all Material objects
+ *  Failure: Returns an error message relating to issue
+ */
 router.get("/", async (req, res) => {
-	try {
-		const materials = await myDatabase.getRepository(Material).find({
-			relations: ["artifactType", "artifacts"],
-		});
-		res.json(materials);
-	} catch (error) {
-		console.error("Error fetching Materials:", error);
-		res.json({ error: error.message });
+	const response = await materialsHelper.getAllMaterials();
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// GET: Fetch a single Material
+/**
+ * GET: Fetch a SINGLE material using ID
+ * @param {*} req - req URL parameter contains the id
+ * @param {*} res - response client contains a single material
+ * @precond req URL parameter contains a valid ID in the database
+ * @postcond
+ * 	Succesful: Returns requested material object (given ID)
+ *  Failure: Returns an error message relating to issue
+ */
 router.get("/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		const material = await myDatabase.getRepository(Material).findOne({
-			where: { id },
-			relations: ["artifactType", "artifacts"],
-		});
-		if (!material) {
-			res.json({ message: "Material not found" });
-		} else {
-			res.json(material);
-		}
-	} catch (error) {
-		console.error("Error fetching Material:", error);
-		res.json({ error: error.message });
+	const response = await materialsHelper.getMaterialById(req);
+	if (response === "Material not found") {
+		return res.json({ message: "Material not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
 // PUT: Update a single Material
+/**
+ * PUT: Update a SINGLE material given the ID
+ * @param {*} req - req URL parameters contain material ID. req body contains name, description, and artifactTypeID
+ * @param {*} res - response to client
+ * @precond
+ * 	- req URL Parameters: Material with given material ID exists in Database.
+ *  - req.body: Must have a valid name, description, and artifactTypeID
+ * @postcond
+ * 	Succesful: Returns the updated Material object
+ * 	Failure: Returns an error message relating to the issue
+ */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name, description, artifactTypeId } = req.body;
-	try {
-		let material = await myDatabase.getRepository(Material).findOneBy({ id });
-
-		if (!material) {
-			return res.json({ message: "Material not found" });
-		}
-
-		if (artifactTypeId) {
-			const artifactType = await myDatabase
-				.getRepository(ArtifactType)
-				.findOneBy({ id: artifactTypeId });
-			if (!artifactType) {
-				return res.json({ message: "ArtifactType not found" });
-			}
-			material.artifactType = artifactType;
-		}
-
-		material.name = name;
-		material.description = description;
-
-		await myDatabase.getRepository(Material).save(material);
-		res.json(material);
-	} catch (error) {
-		console.error("Error updating Material:", error);
-		res.json({ error: error.message });
+	const response = await materialsHelper.updateMaterial(req);
+	if (response === "Material not found") {
+		return res.json({ message: "Material not found" });
 	}
+	if (response === "ArtifactType not found") {
+		return res.json({ message: "ArtifactType not found" });
+	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
-// DELETE: Delete a single Material
+/**
+ * DELETE: Delete a SINGLE material given the ID
+ * @param {*} req - req URL parameters contain material ID to delete
+ * @param {*} res - response to the client
+ * @precond Material with specified ID exists in the database
+ * @postcond
+ * 	Succesful: Material is deleted from database; empty response is sent
+ * 	Failure: Returns an error message relating to the issue
+ */
+
 router.delete("/:id", async (req, res) => {
-	const { id } = req.params;
-	try {
-		const deleteResult = await myDatabase.getRepository(Material).delete(id);
-		if (deleteResult.affected > 0) {
-			res.send();
-		} else {
-			res.json({ message: "Material not found" });
-		}
-	} catch (error) {
-		console.error("Error deleting Material:", error);
-		res.json({ error: error.message });
+	const response = await materialsHelper.deleteMaterial(req);
+	if (response === "Material not found") {
+		return res.json({ message: "Material not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.send();
 });
 
 module.exports = router;

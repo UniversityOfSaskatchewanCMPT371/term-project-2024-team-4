@@ -14,7 +14,7 @@
 		"quotes": ["error", "double"],
 		"semi": ["error", "always"]
 	},
-	"ignorePatterns": ["**.ts", "dist/"],
+	"ignorePatterns": ["**.ts", "dist/", "test-report"],
 	"overrides": [
 		{
 			"files": ["tests/**/*.js"],

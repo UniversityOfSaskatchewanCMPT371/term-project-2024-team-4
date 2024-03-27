@@ -11,7 +11,7 @@ module.exports = {
 		"plugin:react-hooks/recommended",
 		"prettier",
 	],
-	ignorePatterns: ["dist", ".eslintrc.cjs"],
+	ignorePatterns: ["dist", ".eslintrc.cjs", "test-report"],
 	parserOptions: {
 		ecmaVersion: "latest",
 		sourceType: "module",
@@ -44,7 +44,11 @@ module.exports = {
 			env: {
 				"vitest-globals/env": true,
 			},
-			extends: ["plugin:vitest-globals/recommended"],
+			extends: [
+				"plugin:vitest-globals/recommended",
+				"prettier",
+				"eslint-config-prettier",
+			],
 			rules: {
 				"no-unused-expressions": "off",
 				"react/prop-types": "off",

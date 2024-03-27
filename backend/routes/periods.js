@@ -1,90 +1,92 @@
-const { Period } = require("../dist/entity");
 const express = require("express");
 const router = express.Router();
-const myDatabase = require("../config/db");
+const periodsHelper = require("../helperFiles/periodsHelper.js");
 
 // POST: Create a New Period
 router.post("/", async (req, res) => {
-	const { name, start, end } = req.body;
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const newPeriod = periodRepository.create({ name, start, end });
-		await periodRepository.save(newPeriod);
-		res.json(newPeriod);
-	} catch (error) {
-		console.error("Error creating new Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.newPeriod(req);
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// GET: Fetch all Periods
+/**
+ * GET: Fetch ALL Periods
+ * @param {*} req - unused
+ * @param {*} res - response from client contains all periods from database
+ * @precond Database is accessible
+ * @postcond
+ * 	Success: Returns all periods from the database
+ * 	Failure: Returns an error message based on what went wrong
+ */
 router.get("/", async (req, res) => {
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const periods = await periodRepository.find({ relations: ["cultures"] });
-		res.json(periods);
-	} catch (error) {
-		console.error("Error fetching Periods:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.getAllPeriods();
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
 	}
+	return res.json(response);
 });
 
-// GET: Fetch a Period by ID
+/**
+ * GET: Fetch a SINGLE period given the ID
+ * @param {*} req - req URL parameter contains the period ID
+ * @param {*} res - response to client
+ * @precond req URL parameter contains a valid period ID that exists in the database
+ * @postcond
+ * 	Succesful: Returns the SINGLE requested period object
+ * 	Failure: returns  an error messaged based on issue
+ */
+
 router.get("/:id", async (req, res) => {
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const period = await periodRepository.findOne({
-			where: { id: parseInt(req.params.id) },
-			relations: ["cultures"],
-		});
-		if (period) {
-			res.json(period);
-		} else {
-			res.send("Period not found");
-		}
-	} catch (error) {
-		console.error("Error fetching Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.getPeriodById(req);
+	if (response === "Period not found") {
+		return res.json({ message: "Period not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
-// PUT: Update an existing Period
+/**
+ * PUT: Update a SINGLE existing period
+ * @param {*} req - req URL paramter contains the period ID, req.body contains valid: name, start, end
+ * @param {*} res - response to client
+ * @precond req URL parameter contains existing period ID; req.body contains valid: name, start, end
+ * @postcond
+ * 	Success: Returns the updated Period object
+ * 	Failure: Returns an error message based on the issue
+ */
 router.put("/:id", async (req, res) => {
-	const { id } = req.params;
-	const { name, start, end } = req.body;
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		let periodToUpdate = await periodRepository.findOneBy({ id: parseInt(id) });
-		if (periodToUpdate) {
-			periodToUpdate.name = name;
-			periodToUpdate.start = start;
-			periodToUpdate.end = end;
-			await periodRepository.save(periodToUpdate);
-			res.json(periodToUpdate);
-		} else {
-			res.json({ message: "Period not found" });
-		}
-	} catch (error) {
-		console.error("Error updating Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.updatePeriod(req);
+	if (response === "Period not found") {
+		return res.json({ message: "Period not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.json(response);
 });
 
-// DELETE: Delete an existing Period
+/**
+ * DELETE: delete a SINGLE existing period given an ID
+ * @param {*} req - req URL parameter contains id
+ * @param {*} res - response to the client
+ * @precond period ID from req URL parameter exists in the database
+ * @postcond
+ * 	Succesful: Period is deleted from database; empty response sent
+ * 	Failure: Returns an error message based on the issue
+ */
 router.delete("/:id", async (req, res) => {
-	const id = parseInt(req.params.id);
-	try {
-		const periodRepository = await myDatabase.getRepository(Period);
-		const deleteResult = await periodRepository.delete(id);
-		if (deleteResult.affected > 0) {
-			res.send();
-		} else {
-			res.json({ message: "Period not found" });
-		}
-	} catch (error) {
-		console.error("Error deleting Period:", error);
-		res.json({ error: error.message });
+	const response = await periodsHelper.deletePeriod(req);
+	if (response === "Period not found") {
+		return res.json({ message: "Period not found" });
 	}
+	if (response instanceof Error) {
+		return res.json({ error: response.message });
+	}
+	return res.send();
 });
 
 module.exports = router;

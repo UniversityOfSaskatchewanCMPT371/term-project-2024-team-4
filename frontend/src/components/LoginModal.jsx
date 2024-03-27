@@ -1,5 +1,6 @@
 import { useState } from "react";
-import logger from "../logger.js";
+import log from "../logger.js";
+import http from "../../http.js";
 
 // MUI
 import Button from "@mui/material/Button";
@@ -10,65 +11,76 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
-// TODO: fetch login credentials using API endpoint
-// async function loginUser(credentials) {
-// 	logger.info("Login button clicked");
-
-// 	return fetch("URL", {
-// 		method: "POST",
-// 		headers: {
-// 			"Content-Type": "application/json",
-// 		},
-// 		body: JSON.stringify(credentials),
-// 	}).then((data) => data.json());
-// }
-
+/**
+ * Modal for admin user login
+ * @param {boolean} modalVisible to set modal visibility
+ * @param {function} closeModal hide modal
+ * @pre None
+ * @post Renders login modal
+ * @returns {JSX.Element} LoginModal React component
+ */
 // eslint-disable-next-line react/prop-types
 function LoginModal({ modalVisible, closeModal }) {
 	const [userName, setUserName] = useState();
 	const [password, setPassword] = useState();
 
+	/**
+	 * Submit login information for authentication
+	 * @param {object} event login form values
+	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		//**Not needed yet */
-		// const response = await loginUser({
-		//   username,
-		//   password
-		// });
+		try {
+			const response = await http.post("/users", {
+				userName,
+				password,
+			});
 
-		/***
-		 * These loggers are for testing to make sure that the information is properly passed
-		 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
-		 */
-		logger.info("Username entered: " + userName);
-		logger.info("Password entered: " + password);
+			/***
+			 * These loggers are for testing to make sure that the information is properly passed
+			 * MAKE SURE THESE ARE REMOVED BEFORE RELEASE, VERY IMPORTANT
+			 */
+			log.info("Username entered: " + userName);
+			log.info("Password entered: " + password);
 
-		//**Not needed yet */
-		// if ('accessToken' in response) {
-		//   swal("Success", response.message, "success", {
-		//     buttons: false,
-		//     timer: 2000,
-		//   })
-		//   .then((value) => {
-		//     localStorage.setItem('accessToken', response['accessToken']);
-		//     localStorage.setItem('user', JSON.stringify(response['user']));
-		//     window.location.href = "/profile";
-		//   });
-		// } else {
-		//   // Login failed alert message
-		// }
+			if (response.status === 200) {
+				// Login successful
+				alert("Login successful");
+				closeModal(); // Close the modal after successful login
+				window.location.reload();
+			}
+		} catch (error) {
+			if (error.response) {
+				// Request made and server responded with a status code that falls out of the range of 2xx
+				if (error.response.status === 401) {
+					// Unauthorized: Invalid username or password
+					alert("Invalid username or password");
+				} else {
+					// Other server errors
+					alert("An error occurred. Please try again later.");
+				}
+			} else if (error.request) {
+				// The request was made but no response was received
+				alert("Network error. Please check your internet connection.");
+			} else {
+				// Something happened in setting up the request that triggered an error
+				console.error("Error:", error.message);
+			}
+		}
 	};
 
 	/**
-	 * This is for when the username is entered into the textbox to update the state of the component
+	 * Set user name value every textfield input change
+	 * @param {object} event input textfield event object
 	 */
 	const userNameChanged = (event) => {
 		setUserName(event.target.value);
 	};
 
 	/**
-	 * For when the password is entered into the texbox to update the state of the component
+	 * Set password value every textfield input change
+	 * @param {object} event input textfield event object
 	 */
 	const passwordChanged = (event) => {
 		setPassword(event.target.value);

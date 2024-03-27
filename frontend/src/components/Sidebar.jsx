@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import logger from "../logger.js";
 import LoginModal from "./LoginModal";
-
+import http from "../../http.js";
+import { Link } from "react-router-dom";
 // MUI
 import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
@@ -18,11 +19,14 @@ import BarChartIcon from "@mui/icons-material/BarChart";
 import FolderCopyIcon from "@mui/icons-material/FolderCopy";
 import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
 import LoginIcon from "@mui/icons-material/Login";
+import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { styled } from "@mui/material/styles";
 
 const drawerWidth = 240;
 
-// create SidebarList component and styling, based on List MUI component
+/**
+ * Styled List component for the sidebar navigation.
+ */
 const SidebarList = styled(List)(() => ({
 	padding: "10px",
 	// selected and (selected + hover) states
@@ -43,27 +47,93 @@ const SidebarList = styled(List)(() => ({
 	},
 }));
 
-// create SidebarIcon component and styling, based on ListItemIcon MUI component
+/**
+ * Styled Icon component for the sidebar navigation.
+ */
 const SidebarIcon = styled(ListItemIcon)(() => ({
 	minWidth: "47px",
 }));
 
+/**
+ * Sidebar functional component
+ * Renders a navigation drawer with links and actions for the application.
+ *
+ * @pre None
+ * @post Creates a sidebar with navigation options. User's login status is checked on component mount.
+ * @returns {JSX.Element} A rendered sidebar component containing navigation links.
+ */
 function Sidebar() {
 	const [modalVisible, setModalShow] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+	useEffect(() => {
+		/**
+		 * Checks the user's login status with the backend and updates state accordingly.
+		 *
+		 * @pre http must be configured correctly.
+		 * @post Updates isLoggedIn state based on response from backend.
+		 */
+		const checkLoginStatus = async () => {
+			try {
+				const response = await http.get("/users");
+				setIsLoggedIn(!!response.data);
+			} catch (error) {
+				console.error("Error checking login status:", error);
+			}
+		};
+
+		checkLoginStatus();
+	}, []);
+
+	/**
+	 * Logs the sidebar item clicked by the user.
+	 *
+	 * @param {Event} event - The click event from a sidebar item.
+	 * @pre None
+	 * @post Logs the text content of the clicked sidebar item.
+	 */
 	const handleClick = (event) => {
 		logger.info(event.target.innerText + " Sidebar navigation clicked");
 	};
 
+	/**
+	 * Opens the login modal and logs the action.
+	 *
+	 * @param {Event} event - The click event from the login sidebar item.
+	 * @pre None
+	 * @post Sets modalVisible to true and logs the event.
+	 */
 	const setModalVisible = (event) => {
 		handleClick(event);
 		setModalShow(true);
 		logger.info("LoginModal visible");
 	};
 
+	/**
+	 * Closes the login modal and logs the action.
+	 *
+	 * @pre None
+	 * @post Sets modalVisible to false and logs the closure of the modal.
+	 */
 	const closeModal = () => {
 		setModalShow(false);
 		logger.info("LoginModal closed");
+	};
+
+	/**
+	 * Handles the user logout process.
+	 *
+	 * @pre http must be configured correctly.
+	 * @post Sends a logout request to the backend, logs out the user, and reloads the page.
+	 */
+	const handleLogout = async () => {
+		try {
+			await http.post("/users/logout");
+			setIsLoggedIn(false);
+			window.location.reload();
+		} catch (error) {
+			console.error("Error logging out:", error);
+		}
 	};
 
 	return (
@@ -92,14 +162,16 @@ function Sidebar() {
 					</Typography>
 				</Toolbar>
 				<SidebarList>
-					<ListItem key="Home" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<HomeIcon />
-							</SidebarIcon>
-							<ListItemText primary="Home" />
-						</ListItemButton>
-					</ListItem>
+					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+						<ListItem key="Home" disablePadding onClick={handleClick}>
+							<ListItemButton>
+								<SidebarIcon>
+									<HomeIcon />
+								</SidebarIcon>
+								<ListItemText primary="Home" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 					<ListItem key="Connect" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
@@ -111,14 +183,19 @@ function Sidebar() {
 				</SidebarList>
 				<Divider />
 				<SidebarList>
-					<ListItem key="Statistics" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<BarChartIcon />
-							</SidebarIcon>
-							<ListItemText primary="Statistics" />
-						</ListItemButton>
-					</ListItem>
+					<Link
+						to="/stats"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem key="Statistics" disablePadding onClick={handleClick}>
+							<ListItemButton>
+								<SidebarIcon>
+									<BarChartIcon />
+								</SidebarIcon>
+								<ListItemText primary="Statistics" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 					<ListItem key="Data Management" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
@@ -137,14 +214,25 @@ function Sidebar() {
 							<ListItemText primary="Settings" />
 						</ListItemButton>
 					</ListItem>
-					<ListItem key="Login" disablePadding onClick={setModalVisible}>
-						<ListItemButton>
-							<SidebarIcon>
-								<LoginIcon />
-							</SidebarIcon>
-							<ListItemText primary="Login" />
-						</ListItemButton>
-					</ListItem>
+					{isLoggedIn ? (
+						<ListItem key="Logout" disablePadding onClick={handleLogout}>
+							<ListItemButton>
+								<SidebarIcon>
+									<ExitToAppIcon />
+								</SidebarIcon>
+								<ListItemText primary="Logout" />
+							</ListItemButton>
+						</ListItem>
+					) : (
+						<ListItem key="Login" disablePadding onClick={setModalVisible}>
+							<ListItemButton>
+								<SidebarIcon>
+									<LoginIcon />
+								</SidebarIcon>
+								<ListItemText primary="Login" />
+							</ListItemButton>
+						</ListItem>
+					)}
 				</SidebarList>
 			</Drawer>
 			<LoginModal modalVisible={modalVisible} closeModal={closeModal} />
