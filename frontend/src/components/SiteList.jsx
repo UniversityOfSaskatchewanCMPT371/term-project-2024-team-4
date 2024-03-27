@@ -103,7 +103,6 @@ export default function SiteList({ query }) {
 											</CardContent>
 										</Card>
 									</ButtonBase>
-								
 								</Grid>
 							)}
 							{filteredData &&
