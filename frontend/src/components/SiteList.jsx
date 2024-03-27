@@ -16,6 +16,9 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { baseURL } from "../../http";
 
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
+
 /**
  * Item component styled from the Paper MUI component.
  * Intended for use in displaying individual site data as cards.
@@ -41,7 +44,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function SiteList({ query }) {
 	const [open, setOpen] = useState(false); // Controls the visibility of the SiteModal.
 	const [data, setData] = useState([]); // Stores the list of sites.
-
+	const { user } = useContext(UserContext);
 	/**
 	 * Opens the SiteModal when the new site button is clicked.
 	 *
@@ -91,15 +94,18 @@ export default function SiteList({ query }) {
 				<Grid maxWidth="md" style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>
-							<Grid item xs={12} sm={6} md={3}>
-								<ButtonBase onClick={handleClick1}>
-									<Card sx={{ minWidth: 170, minHeight: 150 }}>
-										<CardContent style={{ textAlign: "center" }}>
-											<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
-										</CardContent>
-									</Card>
-								</ButtonBase>
-							</Grid>
+							{user && user.userName && (
+								<Grid item xs={12} sm={6} md={3}>
+									<ButtonBase onClick={handleClick1}>
+										<Card sx={{ minWidth: 170, minHeight: 150 }}>
+											<CardContent style={{ textAlign: "center" }}>
+												<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
+											</CardContent>
+										</Card>
+									</ButtonBase>
+								
+								</Grid>
+							)}
 							{filteredData &&
 								filteredData.map((item) => (
 									<Grid item xs={12} sm={6} md={3} key={item.id}>
