@@ -257,19 +257,17 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 		let relatedCultures = [];
 		if (selectedPeriod && selectedPeriod.cultures) {
-			// Directly use the cultures nested within the found period
 			relatedCultures = selectedPeriod.cultures;
 		}
 
 		// Update the cultures dropdown based on the selected period
 		setCultures(relatedCultures);
 
-		// If there's exactly one culture associated with the selected period, automatically select its name
+		// If there's one culture associated with the selected period, automatically select its name
 		if (relatedCultures.length === 1) {
-			setSelectedCulture(relatedCultures[0].name.trim()); // Set the selectedCulture to the culture's name instead of ID
-			updateRelatedFields(relatedCultures[0].id); // But still use the ID when updating related fields
-		} else {
-			setSelectedCulture(""); // Reset if there's no single match or no cultures at all
+			setSelectedCulture(relatedCultures[0].name.trim());
+			updateRelatedFields(relatedCultures[0].id);
+			setSelectedCulture("");
 		}
 	};
 
@@ -283,7 +281,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 			setBaseShapeID(selectedCulture.baseShapeId);
 			setHaftingShapeID(selectedCulture.haftingShapeId);
 			setCrossSectionID(selectedCulture.crossSectionId);
-			// Add other fields as necessary
 		}
 	};
 
