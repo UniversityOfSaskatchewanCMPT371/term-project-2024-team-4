@@ -973,7 +973,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 								fullWidth
 								value={location}
 								onChange={handleLocationChange}
-								disabled={!selectedPeriod || !selectedCulture}
 							/>
 							{/* The dimensions should be three different fields(length, width, height and )
 						if you are making this change, make sure the database was changed to hold a list of
