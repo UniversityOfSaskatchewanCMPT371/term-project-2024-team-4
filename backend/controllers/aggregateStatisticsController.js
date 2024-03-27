@@ -191,14 +191,21 @@ function projectilePointPercentage(projectilePointArray) {
 function averageProjectilePointDimensions(artifactArray) {
 	assert.notEqual(artifactArray, null);
 	assert.equal(Array.isArray(artifactArray), true);
+
 	//init a new set of dimensions
 	const averageDimensionArray = new Array(0.0, 0.0, 0.0);
 	if (artifactArray.length > 0) {
 		for (let i = 0; i < artifactArray.length; i++) {
 			var currDimensions = artifactArray[i].dimensions;
-			averageDimensionArray[0] += currDimensions[0];
-			averageDimensionArray[1] += currDimensions[1];
-			averageDimensionArray[2] += currDimensions[2];
+			console.log("aggstats 194: " + currDimensions);
+			const currDimensionsStringArray = currDimensions
+				.replace(/\[|\]|\s/g, "")
+				.split(",");
+			const currDimensionsArray = currDimensionsStringArray.map(Number);
+			console.log("aggstats 196: " + currDimensionsArray);
+			averageDimensionArray[0] += currDimensionsArray[0];
+			averageDimensionArray[1] += currDimensionsArray[1];
+			averageDimensionArray[2] += currDimensionsArray[2];
 		}
 		//get tthe average and round to 2 decimal places.
 		averageDimensionArray[0] = parseFloat(
