@@ -183,14 +183,19 @@ function Sidebar() {
 				</SidebarList>
 				<Divider />
 				<SidebarList>
-					<ListItem key="Statistics" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<BarChartIcon />
-							</SidebarIcon>
-							<ListItemText primary="Statistics" />
-						</ListItemButton>
-					</ListItem>
+					<Link
+						to="/stats"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem key="Statistics" disablePadding onClick={handleClick}>
+							<ListItemButton>
+								<SidebarIcon>
+									<BarChartIcon />
+								</SidebarIcon>
+								<ListItemText primary="Statistics" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 					<ListItem key="Data Management" disablePadding onClick={handleClick}>
 						<ListItemButton>
 							<SidebarIcon>
