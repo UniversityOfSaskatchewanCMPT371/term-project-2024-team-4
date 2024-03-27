@@ -197,11 +197,28 @@ function Sidebar() {
 						</ListItem>
 					</Link>
 					<Link
+						to="/manageCultures"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Cultures Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Cultures Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
 						to="/managePeriods"
 						style={{ textDecoration: "none", color: "inherit" }}
 					>
 						<ListItem
-							key="Data Management"
+							key="Periods Data Management"
 							disablePadding
 							onClick={handleClick}
 						>
