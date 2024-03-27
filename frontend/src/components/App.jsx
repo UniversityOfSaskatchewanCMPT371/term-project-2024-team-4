@@ -5,6 +5,7 @@ import Site from "./Site";
 import StatisticsPage from "./StatisticsPage";
 import ManagePeriods from "./ManagementPeriods";
 import ManageCultures from "./ManagementCultures";
+import ManageMaterials from "./ManagementMaterials";
 
 /**
  * Main App component which contains the routing paths
@@ -21,6 +22,7 @@ function App() {
 				<Route path="/stats" element={<StatisticsPage />} />
 				<Route path="/managePeriods" element={<ManagePeriods />} />
 				<Route path="/manageCultures" element={<ManageCultures />} />
+				<Route path="/manageMaterials" element={<ManageMaterials />} />
 				{/* Add new routes here as you make new pages - use '/your_path' as path and the coresponding filename in element. */}
 			</Routes>
 		</UserContextProvider>

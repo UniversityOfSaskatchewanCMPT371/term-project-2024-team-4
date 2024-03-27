@@ -230,6 +230,23 @@ function Sidebar() {
 							</ListItemButton>
 						</ListItem>
 					</Link>
+					<Link
+						to="/manageMaterials"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Materials Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Materials Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
 					<ListItem key="Settings" disablePadding onClick={handleClick}>
