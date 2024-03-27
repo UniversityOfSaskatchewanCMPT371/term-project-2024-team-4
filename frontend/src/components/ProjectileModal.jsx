@@ -91,6 +91,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [cultureModalOpen, setCultureModalOpen] = useState(false);
 	const [editCulture, setEditCulture] = useState(false);
 	const [selectedCultureID, setSelectedCultureID] = useState(null);
+	const [allPeriods, setAllPeriods] = useState([]);
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
@@ -197,6 +198,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("/periods")
 			.then((response) => {
 				setPeriods(response.data);
+				setAllPeriods(response.data);
 				const filteredPeriod = response.data.find(
 					(period) => period.name === selectedPeriod,
 				);
@@ -264,7 +266,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setCultures(relatedCultures);
 
 		// If there's one culture associated with the selected period, automatically select its name
-		if (relatedCultures.length === 1) {
+		if (relatedCultures.length >= 1) {
 			setSelectedCulture(relatedCultures[0].name.trim());
 			updateRelatedFields(relatedCultures[0].id);
 		} else {
@@ -335,9 +337,26 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
 	const handleCultureChange = (event) => {
-		const selectedCultureId = event.target.value;
-		setSelectedCulture(selectedCultureId);
-		updateRelatedFields(selectedCultureId);
+		const selectedCultureName = event.target.value;
+		setSelectedCulture(selectedCultureName);
+
+		// Find the selected culture object based on the selected name
+		const selectedCulture = cultures.find(
+			(culture) => culture.name === selectedCultureName,
+		);
+
+		// If a culture is found and it has an associated period
+		if (selectedCulture && selectedCulture.period) {
+			// filter the periods dropdown to only include the period associated with the selected culture,
+			setPeriods([selectedCulture.period]);
+			// Automatically select this period in the periods dropdown
+			setSelectedPeriod(selectedCulture.period.name);
+		} else {
+			// If no culture is selected or if the selected culture has no associated period,
+			// reset the periods dropdown to the full list of periods.
+			setPeriods(allPeriods);
+			setSelectedPeriod("");
+		}
 	};
 
 	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
