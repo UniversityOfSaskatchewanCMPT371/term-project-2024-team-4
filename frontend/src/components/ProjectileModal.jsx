@@ -247,12 +247,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 				});
 		}
 	};
-
-	const handlePeriodChange = (event) => {
+	const handlePeriodChange = async (event) => {
 		const selectedPeriodName = event.target.value.trim();
 		setSelectedPeriod(selectedPeriodName);
 
-		// Find the selected period from the periods state using the selected period name
 		const selectedPeriod = periods.find(
 			(period) => period.name.trim() === selectedPeriodName,
 		);
@@ -261,22 +259,77 @@ const AddProjectile = ({ setOpenAdd }) => {
 			const relatedCulture = selectedPeriod.cultures[0];
 			setSelectedCulture(relatedCulture.name.trim());
 
-			// Setting related shape states
-			if (relatedCulture.bladeShapes?.length > 0) {
-				setSelectedBladeShapeID(relatedCulture.bladeShapes[0].id);
-			}
-			if (relatedCulture.baseShapes?.length > 0) {
-				setSelectedBaseShapeID(relatedCulture.baseShapes[0].id);
-			}
-			if (relatedCulture.crossSections?.length > 0) {
-				setSelectedCrossSectionID(relatedCulture.crossSections[0].id);
-			}
-			if (relatedCulture.haftingShapes?.length > 0) {
-				setSelectedHaftingShapeID(relatedCulture.haftingShapes[0].id);
-			}
+			// Assuming you have endpoints like /bladeShapes, /baseShapes, etc. that can filter by culture ID
+			fetchShapeData(
+				`/bladeShapes?cultureId=${relatedCulture.id}`,
+				setBladeShapes,
+				setSelectedBladeShape,
+				setSelectedBladeShapeID,
+			);
+			fetchShapeData(
+				`/baseShapes?cultureId=${relatedCulture.id}`,
+				setBaseShapes,
+				setSelectedBaseShape,
+				setSelectedBaseShapeID,
+			);
+			fetchShapeData(
+				`/crossSections?cultureId=${relatedCulture.id}`,
+				setCrossSections,
+				setSelectedCrossSection,
+				setSelectedCrossSectionID,
+			);
+			fetchShapeData(
+				`/haftingShapes?cultureId=${relatedCulture.id}`,
+				setHaftingShapes,
+				setSelectedHaftingShape,
+				setSelectedHaftingShapeID,
+			);
 		} else {
-			setSelectedCulture("");
+			resetShapeSelections();
 		}
+	};
+
+	// Helper function to fetch shape data and update state
+	const fetchShapeData = async (
+		endpoint,
+		setShapes,
+		setSelectedShape,
+		setSelectedShapeID,
+	) => {
+		try {
+			const response = await http.get(endpoint);
+			const shapes = response.data;
+			setShapes(shapes);
+			// Optionally set the selected shape to the first item in the response
+			if (shapes.length > 0) {
+				setSelectedShape(shapes[0].name);
+				setSelectedShapeID(shapes[0].id);
+			} else {
+				setSelectedShape("");
+				setSelectedShapeID(null);
+			}
+		} catch (error) {
+			console.error(`Error fetching data from ${endpoint}:`, error);
+		}
+	};
+
+	// Helper function to reset all shape-related selections to default values
+	const resetShapeSelections = () => {
+		setSelectedBladeShape("");
+		setSelectedBladeShapeID(null);
+		setBladeShapes([]);
+
+		setSelectedBaseShape("");
+		setSelectedBaseShapeID(null);
+		setBaseShapes([]);
+
+		setSelectedCrossSection("");
+		setSelectedCrossSectionID(null);
+		setCrossSections([]);
+
+		setSelectedHaftingShape("");
+		setSelectedHaftingShapeID(null);
+		setHaftingShapes([]);
 	};
 
 	const handleOpenPeriodModal = (periodId = null) => {
@@ -342,7 +395,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 			setPeriods([selectedCulture.period]);
 			// Automatically select this period in the periods dropdown
 			setSelectedPeriod(selectedCulture.period.name);
-			// updateRelatedFields(relatedCultures[0].id);
 		} else {
 			// If no culture is selected or if the selected culture has no associated period,
 			// reset the periods dropdown to the full list of periods.
