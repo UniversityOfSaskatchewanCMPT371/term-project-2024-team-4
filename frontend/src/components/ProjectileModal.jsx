@@ -806,7 +806,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ---------------- End of MaterialModal functions --------------------
 
 	return (
-		<div>
+		<>
 			<Dialog open={true} onClose={handleClose} maxWidth="md" fullWidth>
 				<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
 				<DialogContent style={{ minHeight: "300px" }}>
@@ -1395,7 +1395,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 					updateHaftingShapeList={updateHaftingShapeList}
 				/>
 			)}
-		</div>
+		</>
 	);
 };
 

@@ -8,7 +8,9 @@ import {
 	DialogActions,
 	Grid,
 	Typography,
+	IconButton,
 } from "@mui/material";
+import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 /**
  * Modal for viewing projectile point details
@@ -19,7 +21,7 @@ import {
  * @returns {JSX.Element} ViewProjectile React component
  */
 // eslint-disable-next-line no-unused-vars, react/prop-types
-const ViewProjectile = ({ setOpen, projectilePointId }) => {
+const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
@@ -47,7 +49,7 @@ const ViewProjectile = ({ setOpen, projectilePointId }) => {
 			.get(`/projectilePoints/${projectilePointId}`)
 			.then((response) => {
 				log.info("Projectile point: ", response.data);
-				setName(response.data.name);
+				setName(siteName + "-" + projectilePointId);
 				setDescription(response.data.description);
 				setLocation(response.data.location);
 				setDimensions(response.data.dimensions);
@@ -62,59 +64,108 @@ const ViewProjectile = ({ setOpen, projectilePointId }) => {
 			.catch((error) => {
 				log.error("Error fetching projectile point: ", error);
 			});
-	}, [projectilePointId]);
+	}, [siteName, projectilePointId]);
 
 	return (
 		<Dialog
 			open={true}
 			onClose={handleClose}
-			maxWidth="md"
+			maxWidth="lg"
 			fullWidth
-			PaperProps={{ style: { maxHeight: "80vh" } }}
+			PaperProps={{ style: { maxHeight: "90vh" } }}
 		>
-			<DialogContent style={{ minHeight: "300px" }}>
-				<Grid container spacing={2} sx={{ paddingTop: 0 }}>
-					<Grid item xs={6}>
-						<Typography variant="h4" component="h2">
-							{name}
-						</Typography>
-						<Typography variant="h4" component="h2">
-							{description}
-						</Typography>
-						<Typography variant="h4" component="h2">
-							{location}
-						</Typography>
-						<Typography variant="h4" component="h2">
-							{dimensions}
-						</Typography>
+			<DialogContent style={{ minHeight: "600px" }}>
+				<Grid container spacing={4} sx={{ paddingTop: 0 }}>
+					<Grid item xs={5}>
 						<Typography variant="h4" component="h2">
 							{photoFilePath && (
-								<a href={`http://localhost:3000/${photoFilePath}`} target="_blank" rel="noopener noreferrer">
-									<img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />
+								<a
+									href={`http://localhost:3000/${photoFilePath}`}
+									target="_blank"
+									rel="noopener noreferrer"
+								>
+									<img
+										src={`http://localhost:3000/${photoFilePath}`}
+										alt="Projectile Point"
+										style={{
+											width: "100%",
+											minHeight: "400px",
+											borderRadius: "20px",
+											objectFit: "cover",
+										}}
+									/>
 								</a>
 							)}
 							{/* {photoFilePath && <img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />} */}
 						</Typography>
-						<Typography variant="h4" component="h2">
-							{artifactTypeID}
+						<Typography variant="h6">
+							Description
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
 						</Typography>
+						<Typography variant="body1">{description}</Typography>
 					</Grid>
-					<Grid item xs={6}>
-						<Typography variant="h4" component="h2">
-							{cultureName}
+					<Grid item xs={7}>
+						<Typography sx={{ fontWeight: "bold" }} variant="h4">
+							{name}
 						</Typography>
-						<Typography variant="h4" component="h2">
-							{bladeShapeName}
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Dimensions
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
 						</Typography>
-						<Typography variant="h4" component="h2">
-							{baseShapeName}
+						<Typography variant="body1">{dimensions}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Location
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
 						</Typography>
-						<Typography variant="h4" component="h2">
-							{haftingShapeName}
+						<Typography variant="body1">{location}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Artifact Type
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
 						</Typography>
-						<Typography variant="h4" component="h2">
-							{crossSectionName}
+						<Typography variant="body1">{artifactTypeID}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Culture
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
 						</Typography>
+						<Typography variant="body1">{cultureName}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Base Shape
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
+						</Typography>
+						<Typography variant="body1">{baseShapeName}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Cross Section
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
+						</Typography>
+						<Typography variant="body1">{crossSectionName}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Blade Shape
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
+						</Typography>
+						<Typography variant="body1">{bladeShapeName}</Typography>
+						<Typography sx={{ mt: 2 }} variant="h6">
+							Hafting Shape
+							<IconButton size="small">
+								<MoreHorizIcon />
+							</IconButton>
+						</Typography>
+						<Typography variant="body1">{haftingShapeName}</Typography>
 					</Grid>
 				</Grid>
 			</DialogContent>

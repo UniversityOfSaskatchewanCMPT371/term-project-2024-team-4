@@ -35,7 +35,7 @@ const Item = styled(Paper)(({ theme }) => ({
  * @returns {JSX.Element} ProjectileList React component
  */
 // eslint-disable-next-line react/prop-types
-export default function ProjectileList({ query, siteId }) {
+export default function ProjectileList({ query, siteId, siteName }) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openView, setOpenView] = useState(false);
 	const [projectilePointId, setProjectilePointId] = useState(0);
@@ -105,7 +105,7 @@ export default function ProjectileList({ query, siteId }) {
 											<Card sx={{ minWidth: 170, minHeight: 150 }}>
 												<CardContent>
 													<Typography variant="h5" component="h3">
-														{item.name}
+														{siteName + "-" + item.id}
 													</Typography>
 													<Typography variant="body2" component="p">
 														{item.description}
@@ -127,6 +127,7 @@ export default function ProjectileList({ query, siteId }) {
 					<Projectile
 						setOpen={setOpenView}
 						projectilePointId={projectilePointId}
+						siteName={siteName}
 					/>
 				)}
 			</Typography>

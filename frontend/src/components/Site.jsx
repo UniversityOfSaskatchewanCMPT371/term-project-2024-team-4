@@ -156,7 +156,11 @@ const Site = () => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				<ProjectileList query={searchValue} siteId={siteID} />
+				<ProjectileList
+					query={searchValue}
+					siteId={siteID}
+					siteName={siteName}
+				/>
 			</Grid>
 		</BaseLayout>
 	);
