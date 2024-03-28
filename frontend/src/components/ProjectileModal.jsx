@@ -81,7 +81,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [editPeriod, setEditPeriod] = useState(false);
 	const [periodModalOpen, setPeriodModalOpen] = useState(false);
 	const [selectedPeriodID, setSelectedPeriodID] = useState(null);
-	const [allCultures, setAllCultures] = useState([]);
 
 	// -----------------------------------------------------------------------------------------
 
@@ -91,7 +90,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [cultureModalOpen, setCultureModalOpen] = useState(false);
 	const [editCulture, setEditCulture] = useState(false);
 	const [selectedCultureID, setSelectedCultureID] = useState(null);
-	const [allPeriods, setAllPeriods] = useState([]);
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
@@ -198,7 +196,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.get("/periods")
 			.then((response) => {
 				setPeriods(response.data);
-				setAllPeriods(response.data);
 				const filteredPeriod = response.data.find(
 					(period) => period.name === selectedPeriod,
 				);
@@ -247,6 +244,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 				});
 		}
 	};
+
 	const handlePeriodChange = async (event) => {
 		const selectedPeriodName = event.target.value.trim();
 		setSelectedPeriod(selectedPeriodName);
@@ -255,11 +253,30 @@ const AddProjectile = ({ setOpenAdd }) => {
 			(period) => period.name.trim() === selectedPeriodName,
 		);
 
+		if (selectedPeriod) {
+			// If there are cultures associated with the selected period, update the cultures state
+			if (selectedPeriod.cultures.length > 0) {
+				setCultures(selectedPeriod.cultures);
+				// Optionally, automatically select the first culture
+				setSelectedCulture(selectedPeriod.cultures[0].name);
+				setSelectedCultureID(selectedPeriod.cultures[0].id);
+			} else {
+				// If there are no cultures associated with the selected period, clear the cultures
+				setCultures([]);
+				setSelectedCulture("");
+				setSelectedCultureID(null);
+			}
+		} else {
+			console.error("Selected period not found.");
+			setCultures([]);
+			setSelectedCulture("");
+			setSelectedCultureID(null);
+		}
+
 		if (selectedPeriod?.cultures?.length > 0) {
 			const relatedCulture = selectedPeriod.cultures[0];
 			setSelectedCulture(relatedCulture.name.trim());
 
-			// Assuming you have endpoints like /bladeShapes, /baseShapes, etc. that can filter by culture ID
 			fetchShapeData(
 				`/bladeShapes?cultureId=${relatedCulture.id}`,
 				setBladeShapes,
@@ -397,8 +414,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			// Automatically select this period in the periods dropdown
 			setSelectedPeriod(selectedCulture.period.name);
 		} else {
-			// Reset the periods dropdown to the full list of periods
-			setPeriods(allPeriods);
+			setPeriods([]);
 			setSelectedPeriod("");
 		}
 
