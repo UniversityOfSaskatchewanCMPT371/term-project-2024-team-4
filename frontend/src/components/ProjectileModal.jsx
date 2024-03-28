@@ -396,24 +396,34 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setSelectedCultureID(culture.id);
 	};
 
+	const [isCultureSelected, setIsCultureSelected] = useState(false);
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
 	const handleCultureChange = async (event) => {
 		const selectedCultureName = event.target.value;
 		const selectedCultureId = event.target.id;
 		setCultureID(selectedCultureId);
 		setSelectedCulture(selectedCultureName);
+		setIsCultureSelected(true);
 
 		// Find the selected culture object based on the selected name
 		const selectedCulture = cultures.find(
 			(culture) => culture.name === selectedCultureName,
 		);
 
-		if (selectedCulture && selectedCulture.period) {
-			// Filter the periods dropdown to only include the period associated with the selected culture
-			setPeriods([selectedCulture.period]);
-			// Automatically select this period in the periods dropdown
-			setSelectedPeriod(selectedCulture.period.name);
+		if (selectedCulture) {
+			const filteredPeriods = periods.filter((period) =>
+				period.cultures.some((culture) => culture.name === selectedCultureName),
+			);
+
+			setPeriods(filteredPeriods);
+			if (selectedCulture.period) {
+				setSelectedPeriod(selectedCulture.period.name);
+				setSelectedPeriodID(selectedCulture.period.id);
+			} else {
+				setSelectedPeriod("");
+			}
 		} else {
+			console.error("Selected culture not found.");
 			setPeriods([]);
 			setSelectedPeriod("");
 		}
