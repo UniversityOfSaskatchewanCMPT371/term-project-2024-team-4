@@ -10,7 +10,10 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	FormControl,
+	InputLabel,
 	TextField,
+	Select,
 	MenuItem,
 	Grid,
 	IconButton,
@@ -43,12 +46,13 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const siteID = inComingSiteInfo.state.info.id;
 	const siteName = inComingSiteInfo.state.info.name;
 
-	const [name, setName] = useState("");
+	const [name, setName] = useState(""); // remove once PP name column is removed in database
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [dimensions, setDimensions] = useState("");
 	const [photoFilePath, setPhotoFilePath] = useState(null);
 	const [artifactTypeID, setArtifactTypeID] = useState("");
+	const [artifactTypeError, setArtifactTypeError] = useState(false);
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
 	const [baseShapeID, setBaseShapeID] = useState(0);
@@ -63,6 +67,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	// Function to open the dropdown menu (Edit/Delete options for periods)
 	const handleOpenMenu = (event, period) => {
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setAnchorEl(event.currentTarget);
 		setCurrentPeriod(period);
 	};
@@ -137,10 +142,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setOpenAdd(false);
 	};
 
-	const handleNameChange = (event) => {
-		setName(event.target.value);
-	};
-
 	const handleDescriptionChange = (event) => {
 		setDescription(event.target.value);
 	};
@@ -156,14 +157,12 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const handlePhotoFilePathChange = (event) => {
 		setPhotoFilePath(event.target.files[0]);
 	};
-	
 
 	const handleSubmit = () => {
 		log.info("Adding new projectile");
 
-		
 		const formData = new FormData();
-		formData.append("name", siteID + "-" + name);
+		formData.append("name", name); // remove once PP name column is removed in database
 		formData.append("location", location);
 		formData.append("description", description);
 		formData.append("dimensions", dimensions);
@@ -747,14 +746,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 				<DialogContent style={{ minHeight: "300px" }}>
 					<Grid container spacing={2} sx={{ paddingTop: 0 }}>
 						<Grid item xs={6}>
-							<TextField
-								margin="dense"
-								id="name"
-								label="Name"
-								fullWidth
-								value={name}
-								onChange={handleNameChange}
-							/>
+							{/* ------------ Description ------------- */}
 							<TextField
 								margin="dense"
 								id="description"
@@ -765,35 +757,42 @@ const AddProjectile = ({ setOpenAdd }) => {
 								value={description}
 								onChange={handleDescriptionChange}
 							/>
+							{/* ------------ Upload Photo ------------- */}
+							<label>
+								Upload Photo:
+								<input type="file" onChange={handlePhotoFilePathChange} />
+							</label>
 							{/* ------------ Start of PeriodModal ------------- */}
-							<TextField
-								select
-								label="Period"
-								value={selectedPeriod}
-								onChange={handlePeriodChange}
-								fullWidth
-								margin="dense"
-							>
-								{periods.map((period) => (
-									<MenuItem key={period.id} value={period.name}>
-										{period.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleOpenMenu(event, period)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="period-label">Period</InputLabel>
+								<Select
+									id="period"
+									label="Period"
+									labelId="period-label"
+									value={selectedPeriod}
+									onChange={handlePeriodChange}
+									renderValue={(selected) => selected}
+								>
+									{periods.map((period) => (
+										<MenuItem key={period.id} value={period.name}>
+											{period.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleOpenMenu(event, period)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenPeriodModal()}>
+										+ Add New Period
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenPeriodModal()}>
-									+ Add New Period
-								</MenuItem>
-							</TextField>
+								</Select>
+							</FormControl>
 							<Menu
 								id="period-menu"
 								anchorEl={anchorEl}
-								keepMounted
 								open={Boolean(anchorEl)}
 								onClose={handleCloseMenu}
 							>
@@ -811,135 +810,125 @@ const AddProjectile = ({ setOpenAdd }) => {
 							</Menu>
 							{/* ------------ End of PeriodModal  ------------- */}
 							{/* ------------ Start of CultureModal  ------------- */}
-							<TextField
-								select
-								label="Culture"
-								value={selectedCulture}
-								onChange={handleCultureChange}
-								fullWidth
-								margin="dense"
-							>
-								{cultures.map((culture) => (
-									<MenuItem key={culture.id} value={culture.name}>
-										{culture.name}
-										<IconButton
-											size="small"
-											onClick={(event) =>
-												handleOpenEditCultureMenu(event, culture)
-											}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
-									</MenuItem>
-								))}
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="culture-label">Culture</InputLabel>
+								<Select
+									id="culture"
+									label="Culture"
+									labelId="culture-label"
+									value={selectedCulture}
+									onChange={handleCultureChange}
+									renderValue={(selected) => selected}
+								>
+									{cultures.map((culture) => (
+										<MenuItem key={culture.id} value={culture.name}>
+											{culture.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleOpenEditCultureMenu(event, culture)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
 
-								<MenuItem onClick={() => handleOpenCultureModal()}>
-									+ Add New Culture
-								</MenuItem>
-								<Menu
-									id="culture-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
+									<MenuItem onClick={() => handleOpenCultureModal()}>
+										+ Add New Culture
+									</MenuItem>
+								</Select>
+							</FormControl>
+							<Menu
+								id="culture-menu"
+								anchorEl={anchorEl}
+								open={Boolean(anchorEl)}
+								onClose={() => {
+									setAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditCulture(true);
+										setCultureModalOpen(true);
 										setAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditCulture(true);
-											setCultureModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteCulture();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteCulture();
+										setAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of CultureModal  ------------- */}
-							{/*Should be renamed(maybe just drop the ID?)  also, Menu items will need to be dynamic at some point*/}
-							<TextField
-								margin="dense"
-								id="artifactTypeID"
-								label="ArtifactTypeID"
-								variant="outlined"
-								fullWidth
-								select
-								value={artifactTypeID}
-								onChange={(e) => setArtifactTypeID(e.target.value)}
-							>
-								<MenuItem value="Lithic">Lithic</MenuItem>
-								<MenuItem value="Ceramic">Ceramic</MenuItem>
-								<MenuItem value="Faunal">Faunal</MenuItem>
-							</TextField>
 							{/* ------------ Start of MaterialModal  ------------- */}
-							<TextField
-								select
-								label="Material"
-								value={selectedMaterial}
-								onChange={handleMaterialChange}
-								fullWidth
-								margin="dense"
-							>
-								{materials.map((material) => (
-									<MenuItem key={material.id} value={material.name}>
-										{material.name}
-										<IconButton
-											size="small"
-											onClick={(event) =>
-												handleOpenEditMaterialMenu(event, material)
-											}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
-									</MenuItem>
-								))}
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="material-label">Material</InputLabel>
+								<Select
+									id="material"
+									label="Material"
+									labelId="material-label"
+									value={selectedMaterial}
+									onChange={handleMaterialChange}
+									renderValue={(selected) => selected}
+								>
+									{materials.map((material) => (
+										<MenuItem key={material.id} value={material.name}>
+											{material.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleOpenEditMaterialMenu(event, material)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
 
-								<MenuItem onClick={() => handleOpenMaterialModal()}>
-									+ Add New Material
-								</MenuItem>
-								<Menu
-									id="material-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
+									<MenuItem onClick={() => handleOpenMaterialModal()}>
+										+ Add New Material
+									</MenuItem>
+								</Select>
+							</FormControl>
+							<Menu
+								id="material-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={() => {
+									setAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditMaterial(true);
+										setMaterialModalOpen(true);
 										setAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditMaterial(true);
-											setMaterialModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteMaterial();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteMaterial();
+										setAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of MaterialModal  ------------- */}
 						</Grid>
 						<Grid item xs={6}>
-							{/*This should removed, as the location is attached to the site*/}
+							{/* ------------ Location ------------- */}
 							<TextField
 								margin="dense"
 								id="location"
@@ -948,248 +937,262 @@ const AddProjectile = ({ setOpenAdd }) => {
 								value={location}
 								onChange={handleLocationChange}
 							/>
-							{/* The dimensions should be three different fields(length, width, height and )
-						if you are making this change, make sure the database was changed to hold a list of
-						float/double and not a string*/}
+
+							{/* ------------ Dimensions ------------- */}
 							<TextField
 								margin="dense"
 								id="dimensions"
-								label="Dimensions"
-								fullWidth
+								label="Dimension"
 								value={dimensions}
 								onChange={handleDimensionsChange}
 							/>
-							{/* <FileUpload margin="dense" /> */}
-							{/* <TextField
-								margin="dense"
-								id="photoFilePath"
-								label="Photo File Path"
-								fullWidth
-								type="file"
-								value={photoFilePath}
-								onChange={handlePhotoFilePathChange}
-							/> */}
-							<label>
-        Upload Photo:
-								<input type="file" onChange={handlePhotoFilePathChange} />
-							</label>
-							{/* ------------ Start of BaseShapeModal  ------------- */}
+							{/* ------------ Artifact Type ------------- */}
 							<TextField
-								select
-								label="Base Shape"
+								sx={{ mt: 1.5, width: "100%" }}
+								id="artifactTypeID"
+								label="Artifact Type"
+								variant="outlined"
 								fullWidth
-								margin="dense"
-								value={selectedBaseShape}
-								onChange={handleBaseShapeChange}
+								select
+								required
+								error={Boolean(artifactTypeError)}
+								helperText={
+									artifactTypeError && "Please select an Artifact Type"
+								}
+								value={artifactTypeID}
+								onChange={(event) => setArtifactTypeID(event.target.value)}
 							>
-								{baseShapes.map((shape) => (
-									<MenuItem key={shape.id} value={shape.name}>
-										{shape.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleEditBaseShape(event, shape)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+								<MenuItem value="Lithic">Lithic</MenuItem>
+								<MenuItem value="Ceramic">Ceramic</MenuItem>
+								<MenuItem value="Faunal">Faunal</MenuItem>
+							</TextField>
+							{/* ------------ Start of BaseShapeModal  ------------- */}
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="baseshape-label">Base Shape</InputLabel>
+								<Select
+									id="baseshape"
+									label="Base Shape"
+									labelId="baseshape-label"
+									value={selectedBaseShape}
+									onChange={handleBaseShapeChange}
+									renderValue={(selected) => selected}
+								>
+									{baseShapes.map((shape) => (
+										<MenuItem key={shape.id} value={shape.name}>
+											{shape.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleEditBaseShape(event, shape)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenBaseShapeModal()}>
+										+ Add New Base Shape
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenBaseShapeModal()}>
-									+ Add New Base Shape
-								</MenuItem>
-
-								<Menu
-									id="base-shape-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
+								</Select>
+							</FormControl>
+							<Menu
+								id="base-shape-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={() => {
+									setAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditBaseShape(true);
+										setBaseShapeModalOpen(true);
 										setAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditBaseShape(true);
-											setBaseShapeModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteBaseShape();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteBaseShape();
+										setAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of BaseShapeModal  ------------- */}
 							{/* ------------ Start of CrossSectionModal  ------------- */}
-							<TextField
-								select
-								label="Cross Section"
-								fullWidth
-								margin="dense"
-								value={selectedCrossSection}
-								onChange={handleCrossSectionChange}
-							>
-								{crossSections.map((crossSect) => (
-									<MenuItem key={crossSect.id} value={crossSect.name}>
-										{crossSect.name}
-										<IconButton
-											size="small"
-											onClick={(event) =>
-												handleEditCrossSection(event, crossSect)
-											}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="crosssection-label">Cross Section</InputLabel>
+								<Select
+									id="crosssection"
+									label="Cross Section"
+									labelId="crosssection-label"
+									value={selectedCrossSection}
+									onChange={handleCrossSectionChange}
+									renderValue={(selected) => selected}
+								>
+									{crossSections.map((crossSect) => (
+										<MenuItem key={crossSect.id} value={crossSect.name}>
+											{crossSect.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleEditCrossSection(event, crossSect)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenCrossSectionModal()}>
+										+ Add New Cross Section
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenCrossSectionModal()}>
-									+ Add New Cross Section
-								</MenuItem>
-
-								<Menu
-									id="cross-section-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
+								</Select>
+							</FormControl>
+							<Menu
+								id="cross-section-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={() => {
+									setAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditCrossSection(true);
+										setCrossSectionModalOpen(true);
 										setAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditCrossSection(true);
-											setCrossSectionModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteCrossSection();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteCrossSection();
+										setAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of CrossSectionModal  ------------- */}
 							{/* ------------ Start of BladeShapeModal  ------------- */}
-							<TextField
-								select
-								label="Blade Shape"
-								fullWidth
-								margin="dense"
-								value={selectedBladeShape}
-								onChange={handleBladeShapeChange}
-							>
-								{bladeShapes.map((shape) => (
-									<MenuItem key={shape.id} value={shape.name}>
-										{shape.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleEditBladeShape(event, shape)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="blaseshape-label">Blade Shape</InputLabel>
+								<Select
+									id="bladeshape"
+									label="Blade Shape"
+									labelId="bladeshape-label"
+									value={selectedBladeShape}
+									onChange={handleBladeShapeChange}
+									renderValue={(selected) => selected}
+								>
+									{bladeShapes.map((shape) => (
+										<MenuItem key={shape.id} value={shape.name}>
+											{shape.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleEditBladeShape(event, shape)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenBladeShapeModal()}>
+										+ Add New Blade Shape
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenBladeShapeModal()}>
-									+ Add New Blade Shape
-								</MenuItem>
-
-								<Menu
-									id="blade-shape-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
+								</Select>
+							</FormControl>
+							<Menu
+								id="blade-shape-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={() => {
+									setAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditBladeShape(true);
+										setBladeShapeModalOpen(true);
 										setAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditBladeShape(true);
-											setBladeShapeModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteBladeShape();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteBladeShape();
+										setAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of BladeShapeModal  ------------- */}
 							{/* ------------ Start of HaftingShapeModal  ------------- */}
-							<TextField
-								select
-								label="Hafting Shape"
-								fullWidth
-								margin="dense"
-								value={selectedHaftingShape}
-								onChange={handleHaftingShapeChange}
-							>
-								{haftingShapes.map((shape) => (
-									<MenuItem key={shape.id} value={shape.name}>
-										{shape.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleEditHaftingShape(event, shape)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="haftingshape-label">Hafting Shape</InputLabel>
+								<Select
+									id="haftingshape"
+									label="Hafting Shape"
+									labelId="haftingshape-label"
+									value={selectedHaftingShape}
+									onChange={handleHaftingShapeChange}
+									renderValue={(selected) => selected}
+								>
+									{haftingShapes.map((shape) => (
+										<MenuItem key={shape.id} value={shape.name}>
+											{shape.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleEditHaftingShape(event, shape)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenHaftingShapeModal()}>
+										+ Add New Hafting Shape
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenHaftingShapeModal()}>
-									+ Add New Hafting Shape
-								</MenuItem>
-
-								<Menu
-									id="hafting-shape-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
+								</Select>
+							</FormControl>
+							<Menu
+								id="hafting-shape-menu"
+								anchorEl={anchorEl}
+								keepMounted
+								open={Boolean(anchorEl)}
+								onClose={() => {
+									setAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditHaftingShape(true);
+										setHaftingShapeModalOpen(true);
 										setAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditHaftingShape(true);
-											setHaftingShapeModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteHaftingShape();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteHaftingShape();
+										setAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of HaftingShapeModal  ------------- */}
 						</Grid>
 					</Grid>
