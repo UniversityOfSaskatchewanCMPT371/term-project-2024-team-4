@@ -154,38 +154,53 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setDimensions(event.target.value);
 	};
 
+	const handleArtifactTypeChange = (event) => {
+		if (event.target.value.trim() === "") {
+			setArtifactTypeError(true);
+		} else {
+			setArtifactTypeID(event.target.value);
+		}
+	};
+
 	const handlePhotoFilePathChange = (event) => {
 		setPhotoFilePath(event.target.files[0]);
 	};
 
 	const handleSubmit = () => {
-		log.info("Adding new projectile");
+		if (artifactTypeID.trim() === "") {
+			setArtifactTypeError(true);
+		} else {
+			log.info("Adding new projectile");
 
-		const formData = new FormData();
-		formData.append("name", name); // remove once PP name column is removed in database
-		formData.append("location", location);
-		formData.append("description", description);
-		formData.append("dimensions", dimensions);
-		formData.append("photo", photoFilePath);
-		formData.append("siteId", siteID);
-		formData.append("artifactTypeId", artifactTypeID);
-		formData.append("cultureId", cultureID);
-		formData.append("bladeShapeId", bladeShapeID);
-		formData.append("baseShapeId", baseShapeID);
-		formData.append("haftingShapeId", haftingShapeID);
-		formData.append("crossSectionId", crossSectionID);
+			const formData = new FormData();
+			formData.append("name", name); // remove once PP name column is removed in database
+			formData.append("location", location);
+			formData.append("description", description);
+			formData.append("dimensions", dimensions);
+			formData.append("photo", photoFilePath);
+			formData.append("siteId", siteID);
+			formData.append("artifactTypeId", artifactTypeID);
+			formData.append("cultureId", cultureID);
+			formData.append("bladeShapeId", bladeShapeID);
+			formData.append("baseShapeId", baseShapeID);
+			formData.append("haftingShapeId", haftingShapeID);
+			formData.append("crossSectionId", crossSectionID);
 
-		http
-			.post("/projectilePoints", formData)
-			.then((response) => {
-				console.log("New projectile point added successfully:", response.data);
-				handleClose();
-			})
-			.catch((error) => {
-				console.error("Error adding new  projectile point:", error);
-			});
-		//setOpen(true);
-		console.log("Submitted:", formData);
+			http
+				.post("/projectilePoints", formData)
+				.then((response) => {
+					console.log(
+						"New projectile point added successfully:",
+						response.data,
+					);
+					handleClose();
+				})
+				.catch((error) => {
+					console.error("Error adding new  projectile point:", error);
+				});
+			//setOpen(true);
+			console.log("Submitted:", formData);
+		}
 	};
 
 	// const newProjectilePoint = {
@@ -942,7 +957,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 							<TextField
 								margin="dense"
 								id="dimensions"
-								label="Dimension"
+								label="Dimensions"
 								value={dimensions}
 								onChange={handleDimensionsChange}
 							/>
@@ -960,7 +975,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									artifactTypeError && "Please select an Artifact Type"
 								}
 								value={artifactTypeID}
-								onChange={(event) => setArtifactTypeID(event.target.value)}
+								onChange={handleArtifactTypeChange}
 							>
 								<MenuItem value="Lithic">Lithic</MenuItem>
 								<MenuItem value="Ceramic">Ceramic</MenuItem>
