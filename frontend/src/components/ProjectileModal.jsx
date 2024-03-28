@@ -18,6 +18,8 @@ import {
 	Grid,
 	IconButton,
 	Menu,
+	FormLabel,
+	InputAdornment,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -50,6 +52,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [dimensions, setDimensions] = useState("");
+	const [height, setHeight] = useState("");
+	const [width, setWidth] = useState("");
+	const [length, setLength] = useState("");
 	const [photoFilePath, setPhotoFilePath] = useState(null);
 	const [artifactTypeID, setArtifactTypeID] = useState("");
 	const [artifactTypeError, setArtifactTypeError] = useState(false);
@@ -150,8 +155,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setLocation(event.target.value);
 	};
 
-	const handleDimensionsChange = (event) => {
-		setDimensions(event.target.value);
+	useEffect(() => {
+		setDimensions(length + "," + width + "," + height);
+	}, [length, width, height]);
+
+	const handleLengthChange = (event) => {
+		setLength(event.target.value);
+	};
+
+	const handleWidthChange = (event) => {
+		setWidth(event.target.value);
+	};
+
+	const handleHeightChange = (event) => {
+		setHeight(event.target.value);
 	};
 
 	const handleArtifactTypeChange = (event) => {
@@ -773,12 +790,103 @@ const AddProjectile = ({ setOpenAdd }) => {
 								onChange={handleDescriptionChange}
 							/>
 							{/* ------------ Upload Photo ------------- */}
-							<label>
-								Upload Photo:
+							<FormControl sx={{ my: 3.4 }}>
+								<FormLabel sx={{ mb: 1.5 }}>Upload Photo</FormLabel>
 								<input type="file" onChange={handlePhotoFilePathChange} />
-							</label>
+							</FormControl>
+							{/* ------------ Dimensions ------------- */}
+							<div>
+								<FormLabel id="dimensions-label">Dimensions</FormLabel>
+								<Grid
+									container
+									sx={{
+										mt: 1,
+										"& .MuiTextField-root": { width: "14.5ch" },
+										display: "flex",
+										justifyContent: "space-between",
+									}}
+								>
+									<Grid item>
+										<TextField
+											id="lengthdimension"
+											label="Length"
+											value={length}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment disableTypography position="end">
+														mm
+													</InputAdornment>
+												),
+											}}
+											onChange={handleLengthChange}
+										/>
+									</Grid>
+									<Grid item>
+										<TextField
+											id="widthdimension"
+											label="Width"
+											value={width}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment disableTypography position="end">
+														mm
+													</InputAdornment>
+												),
+											}}
+											onChange={handleWidthChange}
+										/>
+									</Grid>
+									<Grid item>
+										<TextField
+											id="heightdimension"
+											label="Height"
+											value={height}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment disableTypography position="end">
+														mm
+													</InputAdornment>
+												),
+											}}
+											onChange={handleHeightChange}
+										/>
+									</Grid>
+								</Grid>
+							</div>
+							{/* ------------ Location ------------- */}
+							<TextField
+								sx={{ mt: 1.5, width: "100%" }}
+								margin="dense"
+								id="location"
+								label="Location"
+								fullWidth
+								value={location}
+								onChange={handleLocationChange}
+							/>
+							{/* ------------ Artifact Type ------------- */}
+							<TextField
+								sx={{ mt: 1, width: "100%" }}
+								id="artifactTypeID"
+								label="Artifact Type"
+								variant="outlined"
+								fullWidth
+								select
+								required
+								error={Boolean(artifactTypeError)}
+								helperText={
+									artifactTypeError && "Please select an Artifact Type"
+								}
+								value={artifactTypeID}
+								onChange={handleArtifactTypeChange}
+							>
+								<MenuItem value="Lithic">Lithic</MenuItem>
+								<MenuItem value="Ceramic">Ceramic</MenuItem>
+								<MenuItem value="Faunal">Faunal</MenuItem>
+							</TextField>
+						</Grid>
+						<Grid item xs={6}>
 							{/* ------------ Start of PeriodModal ------------- */}
-							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+							<FormControl sx={{ mt: 1, width: "100%" }}>
 								<InputLabel id="period-label">Period</InputLabel>
 								<Select
 									id="period"
@@ -941,46 +1049,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 								</MenuItem>
 							</Menu>
 							{/* ------------ End of MaterialModal  ------------- */}
-						</Grid>
-						<Grid item xs={6}>
-							{/* ------------ Location ------------- */}
-							<TextField
-								margin="dense"
-								id="location"
-								label="Location"
-								fullWidth
-								value={location}
-								onChange={handleLocationChange}
-							/>
-
-							{/* ------------ Dimensions ------------- */}
-							<TextField
-								margin="dense"
-								id="dimensions"
-								label="Dimensions"
-								value={dimensions}
-								onChange={handleDimensionsChange}
-							/>
-							{/* ------------ Artifact Type ------------- */}
-							<TextField
-								sx={{ mt: 1.5, width: "100%" }}
-								id="artifactTypeID"
-								label="Artifact Type"
-								variant="outlined"
-								fullWidth
-								select
-								required
-								error={Boolean(artifactTypeError)}
-								helperText={
-									artifactTypeError && "Please select an Artifact Type"
-								}
-								value={artifactTypeID}
-								onChange={handleArtifactTypeChange}
-							>
-								<MenuItem value="Lithic">Lithic</MenuItem>
-								<MenuItem value="Ceramic">Ceramic</MenuItem>
-								<MenuItem value="Faunal">Faunal</MenuItem>
-							</TextField>
 							{/* ------------ Start of BaseShapeModal  ------------- */}
 							<FormControl sx={{ mt: 1.5, width: "100%" }}>
 								<InputLabel id="baseshape-label">Base Shape</InputLabel>
