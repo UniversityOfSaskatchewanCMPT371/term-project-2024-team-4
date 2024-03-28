@@ -51,18 +51,27 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [name, setName] = useState(""); // remove once PP name column is removed in database
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
-	const [dimensions, setDimensions] = useState("");
 	const [height, setHeight] = useState("");
 	const [width, setWidth] = useState("");
 	const [length, setLength] = useState("");
 	const [photoFilePath, setPhotoFilePath] = useState(null);
 	const [artifactTypeID, setArtifactTypeID] = useState("");
-	const [artifactTypeError, setArtifactTypeError] = useState(false);
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
 	const [baseShapeID, setBaseShapeID] = useState(0);
 	const [haftingShapeID, setHaftingShapeID] = useState(0);
 	const [crossSectionID, setCrossSectionID] = useState(0);
+
+	const [artifactTypeError, setArtifactTypeError] = useState(false); // for artifact type dropdown error handling
+
+	// for dimension fields validation
+	const [lengthError, setLengthError] = useState(false);
+	const [widthError, setWidthError] = useState(false);
+	const [heightError, setHeightError] = useState(false);
+
+	const [cultureEnabled, setCultureEnabled] = useState(false);
+	const [materialEnabled, setMaterialEnabled] = useState(false);
+
 	const [materialID, setMaterialID] = useState(0); // for future implementation of adding materials
 	const [periodID, setPeriodID] = useState(0); // not needed for adding projectile point, for testing only
 
@@ -156,7 +165,25 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	useEffect(() => {
-		setDimensions(length + "," + width + "," + height);
+		const isFloatRegExp = new RegExp("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
+
+		if (isFloatRegExp.test(length) || length.length === 0) {
+			setLengthError(false);
+		} else {
+			setLengthError(true);
+		}
+
+		if (isFloatRegExp.test(width) || width.length === 0) {
+			setWidthError(false);
+		} else {
+			setWidthError(true);
+		}
+
+		if (isFloatRegExp.test(height) || height.length === 0) {
+			setHeightError(false);
+		} else {
+			setHeightError(true);
+		}
 	}, [length, width, height]);
 
 	const handleLengthChange = (event) => {
@@ -175,6 +202,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 		if (event.target.value.trim() === "") {
 			setArtifactTypeError(true);
 		} else {
+			setArtifactTypeError(false);
 			setArtifactTypeID(event.target.value);
 		}
 	};
@@ -186,14 +214,17 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const handleSubmit = () => {
 		if (artifactTypeID.trim() === "") {
 			setArtifactTypeError(true);
-		} else {
+		} else if (!lengthError && !widthError && !heightError) {
 			log.info("Adding new projectile");
 
 			const formData = new FormData();
 			formData.append("name", name); // remove once PP name column is removed in database
 			formData.append("location", location);
 			formData.append("description", description);
-			formData.append("dimensions", dimensions);
+			formData.append(
+				"dimensions",
+				new Array(parseFloat(length), parseFloat(width), parseFloat(height)),
+			);
 			formData.append("photo", photoFilePath);
 			formData.append("siteId", siteID);
 			formData.append("artifactTypeId", artifactTypeID);
@@ -293,6 +324,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	const handlePeriodChange = (event) => {
 		setSelectedPeriod(event.target.value);
+		setCultureEnabled(true);
 	};
 
 	const handleOpenPeriodModal = (periodId = null) => {
@@ -346,6 +378,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const handleCultureChange = (event) => {
 		setCultureID(event.target.id);
 		setSelectedCulture(event.target.value);
+
+		setMaterialEnabled(true);
 	};
 
 	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
@@ -818,6 +852,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 													</InputAdornment>
 												),
 											}}
+											error={Boolean(lengthError)}
+											helperText={lengthError && "Invalid length"}
 											onChange={handleLengthChange}
 										/>
 									</Grid>
@@ -833,6 +869,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 													</InputAdornment>
 												),
 											}}
+											error={Boolean(widthError)}
+											helperText={widthError && "Invalid width"}
 											onChange={handleWidthChange}
 										/>
 									</Grid>
@@ -848,6 +886,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 													</InputAdornment>
 												),
 											}}
+											error={Boolean(heightError)}
+											helperText={heightError && "Invalid height"}
 											onChange={handleHeightChange}
 										/>
 									</Grid>
@@ -942,6 +982,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									value={selectedCulture}
 									onChange={handleCultureChange}
 									renderValue={(selected) => selected}
+									disabled={!cultureEnabled}
 								>
 									{cultures.map((culture) => (
 										<MenuItem key={culture.id} value={culture.name}>
@@ -1000,6 +1041,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									value={selectedMaterial}
 									onChange={handleMaterialChange}
 									renderValue={(selected) => selected}
+									disabled={!materialEnabled}
 								>
 									{materials.map((material) => (
 										<MenuItem key={material.id} value={material.name}>
