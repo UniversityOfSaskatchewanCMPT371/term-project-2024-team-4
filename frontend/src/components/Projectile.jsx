@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import http from "../../http.js";
+import ProjectileModal from "./ProjectileModal";
 import log from "../logger.js";
 import {
 	Button,
@@ -8,9 +9,7 @@ import {
 	DialogActions,
 	Grid,
 	Typography,
-	IconButton,
 } from "@mui/material";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 
 /**
  * Modal for viewing projectile point details
@@ -34,10 +33,26 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 	const [haftingShapeName, setHaftingShapeName] = useState("");
 	const [crossSectionName, setCrossSectionName] = useState("");
 
+	const [openAdd, setOpenAdd] = useState(false);
+
 	/**
 	 * Set modal visibility to false
 	 */
 	const handleClose = () => {
+		setOpen(false);
+	};
+
+	/**
+	 *
+	 */
+	const handleEdit = () => {
+		setOpenAdd(true);
+	};
+
+	/**
+	 *
+	 */
+	const handleDelete = () => {
 		setOpen(false);
 	};
 
@@ -55,11 +70,26 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 				setDimensions(response.data.dimensions);
 				setPhotoFilePath(response.data.photo);
 				setArtifactTypeID(response.data.artifactType.id);
-				setCultureName(response.data.culture.name);
-				setBladeShapeName(response.data.bladeShape.name);
-				setBaseShapeName(response.data.baseShape.name);
-				setHaftingShapeName(response.data.haftingShape.name);
-				setCrossSectionName(response.data.crossSection.name);
+
+				if (response.data.culture !== null) {
+					setCultureName(response.data.culture.name);
+				}
+
+				if (response.data.bladeShape !== null) {
+					setBladeShapeName(response.data.bladeShape.name);
+				}
+
+				if (response.data.baseShape !== null) {
+					setBaseShapeName(response.data.baseShape.name);
+				}
+
+				if (response.data.haftingShape !== null) {
+					setHaftingShapeName(response.data.haftingShape.name);
+				}
+
+				if (response.data.crossSection !== null) {
+					setCrossSectionName(response.data.crossSection.name);
+				}
 			})
 			.catch((error) => {
 				log.error("Error fetching projectile point: ", error);
@@ -67,117 +97,123 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 	}, [siteName, projectilePointId]);
 
 	return (
-		<Dialog
-			open={true}
-			onClose={handleClose}
-			maxWidth="lg"
-			fullWidth
-			PaperProps={{ style: { maxHeight: "90vh" } }}
-		>
-			<DialogContent style={{ minHeight: "600px" }}>
-				<Grid container spacing={4} sx={{ paddingTop: 0 }}>
-					<Grid item xs={5}>
-						<Typography variant="h4" component="h2">
-							{photoFilePath && (
-								<a
-									href={`http://localhost:3000/${photoFilePath}`}
-									target="_blank"
-									rel="noopener noreferrer"
-								>
-									<img
-										src={`http://localhost:3000/${photoFilePath}`}
-										alt="Projectile Point"
-										style={{
+		<>
+			<Dialog
+				open={true}
+				onClose={handleClose}
+				maxWidth="lg"
+				fullWidth
+				PaperProps={{ style: { maxHeight: "90vh" } }}
+			>
+				<DialogContent style={{ minHeight: "600px" }}>
+					<Grid container spacing={6} sx={{ paddingTop: 0 }}>
+						<Grid item xs={6}>
+							<div>
+								{photoFilePath && (
+									<a
+										href={`http://localhost:3000/${photoFilePath}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<img
+											src={`http://localhost:3000/${photoFilePath}`}
+											alt="Projectile Point"
+											style={{
+												width: "100%",
+												minHeight: "450px",
+												borderRadius: "20px",
+												objectFit: "cover",
+											}}
+										/>
+									</a>
+								)}
+								{!photoFilePath && (
+									<Typography
+										variant="body1"
+										sx={{
 											width: "100%",
-											minHeight: "400px",
+											minHeight: "450px",
 											borderRadius: "20px",
-											objectFit: "cover",
+											textAlign: "center",
+											alignContent: "center",
 										}}
-									/>
-								</a>
-							)}
-							{/* {photoFilePath && <img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />} */}
-						</Typography>
-						<Typography variant="h6">
-							Description
-							<IconButton size="small">
+									>
+										No Image
+										{/* <IconButton size="small">
+							<MoreHorizIcon />
+						</IconButton> */}
+									</Typography>
+								)}
+								{/* {photoFilePath && <img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />} */}
+							</div>
+							<Typography variant="h6">
+								Description
+								{/* <IconButton size="small">
 								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{description}</Typography>
+							</IconButton> */}
+							</Typography>
+							<Typography variant="body1">{description}</Typography>
+						</Grid>
+						<Grid item xs={6}>
+							<Typography sx={{ fontWeight: "bold" }} variant="h4">
+								{name}
+							</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Dimensions
+							</Typography>
+							<Typography variant="body1">{dimensions}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Location
+							</Typography>
+							<Typography variant="body1">{location}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Artifact Type
+							</Typography>
+							<Typography variant="body1">{artifactTypeID}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Culture
+							</Typography>
+							<Typography variant="body1">{cultureName}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Base Shape
+							</Typography>
+							<Typography variant="body1">{baseShapeName}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Cross Section
+							</Typography>
+							<Typography variant="body1">{crossSectionName}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Blade Shape
+							</Typography>
+							<Typography variant="body1">{bladeShapeName}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Hafting Shape
+							</Typography>
+							<Typography variant="body1">{haftingShapeName}</Typography>
+						</Grid>
 					</Grid>
-					<Grid item xs={7}>
-						<Typography sx={{ fontWeight: "bold" }} variant="h4">
-							{name}
-						</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Dimensions
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{dimensions}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Location
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{location}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Artifact Type
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{artifactTypeID}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Culture
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{cultureName}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Base Shape
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{baseShapeName}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Cross Section
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{crossSectionName}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Blade Shape
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{bladeShapeName}</Typography>
-						<Typography sx={{ mt: 2 }} variant="h6">
-							Hafting Shape
-							<IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton>
-						</Typography>
-						<Typography variant="body1">{haftingShapeName}</Typography>
-					</Grid>
-				</Grid>
-			</DialogContent>
-			<DialogActions>
-				<Button onClick={handleClose} color="primary">
-					Close
-				</Button>
-				{/* <Button onClick={handleSubmit} color="primary">
-						Add
-					</Button> */}
-			</DialogActions>
-		</Dialog>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Close
+					</Button>
+					<Button onClick={handleDelete} color="primary">
+						Delete
+					</Button>
+					<Button onClick={handleEdit} color="primary">
+						Edit
+					</Button>
+				</DialogActions>
+			</Dialog>
+			<Typography>
+				{openAdd && (
+					<ProjectileModal
+						setOpenAdd={setOpenAdd}
+						projectilePointId={projectilePointId}
+					/>
+				)}
+			</Typography>
+		</>
 	);
 };
 

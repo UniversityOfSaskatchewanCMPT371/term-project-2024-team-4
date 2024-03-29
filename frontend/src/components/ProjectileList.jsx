@@ -119,10 +119,8 @@ export default function ProjectileList({ query, siteId, siteName }) {
 					</Box>
 				</Grid>
 			</Item>
-			<Typography>
-				{openAdd && <ProjectileModal setOpenAdd={setOpenAdd} />}
-			</Typography>
-			<Typography>
+			<div>{openAdd && <ProjectileModal setOpenAdd={setOpenAdd} />}</div>
+			<div>
 				{openView && (
 					<Projectile
 						setOpen={setOpenView}
@@ -130,7 +128,7 @@ export default function ProjectileList({ query, siteId, siteName }) {
 						siteName={siteName}
 					/>
 				)}
-			</Typography>
+			</div>
 		</div>
 	);
 }

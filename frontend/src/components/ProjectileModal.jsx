@@ -42,7 +42,7 @@ import HaftingShapeModal from "./HaftingShapeModal.jsx";
  * @returns {JSX.Element} AddProjectile React component
  */
 // eslint-disable-next-line no-unused-vars, react/prop-types
-const AddProjectile = ({ setOpenAdd }) => {
+const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 	const inComingSiteInfo = useLocation();
 
 	const siteID = inComingSiteInfo.state.info.id;
@@ -61,6 +61,14 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [baseShapeID, setBaseShapeID] = useState(0);
 	const [haftingShapeID, setHaftingShapeID] = useState(0);
 	const [crossSectionID, setCrossSectionID] = useState(0);
+
+	const [periodName, setPeriodName] = useState("");
+	const [cultureName, setCultureName] = useState("");
+	const [materialName, setMaterialName] = useState("");
+	const [bladeShapeName, setBladeShapeName] = useState("");
+	const [baseShapeName, setBaseShapeName] = useState("");
+	const [haftingShapeName, setHaftingShapeName] = useState("");
+	const [crossSectionName, setCrossSectionName] = useState("");
 
 	const [artifactTypeError, setArtifactTypeError] = useState(false); // for artifact type dropdown error handling
 
@@ -234,20 +242,27 @@ const AddProjectile = ({ setOpenAdd }) => {
 			formData.append("haftingShapeId", haftingShapeID);
 			formData.append("crossSectionId", crossSectionID);
 
-			http
-				.post("/projectilePoints", formData)
+			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
+			const requestMethod = projectilePointId ? http.put : http.post;
+
+			requestMethod(requestUrl, formData)
 				.then((response) => {
-					console.log(
-						"New projectile point added successfully:",
-						response.data,
-					);
 					handleClose();
+					if (projectilePointId) {
+						log.info("Updated projectile point successfully:", response.data);
+					} else {
+						log.info("New projectile point added successfully:", response.data);
+					}
 				})
 				.catch((error) => {
-					console.error("Error adding new  projectile point:", error);
+					if (projectilePointId) {
+						log.error("Error updating projectile point:", error);
+					} else {
+						log.error("Error adding new  projectile point:", error);
+					}
 				});
-			//setOpen(true);
-			console.log("Submitted:", formData);
+
+			log.info("Submitted:", ...formData);
 		}
 	};
 
@@ -805,10 +820,60 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 	// ---------------- End of MaterialModal functions --------------------
 
+	useEffect(() => {
+		if (projectilePointId) {
+			http
+				.get(`/projectilePoints/${projectilePointId}`)
+				.then((response) => {
+					setName(response.data.site.name + "-" + response.data.id);
+					setDescription(response.data.description);
+					setLocation(response.data.location);
+					// setDimensions(response.data.dimensions);
+					setPhotoFilePath(response.data.photo);
+					setArtifactTypeID(response.data.artifactType.id);
+
+					if (response.data.culture !== null) {
+						setCultureID(response.data.culture.id);
+						setCultureName(response.data.culture.name);
+					}
+
+					if (response.data.bladeShape !== null) {
+						setBladeShapeID(response.data.bladeShape.id);
+						setBladeShapeName(response.data.bladeShape.name);
+					}
+
+					if (response.data.baseShape !== null) {
+						setBaseShapeID(response.data.baseShape.id);
+						setBaseShapeName(response.data.baseShape.name);
+					}
+
+					if (response.data.haftingShape !== null) {
+						setHaftingShapeID(response.data.haftingShape.id);
+						setHaftingShapeName(response.data.haftingShape.name);
+					}
+
+					if (response.data.crossSection !== null) {
+						setCrossSectionID(response.data.crossSection.id);
+						setCrossSectionName(response.data.crossSection.name);
+					}
+				})
+				.catch((error) => {
+					log.error("Error fetching projectile point: ", error);
+				});
+		}
+	}, [projectilePointId]);
+
 	return (
 		<>
 			<Dialog open={true} onClose={handleClose} maxWidth="md" fullWidth>
-				<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
+				{!projectilePointId && (
+					<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
+				)}
+				{projectilePointId && (
+					<DialogTitle>
+						Update {siteName}-{projectilePointId} Projectile Point
+					</DialogTitle>
+				)}
 				<DialogContent style={{ minHeight: "300px" }}>
 					<Grid container spacing={2} sx={{ paddingTop: 0 }}>
 						<Grid item xs={6}>
@@ -820,7 +885,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								multiline
 								rows={4}
 								fullWidth
-								value={description}
+								value={description || ""}
 								onChange={handleDescriptionChange}
 							/>
 							{/* ------------ Upload Photo ------------- */}
@@ -844,7 +909,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 										<TextField
 											id="lengthdimension"
 											label="Length"
-											value={length}
+											value={length || ""}
 											InputProps={{
 												endAdornment: (
 													<InputAdornment disableTypography position="end">
@@ -861,7 +926,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 										<TextField
 											id="widthdimension"
 											label="Width"
-											value={width}
+											value={width || ""}
 											InputProps={{
 												endAdornment: (
 													<InputAdornment disableTypography position="end">
@@ -878,7 +943,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 										<TextField
 											id="heightdimension"
 											label="Height"
-											value={height}
+											value={height || ""}
 											InputProps={{
 												endAdornment: (
 													<InputAdornment disableTypography position="end">
@@ -900,7 +965,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								id="location"
 								label="Location"
 								fullWidth
-								value={location}
+								value={location || ""}
 								onChange={handleLocationChange}
 							/>
 							{/* ------------ Artifact Type ------------- */}
@@ -916,7 +981,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								helperText={
 									artifactTypeError && "Please select an Artifact Type"
 								}
-								value={artifactTypeID}
+								value={artifactTypeID || ""}
 								onChange={handleArtifactTypeChange}
 							>
 								<MenuItem value="Lithic">Lithic</MenuItem>
@@ -932,7 +997,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="period"
 									label="Period"
 									labelId="period-label"
-									value={selectedPeriod}
+									value={periodName || ""}
 									onChange={handlePeriodChange}
 									renderValue={(selected) => selected}
 								>
@@ -979,7 +1044,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="culture"
 									label="Culture"
 									labelId="culture-label"
-									value={selectedCulture}
+									value={cultureName || ""}
 									onChange={handleCultureChange}
 									renderValue={(selected) => selected}
 									disabled={!cultureEnabled}
@@ -1038,7 +1103,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="material"
 									label="Material"
 									labelId="material-label"
-									value={selectedMaterial}
+									value={materialName || ""}
 									onChange={handleMaterialChange}
 									renderValue={(selected) => selected}
 									disabled={!materialEnabled}
@@ -1098,7 +1163,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="baseshape"
 									label="Base Shape"
 									labelId="baseshape-label"
-									value={selectedBaseShape}
+									value={baseShapeName || ""}
 									onChange={handleBaseShapeChange}
 									renderValue={(selected) => selected}
 								>
@@ -1154,7 +1219,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="crosssection"
 									label="Cross Section"
 									labelId="crosssection-label"
-									value={selectedCrossSection}
+									value={crossSectionName || ""}
 									onChange={handleCrossSectionChange}
 									renderValue={(selected) => selected}
 								>
@@ -1212,7 +1277,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="bladeshape"
 									label="Blade Shape"
 									labelId="bladeshape-label"
-									value={selectedBladeShape}
+									value={bladeShapeName || ""}
 									onChange={handleBladeShapeChange}
 									renderValue={(selected) => selected}
 								>
@@ -1268,7 +1333,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 									id="haftingshape"
 									label="Hafting Shape"
 									labelId="haftingshape-label"
-									value={selectedHaftingShape}
+									value={haftingShapeName || ""}
 									onChange={handleHaftingShapeChange}
 									renderValue={(selected) => selected}
 								>
@@ -1326,9 +1391,16 @@ const AddProjectile = ({ setOpenAdd }) => {
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleSubmit} color="primary">
-						Add
-					</Button>
+					{!projectilePointId && (
+						<Button onClick={handleSubmit} color="primary">
+							Add
+						</Button>
+					)}
+					{projectilePointId && (
+						<Button onClick={handleSubmit} color="primary">
+							Save Changes
+						</Button>
+					)}
 				</DialogActions>
 			</Dialog>
 			{editPeriod && (
