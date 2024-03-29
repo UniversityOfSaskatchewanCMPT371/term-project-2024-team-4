@@ -1,4 +1,12 @@
-const { Culture, Period } = require("../dist/entity");
+/* eslint-disable indent */
+const {
+	Culture,
+	Period,
+	HaftingShape,
+	CrossSection,
+	BaseShape,
+	BladeShape,
+} = require("../dist/entity");
 const myDatabase = require("../config/db");
 const assert = require("node:assert/strict");
 const { logger } = require("../config/logger.js");
@@ -72,9 +80,13 @@ async function getCultureById(req) {
 				"period",
 				"projectilePoints",
 				"bladeShapes",
+				"bladeShapes.cultures",
 				"baseShapes",
+				"baseShapes.cultures",
 				"haftingShapes",
+				"haftingShapes.cultures",
 				"crossSections",
+				"crossSections.cultures",
 			],
 		});
 		assert(culture, "Culture not found.");
@@ -95,7 +107,14 @@ async function getCultureById(req) {
  */
 async function updateCulture(req) {
 	const { id } = req.params;
-	const { name, periodId } = req.body;
+	const {
+		name,
+		periodId,
+		bladeShapes,
+		baseShapes,
+		haftingShapes,
+		crossSections,
+	} = req.body;
 	try {
 		const idInt = parseInt(id);
 		assert(!isNaN(idInt), "Invalid ID provided.");
@@ -113,7 +132,144 @@ async function updateCulture(req) {
 			cultureToUpdate.period = period;
 		}
 
+		//go through given hafting shapes, get their objects and store it in an array for updating.
+		//have to do this 4 times, once for each shape.
+		logger.info(Array(bladeShapes));
+		const haftingShapeObjArray = new Array();
+		for (let i = 0; i < haftingShapes.length; i++) {
+			let currentId = parseInt(haftingShapes[i]);
+			let currentHaftingShape;
+			//check if the current index is just an id, or a hafting shape object with an id key.
+			assert(
+				!isNaN(currentId) || Object.hasOwn(haftingShapes[i], "id"),
+				"Index " +
+					i +
+					" of the given haftingShape array is not a hafting shape object or an id.",
+			);
+			//check if its an id
+			if (isNaN(currentId) && Object.hasOwn(haftingShapes[i], "id")) {
+				currentId = parseInt(haftingShapes[i].id);
+			} else if (isNaN(currentId) && !Object.hasOwn(haftingShapes[i], "id")) {
+				logger.debug(
+					"Index " +
+						i +
+						" of the given haftingShape array is not a hafting shape object or an id. But passed assertion",
+				);
+				continue;
+			}
+			currentHaftingShape = currentId
+				? await myDatabase
+						.getRepository(HaftingShape)
+						.findOneBy({ id: currentId })
+				: null;
+			if (currentHaftingShape != null) {
+				haftingShapeObjArray.push(currentHaftingShape);
+			}
+		}
+
+		//go through given blade shapes, get their objects and store it in an array for updating.
+		const bladeShapeObjArray = new Array();
+		for (let i = 0; i < bladeShapes.length; i++) {
+			let currentId = parseInt(bladeShapes[i]);
+			let currentBladeShape;
+			//check if the current index is just an id, or a hafting shape object with an id key.
+			assert(
+				!isNaN(currentId) || Object.hasOwn(bladeShapes[i], "id"),
+				"Index " +
+					i +
+					" of the given haftingShape array is not a hafting shape object or an id.",
+			);
+			//if its not an id, check if the object has an id key and set that as the currentid
+			if (isNaN(currentId) && Object.hasOwn(bladeShapes[i], "id")) {
+				currentId = parseInt(bladeShapes[i].id);
+			} else if (isNaN(currentId) && !Object.hasOwn(bladeShapes[i], "id")) {
+				logger.debug(
+					"Index " +
+						i +
+						" of the given bladeShape array is not a hafting shape object or an id. But passed assertion",
+				);
+				continue;
+			}
+			currentBladeShape = currentId
+				? await myDatabase
+						.getRepository(BladeShape)
+						.findOneBy({ id: currentId })
+				: null;
+			if (currentBladeShape != null) {
+				bladeShapeObjArray.push(currentBladeShape);
+			}
+		}
+
+		//go through given base shapes, get their objects and store it in an array for updating.
+		const baseShapeObjArray = new Array();
+		for (let i = 0; i < baseShapes.length; i++) {
+			let currentId = parseInt(baseShapes[i]);
+			let currentBaseShape;
+			//check if the current index is just an id, or a hafting shape object with an id key.
+			assert(
+				!isNaN(currentId) || Object.hasOwn(baseShapes[i], "id"),
+				"Index " +
+					i +
+					" of the given haftingShape array is not a hafting shape object or an id.",
+			);
+			//check if its an id
+			if (isNaN(currentId) && Object.hasOwn(baseShapes[i], "id")) {
+				currentId = parseInt(baseShapes[i].id);
+			} else if (isNaN(currentId) && !Object.hasOwn(baseShapes[i], "id")) {
+				logger.debug(
+					"Index " +
+						i +
+						" of the given baseShape array is not a hafting shape object or an id. But passed assertion",
+				);
+				continue;
+			}
+			currentBaseShape = currentId
+				? await myDatabase.getRepository(BaseShape).findOneBy({ id: currentId })
+				: null;
+			if (currentBaseShape != null) {
+				baseShapeObjArray.push(currentBaseShape);
+			}
+		}
+
+		//go through given base shapes, get their objects and store it in an array for updating.
+		const crossSectionObjArray = new Array();
+		for (let i = 0; i < crossSections.length; i++) {
+			let currentId = parseInt(crossSections[i]);
+			let currentCrossSection;
+			//check if the current index is just an id, or a hafting shape object with an id key.
+			assert(
+				!isNaN(currentId) || Object.hasOwn(crossSections[i], "id"),
+				"Index " +
+					i +
+					" of the given haftingShape array is not a hafting shape object or an id.",
+			);
+			//check if its an id
+			if (isNaN(currentId) && Object.hasOwn(crossSections[i], "id")) {
+				currentId = parseInt(crossSections[i].id);
+			} else if (isNaN(currentId) && !Object.hasOwn(crossSections[i], "id")) {
+				logger.debug(
+					"Index " +
+						i +
+						" of the given crossSection array is not a hafting shape object or an id. But passed assertion",
+				);
+				continue;
+			}
+			currentCrossSection = currentId
+				? await myDatabase
+						.getRepository(CrossSection)
+						.findOneBy({ id: currentId })
+				: null;
+			if (currentCrossSection != null) {
+				crossSectionObjArray.push(currentCrossSection);
+			}
+		}
+
 		cultureToUpdate.name = name;
+		cultureToUpdate.bladeShapes = bladeShapeObjArray;
+		cultureToUpdate.baseShapes = baseShapeObjArray;
+		cultureToUpdate.haftingShapes = haftingShapeObjArray;
+		cultureToUpdate.crossSections = crossSectionObjArray;
+
 		await cultureRepository.save(cultureToUpdate);
 		// res.json(cultureToUpdate);
 		logger.info(`Updated Culture with ID: ${id}`);
