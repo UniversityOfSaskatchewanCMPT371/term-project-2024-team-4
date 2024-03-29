@@ -30,6 +30,7 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 	const [dimensions, setDimensions] = useState("");
 	const [photoFilePath, setPhotoFilePath] = useState("");
 	const [artifactTypeID, setArtifactTypeID] = useState(0);
+	const [periodName, setPeriodName] = useState("");
 	const [cultureName, setCultureName] = useState("");
 	const [bladeShapeName, setBladeShapeName] = useState("");
 	const [baseShapeName, setBaseShapeName] = useState("");
@@ -103,6 +104,7 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 
 				if (response.data.culture !== null) {
 					setCultureName(response.data.culture.name);
+					setPeriodName(response.data.culture.period.name);
 				}
 
 				if (response.data.bladeShape !== null) {
@@ -200,6 +202,10 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 								Artifact Type
 							</Typography>
 							<Typography variant="body1">{artifactTypeID}</Typography>
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Period
+							</Typography>
+							<Typography variant="body1">{periodName}</Typography>
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Culture
 							</Typography>

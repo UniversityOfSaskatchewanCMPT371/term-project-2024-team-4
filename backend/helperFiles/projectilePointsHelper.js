@@ -29,7 +29,7 @@ async function newProjectilePoint(req) {
 
 	const photo = req.file ? req.file.path : null;
 
-	console.log("Creating new Projectile Point: " +  JSON.stringify(req.body));
+	console.log("Creating new Projectile Point: " + JSON.stringify(req.body));
 
 	try {
 		// Fetch related entities by their IDs
@@ -124,6 +124,7 @@ async function getProjectilePointFromId(req) {
 					"baseShape",
 					"haftingShape",
 					"crossSection",
+					"culture.period",
 				],
 			});
 		if (!projectilePoint) {

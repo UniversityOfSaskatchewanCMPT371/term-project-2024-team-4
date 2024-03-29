@@ -239,11 +239,35 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 			formData.append("haftingShapeId", haftingShapeID);
 			formData.append("crossSectionId", crossSectionID);
 
+			const updateProjectilePoint = {
+				name: name,
+				location: location,
+				description: description,
+				dimensions: new Array(
+					parseFloat(length),
+					parseFloat(width),
+					parseFloat(height),
+				),
+				photo: photoFilePath,
+				siteId: siteID,
+				artifactTypeId: artifactTypeID,
+				cultureId: cultureID,
+				bladeShapeId: bladeShapeID,
+				baseShapeId: baseShapeID,
+				haftingShapeId: haftingShapeID,
+				crossSectionId: crossSectionID,
+			};
+
 			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
 			const requestMethod = projectilePointId ? http.put : http.post;
+			const projectilePointData = projectilePointId
+				? updateProjectilePoint
+				: formData;
 
-			requestMethod(requestUrl, formData)
+			log.info("Updating projectile point");
+			requestMethod(requestUrl, updateProjectilePoint)
 				.then((response) => {
+					log.info("Updating projectile point");
 					handleClose();
 					if (projectilePointId) {
 						log.info("Updated projectile point successfully:", response.data);
@@ -834,6 +858,9 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 					if (response.data.culture !== null) {
 						setCultureID(response.data.culture.id);
 						setCultureName(response.data.culture.name);
+
+						setPeriodID(response.data.culture.period.id);
+						setPeriodName(response.data.culture.period.name);
 					}
 
 					if (response.data.bladeShape !== null) {

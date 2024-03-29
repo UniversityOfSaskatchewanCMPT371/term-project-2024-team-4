@@ -7,10 +7,13 @@ const path = require("path");
 const storage = multer.diskStorage({
 	destination: "./uploads/",
 	filename: function (req, file, cb) {
-	  cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+		cb(
+			null,
+			file.fieldname + "-" + Date.now() + path.extname(file.originalname),
+		);
 	},
 });
-  
+
 // Multer middleware
 const upload = multer({ storage });
 
@@ -107,6 +110,7 @@ router.delete("/:id", async (req, res) => {
 	if (result instanceof Error) {
 		return res.json({ error: result.message });
 	}
+	return res.send();
 });
 
 module.exports = router;
