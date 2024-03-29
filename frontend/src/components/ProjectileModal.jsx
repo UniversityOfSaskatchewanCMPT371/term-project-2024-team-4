@@ -180,12 +180,77 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.post("/projectilePoints", newProjectilePoint)
 			.then((response) => {
 				console.log("New projectile point added successfully:", response.data);
-				handleClose();
 			})
 			.catch((error) => {
 				console.error("Error adding new  projectile point:", error);
 			});
-		//setOpen(true);
+
+		//Add Base/Blade/Hafting shape and cross section to selected culture.
+		//first, if the currently selected Base/Blade/Hafting shape and cross sections are not in the current culture, add them
+
+		http
+			.get(`/cultures/${cultureID}`)
+			.then((response) => {
+				console.log("New projectile point added successfully:", response.data);
+				let cultureToUpdate = response.data;
+				//check if the selected base shape is in the selected culture.
+				if (
+					!cultureToUpdate.baseShapes.find(
+						(baseShapeObj) => baseShapeObj.id === baseShapeID,
+					)
+				) {
+					cultureToUpdate.baseShapes.push(baseShapeID);
+				}
+				//check if the selected hafting shape is in the selected culture.
+				if (
+					!cultureToUpdate.haftingShapes.find(
+						(haftingShapeObj) => haftingShapeObj.id === haftingShapeID,
+					)
+				) {
+					cultureToUpdate.haftingShapes.push(haftingShapeID);
+				}
+				//check if the selected blade shape is in the selected culture.
+				if (
+					!cultureToUpdate.bladeShapes.find(
+						(bladeShapeObj) => bladeShapeObj.id === bladeShapeID,
+					)
+				) {
+					cultureToUpdate.bladeShapes.push(bladeShapeID);
+				}
+				//check if the selected cross section is in the selected culture.
+				if (
+					!cultureToUpdate.crossSections.find(
+						(crossSectionObj) => crossSectionObj.id === crossSectionID,
+					)
+				) {
+					cultureToUpdate.crossSections.push(crossSectionID);
+				}
+				const updatedCulture = {
+					name: cultureToUpdate.name,
+					periodId: cultureToUpdate.periodId,
+					baseShapes: cultureToUpdate.baseShapes,
+					bladeShapes: cultureToUpdate.bladeShapes,
+					haftingShapes: cultureToUpdate.haftingShapes,
+					crossSections: cultureToUpdate.crossSections,
+				};
+				log.info("PM 231: " + updatedCulture);
+
+				http
+					.put(`/cultures/${cultureID}`, updatedCulture)
+					.then((response) => {
+						log.info(
+							`Culture processed successfully: ${JSON.stringify(response.data)}`,
+						);
+						handleClose();
+					})
+					.catch((error) => {
+						log.error(`Error processing culture: ${error}`);
+					});
+			})
+			.catch((error) => {
+				console.error("Error adding new  projectile point:", error);
+			});
+
 		console.log("Submitted:", newProjectilePoint);
 	};
 
@@ -252,6 +317,31 @@ const AddProjectile = ({ setOpenAdd }) => {
 		const selectedPeriod = periods.find(
 			(period) => period.name.trim() === selectedPeriodName,
 		);
+
+		// http.get(`/periods/${periodID}`).then((response) => {
+		// 	const currentPeriod = response.data;
+		// 	if (currentPeriod) {
+		// 		// If there are cultures associated with the selected period, update the cultures state
+		// 		if (currentPeriod.cultures.length > 0) {
+		// 			setCultures(currentPeriod.cultures);
+		// 			// setCultures(["Bingus", "Bongus"]);
+		// 			// Optionally, automatically select the first culture
+		// 			setSelectedCulture(currentPeriod.cultures[0].name);
+		// 			setSelectedCultureID(currentPeriod.cultures[0].id);
+		// 		} else {
+		// 			// If there are no cultures associated with the selected period, clear the cultures
+		// 			setCultures([]);
+		// 			setSelectedCulture("");
+		// 			setSelectedCultureID(null);
+		// 		}
+		// 	}
+		// 	// else {
+		// 	// 	console.error("Selected period not found.");
+		// 	// 	setCultures([]);
+		// 	// 	setSelectedCulture("");
+		// 	// 	setSelectedCultureID(null);
+		// 	// }
+		// });
 
 		if (selectedPeriod) {
 			// If there are cultures associated with the selected period, update the cultures state
@@ -363,7 +453,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 		http
 			.get("/cultures")
 			.then((response) => {
-				setCultures(response.data);
+				//when a period is selected, this stops the culture dropdown from being constantly overwritten
+				if (!selectedPeriod) {
+					setCultures(response.data);
+				}
 				const filteredCulture = response.data.find(
 					(culture) => culture.name === selectedCulture,
 				);
@@ -411,11 +504,11 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 		if (selectedCulture && selectedCulture.period) {
 			// Filter the periods dropdown to only include the period associated with the selected culture
-			setPeriods([selectedCulture.period]);
+			//setPeriods([selectedCulture.period]);
 			// Automatically select this period in the periods dropdown
 			setSelectedPeriod(selectedCulture.period.name);
 		} else {
-			setPeriods([]);
+			//setPeriods([]);
 			setSelectedPeriod("");
 		}
 
