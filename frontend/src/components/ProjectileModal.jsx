@@ -77,9 +77,6 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 	const [widthError, setWidthError] = useState(false);
 	const [heightError, setHeightError] = useState(false);
 
-	const [cultureEnabled, setCultureEnabled] = useState(false);
-	const [materialEnabled, setMaterialEnabled] = useState(false);
-
 	const [materialID, setMaterialID] = useState(0); // for future implementation of adding materials
 	const [periodID, setPeriodID] = useState(0); // not needed for adding projectile point, for testing only
 
@@ -339,7 +336,6 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 
 	const handlePeriodChange = (event) => {
 		setSelectedPeriod(event.target.value);
-		setCultureEnabled(true);
 	};
 
 	const handleOpenPeriodModal = (periodId = null) => {
@@ -393,8 +389,6 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 	const handleCultureChange = (event) => {
 		setCultureID(event.target.id);
 		setSelectedCulture(event.target.value);
-
-		setMaterialEnabled(true);
 	};
 
 	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
@@ -828,7 +822,12 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 					setName(response.data.site.name + "-" + response.data.id);
 					setDescription(response.data.description);
 					setLocation(response.data.location);
-					// setDimensions(response.data.dimensions);
+
+					const dimensions = response.data.dimensions.split(",");
+					setLength(dimensions[0]);
+					setWidth(dimensions[1]);
+					setHeight(dimensions[2]);
+
 					setPhotoFilePath(response.data.photo);
 					setArtifactTypeID(response.data.artifactType.id);
 
@@ -1047,7 +1046,6 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 									value={cultureName || ""}
 									onChange={handleCultureChange}
 									renderValue={(selected) => selected}
-									disabled={!cultureEnabled}
 								>
 									{cultures.map((culture) => (
 										<MenuItem key={culture.id} value={culture.name}>
@@ -1106,7 +1104,6 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 									value={materialName || ""}
 									onChange={handleMaterialChange}
 									renderValue={(selected) => selected}
-									disabled={!materialEnabled}
 								>
 									{materials.map((material) => (
 										<MenuItem key={material.id} value={material.name}>
