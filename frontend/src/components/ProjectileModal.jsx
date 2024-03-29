@@ -318,31 +318,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 			(period) => period.name.trim() === selectedPeriodName,
 		);
 
-		// http.get(`/periods/${periodID}`).then((response) => {
-		// 	const currentPeriod = response.data;
-		// 	if (currentPeriod) {
-		// 		// If there are cultures associated with the selected period, update the cultures state
-		// 		if (currentPeriod.cultures.length > 0) {
-		// 			setCultures(currentPeriod.cultures);
-		// 			// setCultures(["Bingus", "Bongus"]);
-		// 			// Optionally, automatically select the first culture
-		// 			setSelectedCulture(currentPeriod.cultures[0].name);
-		// 			setSelectedCultureID(currentPeriod.cultures[0].id);
-		// 		} else {
-		// 			// If there are no cultures associated with the selected period, clear the cultures
-		// 			setCultures([]);
-		// 			setSelectedCulture("");
-		// 			setSelectedCultureID(null);
-		// 		}
-		// 	}
-		// 	// else {
-		// 	// 	console.error("Selected period not found.");
-		// 	// 	setCultures([]);
-		// 	// 	setSelectedCulture("");
-		// 	// 	setSelectedCultureID(null);
-		// 	// }
-		// });
-
 		if (selectedPeriod) {
 			// If there are cultures associated with the selected period, update the cultures state
 			if (selectedPeriod.cultures.length > 0) {
