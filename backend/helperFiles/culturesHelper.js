@@ -6,6 +6,7 @@ const {
 	CrossSection,
 	BaseShape,
 	BladeShape,
+	Material,
 } = require("../dist/entity");
 const myDatabase = require("../config/db");
 const assert = require("node:assert/strict");
@@ -53,6 +54,7 @@ async function getAllCultures() {
 				"baseShapes",
 				"haftingShapes",
 				"crossSections",
+				"materials",
 			],
 		});
 		assert(cultures.length > 0, "No Cultures found.");
@@ -87,6 +89,8 @@ async function getCultureById(req) {
 				"haftingShapes.cultures",
 				"crossSections",
 				"crossSections.cultures",
+				"materials",
+				"materials.cultures",
 			],
 		});
 		assert(culture, "Culture not found.");
@@ -107,6 +111,7 @@ async function getCultureById(req) {
  */
 async function updateCulture(req) {
 	const { id } = req.params;
+	logger.info("Updating Culture with id: " + id);
 	const {
 		name,
 		periodId,
@@ -114,6 +119,7 @@ async function updateCulture(req) {
 		baseShapes,
 		haftingShapes,
 		crossSections,
+		materials,
 	} = req.body;
 	try {
 		const idInt = parseInt(id);
@@ -132,9 +138,40 @@ async function updateCulture(req) {
 			cultureToUpdate.period = period;
 		}
 
+		logger.info(Array(materials));
+		const materialObjArray = new Array();
+		for (let i = 0; i < materials.length; i++) {
+			let currentId = parseInt(materials[i]);
+			let currentMaterial;
+			//check if the current index is just an id, or a hafting shape object with an id key.
+			assert(
+				!isNaN(currentId) || Object.hasOwn(materials[i], "id"),
+				"Index " +
+					i +
+					" of the given haftingShape array is not a hafting shape object or an id.",
+			);
+			//check if its an id
+			if (isNaN(currentId) && Object.hasOwn(materials[i], "id")) {
+				currentId = parseInt(materials[i].id);
+			} else if (isNaN(currentId) && !Object.hasOwn(materials[i], "id")) {
+				logger.debug(
+					"Index " +
+						i +
+						" of the given material array is not a hafting shape object or an id. But passed assertion",
+				);
+				continue;
+			}
+			currentMaterial = currentId
+				? await myDatabase.getRepository(Material).findOneBy({ id: currentId })
+				: null;
+			if (currentMaterial != null) {
+				materialObjArray.push(currentMaterial);
+			}
+		}
+
 		//go through given hafting shapes, get their objects and store it in an array for updating.
 		//have to do this 4 times, once for each shape.
-		logger.info(Array(bladeShapes));
+		logger.info(Array(haftingShapes));
 		const haftingShapeObjArray = new Array();
 		for (let i = 0; i < haftingShapes.length; i++) {
 			let currentId = parseInt(haftingShapes[i]);
@@ -168,6 +205,7 @@ async function updateCulture(req) {
 		}
 
 		//go through given blade shapes, get their objects and store it in an array for updating.
+		logger.info(Array(bladeShapes));
 		const bladeShapeObjArray = new Array();
 		for (let i = 0; i < bladeShapes.length; i++) {
 			let currentId = parseInt(bladeShapes[i]);
@@ -201,6 +239,7 @@ async function updateCulture(req) {
 		}
 
 		//go through given base shapes, get their objects and store it in an array for updating.
+		logger.info(Array(baseShapes));
 		const baseShapeObjArray = new Array();
 		for (let i = 0; i < baseShapes.length; i++) {
 			let currentId = parseInt(baseShapes[i]);
@@ -232,6 +271,7 @@ async function updateCulture(req) {
 		}
 
 		//go through given base shapes, get their objects and store it in an array for updating.
+		logger.info(Array(crossSections));
 		const crossSectionObjArray = new Array();
 		for (let i = 0; i < crossSections.length; i++) {
 			let currentId = parseInt(crossSections[i]);
@@ -269,6 +309,7 @@ async function updateCulture(req) {
 		cultureToUpdate.baseShapes = baseShapeObjArray;
 		cultureToUpdate.haftingShapes = haftingShapeObjArray;
 		cultureToUpdate.crossSections = crossSectionObjArray;
+		cultureToUpdate.materials = materialObjArray;
 
 		await cultureRepository.save(cultureToUpdate);
 		// res.json(cultureToUpdate);

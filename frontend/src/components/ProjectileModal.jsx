@@ -225,6 +225,14 @@ const AddProjectile = ({ setOpenAdd }) => {
 				) {
 					cultureToUpdate.crossSections.push(crossSectionID);
 				}
+				//check if the selected material is in the selected culture.
+				if (
+					!cultureToUpdate.materials.find(
+						(materialObj) => materialObj.id === materialID,
+					)
+				) {
+					cultureToUpdate.materials.push(materialID);
+				}
 				const updatedCulture = {
 					name: cultureToUpdate.name,
 					periodId: cultureToUpdate.periodId,
@@ -232,6 +240,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 					bladeShapes: cultureToUpdate.bladeShapes,
 					haftingShapes: cultureToUpdate.haftingShapes,
 					crossSections: cultureToUpdate.crossSections,
+					materials: cultureToUpdate.materials,
 				};
 				log.info("PM 231: " + updatedCulture);
 
@@ -445,7 +454,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching cultures:", error);
 			});
-	}, [selectedCulture]);
+	}, [selectedCulture, selectedPeriod]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.

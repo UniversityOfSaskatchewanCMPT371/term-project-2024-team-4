@@ -123,7 +123,8 @@ export class Culture {
 	@JoinTable()
 	crossSections: CrossSection[];
 
-	@ManyToMany(() => Material)
+	@ManyToMany(() => Material, (material) => material.cultures)
+	@JoinTable()
 	materials: Material[];
 }
 
@@ -270,11 +271,11 @@ export class Material {
 	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Artifact)
+	@ManyToMany(() => Artifact, (artifact) => artifact.materials)
 	@JoinTable()
 	artifacts: Artifact[];
 
-	@ManyToMany(() => Culture)
+	@ManyToMany(() => Culture, (culture) => culture.materials)
 	@JoinTable()
 	cultures: Culture[];
 }
