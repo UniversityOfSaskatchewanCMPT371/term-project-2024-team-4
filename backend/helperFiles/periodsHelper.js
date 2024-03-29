@@ -25,7 +25,16 @@ async function newPeriod(req) {
 async function getAllPeriods() {
 	try {
 		const periodRepository = await myDatabase.getRepository(Period);
-		const periods = await periodRepository.find({ relations: ["cultures"] });
+		const periods = await periodRepository.find({
+			relations: [
+				"cultures",
+				"cultures.bladeShapes",
+				"cultures.baseShapes",
+				"cultures.haftingShapes",
+				"cultures.crossSections",
+				"cultures.materials",
+			],
+		});
 		// res.json(periods);
 		return periods;
 	} catch (error) {
@@ -43,7 +52,14 @@ async function getPeriodById(req) {
 		const periodRepository = await myDatabase.getRepository(Period);
 		const period = await periodRepository.findOne({
 			where: { id: parseInt(req.params.id) },
-			relations: ["cultures"],
+			relations: [
+				"cultures",
+				"cultures.bladeShapes",
+				"cultures.baseShapes",
+				"cultures.haftingShapes",
+				"cultures.crossSections",
+				"cultures.materials",
+			],
 		});
 		if (period) {
 			// res.json(period);
