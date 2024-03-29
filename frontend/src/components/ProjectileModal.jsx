@@ -489,7 +489,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setSelectedCultureID(culture.id);
 	};
 
-	const [displayedPeriods, setDisplayedPeriods] = useState([]);
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
 	const handleCultureChange = async (event) => {
 		const selectedCultureName = event.target.value;
@@ -502,14 +501,12 @@ const AddProjectile = ({ setOpenAdd }) => {
 			(culture) => culture.name === selectedCultureName,
 		);
 
-		if (selectedCulture && selectedCulture.period) {
-			// Filter the periods dropdown to only include the period associated with the selected culture
-			//setPeriods([selectedCulture.period]);
-			// Automatically select this period in the periods dropdown
-			setSelectedPeriod(selectedCulture.period.name);
+		if (selectedPeriod) {
+			if (selectedCulture.cultures.length > 1) {
+				setSelectedPeriod("");
+			}
 		} else {
-			//setPeriods([]);
-			setSelectedPeriod("");
+			setSelectedPeriod(selectedCulture.period.name);
 		}
 
 		// Fetch and update shape data based on the selected culture
