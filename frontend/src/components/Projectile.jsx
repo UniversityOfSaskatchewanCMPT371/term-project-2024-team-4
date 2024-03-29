@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import http from "../../http.js";
 import ProjectileModal from "./ProjectileModal";
 import log from "../logger.js";
+import { baseURL } from "../../http";
 import {
 	Button,
 	Dialog,
+	DialogTitle,
 	DialogContent,
+	DialogContentText,
 	DialogActions,
 	Grid,
 	Typography,
@@ -20,7 +23,7 @@ import {
  * @returns {JSX.Element} ViewProjectile React component
  */
 // eslint-disable-next-line no-unused-vars, react/prop-types
-const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
+const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
@@ -34,12 +37,13 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 	const [crossSectionName, setCrossSectionName] = useState("");
 
 	const [openAdd, setOpenAdd] = useState(false);
+	const [openAlertDelete, setOpenAlertDelete] = useState(false);
 
 	/**
 	 * Set modal visibility to false
 	 */
 	const handleClose = () => {
-		setOpen(false);
+		setOpenView(false);
 	};
 
 	/**
@@ -52,8 +56,34 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 	/**
 	 *
 	 */
+	const handleOpenAlertDelete = () => {
+		setOpenAlertDelete(true);
+	};
+
+	/**
+	 *
+	 */
 	const handleDelete = () => {
-		setOpen(false);
+		fetch(`${baseURL}/projectilePoints/${projectilePointId}`, {
+			method: "DELETE",
+		})
+			.then(() => {
+				log.info("Successfully deleted projectile point");
+				handleCloseAlertDelete();
+				handleClose();
+			})
+			.catch((error) => {
+				log.error("Error deleting projectile point:", error);
+				handleCloseAlertDelete();
+				handleClose();
+			});
+	};
+
+	/**
+	 *
+	 */
+	const handleCloseAlertDelete = () => {
+		setOpenAlertDelete(false);
 	};
 
 	/**
@@ -197,7 +227,7 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 					<Button onClick={handleClose} color="primary">
 						Close
 					</Button>
-					<Button onClick={handleDelete} color="primary">
+					<Button onClick={handleOpenAlertDelete} color="primary">
 						Delete
 					</Button>
 					<Button onClick={handleEdit} color="primary">
@@ -205,14 +235,32 @@ const ViewProjectile = ({ setOpen, projectilePointId, siteName }) => {
 					</Button>
 				</DialogActions>
 			</Dialog>
-			<Typography>
+			<div>
 				{openAdd && (
 					<ProjectileModal
 						setOpenAdd={setOpenAdd}
 						projectilePointId={projectilePointId}
 					/>
 				)}
-			</Typography>
+			</div>
+			<div>
+				<Dialog open={openAlertDelete}>
+					<DialogTitle id="alert-dialog-title">
+						{"Delete Projectile Point " + name}
+					</DialogTitle>
+					<DialogContent>
+						<DialogContentText id="alert-dialog-description">
+							Are you sure you want to delete projectile point?
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleCloseAlertDelete}>No</Button>
+						<Button onClick={handleDelete} autoFocus>
+							Yes
+						</Button>
+					</DialogActions>
+				</Dialog>
+			</div>
 		</>
 	);
 };

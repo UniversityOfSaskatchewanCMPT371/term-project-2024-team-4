@@ -70,7 +70,7 @@ export default function ProjectileList({ query, siteId, siteName }) {
 		}
 
 		fetchprojectilePoints();
-	}, [openAdd]);
+	}, [openAdd, openView]);
 
 	// Filter projectile points to current selected site
 	const siteData = data?.filter((item) => item.site.id == siteId);
@@ -123,7 +123,7 @@ export default function ProjectileList({ query, siteId, siteName }) {
 			<div>
 				{openView && (
 					<Projectile
-						setOpen={setOpenView}
+						setOpenView={setOpenView}
 						projectilePointId={projectilePointId}
 						siteName={siteName}
 					/>
