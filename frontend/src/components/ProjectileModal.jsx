@@ -351,50 +351,107 @@ const AddProjectile = ({ setOpenAdd }) => {
 			const relatedCulture = selectedPeriod.cultures[0];
 			setSelectedCulture(relatedCulture.name.trim());
 
-			fetchShapeData(
-				`/bladeShapes?cultureId=${relatedCulture.id}`,
-				setBladeShapes,
-				setSelectedBladeShape,
-				setSelectedBladeShapeID,
+			//get all of the blade/base/hafting shapes and cross sections.
+			const bladeShapesResponse = await http.get("/bladeShapes");
+			const baseShapesResponse = await http.get("/baseShapes");
+			const haftingShapesResponse = await http.get("/haftingShapes");
+			const crossSectionsResponse = await http.get("/crossSections");
+			const materialsResponse = await http.get("/materials");
+
+			//add the other options to the end, placing the shapes associated with the culture first.
+			setBladeShapes(
+				mergeArrays(relatedCulture.bladeShapes, bladeShapesResponse.data),
 			);
-			fetchShapeData(
-				`/baseShapes?cultureId=${relatedCulture.id}`,
-				setBaseShapes,
-				setSelectedBaseShape,
-				setSelectedBaseShapeID,
+			if (relatedCulture.bladeShapes.length > 0) {
+				setSelectedBladeShape(relatedCulture.bladeShapes[0].name);
+				setSelectedBladeShapeID(relatedCulture.bladeShapes[0].id);
+			} else {
+				setSelectedBladeShape("");
+				setSelectedBladeShapeID(null);
+			}
+
+			//add the other options to the end, placing the shapes associated with the culture first.
+			setBaseShapes(
+				mergeArrays(relatedCulture.baseShapes, baseShapesResponse.data),
 			);
-			fetchShapeData(
-				`/crossSections?cultureId=${relatedCulture.id}`,
-				setCrossSections,
-				setSelectedCrossSection,
-				setSelectedCrossSectionID,
+			if (relatedCulture.baseShapes.length > 0) {
+				setSelectedBaseShape(relatedCulture.baseShapes[0].name);
+				setSelectedBaseShapeID(relatedCulture.baseShapes[0].id);
+			} else {
+				setSelectedBaseShape("");
+				setSelectedBaseShapeID(null);
+			}
+			//add the other options to the end, placing the shapes associated with the culture first.
+			setCrossSections(
+				mergeArrays(relatedCulture.crossSections, crossSectionsResponse.data),
 			);
-			fetchShapeData(
-				`/haftingShapes?cultureId=${relatedCulture.id}`,
-				setHaftingShapes,
-				setSelectedHaftingShape,
-				setSelectedHaftingShapeID,
+			if (relatedCulture.crossSections.length > 0) {
+				setSelectedCrossSection(relatedCulture.crossSections[0].name);
+				setSelectedCrossSectionID(relatedCulture.crossSections[0].id);
+			} else {
+				setSelectedCrossSection("");
+				setSelectedCrossSectionID(null);
+			}
+			//add the other options to the end, placing the shapes associated with the culture first.
+			setHaftingShapes(
+				mergeArrays(relatedCulture.haftingShapes, haftingShapesResponse.data),
 			);
+			if (relatedCulture.haftingShapes.length > 0) {
+				setSelectedHaftingShape(relatedCulture.haftingShapes[0].name);
+				setSelectedHaftingShapeID(relatedCulture.haftingShapes[0].id);
+			} else {
+				setSelectedHaftingShape("");
+				setSelectedHaftingShapeID(null);
+			}
+			setMaterials(
+				mergeArrays(relatedCulture.materials, materialsResponse.data),
+			);
+			if (relatedCulture.materials.length > 0) {
+				setSelectedMaterial(relatedCulture.materials[0].name);
+				setSelectedMaterialID(relatedCulture.materials[0].id);
+			} else {
+				setSelectedMaterial("");
+				setSelectedMaterialID(null);
+			}
 		} else {
 			resetShapeSelections();
 		}
 	};
 
+	//Helper function for merging two arrays without duplicates
+	const mergeArrays = (
+		array1,
+		array2,
+		predicate = (array1, array2) => array1 === array2,
+	) => {
+		const array1Copy = [...array1]; // copy to avoid side effects
+		// add all items from B to copy C if they're not already present
+		array2.forEach((array2Item) =>
+			array1Copy.some((array1CopyItem) =>
+				predicate(array2Item.id, array1CopyItem.id),
+			)
+				? null
+				: array1Copy.push(array2Item),
+		);
+		return array1Copy;
+	};
+
 	// Helper function to fetch shape data and update state
 	const fetchShapeData = async (
 		endpoint,
+		shapeType,
 		setShapes,
 		setSelectedShape,
 		setSelectedShapeID,
 	) => {
 		try {
 			const response = await http.get(endpoint);
-			const shapes = response.data;
-			setShapes(shapes);
+			const culture = response.data;
+			setShapes(culture[shapeType]);
 			// Optionally set the selected shape to the first item in the response
-			if (shapes.length > 0) {
-				setSelectedShape(shapes[0].name);
-				setSelectedShapeID(shapes[0].id);
+			if (culture[shapeType].length > 0) {
+				setSelectedShape(culture[shapeType][0].name);
+				setSelectedShapeID(culture[shapeType][0].id);
 			} else {
 				setSelectedShape("");
 				setSelectedShapeID(null);
@@ -498,31 +555,69 @@ const AddProjectile = ({ setOpenAdd }) => {
 			setCultures(selectedPeriod.cultures);
 		}
 
-		// Fetch and update shape data based on the selected culture
-		fetchShapeData(
-			`/bladeShapes?cultureId=${selectedCultureId}`,
-			setBladeShapes,
-			setSelectedBladeShape,
-			setSelectedBladeShapeID,
+		//get all of the blade/base/hafting shapes and cross sections.
+		const bladeShapesResponse = await http.get("/bladeShapes");
+		const baseShapesResponse = await http.get("/baseShapes");
+		const haftingShapesResponse = await http.get("/haftingShapes");
+		const crossSectionsResponse = await http.get("/crossSections");
+		const materialsResponse = await http.get("/materials");
+
+		//add the other options to the end, placing the shapes associated with the culture first.
+		setBladeShapes(
+			mergeArrays(selectedCulture.bladeShapes, bladeShapesResponse.data),
 		);
-		fetchShapeData(
-			`/baseShapes?cultureId=${selectedCultureId}`,
-			setBaseShapes,
-			setSelectedBaseShape,
-			setSelectedBaseShapeID,
+		if (selectedCulture.bladeShapes.length > 0) {
+			setSelectedBladeShape(selectedCulture.bladeShapes[0].name);
+			setSelectedBladeShapeID(selectedCulture.bladeShapes[0].id);
+		} else {
+			setSelectedBladeShape("");
+			setSelectedBladeShapeID(null);
+		}
+
+		//add the other options to the end, placing the shapes associated with the culture first.
+		setBaseShapes(
+			mergeArrays(selectedCulture.baseShapes, baseShapesResponse.data),
 		);
-		fetchShapeData(
-			`/crossSections?cultureId=${selectedCultureId}`,
-			setCrossSections,
-			setSelectedCrossSection,
-			setSelectedCrossSectionID,
+		if (selectedCulture.baseShapes.length > 0) {
+			setSelectedBaseShape(selectedCulture.baseShapes[0].name);
+			setSelectedBaseShapeID(selectedCulture.baseShapes[0].id);
+		} else {
+			setSelectedBaseShape("");
+			setSelectedBaseShapeID(null);
+		}
+		//add the other options to the end, placing the shapes associated with the culture first.
+		setCrossSections(
+			mergeArrays(selectedCulture.crossSections, crossSectionsResponse.data),
 		);
-		fetchShapeData(
-			`/haftingShapes?cultureId=${selectedCultureId}`,
-			setHaftingShapes,
-			setSelectedHaftingShape,
-			setSelectedHaftingShapeID,
+		if (selectedCulture.crossSections.length > 0) {
+			setSelectedCrossSection(selectedCulture.crossSections[0].name);
+			setSelectedCrossSectionID(selectedCulture.crossSections[0].id);
+		} else {
+			setSelectedCrossSection("");
+			setSelectedCrossSectionID(null);
+		}
+		//add the other options to the end, placing the shapes associated with the culture first.
+		setHaftingShapes(
+			mergeArrays(selectedCulture.haftingShapes, haftingShapesResponse.data),
 		);
+		if (selectedCulture.haftingShapes.length > 0) {
+			setSelectedHaftingShape(selectedCulture.haftingShapes[0].name);
+			setSelectedHaftingShapeID(selectedCulture.haftingShapes[0].id);
+		} else {
+			setSelectedHaftingShape("");
+			setSelectedHaftingShapeID(null);
+		}
+		//add the other options to the end, placing the materials associated with the culture first.
+		setMaterials(
+			mergeArrays(selectedCulture.materials, materialsResponse.data),
+		);
+		if (selectedCulture.materials.length > 0) {
+			setSelectedMaterial(selectedCulture.materials[0].name);
+			setSelectedMaterialID(selectedCulture.materials[0].id);
+		} else {
+			setSelectedMaterial("");
+			setSelectedMaterialID(null);
+		}
 	};
 
 	// This function ensures the dropdown list reflects the most current data without needing to refetch from the server.
@@ -559,7 +654,11 @@ const AddProjectile = ({ setOpenAdd }) => {
 		http
 			.get("/baseShapes")
 			.then((response) => {
-				setBaseShapes(response.data);
+				//stops the set from overwriting changes to drop down once a culture is selected.
+				if (!selectedCulture) {
+					setBaseShapes(response.data);
+				}
+
 				const filteredBaseShape = response.data.find(
 					(baseShape) => baseShape.name === selectedBaseShape,
 				);
@@ -573,7 +672,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching base shapes:", error);
 			});
-	}, [selectedBaseShape]);
+	}, [selectedBaseShape, selectedCulture]);
 
 	// This function opens the BaseShapeModal for editing an existing base shape or adding a new one.
 	const handleOpenBaseShapeModal = (baseShapeId = null) => {
@@ -634,7 +733,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 		http
 			.get("/crossSections")
 			.then((response) => {
-				setCrossSections(response.data);
+				//stops the set from overwriting changes to drop down once a culture is selected.
+				if (!selectedCulture) {
+					setCrossSections(response.data);
+				}
 				const filteredCrossSection = response.data.find(
 					(crossSection) => crossSection.name === selectedCrossSection,
 				);
@@ -648,7 +750,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching cross sections:", error);
 			});
-	}, [selectedCrossSection]);
+	}, [selectedCrossSection, selectedCulture]);
 
 	// This function opens the CrossSectionModal for editing an existing cross sections or adding a new one.
 	const handleOpenCrossSectionModal = (crossSectionId = null) => {
@@ -710,7 +812,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 		http
 			.get("/bladeShapes")
 			.then((response) => {
-				setBladeShapes(response.data);
+				//stops the set from overwriting changes to drop down once a culture is selected.
+				if (!selectedCulture) {
+					setBladeShapes(response.data);
+				}
 				const filteredBladeShape = response.data.find(
 					(bladeShape) => bladeShape.name === selectedBladeShape,
 				);
@@ -724,7 +829,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching blade shapes:", error);
 			});
-	}, [selectedBladeShape]);
+	}, [selectedBladeShape, selectedCulture]);
 
 	// This function opens the BladeShapeModal for editing an existing blade shape or adding a new one.
 	const handleOpenBladeShapeModal = (bladeShapeId = null) => {
@@ -785,7 +890,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 		http
 			.get("/haftingShapes")
 			.then((response) => {
-				setHaftingShapes(response.data);
+				//stops the set from overwriting changes to drop down once a culture is selected.
+				if (!selectedCulture) {
+					setHaftingShapes(response.data);
+				}
 				const filteredHaftingShape = response.data.find(
 					(haftingShape) => haftingShape.name === selectedHaftingShape,
 				);
@@ -799,7 +907,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching hafting shapes:", error);
 			});
-	}, [selectedHaftingShape]);
+	}, [selectedCulture, selectedHaftingShape]);
 
 	// This function opens the HaftingShapeModal for editing an existing hafting shape or adding a new one.
 	const handleOpenHaftingShapeModal = (haftingShapeID = null) => {
@@ -859,7 +967,10 @@ const AddProjectile = ({ setOpenAdd }) => {
 		http
 			.get("/materials")
 			.then((response) => {
-				setMaterials(response.data);
+				//stops the set from overwriting changes to drop down once a culture is selected.
+				if (!selectedCulture) {
+					setMaterials(response.data);
+				}
 				const filteredMaterial = response.data.find(
 					(material) => material.name === selectedMaterial,
 				);
@@ -882,13 +993,16 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching artifact types:", error);
 			});
-	}, [selectedMaterial]);
+	}, [selectedCulture, selectedMaterial]);
 
 	useEffect(() => {
 		http
 			.get("/materials")
 			.then((response) => {
-				setMaterials(response.data);
+				//stops the set from overwriting changes to drop down once a culture is selected.
+				if (!selectedCulture) {
+					setMaterials(response.data);
+				}
 				const filteredMaterial = response.data.find(
 					(material) => material.name === selectedMaterial,
 				);
@@ -902,7 +1016,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching material:", error);
 			});
-	}, [selectedMaterial]);
+	}, [selectedCulture, selectedMaterial]);
 
 	const handleOpenMaterialModal = (materialID = null) => {
 		setSelectedMaterialID(materialID);

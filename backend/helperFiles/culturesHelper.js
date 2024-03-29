@@ -72,6 +72,7 @@ async function getAllCultures() {
  *
  */
 async function getCultureById(req) {
+	logger.info("Getting culture by id: " + req.params.id);
 	try {
 		const id = parseInt(req.params.id);
 		assert(!isNaN(id), "Invalid ID provided");
@@ -136,37 +137,6 @@ async function updateCulture(req) {
 				.findOneBy({ id: periodId });
 			assert(period, "Period not found.");
 			cultureToUpdate.period = period;
-		}
-
-		logger.info(Array(materials));
-		const materialObjArray = new Array();
-		for (let i = 0; i < materials.length; i++) {
-			let currentId = parseInt(materials[i]);
-			let currentMaterial;
-			//check if the current index is just an id, or a hafting shape object with an id key.
-			assert(
-				!isNaN(currentId) || Object.hasOwn(materials[i], "id"),
-				"Index " +
-					i +
-					" of the given haftingShape array is not a hafting shape object or an id.",
-			);
-			//check if its an id
-			if (isNaN(currentId) && Object.hasOwn(materials[i], "id")) {
-				currentId = parseInt(materials[i].id);
-			} else if (isNaN(currentId) && !Object.hasOwn(materials[i], "id")) {
-				logger.debug(
-					"Index " +
-						i +
-						" of the given material array is not a hafting shape object or an id. But passed assertion",
-				);
-				continue;
-			}
-			currentMaterial = currentId
-				? await myDatabase.getRepository(Material).findOneBy({ id: currentId })
-				: null;
-			if (currentMaterial != null) {
-				materialObjArray.push(currentMaterial);
-			}
 		}
 
 		//go through given hafting shapes, get their objects and store it in an array for updating.
@@ -301,6 +271,37 @@ async function updateCulture(req) {
 				: null;
 			if (currentCrossSection != null) {
 				crossSectionObjArray.push(currentCrossSection);
+			}
+		}
+
+		logger.info(Array(materials));
+		const materialObjArray = new Array();
+		for (let i = 0; i < materials.length; i++) {
+			let currentId = parseInt(materials[i]);
+			let currentMaterial;
+			//check if the current index is just an id, or a hafting shape object with an id key.
+			assert(
+				!isNaN(currentId) || Object.hasOwn(materials[i], "id"),
+				"Index " +
+					i +
+					" of the given haftingShape array is not a hafting shape object or an id.",
+			);
+			//check if its an id
+			if (isNaN(currentId) && Object.hasOwn(materials[i], "id")) {
+				currentId = parseInt(materials[i].id);
+			} else if (isNaN(currentId) && !Object.hasOwn(materials[i], "id")) {
+				logger.debug(
+					"Index " +
+						i +
+						" of the given material array is not a hafting shape object or an id. But passed assertion",
+				);
+				continue;
+			}
+			currentMaterial = currentId
+				? await myDatabase.getRepository(Material).findOneBy({ id: currentId })
+				: null;
+			if (currentMaterial != null) {
+				materialObjArray.push(currentMaterial);
 			}
 		}
 

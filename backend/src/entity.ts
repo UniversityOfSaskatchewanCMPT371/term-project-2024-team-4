@@ -276,7 +276,6 @@ export class Material {
 	artifacts: Artifact[];
 
 	@ManyToMany(() => Culture, (culture) => culture.materials)
-	@JoinTable()
 	cultures: Culture[];
 }
 
