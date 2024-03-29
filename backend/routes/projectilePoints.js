@@ -10,7 +10,6 @@ const storage = multer.diskStorage({
 	  cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
 	},
 });
-  
 // Multer middleware
 const upload = multer({ storage });
 

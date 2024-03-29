@@ -21,7 +21,7 @@ import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
 import LoginIcon from "@mui/icons-material/Login";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { styled } from "@mui/material/styles";
-
+import { useNavigate } from "react-router-dom";
 const drawerWidth = 240;
 
 /**
@@ -120,6 +120,12 @@ function Sidebar() {
 		logger.info("LoginModal closed");
 	};
 
+	const navigate = useNavigate();
+
+	const handleSettingClick = () => {
+		navigate("/settings");
+	  };
+
 	/**
 	 * Handles the user logout process.
 	 *
@@ -206,7 +212,7 @@ function Sidebar() {
 					</ListItem>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
-					<ListItem key="Settings" disablePadding onClick={handleClick}>
+					<ListItem key="Settings" disablePadding onClick={handleSettingClick}>
 						<ListItemButton>
 							<SidebarIcon>
 								<RoomPreferencesIcon />

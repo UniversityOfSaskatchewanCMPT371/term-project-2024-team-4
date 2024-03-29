@@ -82,6 +82,40 @@ router.post("/", async (req, res) => {
 	}
 });
 
+router.post("/check-password", async (req, res) => {
+	const { password } = req.body;
+
+	// Check if password is null or undefined
+	if (!password || password.length === 0) {
+		// Use logger.error() for logging errors
+		logger.error("Password is required");
+		return res.status(400).json({ message: "Password is required" });
+	}
+
+	const Users = await dataSource.getRepository(User);
+
+	try {
+		// Assuming you have a way to identify the user whose password you want to check
+		const existingUser = await Users.findOne({ where: { id: 1 } });
+		if (existingUser) {
+			// Compare the provided password with the hashed password from the database
+			const match = await bcrypt.compare(password, existingUser.password);
+			if (!match) {
+				logger.info("Password does not match");
+				return res.status(401).json({ message: "Password does not match" });
+			}
+			logger.info("Password matches");
+			return res.status(200).json({ message: "Password matches" });
+		} else {
+			logger.error("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+
 /**
  * POST /api/users/logout
  *
@@ -145,6 +179,31 @@ router.get("/", async (req, res) => {
 	}
 });
 
+router.get("/:userId", async (req, res) => {
+	const { userId } = req.params;
+
+	try {
+		// Initialize data source
+		const Users = await dataSource.getRepository(User);
+		// Fetch the user by userId
+		const user = await Users.findOne({ where: { id: userId } });
+        
+		if (!user) {
+			logger.error("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// If user is found, return username and password
+		return res.status(200).json({ username: user.userName});
+
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+
+
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
 
 /**
@@ -165,26 +224,103 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
  * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
  */
 // PATCH route for admin to update username and password
-router.patch("/:userId", async (req, res) => {
+// router.patch("/:userId", async (req, res) => {
+// 	const { userId } = req.params;
+// 	const { userName, password } = req.body;
+// 	// Check if userId is provided
+// 	if (!userId) {
+// 		logger.error("User ID is required");
+// 		return res.status(400).json({ message: "User ID is required" });
+// 	}
+
+// 	try {
+// 		// Initialize data source
+// 		const Users = await dataSource.getRepository(User);
+// 		// Fetch the user by userId
+// 		const user = await Users.findOne({ where: { id: userId } });
+// 		if (!user) {
+// 			logger.error("User not found");
+// 			return res.status(404).json({ message: "User not found" });
+// 		}
+
+// 		// Check if the provided userId matches the user's id
+// 		if (parseInt(userId) !== user.id) {
+// 			// Parse userId to integer for comparison
+// 			logger.error("Forbidden");
+// 			return res.status(403).json({ message: "Forbidden" });
+// 		}
+
+// 		// Validate username
+// 		if (userName) {
+// 			// Perform data validation for username (e.g., minimum length, special characters, etc.)
+// 			// Example: Ensure minimum length of username is 5 characters
+// 			if (
+// 				!userName || userName.length == 0 ) {
+// 				// Use logger.error() for logging errors
+				
+// 			}
+// 			if (userName.length < 5) {
+// 				logger.error("Username must be at least 5 characters long");
+// 				return res
+// 					.status(400)
+// 					.json({ message: "Username must be at least 5 characters long" });
+// 			}
+// 			if (userName.length > 12) {
+// 				logger.error("Username must be at most 12 characters long");
+// 				return res
+// 					.status(400)
+// 					.json({ message: "Username must be at most 12 characters long" });
+// 			}
+// 			// Add more validation rules for username if needed
+// 		}
+		
+
+// 		// Validate password
+// 		if (password) {
+				
+
+// 			if (password.length > 12) {
+// 				logger.error("password must be at most 12 characters long");
+// 				return res
+// 					.status(400)
+// 					.json({ message: "password must be at most 12 characters long" });
+// 			}
+
+// 			// Perform data validation for password (e.g., minimum length, special characters, etc.)
+// 			// Example: Ensure minimum length of password is 10 characters
+// 			if (!passwordRegex.test(password)) {
+// 				logger.error(
+// 					"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
+// 				);
+// 				return res.status(400).json({
+// 					message:
+// 						"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
+// 				});
+// 			}
+// 			// Add more validation rules for password if needed
+// 		}
+
+// 		// Update username and/or password
+// 		if (userName) {
+// 			user.userName = userName;
+// 		}
+// 		if (password) {
+// 			user.password = await bcrypt.hash(password, 10); // Hash the new password
+// 		}
+
+// 		// Save updated user
+// 		await Users.save(user);
+// 		logger.info("User successfully updated");
+// 		return res.status(200).json({ message: "User successfully updated", user });
+// 	} catch (error) {
+// 		logger.error("Internal server error:", error);
+// 		return res.status(500).json({ message: "Internal server error" });
+// 	}
+// });
+// PATCH request to update username
+router.patch("/:userId/username", async (req, res) => {
 	const { userId } = req.params;
-	const { userName, password } = req.body;
-	// Check if userId is provided
-	if (!userId) {
-		logger.error("User ID is required");
-		return res.status(400).json({ message: "User ID is required" });
-	}
-	if (
-		!userName ||
-		userName.length === 0 ||
-		!password ||
-		password.length === 0
-	) {
-		// Use logger.error() for logging errors
-		logger.error("Username and password are required");
-		return res
-			.status(400)
-			.json({ message: "Username and password are required" });
-	}
+	const { userName } = req.body;
 
 	try {
 		// Initialize data source
@@ -196,54 +332,87 @@ router.patch("/:userId", async (req, res) => {
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		// Check if the provided userId matches the user's id
-		if (parseInt(userId) !== user.id) {
-			// Parse userId to integer for comparison
-			logger.error("Forbidden");
-			return res.status(403).json({ message: "Forbidden" });
-		}
-
 		// Validate username
-		if (userName) {
-			// Perform data validation for username (e.g., minimum length, special characters, etc.)
-			// Example: Ensure minimum length of username is 5 characters
-			if (userName.length < 5) {
-				logger.error("Username must be at least 5 characters long");
-				return res
-					.status(400)
-					.json({ message: "Username must be at least 5 characters long" });
-			}
-			// Add more validation rules for username if needed
+		if (!userName || userName.length == 0) {
+			logger.error("Username is required");
+			return res.status(400).json({ message: "Username is required" });
 		}
-
-		// Validate password
-		if (password) {
-			// Perform data validation for password (e.g., minimum length, special characters, etc.)
-			// Example: Ensure minimum length of password is 10 characters
-			if (!passwordRegex.test(password)) {
-				logger.error(
-					"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
-				);
-				return res.status(400).json({
-					message:
-						"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
-				});
-			}
-			// Add more validation rules for password if needed
+		if (userName.length < 5) {
+			logger.error("Username must be at least 5 characters long");
+			return res
+				.status(400)
+				.json({ message: "Username must be at least 5 characters long" });
 		}
-
-		// Update username and/or password
-		if (userName) {
-			user.userName = userName;
+		if (userName.length > 12) {
+			logger.error("Username must be at most 12 characters long");
+			return res
+				.status(400)
+				.json({ message: "Username must be at most 12 characters long" });
 		}
-		if (password) {
-			user.password = await bcrypt.hash(password, 10); // Hash the new password
+		// Regular expression to match alphanumeric characters only
+		const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+		if (!alphanumericRegex.test(userName)) {
+			logger.error("Username must contain only letters and numbers");
+			return res.status(400).json({ message: "Username must contain only letters and numbers" });
 		}
+		// Update username
+		user.userName = userName;
 
 		// Save updated user
 		await Users.save(user);
-		logger.info("User successfully updated");
-		return res.status(200).json({ message: "User successfully updated", user });
+		logger.info("Username successfully updated");
+		return res.status(200).json({ message: "Username successfully updated", user });
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+// PATCH request to update password
+router.patch("/:userId/password", async (req, res) => {
+	const { userId } = req.params;
+	const { password } = req.body;
+
+	try {
+		// Initialize data source
+		const Users = await dataSource.getRepository(User);
+		// Fetch the user by userId
+		const user = await Users.findOne({ where: { id: userId } });
+		if (!user) {
+			logger.error("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// Validate password
+		if (!password || password.length == 0) {
+			logger.error("Password is required");
+			return res.status(400).json({ message: "Password is required" });
+		}
+		if (password.length > 12) {
+			logger.error("Password must be at most 12 characters long");
+			return res
+				.status(400)
+				.json({ message: "Password must be at most 12 characters long" });
+		}
+		// Perform data validation for password (e.g., minimum length, special characters, etc.)
+		// Example: Ensure minimum length of password is 10 characters
+		if (!passwordRegex.test(password)) {
+			logger.error(
+				"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
+			);
+			return res.status(400).json({
+				message:
+                    "Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
+			});
+		}
+
+		// Update password
+		user.password = await bcrypt.hash(password, 10); // Hash the new password
+
+		// Save updated user
+		await Users.save(user);
+		logger.info("Password successfully updated");
+		return res.status(200).json({ message: "Password successfully updated", user });
 	} catch (error) {
 		logger.error("Internal server error:", error);
 		return res.status(500).json({ message: "Internal server error" });
