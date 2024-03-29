@@ -19,6 +19,7 @@ import log from "../logger.js";
 
 import AddCultureDialog from "./AddCultureDialog";
 import Sidebar from "./Sidebar";
+import RelationsCultureDialog from "./RelationsCultureDialog.jsx";
 
 const apiUrlCultures = "http://localhost:3000/cultures"; // API endpoint for fetching and deleting cultures
 
@@ -113,14 +114,22 @@ export default function ManagementCultures() {
 		}
 	};
 
+	// For displaying Cultures relations, if any
+	const [relationsDialogOpen, setRelationsDialogOpen] = useState(false);
+	const [selectedCulture, setSelectedCulture] = useState(null);
+
+	const handleViewRelationsClick = (culture) => {
+		setSelectedCulture(culture);
+		setRelationsDialogOpen(true);
+	};
 	// Configuration for the columns in the data grid
 	const columns = [
-		{ field: "id", headerName: "ID", width: 90 },
-		{ field: "name", headerName: "Name", width: 180 },
+		{ field: "id", headerName: "ID", flex: 1 },
+		{ field: "name", headerName: "Name", flex: 2 },
 		{
 			field: "period",
 			headerName: "Period",
-			width: 200,
+			flex: 2,
 			valueGetter: (params) => {
 				return params.row.period
 					? `${params.row.period.name} (${params.row.period.start}-${params.row.period.end})`
@@ -128,10 +137,24 @@ export default function ManagementCultures() {
 			},
 		},
 		{
+			field: "relations",
+			headerName: "Relations",
+			flex: 2,
+			renderCell: (params) => (
+				<Button
+					variant="outlined"
+					onClick={() => handleViewRelationsClick(params.row)}
+				>
+					View Relations
+				</Button>
+			),
+		},
+
+		{
 			field: "actions",
 			type: "actions",
 			headerName: "Actions",
-			width: 150,
+			flex: 1,
 			getActions: (params) => [
 				<GridActionsCellItem
 					icon={<DeleteIcon />}
@@ -204,6 +227,11 @@ export default function ManagementCultures() {
 					open={dialogOpen}
 					onClose={() => setDialogOpen(false)}
 					onSave={handleSaveNewCulture}
+				/>
+				<RelationsCultureDialog
+					open={relationsDialogOpen}
+					onClose={() => setRelationsDialogOpen(false)}
+					culture={selectedCulture}
 				/>
 			</Box>
 		</Box>

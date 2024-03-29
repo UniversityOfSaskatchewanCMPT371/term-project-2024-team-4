@@ -10,6 +10,7 @@ import { DataGrid, GridActionsCellItem, GridToolbar } from "@mui/x-data-grid";
 import log from "../logger.js";
 import Sidebar from "./Sidebar";
 import AddPeriodDialog from "./AddPeriodDialog";
+import RelationsPeriodsDialog from "./RelationsPeriodsDialog.jsx";
 import {
 	Typography,
 	Dialog,
@@ -116,29 +117,51 @@ export default function ManagementPeriods() {
 		return details;
 	};
 
+	// For displaying Period's relations, if any
+	const [relationsDialogOpen, setRelationsDialogOpen] = useState(false);
+	const [selectedPeriod, setSelectedPeriod] = useState(null);
+
+	const handleViewRelationsClick = (period) => {
+		setSelectedPeriod(period);
+		setRelationsDialogOpen(true);
+	};
 	// Columns configuration for the data grid
 	const columns = [
-		{ field: "id", headerName: "ID", width: 90, editable: false },
-		{ field: "name", headerName: "Name", width: 180, editable: false },
+		{ field: "id", headerName: "ID", flex: 1, editable: false },
+		{ field: "name", headerName: "Name", flex: 2, editable: false },
 		{
 			field: "start",
 			headerName: "Start Year",
 			type: "number",
-			width: 120,
+			flex: 1,
 			editable: false,
 		},
 		{
 			field: "end",
 			headerName: "End Year",
 			type: "number",
-			width: 120,
+			flex: 1,
 			editable: false,
 		},
+		{
+			field: "relations",
+			headerName: "Relations",
+			flex: 2,
+			renderCell: (params) => (
+				<Button
+					variant="outlined"
+					onClick={() => handleViewRelationsClick(params.row)}
+				>
+					View Relations
+				</Button>
+			),
+		},
+
 		{
 			field: "actions",
 			type: "actions",
 			headerName: "Actions",
-			width: 150,
+			flex: 1,
 			cellClassName: "actions",
 			getActions: (params) => [
 				<GridActionsCellItem
@@ -214,6 +237,11 @@ export default function ManagementPeriods() {
 					onClose={() => setDialogOpen(false)}
 					onSave={handleSaveNewPeriod}
 					periodNames={existingPeriodNames}
+				/>
+				<RelationsPeriodsDialog
+					open={relationsDialogOpen}
+					onClose={() => setRelationsDialogOpen(false)}
+					period={selectedPeriod}
 				/>
 			</Box>
 		</Box>

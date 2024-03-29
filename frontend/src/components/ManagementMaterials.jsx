@@ -19,6 +19,7 @@ import log from "../logger.js";
 
 import AddMaterialDialog from "./AddMaterialDialog";
 import Sidebar from "./Sidebar";
+import RelationsMaterialsDialog from "./RelationsMaterialsDialog.jsx";
 
 // URL to fetch materials
 const apiUrlMaterials = "http://localhost:3000/materials";
@@ -123,11 +124,19 @@ export default function ManagementMaterials() {
 		}
 	};
 
+	// For displaying Material's relations, if any
+	const [relationsDialogOpen, setRelationsDialogOpen] = useState(false);
+	const [selectedMaterial, setSelectedMaterial] = useState(null);
+
+	const handleViewRelationsClick = (material) => {
+		setSelectedMaterial(material);
+		setRelationsDialogOpen(true);
+	};
 	// DataGrid columns configuration
 	const columns = [
-		{ field: "id", headerName: "ID", width: 90 },
-		{ field: "name", headerName: "Name", width: 200 },
-		{ field: "description", headerName: "Description", width: 300 },
+		{ field: "id", headerName: "ID", flex: 1 },
+		{ field: "name", headerName: "Name", flex: 1 },
+		{ field: "description", headerName: "Description", flex: 3 },
 		{
 			field: "artifactType",
 			headerName: "Artifact Type",
@@ -136,10 +145,23 @@ export default function ManagementMaterials() {
 				params.row.artifactType ? params.row.artifactType.id : "Indeterminate",
 		},
 		{
+			field: "relations",
+			headerName: "Relations",
+			flex: 2,
+			renderCell: (params) => (
+				<Button
+					variant="outlined"
+					onClick={() => handleViewRelationsClick(params.row)}
+				>
+					View Relations
+				</Button>
+			),
+		},
+		{
 			field: "actions",
 			type: "actions",
 			headerName: "Actions",
-			width: 150,
+			flex: 1,
 			getActions: (params) => [
 				<GridActionsCellItem
 					icon={<DeleteIcon />}
@@ -209,6 +231,11 @@ export default function ManagementMaterials() {
 					onClose={() => setDialogOpen(false)}
 					onSave={handleSaveNewMaterial}
 					materialNames={materialNames}
+				/>
+				<RelationsMaterialsDialog
+					open={relationsDialogOpen}
+					onClose={() => setRelationsDialogOpen(false)}
+					materials={selectedMaterial}
 				/>
 			</Box>
 		</Box>
