@@ -1,12 +1,33 @@
+/*
+Initializes database with default/starting values:
+- Create catalogue
+- Create predefined artifact types
+- Create base user, (test user if in development)
+*/
+
 const dataSource = require("./db");
 const { Catalogue, ArtifactType } = require("../dist/entity");
 const { logger } = require("./logger");
 
+/**
+ * Main function to call specific initialization functions
+ * @precond necessary database schema must be initialized:
+ * 	- Catalogue
+ * 	- Artifact Types
+ * 	- Users
+ */
 async function initializeDefaults() {
 	await initializeDefaultCatalogue();
 	await initializeArtifactTypes();
 }
 
+/**
+ * Initializes default catalogue in the database if it does not exist
+ * @precond 
+ * 	- Catalogue table schema is generated
+ * 	- There is no existing catalogue
+ * @postcond Creates a catalogue with ID1
+ */
 async function initializeDefaultCatalogue() {
 	try {
 		const catalogueRepository = dataSource.getRepository(Catalogue);
@@ -33,6 +54,13 @@ async function initializeDefaultCatalogue() {
 	}
 }
 
+/**
+ * Initializes default artifact types in the database if they don't exist
+ * @precond 
+ * 	- ArtifactType table schema is generated
+ * 	- There are no existing Artifact Types in the table
+ * @postcond Creates artifact types from ID1-ID3: [Lithic, Ceramic, Faunal]
+ */
 async function initializeArtifactTypes() {
 	try {
 		const artifactTypeRepository = dataSource.getRepository(ArtifactType);
