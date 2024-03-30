@@ -51,7 +51,7 @@ jobs:
         run: npm run format
           
         # @TODO need to change JWT_SECRET to be private
-      - name: Set up PostgreSQL
+      - name: Set up PostgreSQL & ENV Variables
         working-directory: ./backend
         run: |
           echo "DB_DIALECT=postgres" >> $GITHUB_ENV
@@ -60,6 +60,11 @@ jobs:
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
           echo "JWT_SECRET=1234abc" >> $GITHUB_ENV
+          echo "DEFAULT_USERNAME=admin" >> $GITHUB_ENV
+          echo "DEFAULT_PASSWORD=admin" >> $GITHUB_ENV
+          echo "NODE_ENV=development" >> $GITHUB_ENV
+          echo "TEST_USERNAME=tester" >> $GITHUB_ENV
+          echo "TEST_PASSWORD=tester" >> $GITHUB_ENV
 
       - name: Build & Check if Backend Runs
         working-directory: ./backend
@@ -84,7 +89,7 @@ jobs:
           working-directory: ./frontend
           run: |
             npm ci
-
+        
         - name: Run Linter
           working-directory: ./frontend
           run: npm run lint
@@ -93,11 +98,13 @@ jobs:
           working-directory: ./frontend
           run: npm run format
 
-          # build frontend
         - name: Build Frontend
           working-directory: ./frontend
-          run: |
-            npm run build
+          env:
+            VITE_API_URL: "http://127.0.0.1:3000"
+            VITE_TEST_USERNAME: "tester"
+            VITE_TEST_PASSWORD: "tester"
+          run: npm run build
 
   ### Run all services to do smoke, unit, integration, coverage, and e2e tests
   ### Also upload all test documents as artifacts
@@ -127,7 +134,7 @@ jobs:
         run: npm ci
       
         # @TODO need to change JWT_SECRET to be private
-      - name: Set up PostgreSQL
+      - name: Set up PostgreSQL $ ENV Variables
         working-directory: ./backend
         run: |
           echo "DB_DIALECT=postgres" >> $GITHUB_ENV
@@ -136,11 +143,25 @@ jobs:
           echo "DB_PASS=password" >> $GITHUB_ENV
           echo "DB_NAME=testdb" >> $GITHUB_ENV
           echo "JWT_SECRET=1234abc" >> $GITHUB_ENV
+          echo "DEFAULT_USERNAME=admin" >> $GITHUB_ENV
+          echo "DEFAULT_PASSWORD=admin" >> $GITHUB_ENV
+          echo "NODE_ENV=development" >> $GITHUB_ENV
+          echo "TEST_USERNAME=tester" >> $GITHUB_ENV
+          echo "TEST_PASSWORD=tester" >> $GITHUB_ENV
       
       - name: Install Frontend Dependencies
         working-directory: ./frontend
         run: npm ci
       
+      - name: Setup Frontend ENV Variables
+        working-directory: ./frontend
+        env:
+          VITE_API_URL: "http://127.0.0.1:3000"
+          VITE_TEST_USERNAME: "tester"
+          VITE_TEST_PASSWORD: "tester"
+        run: |
+          echo "Setting up Frontend ENV for tests"
+
       - name: Build & Start Backend
         working-directory: ./backend
         run: npm start & # runs in background
