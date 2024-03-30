@@ -3,7 +3,16 @@ const router = express.Router();
 const periodsHelper = require("../helperFiles/periodsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
 
-// POST: Create a New Period
+/**
+ * POST: Create a new Period
+ * @param {*} req - req.body containing name, start, end
+ * @param {*} res - response to client
+ * @precond req.body contains valid fields: name, start, end
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ * @postcond
+ *  Succesful: Returns newly created Period object
+ * 	Failure: Returns error message based on what went wrong
+ */
 router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await periodsHelper.newPeriod(req);
 	if (response instanceof Error) {
@@ -55,6 +64,7 @@ router.get("/:id", async (req, res) => {
  * @param {*} req - req URL paramter contains the period ID, req.body contains valid: name, start, end
  * @param {*} res - response to client
  * @precond req URL parameter contains existing period ID; req.body contains valid: name, start, end
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Success: Returns the updated Period object
  * 	Failure: Returns an error message based on the issue
@@ -75,6 +85,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param {*} req - req URL parameter contains id
  * @param {*} res - response to the client
  * @precond period ID from req URL parameter exists in the database
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: Period is deleted from database; empty response sent
  * 	Failure: Returns an error message based on the issue

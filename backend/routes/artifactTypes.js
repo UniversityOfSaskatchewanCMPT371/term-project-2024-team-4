@@ -10,6 +10,7 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param req Express request object, expecting 'id' in the request body.
  * @param res Express response object used to return the newly created ArtifactType.
  * @pre The 'id' provided in the body must be one of the predetermined values ('Lithic', 'Ceramic', 'Faunal').
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post A new ArtifactType is created and saved in the database.
  * @return Returns the newly created ArtifactType object or an error message.
  */
@@ -63,6 +64,7 @@ router.get("/:id", async (req, res) => {
  * @param req Express request object, expecting 'id' as a parameter.
  * @param res Express response object used for signaling the result of the deletion operation.
  * @pre The ArtifactType with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Deletes the specified ArtifactType from the database.
  * @return Does not return any content on successful deletion, otherwise returns an error message.
  */

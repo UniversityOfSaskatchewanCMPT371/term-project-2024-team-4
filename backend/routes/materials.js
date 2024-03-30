@@ -8,6 +8,7 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param {*} req - req.body containing material: name, description, artifactTypeId
  * @param {*} res - response to client
  * @precond req.body contains valid fields: name, description, artifactTypeId
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  *  Succesful: Returns newly created Material object
  * 	Failure: Returns error message based on what went wrong
@@ -68,6 +69,7 @@ router.get("/:id", async (req, res) => {
  * @precond
  * 	- req URL Parameters: Material with given material ID exists in Database.
  *  - req.body: Must have a valid name, description, and artifactTypeID
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: Returns the updated Material object
  * 	Failure: Returns an error message relating to the issue
@@ -91,6 +93,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param {*} req - req URL parameters contain material ID to delete
  * @param {*} res - response to the client
  * @precond Material with specified ID exists in the database
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: Material is deleted from database; empty response is sent
  * 	Failure: Returns an error message relating to the issue

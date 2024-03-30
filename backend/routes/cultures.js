@@ -10,6 +10,7 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param req Express request object, expecting 'name' and 'periodId' in the request body.
  * @param res Express response object used for returning the newly created Culture.
  * @pre 'name' field must be provided and 'periodId' must reference an existing Period.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post A new Culture entity associated with the specified Period is created in the database.
  * @return Returns the newly created Culture object or an error message if creation fails.
  */
@@ -63,6 +64,7 @@ router.get("/:id", async (req, res) => {
  * @param req Express request object containing the new 'name' and 'periodId' for the Culture.
  * @param res Express response object used for returning the updated Culture.
  * @pre The Culture with the given ID must exist in the database, and 'periodId' must reference an existing Period if provided.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Updates and returns the specified Culture in the database.
  * @return Returns the updated Culture object or a message indicating the Culture or Period was not found.
  */
@@ -80,6 +82,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param req Express request object, expecting 'id' as a route parameter.
  * @param res Express response object used for signaling the result of the deletion operation.
  * @pre The Culture with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Deletes the specified Culture from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */

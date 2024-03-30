@@ -10,6 +10,7 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param req Express request object, expecting 'name' in the request body.
  * @param res Express response object used to return the created BladeShape.
  * @pre 'name' field should be provided in the body and must be unique.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post A new BladeShape is created in the database.
  * @return Returns the newly created BladeShape object.
  */
@@ -63,6 +64,7 @@ router.get("/:id", async (req, res) => {
  * @param req Express request object containing the new 'name' for the BladeShape.
  * @param res Express response object used for returning the updated BladeShape.
  * @pre The BladeShape with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Updates and returns the specified BladeShape in the database.
  * @return Returns the updated BladeShape object or a message indicating the BladeShape was not found.
  */
@@ -80,6 +82,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param req Express request object, expecting 'id' as a route parameter.
  * @param res Express response object used for signaling the result of the deletion operation.
  * @pre The BladeShape with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Deletes the specified BladeShape from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */

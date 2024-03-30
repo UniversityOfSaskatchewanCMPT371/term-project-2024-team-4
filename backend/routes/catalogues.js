@@ -27,6 +27,7 @@ router.get("/", async (req, res) => {
  * @param req Express request object, expecting 'name' and 'description' in the request body.
  * @param res Express response object used to return the created Catalogue.
  * @pre The request body must contain both 'name' and 'description' fields.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post A new Catalogue is created and saved in the database.
  * @return Returns the newly created Catalogue object.
  */
@@ -63,6 +64,7 @@ router.get("/:id", async (req, res) => {
  * @param req Express request object containing the new 'name' and 'description' for the Catalogue.
  * @param res Express response object used for returning the updated Catalogue.
  * @pre The Catalogue with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Updates and returns the specified Catalogue in the database.
  * @return Returns the updated Catalogue object or a message indicating the Catalogue was not found.
  */
@@ -80,6 +82,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param req Express request object, expecting 'id' as a route parameter.
  * @param res Express response object used for signaling the result of the deletion operation.
  * @pre The Catalogue with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Deletes the specified Catalogue from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */

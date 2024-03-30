@@ -9,6 +9,7 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param req Express request object, expecting 'name' in the request body.
  * @param res Express response object used for returning the newly created HaftingShape.
  * @pre 'name' field must be provided in the request body.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post A new HaftingShape entity is created in the database.
  * @return Returns the newly created HaftingShape object.
  */
@@ -60,6 +61,7 @@ router.get("/:id", async (req, res) => {
  * @param req Express request object containing the new 'name' for the HaftingShape.
  * @param res Express response object used for returning the updated HaftingShape.
  * @pre The HaftingShape with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Updates and returns the specified HaftingShape in the database.
  * @return Returns the updated HaftingShape object or a message indicating the HaftingShape was not found.
  */
@@ -77,6 +79,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param req Express request object, expecting 'id' as a route parameter.
  * @param res Express response object used for signaling the result of the deletion operation.
  * @pre The HaftingShape with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Deletes the specified HaftingShape from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */

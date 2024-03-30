@@ -88,7 +88,7 @@ router.post("/", async (req, res) => {
  *
  * Purpose: Log out a user by clearing the JWT token cookie.
  *
- * Pre-conditions: None
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  *
  * Post-conditions:
  * - Clears the token cookie.
@@ -120,8 +120,7 @@ router.post("/logout", authenticateAdmin, async (req, res) => {
  *
  * Purpose: Retrieve user details using a JWT token.
  *
- * Pre-conditions:
- * - Request must contain a valid JWT token in the cookie named 'token'.
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  *
  * Post-conditions:
  * - If a valid token is provided, returns user details with status code 200.
@@ -153,10 +152,12 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
  *
  * Purpose: Update username and/or password of a user.
  *
- * Pre-conditions:
+ * @precond
  * - Request must contain 'userName' and 'password' fields in the body.
  * - 'userId' parameter must be provided.
  * - 'userName' and 'password' fields must not be null or empty.
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ *
  *
  * Post-conditions:
  * - If the user is successfully updated, returns updated user details with status code 200.

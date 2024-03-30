@@ -10,6 +10,7 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param req Express request object, expecting 'name' in the request body.
  * @param res Express response object used for returning the newly created BaseShape.
  * @pre The request body must contain a 'name' field.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post A new BaseShape is created and saved in the database.
  * @return Returns the newly created BaseShape object.
  */
@@ -63,6 +64,7 @@ router.get("/:id", async (req, res) => {
  * @param req Express request object containing the new 'name' for the BaseShape.
  * @param res Express response object used for returning the updated BaseShape.
  * @pre The BaseShape with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Updates and returns the specified BaseShape in the database.
  * @return Returns the updated BaseShape object or a message indicating the BaseShape was not found.
  */
@@ -82,6 +84,7 @@ router.put("/:id", authenticateAdmin, async (req, res) => {
  * @param req Express request object, expecting 'id' as a route parameter.
  * @param res Express response object used for signaling the result of the deletion operation.
  * @pre The BaseShape with the given ID must exist in the database.
+ * @pre A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @post Deletes the specified BaseShape from the database.
  * @return Returns a message indicating success or failure of the deletion.
  */
