@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import http from "../../http.js";
@@ -16,8 +17,10 @@ import {
 
 /**
  * Modal for viewing projectile point details
- * @param {function} setOpen toggle modal visibility
- * @param {integer} projectilePointId ID of projectile point to be viewed
+ * @param {function} setOpenView function to toggle view projectile point modal visibility
+ * @param {function} setOpenEdit function to toggle edit projectile point modal visibility
+ * @param {integer} projectilePointId current selected projectile point ID
+ * @param {string} siteName site name of current selected projectile point
  * @pre None
  * @post Renders modal with projectile point details
  * @returns {JSX.Element} ViewProjectile React component
@@ -46,28 +49,36 @@ const ViewProjectile = ({
 	const [openAlertDelete, setOpenAlertDelete] = useState(false);
 
 	/**
-	 * Set modal visibility to false
+	 * Set current modal visibility to false
 	 */
 	const handleClose = () => {
 		setOpenView(false);
 	};
 
 	/**
-	 *
+	 * Set edit projectile point modal visibility to true
 	 */
 	const handleEdit = () => {
 		setOpenEdit(true);
 	};
 
 	/**
-	 *
+	 * Set delete projectile point alert modal visibility to true
+	 * for confirming deletion of projectile points
 	 */
 	const handleOpenAlertDelete = () => {
 		setOpenAlertDelete(true);
 	};
 
 	/**
-	 *
+	 * Set delete projectile point alert modal visibility to false
+	 */
+	const handleCloseAlertDelete = () => {
+		setOpenAlertDelete(false);
+	};
+
+	/**
+	 * Handles deletion of projectile point on click event
 	 */
 	const handleDelete = () => {
 		fetch(`${baseURL}/projectilePoints/${projectilePointId}`, {
@@ -84,16 +95,8 @@ const ViewProjectile = ({
 				handleClose();
 			});
 	};
-
 	/**
-	 *
-	 */
-	const handleCloseAlertDelete = () => {
-		setOpenAlertDelete(false);
-	};
-
-	/**
-	 * Fetch projectile point using ID
+	 * Fetch projectile point using ID and set state values for viewing projectile point details
 	 */
 	useEffect(() => {
 		http
@@ -105,16 +108,10 @@ const ViewProjectile = ({
 				setLocation(response.data.location);
 
 				const dimensions = response.data.dimensions.split(",");
-
 				var lengthDimension = dimensions[0].replace("{", "");
-				// eslint-disable-next-line quotes
 				lengthDimension = lengthDimension.replace('"', "");
-
-				// eslint-disable-next-line quotes
 				var widthDimension = dimensions[1].replace('"', "");
-
 				var heightDimension = dimensions[2].replace("{", "");
-				// eslint-disable-next-line quotes
 				heightDimension = heightDimension.replace('"', "");
 
 				setLength(lengthDimension.trim() ? parseFloat(lengthDimension) : "");
@@ -162,6 +159,7 @@ const ViewProjectile = ({
 				<DialogContent style={{ minHeight: "600px" }}>
 					<Grid container spacing={6} sx={{ paddingTop: 0 }}>
 						<Grid item xs={6}>
+							{/* ------------ Photo ------------- */}
 							<div>
 								{photoFilePath && (
 									<a
@@ -193,27 +191,21 @@ const ViewProjectile = ({
 										}}
 									>
 										No Image
-										{/* <IconButton size="small">
-							<MoreHorizIcon />
-						</IconButton> */}
 									</Typography>
 								)}
-								{/* {photoFilePath && <img src={`http://localhost:3000/${photoFilePath}`} alt="Projectile Point" style={{ maxWidth: "40%", cursor: "pointer" }} />} */}
 							</div>
-							<Typography variant="h6">
-								Description
-								{/* <IconButton size="small">
-								<MoreHorizIcon />
-							</IconButton> */}
-							</Typography>
+							{/* ------------ Description ------------- */}
+							<Typography variant="h6">Description</Typography>
 							<Typography variant="body1">
 								{description || "No description"}
 							</Typography>
 						</Grid>
 						<Grid item xs={6}>
+							{/* ------------ Name ------------- */}
 							<Typography sx={{ fontWeight: "bold" }} variant="h4">
 								{name}
 							</Typography>
+							{/* ------------ Dimensions ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Dimensions
 							</Typography>
@@ -226,34 +218,43 @@ const ViewProjectile = ({
 							<Typography variant="body1">
 								{"H: " + (height || 0) + "mm"}
 							</Typography>
+							{/* ------------ Location ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Location
 							</Typography>
 							<Typography variant="body1">{location}</Typography>
+							{/* ------------ Artifact Type ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Artifact Type
 							</Typography>
 							<Typography variant="body1">{artifactTypeID}</Typography>
+							{/* ------------ Period ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Period
 							</Typography>
 							<Typography variant="body1">{periodName}</Typography>
+							{/* ------------ Culture ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Culture
 							</Typography>
 							<Typography variant="body1">{cultureName}</Typography>
+							{/* ------------ Base Shape ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Base Shape
 							</Typography>
 							<Typography variant="body1">{baseShapeName}</Typography>
+
+							{/* ------------ Cross Section ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Cross Section
 							</Typography>
 							<Typography variant="body1">{crossSectionName}</Typography>
+							{/* ------------ Blade Shape ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Blade Shape
 							</Typography>
 							<Typography variant="body1">{bladeShapeName}</Typography>
+							{/* ------------ Hafting Shape ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Hafting Shape
 							</Typography>

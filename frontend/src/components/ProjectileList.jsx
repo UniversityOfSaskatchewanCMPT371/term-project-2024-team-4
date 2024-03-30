@@ -59,6 +59,10 @@ export default function ProjectileList({ query, siteId, siteName }) {
 		log.info("Card clicked! ID:", item.id);
 	};
 
+	/**
+	 * Fetch and update projectile points list/cards with latest list of projectile points
+	 * every state change of add the edit proejctile point modals
+	 */
 	useEffect(() => {
 		async function fetchprojectilePoints() {
 			try {

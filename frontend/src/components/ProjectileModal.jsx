@@ -56,12 +56,17 @@ const AddProjectile = ({
 	const siteID = inComingSiteInfo.state.info.id;
 	const siteName = inComingSiteInfo.state.info.name;
 
-	if (openAdd) {
-		log.info("Adding new projectile point");
-	}
-	if (openEdit) {
-		log.info("Updating a projectile point");
-	}
+	/**
+	 * Check if modal is being used for add or edit projectile points
+	 */
+	useEffect(() => {
+		if (openAdd) {
+			log.info("Adding new projectile point");
+		}
+		if (openEdit) {
+			log.info("Updating a projectile point");
+		}
+	}, []);
 
 	const [name, setName] = useState(""); // remove once PP name column is removed in database
 	const [description, setDescription] = useState("");
@@ -76,14 +81,6 @@ const AddProjectile = ({
 	const [baseShapeID, setBaseShapeID] = useState(0);
 	const [haftingShapeID, setHaftingShapeID] = useState(0);
 	const [crossSectionID, setCrossSectionID] = useState(0);
-
-	const [periodName, setPeriodName] = useState("");
-	const [cultureName, setCultureName] = useState("");
-	const [materialName, setMaterialName] = useState("");
-	const [bladeShapeName, setBladeShapeName] = useState("");
-	const [baseShapeName, setBaseShapeName] = useState("");
-	const [haftingShapeName, setHaftingShapeName] = useState("");
-	const [crossSectionName, setCrossSectionName] = useState("");
 
 	const [artifactTypeError, setArtifactTypeError] = useState(false); // for artifact type dropdown error handling
 
@@ -173,6 +170,9 @@ const AddProjectile = ({
 	const [artifactTypes, setArtifactTypes] = useState([]);
 	// -----------------------------------------------------------------------------------------
 
+	/**
+	 * Handle modal visibility depending if being used for add or edit
+	 */
 	const handleClose = () => {
 		if (openAdd) {
 			setOpenAdd(false);
@@ -190,6 +190,10 @@ const AddProjectile = ({
 		setLocation(event.target.value);
 	};
 
+	/**
+	 * Validation of length, width, and height input values to only accept float values
+	 * everytime length, width, or height values change
+	 */
 	useEffect(() => {
 		const isFloatRegExp = new RegExp("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
 
@@ -292,6 +296,7 @@ const AddProjectile = ({
 				crossSectionId: crossSectionID,
 			};
 
+			// set up API endpoint depending if modal is being used for add or edit
 			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
 			const requestMethod = openAdd ? http.post : http.put;
 			const projectilePointData = openAdd ? formData : updateProjectilePoint;
@@ -398,8 +403,9 @@ const AddProjectile = ({
 		}
 	};
 
-	// ---------------- Pre-populate input fields for editing projectile point --------------------
-
+	/**
+	 * Pre-populate input fields for editing projectile point
+	 */
 	useEffect(() => {
 		if (openEdit) {
 			http
@@ -445,8 +451,6 @@ const AddProjectile = ({
 				});
 		}
 	}, [openEdit, projectilePointId]);
-
-	// ----------------------------------------------------------------------------------
 
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
