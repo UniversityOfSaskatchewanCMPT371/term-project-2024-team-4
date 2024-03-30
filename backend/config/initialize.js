@@ -88,15 +88,26 @@ async function initializeArtifactTypes() {
 async function initializeBaseUser() {
 	const defaultUsername = process.env.DEFAULT_USERNAME;
 	const defaultPassword = process.env.DEFAULT_PASSWORD;
+	const testUsername = process.env.TEST_USERNAME;
+	const testPassword = process.env.TEST_PASSWORD;
 
-	// check if default credentials exist
+	// if running in development env, then register test user
+	if (process.env.NODE_ENV === "development") {
+		if (!testUsername || !testPassword) {
+			logger.error("Test user credentials not deefined in .env file");
+			return;
+		} else {
+			await registerUser(testUsername, testPassword);
+		}
+	}
+
+	// either way, register default user
 	if (!defaultUsername || !defaultPassword) {
 		logger.error("Default user credentials not defined in .env file");
 		return;
 	}
 
-	// otherwise, use helper function to register a user
-	registerUser(defaultUsername, defaultPassword);
+	await registerUser(defaultUsername, defaultPassword);
 }
 
 module.exports = initializeDefaults;
