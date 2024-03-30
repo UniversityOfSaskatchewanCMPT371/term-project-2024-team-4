@@ -48,8 +48,18 @@ router.post("/", async (req, res) => {
 
 	try {
 		if (!(await Users.findOne({ where: { id: 1 } }))) {
-			// If user with id 1 does not exist, register a new user
-			await registerUser();
+			// If user with id 1 does not exist, attempt to register base user again
+			const defaultUsername = process.env.DEFAULT_USERNAME;
+			const defaultPassword = process.env.DEFAULT_PASSWORD;
+
+			// check if default credentials exist
+			if (!defaultUsername || !defaultPassword) {
+				logger.error("Default user credentials not defined in .env file");
+				return;
+			}
+
+			// otherwise, use helper function to register base user
+			registerUser(defaultUsername, defaultPassword);
 		}
 		// Check if any user exists in the database with the provided username
 		const existingUser = await Users.findOne({ where: { userName } });

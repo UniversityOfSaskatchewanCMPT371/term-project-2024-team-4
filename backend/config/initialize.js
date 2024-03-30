@@ -8,6 +8,8 @@ Initializes database with default/starting values:
 const dataSource = require("./db");
 const { Catalogue, ArtifactType } = require("../dist/entity");
 const { logger } = require("./logger");
+require("dotenv").config();
+const registerUser = require("../helpers/register");
 
 /**
  * Main function to call specific initialization functions
@@ -19,11 +21,12 @@ const { logger } = require("./logger");
 async function initializeDefaults() {
 	await initializeDefaultCatalogue();
 	await initializeArtifactTypes();
+	await initializeBaseUser();
 }
 
 /**
  * Initializes default catalogue in the database if it does not exist
- * @precond 
+ * @precond
  * 	- Catalogue table schema is generated
  * 	- There is no existing catalogue
  * @postcond Creates a catalogue with ID1
@@ -56,7 +59,7 @@ async function initializeDefaultCatalogue() {
 
 /**
  * Initializes default artifact types in the database if they don't exist
- * @precond 
+ * @precond
  * 	- ArtifactType table schema is generated
  * 	- There are no existing Artifact Types in the table
  * @postcond Creates artifact types from ID1-ID3: [Lithic, Ceramic, Faunal]
@@ -80,6 +83,20 @@ async function initializeArtifactTypes() {
 	} catch (error) {
 		logger.error("Failed to create artifact types:", error);
 	}
+}
+
+async function initializeBaseUser() {
+	const defaultUsername = process.env.DEFAULT_USERNAME;
+	const defaultPassword = process.env.DEFAULT_PASSWORD;
+
+	// check if default credentials exist
+	if (!defaultUsername || !defaultPassword) {
+		logger.error("Default user credentials not defined in .env file");
+		return;
+	}
+
+	// otherwise, use helper function to register a user
+	registerUser(defaultUsername, defaultPassword);
 }
 
 module.exports = initializeDefaults;
