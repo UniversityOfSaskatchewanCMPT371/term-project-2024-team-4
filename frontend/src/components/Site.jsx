@@ -5,13 +5,8 @@ import BaseLayout from "./BaseLayout";
 import axios from "../../http.js";
 import SearchIcon from "@mui/icons-material/Search";
 import log from "../logger.js";
-import {
-	TextField,
-	IconButton,
-	Typography,
-	Grid,
-	MenuItem,
-} from "@mui/material";
+import { TextField, IconButton, Grid, MenuItem } from "@mui/material";
+import { InputBase, ClickAwayListener } from "@mui/material";
 
 import { useLocation } from "react-router-dom";
 
@@ -87,14 +82,58 @@ const Site = () => {
 		setFilterValue(event.target.value);
 	};
 
+	/**
+	 * Sends the updated site name and description to the server.
+	 * This function is triggered when the user clicks away from the editable input
+	 * fields for the site name or description. It sends an HTTP PUT request to
+	 * the server endpoint to update the site data in the database.
+	 */
+	const handleUpdate = async () => {
+		try {
+			// Assuming you have a similar PUT endpoint as for the catalogue
+			const response = await axios.put(`/sites/${siteID}`, {
+				name: siteName,
+				description: siteDescription,
+			});
+			log.info("Site updated: ", response.data);
+		} catch (error) {
+			log.error("Error updating site: ", error);
+		}
+	};
+
 	return (
 		<BaseLayout>
 			<Grid item xs={12}>
 				<Grid>
-					<Typography variant="h4" sx={{ marginBottom: 2 }}>
-						{siteName}
-					</Typography>
-					<Typography sx={{ marginBottom: 4 }}>{siteDescription}</Typography>
+					{/* Editable field for Site Name */}
+					<ClickAwayListener onClickAway={() => handleUpdate()}>
+						<InputBase
+							value={siteName}
+							onChange={(e) => setSiteName(e.target.value)}
+							fullWidth
+							sx={{
+								fontSize: "h4.fontSize",
+								mb: 2,
+								"&.Mui-focused": { borderBottom: "2px solid" },
+							}}
+							inputProps={{ "aria-label": "site name" }}
+						/>
+					</ClickAwayListener>
+
+					{/* Editable field for Site Description */}
+					<ClickAwayListener onClickAway={() => handleUpdate()}>
+						<InputBase
+							value={siteDescription}
+							onChange={(e) => setSiteDescription(e.target.value)}
+							fullWidth
+							multiline
+							sx={{
+								mb: 2,
+								"&.Mui-focused": { borderBottom: "2px solid" },
+							}}
+							inputProps={{ "aria-label": "site description" }}
+						/>
+					</ClickAwayListener>
 				</Grid>
 
 				{/* Search and filter UI */}

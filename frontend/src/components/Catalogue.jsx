@@ -5,13 +5,8 @@ import BaseLayout from "./BaseLayout";
 import http from "../../http";
 import SearchIcon from "@mui/icons-material/Search";
 import log from "../logger";
-import {
-	TextField,
-	IconButton,
-	Typography,
-	Grid,
-	MenuItem,
-} from "@mui/material";
+import { TextField, IconButton, Grid, MenuItem } from "@mui/material";
+import { InputBase, ClickAwayListener } from "@mui/material";
 
 /**
  * Default catalogue main page for viewing and adding sites
@@ -69,17 +64,61 @@ const Catalogue = () => {
 		setFilterValue(event.target.value);
 	};
 
+	/**
+	 * Sends the updated catalogue name and description to the server.
+	 * This function is triggered when the user clicks away from the editable input
+	 * fields for the catalogue name or description. It sends an HTTP PUT request to
+	 * the server endpoint to update the catalogue data in the database.
+	 */
+	const handleSubmit = async () => {
+		try {
+			const response = await http.put("/catalogues/1", {
+				name: catalogueName,
+				description: catalogueDescription,
+			});
+			log.info("Catalogue updated: ", response.data);
+			// Optionally, notify the user of success
+		} catch (error) {
+			log.error("Error updating catalogue: ", error);
+			// Optionally, notify the user of failure
+		}
+	};
+
 	return (
 		<BaseLayout>
 			<Grid item xs={12}>
-				{/* Default catalogue labels */}
 				<Grid>
-					<Typography sx={{ marginBottom: 2 }} variant="h4">
-						{catalogueName || "Base Catalogue"}
-					</Typography>
-					<Typography sx={{ marginBottom: 4 }}>
-						{catalogueDescription}
-					</Typography>
+					{/* Editable field for Catalogue Name */}
+					<ClickAwayListener onClickAway={() => handleSubmit("name")}>
+						<InputBase
+							value={catalogueName}
+							onChange={(e) => setCatalogueName(e.target.value)}
+							fullWidth
+							placeholder="Enter Catalogue Name"
+							sx={{
+								fontSize: "h4.fontSize", // Use the theme's font size for h4
+								mb: 2,
+								"&.Mui-focused": { borderBottom: "2px solid" }, // underline when focused
+							}}
+							inputProps={{ "aria-label": "catalogue name" }}
+						/>
+					</ClickAwayListener>
+
+					{/* Editable field for Catalogue Description */}
+					<ClickAwayListener onClickAway={() => handleSubmit("description")}>
+						<InputBase
+							value={catalogueDescription}
+							onChange={(e) => setCatalogueDescription(e.target.value)}
+							fullWidth
+							multiline
+							placeholder="Enter Catalogue Description"
+							sx={{
+								mb: 2,
+								"&.Mui-focused": { borderBottom: "2px solid" }, // &.Mui-focused": { borderBottom: "2px solid"  underline when focused
+							}}
+							inputProps={{ "aria-label": "catalogue description" }}
+						/>
+					</ClickAwayListener>
 				</Grid>
 				<Grid container spacing={2}>
 					<Grid item xs={12} sm={6}>
