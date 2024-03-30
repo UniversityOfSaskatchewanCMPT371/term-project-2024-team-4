@@ -239,6 +239,7 @@ const AddProjectile = ({
 
 	const handlePhotoFilePathChange = (event) => {
 		setPhotoFilePath(event.target.files[0]);
+		log.info(event.target.files[0]);
 	};
 
 	const handleSubmit = () => {
@@ -1278,7 +1279,9 @@ const AddProjectile = ({
 							/>
 							{/* ------------ Upload Photo ------------- */}
 							<FormControl sx={{ my: 3.4 }}>
-								<FormLabel sx={{ mb: 1.5 }}>Upload Photo</FormLabel>
+								<FormLabel sx={{ mb: 1.5 }}>
+									Upload {photoFilePath && "New"} Photo
+								</FormLabel>
 								<input type="file" onChange={handlePhotoFilePathChange} />
 							</FormControl>
 							{/* ------------ Dimensions ------------- */}

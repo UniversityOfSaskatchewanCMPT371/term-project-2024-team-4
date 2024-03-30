@@ -173,6 +173,7 @@ const ViewProjectile = ({
 											style={{
 												width: "100%",
 												minHeight: "450px",
+												maxHeight: "450px",
 												borderRadius: "20px",
 												objectFit: "cover",
 											}}
@@ -185,6 +186,7 @@ const ViewProjectile = ({
 										sx={{
 											width: "100%",
 											minHeight: "450px",
+											maxHeight: "450px",
 											borderRadius: "20px",
 											textAlign: "center",
 											alignContent: "center",
