@@ -1,6 +1,6 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import http from "../../http.js";
-import ProjectileModal from "./ProjectileModal";
 import log from "../logger.js";
 import { baseURL } from "../../http";
 import {
@@ -23,11 +23,18 @@ import {
  * @returns {JSX.Element} ViewProjectile React component
  */
 // eslint-disable-next-line no-unused-vars, react/prop-types
-const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
+const ViewProjectile = ({
+	setOpenView,
+	setOpenEdit,
+	projectilePointId,
+	siteName,
+}) => {
 	const [name, setName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
-	const [dimensions, setDimensions] = useState("");
+	const [height, setHeight] = useState("");
+	const [width, setWidth] = useState("");
+	const [length, setLength] = useState("");
 	const [photoFilePath, setPhotoFilePath] = useState("");
 	const [artifactTypeID, setArtifactTypeID] = useState(0);
 	const [periodName, setPeriodName] = useState("");
@@ -36,8 +43,6 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 	const [baseShapeName, setBaseShapeName] = useState("");
 	const [haftingShapeName, setHaftingShapeName] = useState("");
 	const [crossSectionName, setCrossSectionName] = useState("");
-
-	const [openAdd, setOpenAdd] = useState(false);
 	const [openAlertDelete, setOpenAlertDelete] = useState(false);
 
 	/**
@@ -51,7 +56,7 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 	 *
 	 */
 	const handleEdit = () => {
-		setOpenAdd(true);
+		setOpenEdit(true);
 	};
 
 	/**
@@ -98,7 +103,24 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 				setName(siteName + "-" + projectilePointId);
 				setDescription(response.data.description);
 				setLocation(response.data.location);
-				setDimensions(response.data.dimensions);
+
+				const dimensions = response.data.dimensions.split(",");
+
+				var lengthDimension = dimensions[0].replace("{", "");
+				// eslint-disable-next-line quotes
+				lengthDimension = lengthDimension.replace('"', "");
+
+				// eslint-disable-next-line quotes
+				var widthDimension = dimensions[1].replace('"', "");
+
+				var heightDimension = dimensions[2].replace("{", "");
+				// eslint-disable-next-line quotes
+				heightDimension = heightDimension.replace('"', "");
+
+				setLength(lengthDimension.trim() ? parseFloat(lengthDimension) : "");
+				setWidth(widthDimension.trim() ? parseFloat(widthDimension) : "");
+				setHeight(heightDimension.trim() ? parseFloat(heightDimension) : "");
+
 				setPhotoFilePath(response.data.photo);
 				setArtifactTypeID(response.data.artifactType.id);
 
@@ -126,7 +148,7 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 			.catch((error) => {
 				log.error("Error fetching projectile point: ", error);
 			});
-	}, [siteName, projectilePointId]);
+	}, [siteName, projectilePointId, height, width, length]);
 
 	return (
 		<>
@@ -184,7 +206,9 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 								<MoreHorizIcon />
 							</IconButton> */}
 							</Typography>
-							<Typography variant="body1">{description}</Typography>
+							<Typography variant="body1">
+								{description || "No description"}
+							</Typography>
 						</Grid>
 						<Grid item xs={6}>
 							<Typography sx={{ fontWeight: "bold" }} variant="h4">
@@ -193,7 +217,15 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Dimensions
 							</Typography>
-							<Typography variant="body1">{dimensions}</Typography>
+							<Typography variant="body1">
+								{"L: " + (length || 0) + "mm"}
+							</Typography>
+							<Typography variant="body1">
+								{"W: " + (width || 0) + "mm"}
+							</Typography>
+							<Typography variant="body1">
+								{"H: " + (height || 0) + "mm"}
+							</Typography>
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Location
 							</Typography>
@@ -236,19 +268,17 @@ const ViewProjectile = ({ setOpenView, projectilePointId, siteName }) => {
 					<Button onClick={handleOpenAlertDelete} color="primary">
 						Delete
 					</Button>
-					<Button onClick={handleEdit} color="primary">
+					<Button
+						onClick={() => {
+							handleEdit();
+							handleClose();
+						}}
+						color="primary"
+					>
 						Edit
 					</Button>
 				</DialogActions>
 			</Dialog>
-			<div>
-				{openAdd && (
-					<ProjectileModal
-						setOpenAdd={setOpenAdd}
-						projectilePointId={projectilePointId}
-					/>
-				)}
-			</div>
 			<div>
 				<Dialog open={openAlertDelete}>
 					<DialogTitle id="alert-dialog-title">

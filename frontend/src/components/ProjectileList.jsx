@@ -38,6 +38,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export default function ProjectileList({ query, siteId, siteName }) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openView, setOpenView] = useState(false);
+	const [openEdit, setOpenEdit] = useState(false);
 	const [projectilePointId, setProjectilePointId] = useState(0);
 	const [data, setData] = useState([]);
 
@@ -119,13 +120,28 @@ export default function ProjectileList({ query, siteId, siteName }) {
 					</Box>
 				</Grid>
 			</Item>
-			<div>{openAdd && <ProjectileModal setOpenAdd={setOpenAdd} />}</div>
+			<div>
+				{openAdd && (
+					<ProjectileModal openAdd={openAdd} setOpenAdd={setOpenAdd} />
+				)}
+			</div>
 			<div>
 				{openView && (
 					<Projectile
 						setOpenView={setOpenView}
+						setOpenEdit={setOpenEdit}
 						projectilePointId={projectilePointId}
 						siteName={siteName}
+					/>
+				)}
+			</div>
+			<div>
+				{openEdit && (
+					<ProjectileModal
+						setOpenView={setOpenView}
+						openEdit={openEdit}
+						setOpenEdit={setOpenEdit}
+						projectilePointId={projectilePointId}
 					/>
 				)}
 			</div>

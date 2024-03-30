@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import http from "../../http.js";
@@ -42,11 +43,25 @@ import HaftingShapeModal from "./HaftingShapeModal.jsx";
  * @returns {JSX.Element} AddProjectile React component
  */
 // eslint-disable-next-line no-unused-vars, react/prop-types
-const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
+const AddProjectile = ({
+	openAdd,
+	setOpenAdd,
+	setOpenView,
+	openEdit,
+	setOpenEdit,
+	projectilePointId,
+}) => {
 	const inComingSiteInfo = useLocation();
 
 	const siteID = inComingSiteInfo.state.info.id;
 	const siteName = inComingSiteInfo.state.info.name;
+
+	if (openAdd) {
+		log.info("Adding new projectile point");
+	}
+	if (openEdit) {
+		log.info("Updating a projectile point");
+	}
 
 	const [name, setName] = useState(""); // remove once PP name column is removed in database
 	const [description, setDescription] = useState("");
@@ -159,7 +174,12 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 	// -----------------------------------------------------------------------------------------
 
 	const handleClose = () => {
-		setOpenAdd(false);
+		if (openAdd) {
+			setOpenAdd(false);
+		} else {
+			setOpenEdit(false);
+			setOpenView(true);
+		}
 	};
 
 	const handleDescriptionChange = (event) => {
@@ -227,6 +247,19 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 			formData.append("name", name); // remove once PP name column is removed in database
 			formData.append("location", location);
 			formData.append("description", description);
+
+			if (length.trim()) {
+				setLength(length.replace(/[^0-9.]/g, ""));
+			}
+
+			if (width.trim()) {
+				setWidth(width.replace(/[^0-9.]/g, ""));
+			}
+
+			if (height.trim()) {
+				setHeight(height.replace(/[^0-9.]/g, ""));
+			}
+
 			formData.append(
 				"dimensions",
 				new Array(parseFloat(length), parseFloat(width), parseFloat(height)),
@@ -260,122 +293,166 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 			};
 
 			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
-			const requestMethod = projectilePointId ? http.put : http.post;
-			const projectilePointData = projectilePointId
-				? updateProjectilePoint
-				: formData;
+			const requestMethod = openAdd ? http.post : http.put;
+			const projectilePointData = openAdd ? formData : updateProjectilePoint;
 
-			log.info("Updating projectile point");
 			requestMethod(requestUrl, projectilePointData)
 				.then((response) => {
-					log.info("Updating projectile point");
-					if (projectilePointId) {
-						log.info("Updated projectile point successfully:", response.data);
-					} else {
+					if (openAdd) {
 						log.info("New projectile point added successfully:", response.data);
+					} else {
+						log.info("Updated projectile point successfully:", response.data);
 					}
 				})
 				.catch((error) => {
-					if (projectilePointId) {
-						log.error("Error updating projectile point:", error);
-					} else {
+					if (openAdd) {
 						log.error("Error adding new  projectile point:", error);
+					} else {
+						log.error("Error updating projectile point:", error);
 					}
 				});
 
-			log.info("Submitted:", ...formData);
+			if (openAdd) {
+				log.info("Submitted:", ...formData);
+			} else {
+				log.info("Submitted:", updateProjectilePoint);
+			}
+
+			//Add Base/Blade/Hafting shape and cross section to selected culture.
+			//first, if the currently selected Base/Blade/Hafting shape and cross sections are not in the current culture, add them
+
+			http
+				.get(`/cultures/${cultureID}`)
+				.then((response) => {
+					console.log(
+						"New projectile point added successfully:",
+						response.data,
+					);
+					let cultureToUpdate = response.data;
+					//check if the selected base shape is in the selected culture.
+					if (
+						!cultureToUpdate.baseShapes.find(
+							(baseShapeObj) => baseShapeObj.id === baseShapeID,
+						)
+					) {
+						cultureToUpdate.baseShapes.push(baseShapeID);
+					}
+					//check if the selected hafting shape is in the selected culture.
+					if (
+						!cultureToUpdate.haftingShapes.find(
+							(haftingShapeObj) => haftingShapeObj.id === haftingShapeID,
+						)
+					) {
+						cultureToUpdate.haftingShapes.push(haftingShapeID);
+					}
+					//check if the selected blade shape is in the selected culture.
+					if (
+						!cultureToUpdate.bladeShapes.find(
+							(bladeShapeObj) => bladeShapeObj.id === bladeShapeID,
+						)
+					) {
+						cultureToUpdate.bladeShapes.push(bladeShapeID);
+					}
+					//check if the selected cross section is in the selected culture.
+					if (
+						!cultureToUpdate.crossSections.find(
+							(crossSectionObj) => crossSectionObj.id === crossSectionID,
+						)
+					) {
+						cultureToUpdate.crossSections.push(crossSectionID);
+					}
+					//check if the selected material is in the selected culture.
+					if (
+						!cultureToUpdate.materials.find(
+							(materialObj) => materialObj.id === materialID,
+						)
+					) {
+						cultureToUpdate.materials.push(materialID);
+					}
+					const updatedCulture = {
+						name: cultureToUpdate.name,
+						periodId: cultureToUpdate.periodId,
+						baseShapes: cultureToUpdate.baseShapes,
+						bladeShapes: cultureToUpdate.bladeShapes,
+						haftingShapes: cultureToUpdate.haftingShapes,
+						crossSections: cultureToUpdate.crossSections,
+						materials: cultureToUpdate.materials,
+					};
+					log.info("PM 231: " + updatedCulture);
+
+					http
+						.put(`/cultures/${cultureID}`, updatedCulture)
+						.then((response) => {
+							log.info(
+								`Culture processed successfully: ${JSON.stringify(response.data)}`,
+							);
+							handleClose();
+						})
+						.catch((error) => {
+							log.error(`Error processing culture: ${error}`);
+						});
+				})
+				.catch((error) => {
+					console.error("Error adding new  projectile point:", error);
+				});
 		}
-
-		//Add Base/Blade/Hafting shape and cross section to selected culture.
-		//first, if the currently selected Base/Blade/Hafting shape and cross sections are not in the current culture, add them
-
-		http
-			.get(`/cultures/${cultureID}`)
-			.then((response) => {
-				console.log("New projectile point added successfully:", response.data);
-				let cultureToUpdate = response.data;
-				//check if the selected base shape is in the selected culture.
-				if (
-					!cultureToUpdate.baseShapes.find(
-						(baseShapeObj) => baseShapeObj.id === baseShapeID,
-					)
-				) {
-					cultureToUpdate.baseShapes.push(baseShapeID);
-				}
-				//check if the selected hafting shape is in the selected culture.
-				if (
-					!cultureToUpdate.haftingShapes.find(
-						(haftingShapeObj) => haftingShapeObj.id === haftingShapeID,
-					)
-				) {
-					cultureToUpdate.haftingShapes.push(haftingShapeID);
-				}
-				//check if the selected blade shape is in the selected culture.
-				if (
-					!cultureToUpdate.bladeShapes.find(
-						(bladeShapeObj) => bladeShapeObj.id === bladeShapeID,
-					)
-				) {
-					cultureToUpdate.bladeShapes.push(bladeShapeID);
-				}
-				//check if the selected cross section is in the selected culture.
-				if (
-					!cultureToUpdate.crossSections.find(
-						(crossSectionObj) => crossSectionObj.id === crossSectionID,
-					)
-				) {
-					cultureToUpdate.crossSections.push(crossSectionID);
-				}
-				//check if the selected material is in the selected culture.
-				if (
-					!cultureToUpdate.materials.find(
-						(materialObj) => materialObj.id === materialID,
-					)
-				) {
-					cultureToUpdate.materials.push(materialID);
-				}
-				const updatedCulture = {
-					name: cultureToUpdate.name,
-					periodId: cultureToUpdate.periodId,
-					baseShapes: cultureToUpdate.baseShapes,
-					bladeShapes: cultureToUpdate.bladeShapes,
-					haftingShapes: cultureToUpdate.haftingShapes,
-					crossSections: cultureToUpdate.crossSections,
-					materials: cultureToUpdate.materials,
-				};
-				log.info("PM 231: " + updatedCulture);
-
-				http
-					.put(`/cultures/${cultureID}`, updatedCulture)
-					.then((response) => {
-						log.info(
-							`Culture processed successfully: ${JSON.stringify(response.data)}`,
-						);
-						handleClose();
-					})
-					.catch((error) => {
-						log.error(`Error processing culture: ${error}`);
-					});
-			})
-			.catch((error) => {
-				console.error("Error adding new  projectile point:", error);
-			});
 	};
 
-	// const newProjectilePoint = {
-	// 	name: siteID + "-" + name,
-	// 	location,
-	// 	description,
-	// 	dimensions,
-	// 	photo: photoFilePath,
-	// 	siteId: siteID,
-	// 	artifactTypeId: artifactTypeID,
-	// 	cultureId: cultureID,
-	// 	bladeShapeId: bladeShapeID,
-	// 	baseShapeId: baseShapeID,
-	// 	haftingShapeId: haftingShapeID,
-	// 	crossSectionId: crossSectionID,
-	// };
+	// ---------------- Pre-populate input fields for editing projectile point --------------------
+
+	useEffect(() => {
+		if (openEdit) {
+			http
+				.get(`/projectilePoints/${projectilePointId}`)
+				.then((response) => {
+					setName(response.data.site.name + "-" + response.data.id);
+					setDescription(response.data.description);
+					setLocation(response.data.location);
+
+					const dimensions = response.data.dimensions.split(",");
+
+					setLength(dimensions[0].trim().replace(/[^0-9.]/g, ""));
+					setWidth(dimensions[1].trim().replace(/[^0-9.]/g, ""));
+					setHeight(dimensions[2].trim().replace(/[^0-9.]/g, ""));
+
+					setPhotoFilePath(response.data.photo);
+					setArtifactTypeID(response.data.artifactType.id);
+
+					if (response.data.culture !== null) {
+						setCultureID(response.data.culture.id);
+						setCultureName(response.data.culture.name);
+
+						setPeriodID(response.data.culture.period.id);
+						setPeriodName(response.data.culture.period.name);
+					}
+
+					if (response.data.bladeShape !== null) {
+						setBladeShapeID(response.data.bladeShape.id);
+						setBladeShapeName(response.data.bladeShape.name);
+					}
+
+					if (response.data.baseShape !== null) {
+						setBaseShapeID(response.data.baseShape.id);
+						setBaseShapeName(response.data.baseShape.name);
+					}
+
+					if (response.data.haftingShape !== null) {
+						setHaftingShapeID(response.data.haftingShape.id);
+						setHaftingShapeName(response.data.haftingShape.name);
+					}
+
+					if (response.data.crossSection !== null) {
+						setCrossSectionID(response.data.crossSection.id);
+						setCrossSectionName(response.data.crossSection.name);
+					}
+				})
+				.catch((error) => {
+					log.error("Error fetching projectile point: ", error);
+				});
+		}
+	}, [openEdit, projectilePointId]);
+
+	// ----------------------------------------------------------------------------------
 
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
@@ -1176,64 +1253,13 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 	};
 	// ---------------- End of MaterialModal functions --------------------
 
-	useEffect(() => {
-		if (projectilePointId) {
-			http
-				.get(`/projectilePoints/${projectilePointId}`)
-				.then((response) => {
-					setName(response.data.site.name + "-" + response.data.id);
-					setDescription(response.data.description);
-					setLocation(response.data.location);
-
-					const dimensions = response.data.dimensions.split(",");
-					setLength(dimensions[0]);
-					setWidth(dimensions[1]);
-					setHeight(dimensions[2]);
-
-					setPhotoFilePath(response.data.photo);
-					setArtifactTypeID(response.data.artifactType.id);
-
-					if (response.data.culture !== null) {
-						setCultureID(response.data.culture.id);
-						setCultureName(response.data.culture.name);
-
-						setPeriodID(response.data.culture.period.id);
-						setPeriodName(response.data.culture.period.name);
-					}
-
-					if (response.data.bladeShape !== null) {
-						setBladeShapeID(response.data.bladeShape.id);
-						setBladeShapeName(response.data.bladeShape.name);
-					}
-
-					if (response.data.baseShape !== null) {
-						setBaseShapeID(response.data.baseShape.id);
-						setBaseShapeName(response.data.baseShape.name);
-					}
-
-					if (response.data.haftingShape !== null) {
-						setHaftingShapeID(response.data.haftingShape.id);
-						setHaftingShapeName(response.data.haftingShape.name);
-					}
-
-					if (response.data.crossSection !== null) {
-						setCrossSectionID(response.data.crossSection.id);
-						setCrossSectionName(response.data.crossSection.name);
-					}
-				})
-				.catch((error) => {
-					log.error("Error fetching projectile point: ", error);
-				});
-		}
-	}, [projectilePointId]);
-
 	return (
 		<>
 			<Dialog open={true} onClose={handleClose} maxWidth="md" fullWidth>
-				{!projectilePointId && (
+				{openAdd && (
 					<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
 				)}
-				{projectilePointId && (
+				{openEdit && (
 					<DialogTitle>
 						Update {siteName}-{projectilePointId} Projectile Point
 					</DialogTitle>
@@ -1753,12 +1779,12 @@ const AddProjectile = ({ setOpenAdd, projectilePointId }) => {
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					{!projectilePointId && (
+					{openAdd && (
 						<Button onClick={handleSubmit} color="primary">
 							Add
 						</Button>
 					)}
-					{projectilePointId && (
+					{openEdit && (
 						<Button onClick={handleSubmit} color="primary">
 							Save Changes
 						</Button>
