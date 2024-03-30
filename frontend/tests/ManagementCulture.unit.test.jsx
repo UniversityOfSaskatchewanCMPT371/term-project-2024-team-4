@@ -1,11 +1,11 @@
 // ManagementCultures.test.jsx
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
-import axios from "axios";
+import http from "../http";
 import ManagementCultures from "../src/components/ManagementCultures";
 import AddCultureDialog from "../src/components/AddCultureDialog";
 
-// Mock Sidebar component to avoid router or axios dependencies
+// Mock Sidebar component to avoid router or http dependencies
 vi.mock("../src/components/Sidebar", () => {
 	return {
 		__esModule: true,
@@ -13,34 +13,36 @@ vi.mock("../src/components/Sidebar", () => {
 	};
 });
 
-vi.mock("axios", () => ({
-	__esModule: true,
-	default: {
-		get: vi.fn(() => Promise.resolve({ data: [{ id: 1, name: "Culture 1" }] })),
-		delete: vi.fn(() => Promise.resolve()),
-	},
-}));
-
 describe("ManagementCultures", () => {
 	beforeEach(() => {
 		render(<ManagementCultures />);
+		vi.mock("../http", () => ({
+			__esModule: true,
+			default: {
+				get: vi.fn(() =>
+					Promise.resolve({ data: [{ id: 1, name: "Culture 1" }] }),
+				),
+			},
+		}));
+	});
+
+	afterEach(() => {
+		vi.resetAllMocks();
 	});
 
 	it("fetches cultures on mount", async () => {
-		await waitFor(() => {
-			expect(screen.getByText("Culture 1")).toBeInTheDocument();
-		});
+		await expect(screen.findByText("Culture 1")).resolves.toBeInTheDocument();
 	});
 });
-
 describe("AddCultureDialog", () => {
 	const mockOnClose = vi.fn();
 	const mockOnSave = vi.fn();
 
 	beforeEach(() => {
-		axios.get.mockResolvedValue({
+		http.get.mockResolvedValue({
 			data: [{ id: 1, name: "Period 1", start: 1000, end: 1500 }],
 		});
+
 		render(
 			<AddCultureDialog
 				open={true}
@@ -50,18 +52,23 @@ describe("AddCultureDialog", () => {
 		);
 	});
 
+	afterEach(() => {
+		vi.resetAllMocks();
+	});
+
 	it("renders correctly", async () => {
-		await waitFor(() => {
-			expect(screen.getByLabelText("Culture Name")).toBeInTheDocument();
-			expect(screen.getByLabelText("Associated Period")).toBeInTheDocument();
-		});
+		// Use findByLabelText for asynchronous elements
+		expect(await screen.findByLabelText("Culture Name")).toBeInTheDocument();
+		expect(
+			await screen.findByLabelText("Associated Period"),
+		).toBeInTheDocument();
 	});
 
 	it("fetches periods on mount", async () => {
-		await waitFor(() => {
-			expect(axios.get).toHaveBeenCalledWith("http://localhost:3000/periods");
-			expect(screen.getByLabelText("Associated Period")).toBeInTheDocument();
-		});
+		const associatedPeriodInput =
+			await screen.findByLabelText("Associated Period");
+		expect(associatedPeriodInput).toBeInTheDocument();
+		expect(http.get).toHaveBeenCalledWith("/periods");
 	});
 
 	it("handles save button click with validation", async () => {

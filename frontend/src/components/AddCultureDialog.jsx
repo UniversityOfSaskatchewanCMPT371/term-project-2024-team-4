@@ -10,7 +10,7 @@ import {
 	Typography,
 	MenuItem,
 } from "@mui/material";
-import axios from "axios";
+import http from "../../http.js";
 
 /**
  * The AddCultureDialog component allows users to add a new culture.
@@ -29,7 +29,7 @@ export default function AddCultureDialog({ open, onClose, onSave }) {
 	useEffect(() => {
 		const fetchPeriods = async () => {
 			try {
-				const response = await axios.get("http://localhost:3000/periods");
+				const response = await http.get("/periods");
 				setPeriods(response.data); // Update the periods state with the fetched data
 			} catch (error) {
 				console.error("Error fetching periods:", error);

@@ -10,7 +10,7 @@ import {
 	Typography,
 	MenuItem,
 } from "@mui/material";
-import axios from "axios";
+import http from "../../http.js";
 import log from "../logger.js";
 
 /**
@@ -30,7 +30,7 @@ export default function AddMaterialDialog({ open, onClose, onSave }) {
 	useEffect(() => {
 		const fetchArtifactTypes = async () => {
 			try {
-				const response = await axios.get("http://localhost:3000/artifactTypes");
+				const response = await http.get("/artifactTypes");
 				setArtifactTypes(response.data); // Update state with fetched artifact types
 			} catch (error) {
 				log.error("Failed to fetch artifact types:", error);

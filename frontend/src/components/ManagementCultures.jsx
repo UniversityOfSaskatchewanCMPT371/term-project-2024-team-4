@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-key */
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/userContext.jsx";
+import http from "../../http.js";
 import {
 	Box,
 	Button,
@@ -21,7 +22,7 @@ import AddCultureDialog from "./AddCultureDialog";
 import Sidebar from "./Sidebar";
 import RelationsCultureDialog from "./RelationsCultureDialog.jsx";
 
-const apiUrlCultures = "http://localhost:3000/cultures"; // API endpoint for fetching and deleting cultures
+const apiUrlCultures = "/cultures"; // API endpoint for fetching and deleting cultures
 
 export default function ManagementCultures() {
 	// State management for the component
@@ -33,11 +34,13 @@ export default function ManagementCultures() {
 		culture: null,
 	}); // State for managing delete confirmation dialog
 
+	const { user } = useContext(UserContext);
+
 	// Fetch cultures from the server when the component mounts
 	useEffect(() => {
 		const fetchCultures = async () => {
 			try {
-				const response = await axios.get(apiUrlCultures);
+				const response = await http.get(apiUrlCultures);
 				setRows(response.data); // Set fetched cultures to the grid
 			} catch (error) {
 				log.error("Error fetching cultures:", error);
@@ -57,7 +60,7 @@ export default function ManagementCultures() {
 			const cultureId = deleteConfirmation.culture.id;
 			log.info(`Attempting to delete culture with ID: ${cultureId}`);
 			try {
-				await axios.delete(`${apiUrlCultures}/${cultureId}`);
+				await http.delete(`${apiUrlCultures}/${cultureId}`);
 				setRows(rows.filter((row) => row.id !== cultureId)); // Remove deleted culture from state
 				setAlert({
 					open: true,
@@ -69,7 +72,7 @@ export default function ManagementCultures() {
 				setAlert({
 					open: true,
 					type: "error",
-					message: "Failed to delete culture. Please try again.",
+					message: "Failed to delete culture. Please log in or try again.",
 				});
 			}
 		}
@@ -97,7 +100,7 @@ export default function ManagementCultures() {
 		}
 
 		try {
-			const response = await axios.post(apiUrlCultures, newCulture);
+			const response = await http.post(apiUrlCultures, newCulture);
 			setRows([...rows, response.data]); // Add the new culture to the grid
 			setAlert({
 				open: true,
@@ -206,14 +209,16 @@ export default function ManagementCultures() {
 					<Typography variant="h6" sx={{ mb: 2 }}>
 						Cultures Management
 					</Typography>
-					<Button
-						variant="contained"
-						startIcon={<AddIcon />}
-						onClick={() => setDialogOpen(true)}
-						sx={{ mb: 2 }}
-					>
-						Add Culture
-					</Button>
+					{user && user.userName && (
+						<Button
+							variant="contained"
+							startIcon={<AddIcon />}
+							onClick={() => setDialogOpen(true)}
+							sx={{ mb: 2 }}
+						>
+							Add Culture
+						</Button>
+					)}
 				</Box>
 
 				<DataGrid

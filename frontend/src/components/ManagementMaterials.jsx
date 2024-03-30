@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-key */
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/userContext.jsx";
+import http from "../../http.js";
 import {
 	Box,
 	Button,
@@ -22,7 +23,7 @@ import Sidebar from "./Sidebar";
 import RelationsMaterialsDialog from "./RelationsMaterialsDialog.jsx";
 
 // URL to fetch materials
-const apiUrlMaterials = "http://localhost:3000/materials";
+const apiUrlMaterials = "/materials";
 
 /**
  * ManagementMaterials component is responsible for fetching, displaying, adding, and deleting materials.
@@ -38,11 +39,13 @@ export default function ManagementMaterials() {
 		material: null,
 	}); // State for managing delete confirmation dialog
 
+	const { user } = useContext(UserContext);
+
 	// Fetch materials from the server and update the state.
 	useEffect(() => {
 		const fetchMaterials = async () => {
 			try {
-				const response = await axios.get(apiUrlMaterials);
+				const response = await http.get(apiUrlMaterials);
 				setRows(response.data); // Populate materials data into rows
 			} catch (error) {
 				log.error("Failed to fetch materials:", error);
@@ -60,7 +63,7 @@ export default function ManagementMaterials() {
 	const handleConfirmDelete = async () => {
 		if (deleteConfirmation.material) {
 			try {
-				await axios.delete(
+				await http.delete(
 					`${apiUrlMaterials}/${deleteConfirmation.material.id}`,
 				);
 				setRows(
@@ -76,7 +79,7 @@ export default function ManagementMaterials() {
 				setAlert({
 					open: true,
 					type: "error",
-					message: "Failed to delete material. Please try again.",
+					message: "Failed to delete material. Please log in or try again.",
 				});
 			}
 		}
@@ -107,7 +110,7 @@ export default function ManagementMaterials() {
 		}
 
 		try {
-			const response = await axios.post(apiUrlMaterials, newMaterial);
+			const response = await http.post(apiUrlMaterials, newMaterial);
 			setRows([...rows, response.data]); // Add the new material to the UI
 			setAlert({
 				open: true,
@@ -211,13 +214,15 @@ export default function ManagementMaterials() {
 					<Typography variant="h6" sx={{ mb: 2 }}>
 						Materials Management
 					</Typography>
-					<Button
-						variant="contained"
-						startIcon={<AddIcon />}
-						onClick={() => setDialogOpen(true)}
-					>
-						Add Material
-					</Button>
+					{user && user.userName && (
+						<Button
+							variant="contained"
+							startIcon={<AddIcon />}
+							onClick={() => setDialogOpen(true)}
+						>
+							Add Material
+						</Button>
+					)}
 				</Box>
 				<DataGrid
 					rows={rows}

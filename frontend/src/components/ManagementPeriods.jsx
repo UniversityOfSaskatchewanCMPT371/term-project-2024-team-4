@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-key */
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
+import { UserContext } from "../context/userContext.jsx";
+import http from "../../http.js";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import AddIcon from "@mui/icons-material/Add";
@@ -21,7 +22,7 @@ import {
 } from "@mui/material";
 
 // URL for backend API for period CRUD operations
-const apiUrl = "http://localhost:3000/periods";
+const apiUrl = "/periods";
 
 // ManagementPeriods is a functional component for managing historical periods
 export default function ManagementPeriods() {
@@ -35,11 +36,13 @@ export default function ManagementPeriods() {
 		period: null,
 	});
 
+	const { user } = useContext(UserContext);
+
 	// useEffect to fetch period data from server when component mounts
 	useEffect(() => {
 		const fetchPeriods = async () => {
 			try {
-				const response = await axios.get(apiUrl); // Fetch periods data
+				const response = await http.get(apiUrl); // Fetch periods data
 				setRows(response.data); // Set fetched periods to rows
 				setExistingPeriodNames(response.data.map((period) => period.name)); // Extract names for duplicate checking
 			} catch (error) {
@@ -69,7 +72,7 @@ export default function ManagementPeriods() {
 	const handleConfirmDelete = async () => {
 		if (deleteConfirmation.period) {
 			try {
-				await axios.delete(`${apiUrl}/${deleteConfirmation.period.id}`);
+				await http.delete(`${apiUrl}/${deleteConfirmation.period.id}`);
 				setRows(rows.filter((row) => row.id !== deleteConfirmation.period.id));
 				setAlert({
 					open: true,
@@ -91,7 +94,7 @@ export default function ManagementPeriods() {
 	// Handler for saving a new period
 	const handleSaveNewPeriod = async (newPeriod) => {
 		try {
-			const response = await axios.post(apiUrl, newPeriod); // Send post request to add new period
+			const response = await http.post(apiUrl, newPeriod); // Send post request to add new period
 			setRows((oldRows) => [...oldRows, { ...response.data, isNew: true }]); // Add new period to local state
 			setAlert({
 				open: true,
@@ -215,14 +218,16 @@ export default function ManagementPeriods() {
 					}}
 				>
 					<Typography variant="h6">Periods Management</Typography>
-					<Button
-						variant="contained"
-						startIcon={<AddIcon />}
-						onClick={handleClickOpenDialog}
-						color="primary"
-					>
-						Add Period
-					</Button>
+					{user && user.userName && (
+						<Button
+							variant="contained"
+							startIcon={<AddIcon />}
+							onClick={handleClickOpenDialog}
+							color="primary"
+						>
+							Add Period
+						</Button>
+					)}
 				</Box>
 				<DataGrid
 					rows={rows}
