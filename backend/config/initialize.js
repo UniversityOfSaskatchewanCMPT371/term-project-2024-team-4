@@ -9,7 +9,10 @@ const dataSource = require("./db");
 const { Catalogue, ArtifactType } = require("../dist/entity");
 const { logger } = require("./logger");
 require("dotenv").config();
-const registerUser = require("../helpers/register");
+const {
+	registerUser,
+	deleteUserByUsername,
+} = require("../helperFiles/userHelper");
 
 /**
  * Main function to call specific initialization functions
@@ -85,6 +88,16 @@ async function initializeArtifactTypes() {
 	}
 }
 
+/**
+ * Initializes default user in the database
+ * Additionally, will generate a test user in development environmnts
+ * @precond
+ * 	- Default user does not already exist in the database
+ * @postcond
+ * 	- Registers default user
+ * 	- Registers test user (if in development environment)
+ * @returns
+ */
 async function initializeBaseUser() {
 	const defaultUsername = process.env.DEFAULT_USERNAME;
 	const defaultPassword = process.env.DEFAULT_PASSWORD;
@@ -98,6 +111,16 @@ async function initializeBaseUser() {
 			return;
 		} else {
 			await registerUser(testUsername, testPassword);
+		}
+	} else {
+		// otherwise, delete the tester account if it exists
+		const wasDeleted = await deleteUserByUsername(testUsername);
+		if (wasDeleted) {
+			logger.info(`Tester account ${testUsername} deleted successfully.`);
+		} else {
+			logger.info(
+				`No tester account ${testUsername} to delete or deletion failed.`,
+			);
 		}
 	}
 

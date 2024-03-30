@@ -33,4 +33,30 @@ const registerUser = async (username, password) => {
 	return;
 };
 
-module.exports = registerUser;
+/**
+ * Delete a user given a unique username
+ * @param {*} username - username of an existing user
+ * @precond
+ * 	- username exists in the database already
+ * @postcond
+ * 	- user with given username is deleted from database
+ * @returns
+ * 	- false: if no user is deleted
+ * 	- true: if user is succesfully deleteeed
+ */
+const deleteUserByUsername = async (username) => {
+	const Users = await dataSource.getRepository(User);
+
+	// Attempt to find user by username
+	const user = await Users.findOneBy({ userName: username });
+	if (!user) {
+		logger.warn(`User ${username} not found for deletion.`);
+		return false;
+	} else {
+		await Users.remove(user);
+		logger.info(`User ${username} succesfully deleted`);
+		return true;
+	}
+};
+
+module.exports = { registerUser, deleteUserByUsername };

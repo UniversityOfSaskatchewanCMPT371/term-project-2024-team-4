@@ -4,7 +4,10 @@ const router = express.Router();
 const dataSource = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const registerUser = require("../helpers/register");
+const {
+	registerUser,
+	deleteUserByUsername,
+} = require("../helperFiles/userHelper.js");
 const { logger } = require("../config/logger");
 require("dotenv").config();
 const authenticateAdmin = require("../middleware/authenticate.js");
@@ -256,6 +259,32 @@ router.patch("/:userId", authenticateAdmin, async (req, res) => {
 		await Users.save(user);
 		logger.info("User successfully updated");
 		return res.status(200).json({ message: "User successfully updated", user });
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+/**
+ * Delete an existing account via given username
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ * @precond
+ * 	- username must be existing in database
+ * 	- req param must include username
+ * @postcond
+ * 	- user with given username is deleted from database
+ */
+router.delete("/:username", authenticateAdmin, async (req, res) => {
+	const { username } = req.params;
+
+	try {
+		const wasDeleted = await deleteUserByUsername(username);
+
+		// If delete status is false (not deleted), then return error
+		if (!wasDeleted) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		return res.status(200).json({ message: "user succesfully deleted" });
 	} catch (error) {
 		logger.error("Internal server error:", error);
 		return res.status(500).json({ message: "Internal server error" });
