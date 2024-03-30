@@ -129,7 +129,7 @@ router.post("/logout", authenticateAdmin, async (req, res) => {
  * - If an error occurs during token verification, returns a message "Internal server error" with status code 500.
  */
 // GET route to fetch the single user's details
-router.get("/", async (req, res) => {
+router.get("/", authenticateAdmin, async (req, res) => {
 	const { token } = req.cookies;
 	if (token) {
 		jwt.verify(token, JWT_SECRET, {}, (err, user) => {
