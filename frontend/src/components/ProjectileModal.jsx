@@ -405,6 +405,7 @@ const AddProjectile = ({
 			http
 				.get(`/projectilePoints/${projectilePointId}`)
 				.then((response) => {
+					log.info("Editing projectile point: ", response.data);
 					setName(response.data.site.name + "-" + response.data.id);
 					setDescription(response.data.description);
 					setLocation(response.data.location);
@@ -419,31 +420,24 @@ const AddProjectile = ({
 					setArtifactTypeID(response.data.artifactType.id);
 
 					if (response.data.culture !== null) {
-						setCultureID(response.data.culture.id);
-						setCultureName(response.data.culture.name);
-
-						setPeriodID(response.data.culture.period.id);
-						setPeriodName(response.data.culture.period.name);
+						setSelectedPeriod(response.data.culture.period.name);
+						setSelectedCulture(response.data.culture.name);
 					}
 
 					if (response.data.bladeShape !== null) {
-						setBladeShapeID(response.data.bladeShape.id);
-						setBladeShapeName(response.data.bladeShape.name);
+						setSelectedBladeShape(response.data.bladeShape.name);
 					}
 
 					if (response.data.baseShape !== null) {
-						setBaseShapeID(response.data.baseShape.id);
-						setBaseShapeName(response.data.baseShape.name);
+						setSelectedBaseShape(response.data.baseShape.name);
 					}
 
 					if (response.data.haftingShape !== null) {
-						setHaftingShapeID(response.data.haftingShape.id);
-						setHaftingShapeName(response.data.haftingShape.name);
+						setSelectedHaftingShape(response.data.haftingShape.name);
 					}
 
 					if (response.data.crossSection !== null) {
-						setCrossSectionID(response.data.crossSection.id);
-						setCrossSectionName(response.data.crossSection.name);
+						setSelectedCrossSection(response.data.crossSection.name);
 					}
 				})
 				.catch((error) => {
