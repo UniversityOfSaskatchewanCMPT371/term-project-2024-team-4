@@ -156,12 +156,11 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const handlePhotoFilePathChange = (event) => {
 		setPhotoFilePath(event.target.files[0]);
 	};
-	
 
 	const handleSubmit = () => {
 		log.info("Adding new projectile");
 
-		
+		// we need to aappend to send the data if you are sending file so need to change this
 		const formData = new FormData();
 		formData.append("name", siteID + "-" + name);
 		formData.append("location", location);
@@ -188,21 +187,6 @@ const AddProjectile = ({ setOpenAdd }) => {
 		//setOpen(true);
 		console.log("Submitted:", formData);
 	};
-
-	// const newProjectilePoint = {
-	// 	name: siteID + "-" + name,
-	// 	location,
-	// 	description,
-	// 	dimensions,
-	// 	photo: photoFilePath,
-	// 	siteId: siteID,
-	// 	artifactTypeId: artifactTypeID,
-	// 	cultureId: cultureID,
-	// 	bladeShapeId: bladeShapeID,
-	// 	baseShapeId: baseShapeID,
-	// 	haftingShapeId: haftingShapeID,
-	// 	crossSectionId: crossSectionID,
-	// };
 
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
@@ -970,7 +954,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 								onChange={handlePhotoFilePathChange}
 							/> */}
 							<label>
-        Upload Photo:
+								Upload Photo:
 								<input type="file" onChange={handlePhotoFilePathChange} />
 							</label>
 							{/* ------------ Start of BaseShapeModal  ------------- */}

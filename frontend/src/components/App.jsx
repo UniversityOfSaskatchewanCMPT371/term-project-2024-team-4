@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import Catalogue from "./Catalogue";
 import Site from "./Site";
 import StatisticsPage from "./StatisticsPage";
-import SettingsPage  from "./SettingsPage";
+import SettingsPage from "./SettingsPage";
 
 /**
  * Main App component which contains the routing paths

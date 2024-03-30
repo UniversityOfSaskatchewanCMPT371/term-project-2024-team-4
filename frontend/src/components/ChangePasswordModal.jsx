@@ -12,12 +12,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 /**
- * Modal for admin user login
- * @param {boolean} modalVisible to set modal visibility
- * @param {function} closeModal hide modal
- * @pre None
- * @post Renders login modal
- * @returns {JSX.Element} LoginModal React component
+ * Modal component for changing user password.
+ * @param {boolean} modalVisible - Boolean value to set modal visibility.
+ * @param {function} closeModal - Function to hide the modal.
+ * @returns {JSX.Element} - ChangePasswordModal React component.
  */
 // eslint-disable-next-line react/prop-types
 function ChangePasswordModal({ modalVisible, closeModal }) {
@@ -26,36 +24,35 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 	const [confirmPassword, setConfirmPassword] = useState();
 
 	/**
-	 * Submit login information for authentication
-	 * @param {object} event login form values
+	 * Submit login information for authentication.
+	 * @param {object} event - Event object representing form submission.
 	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
-		if (confirmPassword !==newPassword){
+		if (confirmPassword !== newPassword) {
 			alert("Confirmed Passwords do not match");
 			return;
 		}
 
 		try {
 			const response = await http.post("/users/check-password", {
-				password
+				password,
 			});
+			log.info("New Password entered: " + password);
 
 			if (response.status === 200) {
 				const response = await http.patch("/users/1/password", {
-					password:newPassword
+					password: newPassword,
 				});
-          
+
 				log.info("New Password entered: " + newPassword);
-          
+
 				if (response.status === 200) {
 					alert("Password Changed successful");
 					closeModal();
 					window.location.reload();
-                    
 				}
-                
 			}
 		} catch (error) {
 			if (error.response) {
@@ -68,27 +65,31 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 				alert("Network error. Please check your internet connection.");
 			} else {
 				console.error("Error:", error.message);
+				log.error("Error:", error.message);
 			}
 		}
 	};
 
-      
-
 	/**
-	 * Set user name value every textfield input change
-	 * @param {object} event input textfield event object
+	 * Handle password change event.
+	 * @param {object} event - Event object representing text field input change.
 	 */
 	const passwordChanged = (event) => {
 		setNewPassword(event.target.value);
 	};
 
 	/**
-	 * Set password value every textfield input change
-	 * @param {object} event input textfield event object
+	 * Handle old password change event.
+	 * @param {object} event - Event object representing text field input change.
 	 */
 	const oldPassword = (event) => {
 		setOldPassword(event.target.value);
 	};
+
+	/**
+	 * Handle confirmed password change event.
+	 * @param {object} event - Event object representing text field input change.
+	 */
 	const ConfirmPasswordChanged = (event) => {
 		setConfirmPassword(event.target.value);
 	};
@@ -166,4 +167,3 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 }
 
 export default ChangePasswordModal;
-

@@ -124,7 +124,7 @@ function Sidebar() {
 
 	const handleSettingClick = () => {
 		navigate("/settings");
-	  };
+	};
 
 	/**
 	 * Handles the user logout process.

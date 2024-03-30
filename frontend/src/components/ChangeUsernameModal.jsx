@@ -12,12 +12,10 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 /**
- * Modal for admin user login
- * @param {boolean} modalVisible to set modal visibility
- * @param {function} closeModal hide modal
- * @pre None
- * @post Renders login modal
- * @returns {JSX.Element} LoginModal React component
+ * Modal component for changing user username.
+ * @param {boolean} modalVisible - Boolean value to set modal visibility.
+ * @param {function} closeModal - Function to hide the modal.
+ * @returns {JSX.Element} - ChangeUsernameModal React component.
  */
 // eslint-disable-next-line react/prop-types
 function ChangeUsernameModal({ modalVisible, closeModal }) {
@@ -26,30 +24,30 @@ function ChangeUsernameModal({ modalVisible, closeModal }) {
 	// const [checkPassword, setCheckPassword] = useState();
 
 	/**
-	 * Submit login information for authentication
-	 * @param {object} event login form values
+	 * Submit username change request.
+	 * @param {object} event - Event object representing form submission.
 	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 
 		try {
 			const response = await http.post("/users/check-password", {
-				password
+				password,
 			});
+			log.info("New Username entered: " + password);
 
 			if (response.status === 200) {
 				const response = await http.patch("/users/1/username", {
-					userName
+					userName,
 				});
-          
+
 				log.info("New Username entered: " + userName);
-          
+
 				if (response.status === 200) {
 					alert("Username Changed successful");
 					closeModal();
 					window.location.reload();
 				}
-                
 			}
 		} catch (error) {
 			if (error.response) {
@@ -62,23 +60,22 @@ function ChangeUsernameModal({ modalVisible, closeModal }) {
 				alert("Network error. Please check your internet connection.");
 			} else {
 				console.error("Error:", error.message);
+				log.error("Error:", error.message);
 			}
 		}
 	};
 
-      
-
 	/**
-	 * Set user name value every textfield input change
-	 * @param {object} event input textfield event object
+	 * Handle username change event.
+	 * @param {object} event - Event object representing text field input change.
 	 */
 	const userNameChanged = (event) => {
 		setNewUserName(event.target.value);
 	};
 
 	/**
-	 * Set password value every textfield input change
-	 * @param {object} event input textfield event object
+	 * Handle password change event.
+	 * @param {object} event - Event object representing text field input change.
 	 */
 	const passwordChanged = (event) => {
 		setConfirmPassword(event.target.value);

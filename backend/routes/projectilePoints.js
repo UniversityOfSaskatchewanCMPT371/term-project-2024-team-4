@@ -1,22 +1,49 @@
 const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+/**
+ * Middleware for handling file upload using Multer.
+ * @module multerMiddleware
+ */
 const multer = require("multer");
 const path = require("path");
 
+/**
+ * Configures disk storage options for Multer.
+ * @constant {object}
+ * @default
+ */
 const storage = multer.diskStorage({
+	/**
+	 * Specifies the destination directory for storing uploaded files.
+	 * @type {string}
+	 */
 	destination: "./uploads/",
+	/**
+	 * Generates a filename for the uploaded file.
+	 * @param {object} req - The HTTP request object.
+	 * @param {object} file - The uploaded file object.
+	 * @param {function} cb - The callback function to return the filename.
+	 */
 	filename: function (req, file, cb) {
-	  cb(null, file.fieldname + "-" + Date.now() + path.extname(file.originalname));
+		cb(
+			null,
+			file.fieldname + "-" + Date.now() + path.extname(file.originalname),
+		);
 	},
 });
 // Multer middleware
 const upload = multer({ storage });
 
-// POST: Create a new ProjectilePoint
-// This endpoint handles the creation of a new ProjectilePoint.
-// It extracts various properties from the request body, including related entities like Culture and BladeShape.
-// Each related entity is fetched from the database to ensure it exists before associating it with the new ProjectilePoint.
+/**
+ * Handles POST requests to create a new ProjectilePoint.
+ * This endpoint creates a new ProjectilePoint entity, extracting necessary properties from the request body.
+ * It also fetches related entities such as Culture and BladeShape from the database to ensure their existence before association.
+ * @function
+ * @param {object} req - The HTTP request object.
+ * @param {object} res - The HTTP response object.
+ * @returns {object} - The HTTP response containing the created ProjectilePoint entity or an error message.
+ */
 router.post("/", upload.single("photo"), async (req, res) => {
 	console.log("Uploaded file:", req.file);
 	const newProjectilePoint =
