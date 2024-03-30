@@ -1,5 +1,5 @@
-import { expect, test } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { beforeAll, expect, test } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AddProjectil from "../src/components/ProjectileModal.jsx";
 import PeriodModal from "../src/components/PeriodModal.jsx";
@@ -40,7 +40,6 @@ test("ProjectilePoint renders correctly", async () => {
 	);
 });
 
-/** @TODO refer to issue #123
 test("PeriodModal saves period correctly", async () => {
 	render(<PeriodModal />);
 
@@ -74,7 +73,6 @@ test("PeriodModal saves period correctly", async () => {
 		{ timeout: 5000 },
 	);
 });
-*/
 
 test("Prevents saving when end year is less than start year", async () => {
 	render(<PeriodModal />);

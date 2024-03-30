@@ -83,9 +83,19 @@ router.post("/", async (req, res) => {
 				sameSite: "None", // allows cookie to be sent on cross-site requests
 			});
 			logger.info("User successfully logged in");
-			return res
-				.status(200)
-				.json({ message: "User successfully logged in", user: existingUser });
+
+			// if in development, respond with token (for tests)
+			if (process.env.NODE_ENV === "development") {
+				return res.status(200).json({
+					token,
+					message: "User succesfully logged in",
+					user: existingUser,
+				});
+			} else {
+				return res
+					.status(200)
+					.json({ message: "User successfully logged in", user: existingUser });
+			}
 		} else {
 			logger.error("Unauthorized");
 			return res.status(401).json({ message: "Unauthorized" });
