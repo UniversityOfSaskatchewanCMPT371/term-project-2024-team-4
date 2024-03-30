@@ -12,15 +12,6 @@ const baseShapesHelper = require("../helperFiles/baseShapesHelper.js");
  * @post A new BaseShape is created and saved in the database.
  * @return Returns the newly created BaseShape object.
  */
-/**
- * POST: Create a new BaseShape.
- * @route POST /baseShapes
- * @param req Express request object, expecting 'name' in the request body.
- * @param res Express response object used for returning the newly created BaseShape.
- * @pre The request body must contain a 'name' field.
- * @post A new BaseShape is created and saved in the database.
- * @return Returns the newly created BaseShape object.
- */
 router.post("/", async (req, res) => {
 	const response = await baseShapesHelper.newBaseShape(req);
 	if (response instanceof Error) {

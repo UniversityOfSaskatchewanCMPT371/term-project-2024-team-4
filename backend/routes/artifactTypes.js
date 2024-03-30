@@ -12,15 +12,6 @@ const artifactTypesHelper = require("../helperFiles/artifactTypesHelper.js");
  * @post A new ArtifactType is created and saved in the database.
  * @return Returns the newly created ArtifactType object or an error message.
  */
-/**
- * Creates a new ArtifactType in the database.
- * @route POST /artifactTypes
- * @param req Express request object, expecting 'id' in the request body.
- * @param res Express response object used to return the newly created ArtifactType.
- * @pre The 'id' provided in the body must be one of the predetermined values ('Lithic', 'Ceramic', 'Faunal').
- * @post A new ArtifactType is created and saved in the database.
- * @return Returns the newly created ArtifactType object or an error message.
- */
 router.post("/", async (req, res) => {
 	const response = await artifactTypesHelper.newArtifactType(req);
 	if (response instanceof Error) {

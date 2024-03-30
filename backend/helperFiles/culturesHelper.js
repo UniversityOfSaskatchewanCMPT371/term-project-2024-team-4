@@ -13,7 +13,11 @@ const assert = require("node:assert/strict");
 const { logger } = require("../config/logger.js");
 
 /**
- *
+ * POST: Creates a new Culture.
+ * @param req Express request object, expecting 'name' and 'periodId' in the request body.
+ * @pre 'name' field must be provided and 'periodId' must reference an existing Period.
+ * @post A new Culture entity associated with the specified Period is created in the database.
+ * @return Returns the newly created Culture object or an error message if creation fails.
  */
 async function newCulture(req) {
 	const { name, periodId } = req.body;
@@ -41,7 +45,10 @@ async function newCulture(req) {
 }
 
 /**
- *
+ * GET: Fetches all Cultures.
+ * @pre None.
+ * @post Retrieves all Culture entities from the database including their related data.
+ * @return Returns an array of Culture objects or an error message if there is a fetch failure.
  */
 async function getAllCultures() {
 	try {
@@ -69,7 +76,11 @@ async function getAllCultures() {
 }
 
 /**
- *
+ * GET: Fetches a Culture by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The Culture with the given ID must exist in the database.
+ * @post Retrieves a specific Culture from the database based on its ID including related data.
+ * @return Returns a Culture object or a message indicating the Culture was not found.
  */
 async function getCultureById(req) {
 	logger.info("Getting culture by id: " + req.params.id);
@@ -108,7 +119,11 @@ async function getCultureById(req) {
 }
 
 /**
- *
+ * PUT: Updates an existing Culture.
+ * @param req Express request object containing the new 'name', 'periodId', 'bladeShapes', 'baseShapes', 'haftingShapes', 'crossSections', and 'materials' for the Culture.
+ * @pre The Culture with the given ID must exist in the database, and 'periodId' must reference an existing Period if provided.
+ * @post Updates and returns the specified Culture in the database.
+ * @return Returns the updated Culture object or a message indicating the Culture or Period was not found.
  */
 async function updateCulture(req) {
 	const { id } = req.params;

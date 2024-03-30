@@ -12,15 +12,6 @@ const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
  * @post A new CrossSection entity is created in the database.
  * @return Returns the newly created CrossSection object.
  */
-/**
- * POST: Create a new CrossSection.
- * @route POST /crossSections
- * @param req Express request object, expecting 'name' in the request body.
- * @param res Express response object used for returning the created CrossSection.
- * @pre 'name' field must be provided and should be unique.
- * @post A new CrossSection entity is created in the database.
- * @return Returns the newly created CrossSection object.
- */
 router.post("/", async (req, res) => {
 	const response = await crossSectionsHelper.newCrossSection(req);
 	if (response instanceof Error) {

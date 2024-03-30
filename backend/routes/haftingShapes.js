@@ -11,15 +11,6 @@ const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
  * @post A new HaftingShape entity is created in the database.
  * @return Returns the newly created HaftingShape object.
  */
-/**
- * POST: Creates a new HaftingShape.
- * @route POST /haftingShapes
- * @param req Express request object, expecting 'name' in the request body.
- * @param res Express response object used for returning the newly created HaftingShape.
- * @pre 'name' field must be provided in the request body.
- * @post A new HaftingShape entity is created in the database.
- * @return Returns the newly created HaftingShape object.
- */
 router.post("/", async (req, res) => {
 	const response = await haftingShapesHelper.newHaftingShape(req);
 	if (response instanceof Error) {

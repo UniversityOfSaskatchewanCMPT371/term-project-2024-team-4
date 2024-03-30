@@ -12,15 +12,6 @@ const culturesHelper = require("../helperFiles/culturesHelper.js");
  * @post A new Culture entity associated with the specified Period is created in the database.
  * @return Returns the newly created Culture object or an error message if creation fails.
  */
-/**
- * POST: Creates a new Culture.
- * @route POST /cultures
- * @param req Express request object, expecting 'name' and 'periodId' in the request body.
- * @param res Express response object used for returning the newly created Culture.
- * @pre 'name' field must be provided and 'periodId' must reference an existing Period.
- * @post A new Culture entity associated with the specified Period is created in the database.
- * @return Returns the newly created Culture object or an error message if creation fails.
- */
 router.post("/", async (req, res) => {
 	const response = await culturesHelper.newCulture(req);
 	if (response instanceof Error) {
@@ -65,15 +56,6 @@ router.get("/:id", async (req, res) => {
 	return res.json(response);
 });
 
-/**
- * PUT: Updates an existing Culture.
- * @route PUT /cultures/:id
- * @param req Express request object containing the new 'name' and 'periodId' for the Culture.
- * @param res Express response object used for returning the updated Culture.
- * @pre The Culture with the given ID must exist in the database, and 'periodId' must reference an existing Period if provided.
- * @post Updates and returns the specified Culture in the database.
- * @return Returns the updated Culture object or a message indicating the Culture or Period was not found.
- */
 /**
  * PUT: Updates an existing Culture.
  * @route PUT /cultures/:id
