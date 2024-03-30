@@ -25,6 +25,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * - If authentication fails due to invalid credentials, returns a message "Unauthorized" with status code 401.
  * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
  */
+
 router.post("/", async (req, res) => {
 	const { userName, password } = req.body;
 
@@ -75,6 +76,56 @@ router.post("/", async (req, res) => {
 		} else {
 			logger.error("Unauthorized");
 			return res.status(401).json({ message: "Unauthorized" });
+		}
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+/**
+ * POST request to check password:
+Endpoint: /check-password
+Method: POST
+
+Parameters:
+- password: The password to be checked (extracted from request body).
+
+Behavior:
+- Validates if the password is provided.
+- Fetches the user from the data source using a predefined identifier (e.g., user ID).
+- Compares the provided password with the hashed password stored in the database for the user.
+- Returns a success message if the passwords match.
+- Returns an error message if the user is not found or if the passwords do not match.
+- Handles errors such as missing password, user not found, and internal server errors.
+ */
+router.post("/check-password", async (req, res) => {
+	const { password } = req.body;
+
+	// Check if password is null or undefined
+	if (!password || password.length === 0) {
+		// Use logger.error() for logging errors
+		logger.error("Password is required");
+		return res.status(400).json({ message: "Password is required" });
+	}
+
+	const Users = await dataSource.getRepository(User);
+
+	try {
+		// Assuming you have a way to identify the user whose password you want to check
+		const existingUser = await Users.findOne({ where: { id: 1 } });
+		if (existingUser) {
+			// Compare the provided password with the hashed password from the database
+			const match = await bcrypt.compare(password, existingUser.password);
+			if (!match) {
+				logger.info("Password does not match");
+				return res.status(401).json({ message: "Password does not match" });
+			}
+			logger.info("Password matches");
+			return res.status(200).json({ message: "Password matches" });
+		} else {
+			logger.error("User not found");
+			return res.status(404).json({ message: "User not found" });
 		}
 	} catch (error) {
 		logger.error("Internal server error:", error);
@@ -145,46 +196,55 @@ router.get("/", async (req, res) => {
 	}
 });
 
+router.get("/:userId", async (req, res) => {
+	const { userId } = req.params;
+
+	try {
+		// Initialize data source
+		const Users = await dataSource.getRepository(User);
+		// Fetch the user by userId
+		const user = await Users.findOne({ where: { id: userId } });
+
+		if (!user) {
+			logger.error("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// If user is found, return username and password
+		return res.status(200).json({ username: user.userName });
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+});
+
 const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
 
 /**
- * PATCH /api/users/:userId
- *
- * Purpose: Update username and/or password of a user.
- *
- * Pre-conditions:
- * - Request must contain 'userName' and 'password' fields in the body.
- * - 'userId' parameter must be provided.
- * - 'userName' and 'password' fields must not be null or empty.
- *
- * Post-conditions:
- * - If the user is successfully updated, returns updated user details with status code 200.
- * - If the provided user ID does not exist, returns a message "User not found" with status code 404.
- * - If the provided user ID does not match the user's ID, returns a message "Forbidden" with status code 403.
- * - If the provided username or password does not meet validation criteria, returns a validation message with status code 400.
- * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
+ * 
+PATCH request to update username:
+Endpoint: /:userId/username
+Method: PATCH
+
+Parameters:
+- userId: The ID of the user whose username is to be updated (extracted from request parameters).
+- userName: The new username (extracted from request body).
+
+Behavior:
+- Fetches the user with the provided userId from the data source.
+- Validates the provided username:
+  - Checks if the username is provided and meets length requirements (5 to 12 characters).
+  - Ensures that the username contains only alphanumeric characters.
+- Updates the username for the user.
+- Saves the updated user to the data source.
+- Returns a success message along with the updated user in JSON format if successful.
+- Handles errors such as user not found, validation errors, and internal server errors.
+
  */
-// PATCH route for admin to update username and password
-router.patch("/:userId", async (req, res) => {
+
+router.patch("/:userId/username", async (req, res) => {
 	const { userId } = req.params;
-	const { userName, password } = req.body;
-	// Check if userId is provided
-	if (!userId) {
-		logger.error("User ID is required");
-		return res.status(400).json({ message: "User ID is required" });
-	}
-	if (
-		!userName ||
-		userName.length === 0 ||
-		!password ||
-		password.length === 0
-	) {
-		// Use logger.error() for logging errors
-		logger.error("Username and password are required");
-		return res
-			.status(400)
-			.json({ message: "Username and password are required" });
-	}
+	const { userName } = req.body;
 
 	try {
 		// Initialize data source
@@ -196,54 +256,112 @@ router.patch("/:userId", async (req, res) => {
 			return res.status(404).json({ message: "User not found" });
 		}
 
-		// Check if the provided userId matches the user's id
-		if (parseInt(userId) !== user.id) {
-			// Parse userId to integer for comparison
-			logger.error("Forbidden");
-			return res.status(403).json({ message: "Forbidden" });
-		}
-
 		// Validate username
-		if (userName) {
-			// Perform data validation for username (e.g., minimum length, special characters, etc.)
-			// Example: Ensure minimum length of username is 5 characters
-			if (userName.length < 5) {
-				logger.error("Username must be at least 5 characters long");
-				return res
-					.status(400)
-					.json({ message: "Username must be at least 5 characters long" });
-			}
-			// Add more validation rules for username if needed
+		if (!userName || userName.length == 0) {
+			logger.error("Username is required");
+			return res.status(400).json({ message: "Username is required" });
 		}
-
-		// Validate password
-		if (password) {
-			// Perform data validation for password (e.g., minimum length, special characters, etc.)
-			// Example: Ensure minimum length of password is 10 characters
-			if (!passwordRegex.test(password)) {
-				logger.error(
-					"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
-				);
-				return res.status(400).json({
-					message:
-						"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
-				});
-			}
-			// Add more validation rules for password if needed
+		if (userName.length < 5) {
+			logger.error("Username must be at least 5 characters long");
+			return res
+				.status(400)
+				.json({ message: "Username must be at least 5 characters long" });
 		}
-
-		// Update username and/or password
-		if (userName) {
-			user.userName = userName;
+		if (userName.length > 12) {
+			logger.error("Username must be at most 12 characters long");
+			return res
+				.status(400)
+				.json({ message: "Username must be at most 12 characters long" });
 		}
-		if (password) {
-			user.password = await bcrypt.hash(password, 10); // Hash the new password
+		// Regular expression to match alphanumeric characters only
+		const alphanumericRegex = /^[a-zA-Z0-9]+$/;
+		if (!alphanumericRegex.test(userName)) {
+			logger.error("Username must contain only letters and numbers");
+			return res
+				.status(400)
+				.json({ message: "Username must contain only letters and numbers" });
 		}
+		// Update username
+		user.userName = userName;
 
 		// Save updated user
 		await Users.save(user);
-		logger.info("User successfully updated");
-		return res.status(200).json({ message: "User successfully updated", user });
+		logger.info("Username successfully updated");
+		return res
+			.status(200)
+			.json({ message: "Username successfully updated", user });
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+/**
+ * PATCH request to update password:
+Endpoint: /:userId/password
+Method: PATCH
+
+Parameters:
+- userId: The ID of the user whose password is to be updated (extracted from request parameters).
+- password: The new password (extracted from request body).
+
+Behavior:
+- Fetches the user with the provided userId from the data source.
+- Validates the provided password:
+  - Checks if the password is provided and meets length requirements (up to 12 characters).
+  - Performs additional data validation for password complexity (e.g., minimum length, special characters).
+- Hashes the new password using bcrypt for security.
+- Updates the password for the user.
+- Saves the updated user to the data source.
+- Returns a success message along with the updated user in JSON format if successful.
+- Handles errors such as user not found, validation errors, and internal server errors.
+ */
+router.patch("/:userId/password", async (req, res) => {
+	const { userId } = req.params;
+	const { password } = req.body;
+
+	try {
+		// Initialize data source
+		const Users = await dataSource.getRepository(User);
+		// Fetch the user by userId
+		const user = await Users.findOne({ where: { id: userId } });
+		if (!user) {
+			logger.error("User not found");
+			return res.status(404).json({ message: "User not found" });
+		}
+
+		// Validate password
+		if (!password || password.length == 0) {
+			logger.error("Password is required");
+			return res.status(400).json({ message: "Password is required" });
+		}
+		if (password.length > 12) {
+			logger.error("Password must be at most 12 characters long");
+			return res
+				.status(400)
+				.json({ message: "Password must be at most 12 characters long" });
+		}
+		// Perform data validation for password (e.g., minimum length, special characters, etc.)
+		// Example: Ensure minimum length of password is 10 characters
+		if (!passwordRegex.test(password)) {
+			logger.error(
+				"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
+			);
+			return res.status(400).json({
+				message:
+					"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
+			});
+		}
+
+		// Update password
+		user.password = await bcrypt.hash(password, 10); // Hash the new password
+
+		// Save updated user
+		await Users.save(user);
+		logger.info("Password successfully updated");
+		return res
+			.status(200)
+			.json({ message: "Password successfully updated", user });
 	} catch (error) {
 		logger.error("Internal server error:", error);
 		return res.status(500).json({ message: "Internal server error" });
