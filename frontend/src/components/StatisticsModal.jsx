@@ -49,7 +49,7 @@ function StatisticsModal({ modalOpen, closeModal }) {
 				setCatalogueMaterialPercentages(catalogueMaterialPercentagesStorage);
 			})
 			.catch((error) => {
-				console.error("Error fetching site statistics:", error);
+				log.error("Error fetching site statistics:", error);
 			});
 
 		http
@@ -69,7 +69,7 @@ function StatisticsModal({ modalOpen, closeModal }) {
 				setSitePointCount(sitePointCounts);
 			})
 			.catch((error) => {
-				console.error("Error fetching all sites.", error);
+				log.error("Error fetching all sites.", error);
 			});
 	}, [catalogueMaterialPercentages, sites]);
 
