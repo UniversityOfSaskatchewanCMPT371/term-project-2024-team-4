@@ -50,24 +50,24 @@ router.post("/", async (req, res) => {
 	const Users = await dataSource.getRepository(User);
 
 	try {
-		if (!(await Users.findOne({ where: { id: 1 } }))) {
-			// If user with id 1 does not exist, attempt to register base user again
-			const defaultUsername = process.env.DEFAULT_USERNAME;
-			const defaultPassword = process.env.DEFAULT_PASSWORD;
+		// Check Base User ENV Credentials
+		const defaultUsername = process.env.DEFAULT_USERNAME;
+		const defaultPassword = process.env.DEFAULT_PASSWORD;
 
-			// check if default credentials exist
-			if (!defaultUsername || !defaultPassword) {
-				logger.error("Default user credentials not defined in .env file");
-				return;
-			}
+		// check if default credentials exist
+		if (!defaultUsername || !defaultPassword) {
+			logger.error("Default user credentials not defined in .env file");
+			return res.status(500).json({ message: "Internal server error" });
+		}
 
-			// otherwise, use helper function to register base user
-			registerUser(defaultUsername, defaultPassword);
+		// If Base user does not exist, then register them
+		if (!(await Users.findOneBy({ userName: defaultUsername }))) {
+			await registerUser(defaultUsername, defaultPassword);
+			logger.info("Default user did not exist. Recreating...");
 		}
 		// Check if any user exists in the database with the provided username
 		const existingUser = await Users.findOne({ where: { userName } });
 		if (existingUser) {
-			logger.error("Unauthorized");
 			// If user exists, compare the provided password with the hashed password from the database
 			const match = await bcrypt.compare(password, existingUser.password);
 			if (!match) {
