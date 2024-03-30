@@ -4,7 +4,10 @@ const router = express.Router();
 const dataSource = require("../config/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const registerUser = require("../helpers/register");
+const {
+	registerUser,
+	deleteUserByUsername,
+} = require("../helperFiles/userHelper.js");
 const { logger } = require("../config/logger");
 require("dotenv").config();
 const authenticateAdmin = require("../middleware/authenticate.js");
@@ -47,14 +50,24 @@ router.post("/", async (req, res) => {
 	const Users = await dataSource.getRepository(User);
 
 	try {
-		if (!(await Users.findOne({ where: { id: 1 } }))) {
-			// If user with id 1 does not exist, register a new user
-			await registerUser();
+		// Check Base User ENV Credentials
+		const defaultUsername = process.env.DEFAULT_USERNAME;
+		const defaultPassword = process.env.DEFAULT_PASSWORD;
+
+		// check if default credentials exist
+		if (!defaultUsername || !defaultPassword) {
+			logger.error("Default user credentials not defined in .env file");
+			return res.status(500).json({ message: "Internal server error" });
+		}
+
+		// If Base user does not exist, then register them
+		if (!(await Users.findOneBy({ userName: defaultUsername }))) {
+			await registerUser(defaultUsername, defaultPassword);
+			logger.info("Default user did not exist. Recreating...");
 		}
 		// Check if any user exists in the database with the provided username
 		const existingUser = await Users.findOne({ where: { userName } });
 		if (existingUser) {
-			logger.error("Unauthorized");
 			// If user exists, compare the provided password with the hashed password from the database
 			const match = await bcrypt.compare(password, existingUser.password);
 			if (!match) {
@@ -70,9 +83,19 @@ router.post("/", async (req, res) => {
 				sameSite: "None", // allows cookie to be sent on cross-site requests
 			});
 			logger.info("User successfully logged in");
-			return res
-				.status(200)
-				.json({ message: "User successfully logged in", user: existingUser });
+
+			// if in development, respond with token (for tests)
+			if (process.env.NODE_ENV === "development") {
+				return res.status(200).json({
+					token,
+					message: "User succesfully logged in",
+					user: existingUser,
+				});
+			} else {
+				return res
+					.status(200)
+					.json({ message: "User successfully logged in", user: existingUser });
+			}
 		} else {
 			logger.error("Unauthorized");
 			return res.status(401).json({ message: "Unauthorized" });
@@ -246,6 +269,32 @@ router.patch("/:userId", authenticateAdmin, async (req, res) => {
 		await Users.save(user);
 		logger.info("User successfully updated");
 		return res.status(200).json({ message: "User successfully updated", user });
+	} catch (error) {
+		logger.error("Internal server error:", error);
+		return res.status(500).json({ message: "Internal server error" });
+	}
+});
+
+/**
+ * Delete an existing account via given username
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ * @precond
+ * 	- username must be existing in database
+ * 	- req param must include username
+ * @postcond
+ * 	- user with given username is deleted from database
+ */
+router.delete("/:username", authenticateAdmin, async (req, res) => {
+	const { username } = req.params;
+
+	try {
+		const wasDeleted = await deleteUserByUsername(username);
+
+		// If delete status is false (not deleted), then return error
+		if (!wasDeleted) {
+			return res.status(404).json({ message: "User not found" });
+		}
+		return res.status(200).json({ message: "user succesfully deleted" });
 	} catch (error) {
 		logger.error("Internal server error:", error);
 		return res.status(500).json({ message: "Internal server error" });
