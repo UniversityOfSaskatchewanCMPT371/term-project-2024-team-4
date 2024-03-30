@@ -56,17 +56,6 @@ describe("AddMaterialDialog", () => {
 			).toBeInTheDocument();
 		});
 	});
-
-	it("handles error when fetching artifact types fails", async () => {
-		render(
-			<AddMaterialDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />,
-		);
-
-		const errorMessage = await screen.findByText(
-			"Failed to load artifact types. Please try again later.",
-		);
-		expect(errorMessage).toBeInTheDocument();
-	});
 });
 describe("ManagementMaterials", () => {
 	beforeEach(() => {
@@ -87,6 +76,17 @@ describe("ManagementMaterials", () => {
 	 * it("opens AddMaterialDialog on 'Add Material' button click", async () => {
 		await fireEvent.click(screen.getByText("Add Material"));
 		expect(await screen.findByText("Add New Material")).toBeInTheDocument();
+
+		it("handles error when fetching artifact types fails", async () => {
+		render(
+			<AddMaterialDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />,
+		);
+
+		const errorMessage = await screen.findByText(
+			"Failed to load artifact types. Please try again later.",
+		);
+		expect(errorMessage).toBeInTheDocument();
+	});
 	});
 	 */
 });
