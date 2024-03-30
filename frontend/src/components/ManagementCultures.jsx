@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 /* eslint-disable react/jsx-key */
 import { useState, useEffect, useContext } from "react";
 import { UserContext } from "../context/userContext.jsx";
@@ -158,14 +159,19 @@ export default function ManagementCultures() {
 			type: "actions",
 			headerName: "Actions",
 			flex: 1,
-			getActions: (params) => [
-				<GridActionsCellItem
-					icon={<DeleteIcon />}
-					label="Delete"
-					onClick={handleDeleteClick(rows.find((row) => row.id === params.id))}
-					color="inherit"
-				/>,
-			],
+			getActions: (params) =>
+				user && user.userName
+					? [
+							<GridActionsCellItem
+								icon={<DeleteIcon />}
+								label="Delete"
+								onClick={handleDeleteClick(
+									rows.find((row) => row.id === params.id),
+								)}
+								color="inherit"
+							/>,
+						]
+					: [],
 		},
 	];
 
