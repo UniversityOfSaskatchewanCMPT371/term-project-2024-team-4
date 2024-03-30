@@ -81,7 +81,8 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: returns updated projectile point
  * 	Failure: Returns an error message related to the issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", upload.single("photo"), async (req, res) => {
+	console.log("Uploaded file:", req.file);
 	const projectilePoint =
 		await projectilePointsHelper.updateProjectilePoint(req);
 	if (projectilePoint === "ProjectilePoint not found") {

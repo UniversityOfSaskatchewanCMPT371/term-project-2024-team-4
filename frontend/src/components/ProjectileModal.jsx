@@ -238,8 +238,10 @@ const AddProjectile = ({
 	};
 
 	const handlePhotoFilePathChange = (event) => {
-		setPhotoFilePath(event.target.files[0]);
-		log.info(event.target.files[0]);
+		log.info(event.target.files[0].name);
+		if (event.target.files[0].name.length !== 0) {
+			setPhotoFilePath(event.target.files[0]);
+		}
 	};
 
 	const handleSubmit = () => {
@@ -278,31 +280,11 @@ const AddProjectile = ({
 			formData.append("haftingShapeId", haftingShapeID);
 			formData.append("crossSectionId", crossSectionID);
 
-			const updateProjectilePoint = {
-				name: name,
-				location: location,
-				description: description,
-				dimensions: new Array(
-					parseFloat(length),
-					parseFloat(width),
-					parseFloat(height),
-				),
-				photo: photoFilePath,
-				siteId: siteID,
-				artifactTypeId: artifactTypeID,
-				cultureId: cultureID,
-				bladeShapeId: bladeShapeID,
-				baseShapeId: baseShapeID,
-				haftingShapeId: haftingShapeID,
-				crossSectionId: crossSectionID,
-			};
-
 			// set up API endpoint depending if modal is being used for add or edit
 			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
 			const requestMethod = openAdd ? http.post : http.put;
-			const projectilePointData = openAdd ? formData : updateProjectilePoint;
 
-			requestMethod(requestUrl, projectilePointData)
+			requestMethod(requestUrl, formData)
 				.then((response) => {
 					if (openAdd) {
 						log.info("New projectile point added successfully:", response.data);
@@ -318,11 +300,7 @@ const AddProjectile = ({
 					}
 				});
 
-			if (openAdd) {
-				log.info("Submitted:", ...formData);
-			} else {
-				log.info("Submitted:", updateProjectilePoint);
-			}
+			log.info("Submitted:", ...formData);
 
 			//Add Base/Blade/Hafting shape and cross section to selected culture.
 			//first, if the currently selected Base/Blade/Hafting shape and cross sections are not in the current culture, add them
@@ -423,7 +401,7 @@ const AddProjectile = ({
 					setWidth(dimensions[1].trim().replace(/[^0-9.]/g, ""));
 					setHeight(dimensions[2].trim().replace(/[^0-9.]/g, ""));
 
-					setPhotoFilePath(response.data.photo);
+					// setPhotoFilePath(response.data.photo);
 					setArtifactTypeID(response.data.artifactType.id);
 
 					if (response.data.culture !== null) {

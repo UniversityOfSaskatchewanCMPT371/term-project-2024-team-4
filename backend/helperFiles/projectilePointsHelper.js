@@ -152,7 +152,6 @@ async function updateProjectilePoint(req) {
 		location,
 		description,
 		dimensions,
-		photo,
 		siteId,
 		artifactTypeId,
 		cultureId,
@@ -161,6 +160,14 @@ async function updateProjectilePoint(req) {
 		haftingShapeId,
 		crossSectionId,
 	} = req.body;
+
+	// Initialize photo variable
+	let photo;
+
+	// Check if file is provided
+	if (req.file) {
+		photo = req.file.path;
+	}
 
 	try {
 		// Fetch the existing ProjectilePoint entity
