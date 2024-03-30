@@ -7,6 +7,7 @@ const jwt = require("jsonwebtoken");
 const registerUser = require("../helpers/register");
 const { logger } = require("../config/logger");
 require("dotenv").config();
+const authenticateAdmin = require("../middleware/authenticate.js");
 
 // JWT Secret is in .env file
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -87,7 +88,7 @@ router.post("/", async (req, res) => {
  *
  * Purpose: Log out a user by clearing the JWT token cookie.
  *
- * Pre-conditions: None
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  *
  * Post-conditions:
  * - Clears the token cookie.
@@ -95,7 +96,7 @@ router.post("/", async (req, res) => {
  * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
  */
 // POST route for user logout
-router.post("/logout", async (req, res) => {
+router.post("/logout", authenticateAdmin, async (req, res) => {
 	try {
 		// Clear the token cookie
 		res.clearCookie("token", {
@@ -119,8 +120,7 @@ router.post("/logout", async (req, res) => {
  *
  * Purpose: Retrieve user details using a JWT token.
  *
- * Pre-conditions:
- * - Request must contain a valid JWT token in the cookie named 'token'.
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  *
  * Post-conditions:
  * - If a valid token is provided, returns user details with status code 200.
@@ -128,7 +128,7 @@ router.post("/logout", async (req, res) => {
  * - If an error occurs during token verification, returns a message "Internal server error" with status code 500.
  */
 // GET route to fetch the single user's details
-router.get("/", async (req, res) => {
+router.get("/", authenticateAdmin, async (req, res) => {
 	const { token } = req.cookies;
 	if (token) {
 		jwt.verify(token, JWT_SECRET, {}, (err, user) => {
@@ -152,10 +152,12 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
  *
  * Purpose: Update username and/or password of a user.
  *
- * Pre-conditions:
+ * @precond
  * - Request must contain 'userName' and 'password' fields in the body.
  * - 'userId' parameter must be provided.
  * - 'userName' and 'password' fields must not be null or empty.
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ *
  *
  * Post-conditions:
  * - If the user is successfully updated, returns updated user details with status code 200.
@@ -165,7 +167,7 @@ const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
  * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
  */
 // PATCH route for admin to update username and password
-router.patch("/:userId", async (req, res) => {
+router.patch("/:userId", authenticateAdmin, async (req, res) => {
 	const { userId } = req.params;
 	const { userName, password } = req.body;
 	// Check if userId is provided
