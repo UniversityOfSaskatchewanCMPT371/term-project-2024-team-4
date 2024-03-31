@@ -29,7 +29,26 @@ export default function CrossSectionModal({
 	updateCrossSectionsList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [crossSection, setCrossSection] = useState(selectedCrossSection);
+	const [crossSection, setCrossSection] = useState(selectedCrossSection || "");
+	const [errors, setErrors] = useState({
+		crossSection: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			crossSection: "",
+		};
+
+		// Validate Cross Section name
+		if (!crossSection.trim()) {
+			newErrors.crossSection = "Cross Section name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -37,6 +56,11 @@ export default function CrossSectionModal({
 	 */
 	const handleSave = () => {
 		const crossSectionData = { name: crossSection };
+
+		if (!validateForm()) {
+			log.debug("Cross Section Form fails frontend validation");
+			return;
+		}
 
 		const apiCall = selectedCrossSectionID
 			? http.put(`/crossSections/${selectedCrossSectionID}`, crossSectionData)
@@ -79,6 +103,8 @@ export default function CrossSectionModal({
 						value={crossSection} // Use value instead of defaultValue
 						onChange={(e) => setCrossSection(e.target.value)} // Handle change in name field
 						style={{ marginBottom: "15px" }}
+						error={!!errors.crossSection}
+						helperText={errors.crossSection}
 					/>
 					<Button onClick={handleSave} variant="contained" color="primary">
 						Save

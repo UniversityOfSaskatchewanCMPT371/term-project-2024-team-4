@@ -37,6 +37,33 @@ const SiteModal = ({ setOpen }) => {
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [regionID, setRegionID] = useState(0);
+	const [errors, setErrors] = useState({
+		name: "",
+		regionID: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			name: "",
+			regionID: "",
+		};
+
+		// Validate Site Name
+		if (!name.trim()) {
+			newErrors.name = "Site name is required.";
+			isValid = false;
+		}
+
+		// Validate region selection
+		if (!regionID) {
+			newErrors.regionID = "Region is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Closes the modal and resets the parent's state.
@@ -60,12 +87,10 @@ const SiteModal = ({ setOpen }) => {
 	 * @post Sends the site data to the backend and closes the modal if successful. Logs the action. Handles any errors.
 	 */
 	const handleSubmit = () => {
-		if (!regionID) {
-			// Check if the region is selected
-			setRegionError("Region is required"); // Set the region error message
-			return; // Prevent form submission
+		if (!validateForm()) {
+			log.debug("Site Form fails frontend validation");
+			return;
 		}
-		setRegionError(""); // Clear any existing error message
 		const newSite = {
 			name,
 			description,
@@ -197,6 +222,8 @@ const SiteModal = ({ setOpen }) => {
 						fullWidth
 						value={name}
 						onChange={handleNameChange}
+						error={!!errors.name}
+						helperText={errors.name}
 					/>
 					<TextField
 						margin="dense"
@@ -248,7 +275,11 @@ const SiteModal = ({ setOpen }) => {
 										+ Add New Region
 									</MenuItem>
 								</Select>
-								{regionError && <p style={{ color: "red" }}>{regionError}</p>}
+								{errors.regionID && (
+									<p style={{ color: "red", margin: "8px 14px 0" }}>
+										{errors.regionID}
+									</p>
+								)}
 							</FormControl>
 							<Menu
 								id="region-menu"

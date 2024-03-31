@@ -31,7 +31,26 @@ export default function BaseShapeModal({
 	updateBaseShapesList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [baseShape, setbaseShape] = useState(selectedBaseShape);
+	const [baseShape, setBaseShape] = useState(selectedBaseShape || "");
+	const [errors, setErrors] = useState({
+		baseShape: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			baseShape: "",
+		};
+
+		// Validate Base Shape Name
+		if (!baseShape.trim()) {
+			newErrors.baseShape = "Base Shape name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action for the modal form. Sends a PUT request if editing, POST if adding.
@@ -39,6 +58,11 @@ export default function BaseShapeModal({
 	 */
 	const handleSave = () => {
 		const baseShapeData = { name: baseShape };
+
+		if (!validateForm()) {
+			log.debug("Base Shape Form fails frontend validation");
+			return;
+		}
 
 		const apiCall = selectedBaseShapeID
 			? http.put(`/baseShapes/${selectedBaseShapeID}`, baseShapeData)
@@ -79,8 +103,10 @@ export default function BaseShapeModal({
 						variant="outlined"
 						fullWidth
 						value={baseShape}
-						onChange={(e) => setbaseShape(e.target.value)}
+						onChange={(e) => setBaseShape(e.target.value)}
 						style={{ marginBottom: "15px" }}
+						error={!!errors.baseShape}
+						helperText={errors.baseShape}
 					/>
 					<Button onClick={handleSave} variant="contained" color="primary">
 						Save

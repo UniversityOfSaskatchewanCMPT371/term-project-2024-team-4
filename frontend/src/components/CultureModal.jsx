@@ -38,6 +38,24 @@ export default function CultureModal({
 	const [open, setOpen] = useState(true);
 	const [cultureName, setCultureName] = useState(selectedCulture || "");
 	const [selectedPeriodID, setSelectedPeriodID] = useState("");
+	const [errors, setErrors] = useState({
+		cultureName: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			cultureName: "",
+		};
+
+		if (!cultureName.trim()) {
+			newErrors.cultureName = "Culture name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -46,6 +64,11 @@ export default function CultureModal({
 		log.debug(
 			`Saving culture: ${cultureName} with period ID: ${selectedPeriodID}`,
 		);
+		if (!validateForm()) {
+			log.debug("Projectile Form fails frontend validation");
+			return;
+		}
+
 		if (!selectedPeriodID) {
 			alert("Please select a period to proceed.");
 			log.warn("Attempted to save culture without selecting a period.");
@@ -101,6 +124,8 @@ export default function CultureModal({
 						value={cultureName}
 						onChange={(e) => setCultureName(e.target.value)}
 						style={{ marginBottom: "15px" }}
+						error={!!errors.cultureName}
+						helperText={errors.cultureName}
 					/>
 					<TextField
 						select

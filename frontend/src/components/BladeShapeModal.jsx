@@ -29,7 +29,26 @@ export default function BladeShapeModal({
 	updateBladeShapesList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [bladeShape, setbladeShape] = useState(selectedBladeShape);
+	const [bladeShape, setbladeShape] = useState(selectedBladeShape || "");
+	const [errors, setErrors] = useState({
+		bladeShape: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			bladeShape: "",
+		};
+
+		// Validate Blade Shape Name
+		if (!bladeShape.trim()) {
+			newErrors.bladeShape = "Blade Shape name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -37,6 +56,11 @@ export default function BladeShapeModal({
 	 */
 	const handleSave = () => {
 		const bladeShapeData = { name: bladeShape };
+
+		if (!validateForm()) {
+			log.debug("Blade Shape form fails frontend validation");
+			return;
+		}
 
 		const apiCall = selectedBladeShapeID
 			? http.put(`/bladeShapes/${selectedBladeShapeID}`, bladeShapeData)
@@ -79,6 +103,8 @@ export default function BladeShapeModal({
 						value={bladeShape} // Use value instead of defaultValue
 						onChange={(e) => setbladeShape(e.target.value)} // Handle change in name field
 						style={{ marginBottom: "15px" }}
+						error={!!errors.bladeShape}
+						helperText={errors.bladeShape}
 					/>
 					<Button onClick={handleSave} variant="contained" color="primary">
 						Save

@@ -133,6 +133,36 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [artifactTypes, setArtifactTypes] = useState([]);
 	// -----------------------------------------------------------------------------------------
 
+	// ---------- For validating inputs in the Projectile Modal --------------------------------
+	const [errors, setErrors] = useState({
+		name: "",
+		artifactTypeID: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			name: "",
+			artifactTypeID: "",
+		};
+
+		// Validate name
+		if (!name.trim()) {
+			newErrors.name = "Name is required.";
+			isValid = false;
+		}
+
+		if (!artifactTypeID) {
+			newErrors.artifactTypeID = "Artifact Type is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
+
+	// -----------------------------------------------------------------------------------------
+
 	const handleClose = () => {
 		setOpenAdd(false);
 	};
@@ -159,6 +189,11 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	const handleSubmit = () => {
 		log.info("Adding new projectile");
+
+		if (!validateForm()) {
+			log.debug("Projectile Form fails frontend validation");
+			return;
+		}
 
 		const newProjectilePoint = {
 			name: siteID + "-" + name,
@@ -738,6 +773,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 								fullWidth
 								value={name}
 								onChange={handleNameChange}
+								error={!!errors.name}
+								helperText={errors.name}
 							/>
 							<TextField
 								margin="dense"
@@ -860,6 +897,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 								select
 								value={artifactTypeID}
 								onChange={(e) => setArtifactTypeID(e.target.value)}
+								error={!!errors.artifactTypeID}
+								helperText={errors.artifactTypeID}
 							>
 								<MenuItem value="Lithic">Lithic</MenuItem>
 								<MenuItem value="Ceramic">Ceramic</MenuItem>

@@ -3,7 +3,7 @@
 import { TextField, Button, Dialog, DialogContent } from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
-import logger from "../logger";
+import log from "../logger";
 
 export default function HaftingShapeModal({
 	setEditHaftingShape,
@@ -12,7 +12,26 @@ export default function HaftingShapeModal({
 	updateHaftingShapeList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [haftingShape, setHaftingShape] = useState(selectedHaftingShape);
+	const [haftingShape, setHaftingShape] = useState(selectedHaftingShape || "");
+	const [errors, setErrors] = useState({
+		haftingShape: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			haftingShape: "",
+		};
+
+		// Validate Hafting Shape name
+		if (!haftingShape.trim()) {
+			newErrors.haftingShape = "Hafting Shape name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -21,13 +40,18 @@ export default function HaftingShapeModal({
 	const handleSave = () => {
 		const haftingShapeData = { name: haftingShape };
 
+		if (!validateForm()) {
+			log.debug("Hafting Shape Form fails frontend validation");
+			return;
+		}
+
 		const apiCall = selectedHaftingShapeID
 			? http.put(`/haftingShapes/${selectedHaftingShapeID}`, haftingShapeData)
 			: http.post("/haftingShapes", haftingShapeData);
 
 		apiCall
 			.then((response) => {
-				logger.info(
+				log.info(
 					`Hafting shape ${selectedHaftingShapeID ? "updated" : "created"} successfully: `,
 					response.data,
 				);
@@ -35,7 +59,7 @@ export default function HaftingShapeModal({
 				handleClose();
 			})
 			.catch((error) => {
-				logger.error("Error saving Hafting Shape: ", error);
+				log.error("Error saving Hafting Shape: ", error);
 			});
 	};
 
@@ -45,7 +69,7 @@ export default function HaftingShapeModal({
 	const handleClose = () => {
 		setOpen(false);
 		if (setEditHaftingShape) setEditHaftingShape(false);
-		logger.debug(
+		log.debug(
 			`HaftingShapeModal closed, mode: ${selectedHaftingShape ? "edit" : "add"}.`,
 		);
 	};
@@ -62,6 +86,8 @@ export default function HaftingShapeModal({
 						value={haftingShape} // Use value instead of defaultValue
 						onChange={(e) => setHaftingShape(e.target.value)} // Handle change in name field
 						style={{ marginBottom: "15px" }}
+						error={!!errors.haftingShape}
+						helperText={errors.haftingShape}
 					/>
 					<Button onClick={handleSave} variant="contained" color="primary">
 						Save
