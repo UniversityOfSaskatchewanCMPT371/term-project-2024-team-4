@@ -136,7 +136,6 @@ const artifactValidationRules = () => {
 };
 
 /**
- * @TODO
  * Validation rules for creating a period
  * @precond request body needs to contain:
  * 	name: str, start & end (dates)
@@ -148,6 +147,23 @@ const periodValidationRules = () => {
 			.escape()
 			.isLength({ min: 1 })
 			.withMessage("Name is required"),
+
+		body("start")
+			.isInt({ min: 0 })
+			.withMessage("Start year is required and must be a valid year"),
+
+		body("end")
+			.isInt({ min: 0 })
+			.withMessage("End year is required and must be a valid year"),
+
+		// check if start year is before end year
+		body().custom((values, { req }) => {
+			const { start, end } = req.body;
+			if (parseInt(start) > parseInt(end)) {
+				throw new Error("Start year must be before end year");
+			}
+			return true;
+		}),
 	];
 };
 
@@ -169,7 +185,7 @@ const nameValidationRules = () => {
 
 /**
  * Validation rules that require both a name and a description
- * e.g. material, region
+ * e.g. material, region, catalogue
  * @@precond request body needs to contain:
  * 	name: str, description: str
  */
