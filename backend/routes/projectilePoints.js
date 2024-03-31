@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	artifactValidationRules,
+} = require("../middleware/sanitize.js");
 
 /**
  * POST: Creates a new Projectile Point
@@ -18,14 +22,20 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * 	Succesful: Returns newly created Projectile Point with 201 status code
  * 	Failure: Error; 500 status code
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const newProjectilePoint =
-		await projectilePointsHelper.newProjectilePoint(req);
-	if (newProjectilePoint instanceof Error) {
-		return res.status(500).json({ error: newProjectilePoint.message });
-	}
-	return res.status(201).json(newProjectilePoint);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	artifactValidationRules(),
+	validate,
+	async (req, res) => {
+		const newProjectilePoint =
+			await projectilePointsHelper.newProjectilePoint(req);
+		if (newProjectilePoint instanceof Error) {
+			return res.status(500).json({ error: newProjectilePoint.message });
+		}
+		return res.status(201).json(newProjectilePoint);
+	},
+);
 
 /**
  * GET: Fetch ALL Projectile Points
@@ -78,17 +88,23 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: returns updated projectile point
  * 	Failure: Returns an error message related to the issue
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const projectilePoint =
-		await projectilePointsHelper.updateProjectilePoint(req);
-	if (projectilePoint === "ProjectilePoint not found") {
-		return res.json({ message: "ProjectilePoint not found" });
-	}
-	if (projectilePoint instanceof Error) {
-		return res.json({ error: projectilePoint.message });
-	}
-	return res.json(projectilePoint);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	artifactValidationRules(),
+	validate,
+	async (req, res) => {
+		const projectilePoint =
+			await projectilePointsHelper.updateProjectilePoint(req);
+		if (projectilePoint === "ProjectilePoint not found") {
+			return res.json({ message: "ProjectilePoint not found" });
+		}
+		if (projectilePoint instanceof Error) {
+			return res.json({ error: projectilePoint.message });
+		}
+		return res.json(projectilePoint);
+	},
+);
 
 /**
  * DELETE: delete a single, EXISTING Projectile Point

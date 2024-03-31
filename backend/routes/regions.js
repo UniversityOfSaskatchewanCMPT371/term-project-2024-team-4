@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const regionsHelper = require("../helperFiles/regionsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	nameDescValidationRules,
+} = require("../middleware/sanitize.js");
 
 /**
  * GET: Fetch ALL Regions
@@ -30,13 +34,19 @@ router.get("/", async (req, res) => {
  * 	Success: Returns the newly created Region object
  * 	Failure: Returns an error message indicating the failure reason
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await regionsHelper.newRegion(req);
-	if (response instanceof Error) {
-		return res.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	nameDescValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await regionsHelper.newRegion(req);
+		if (response instanceof Error) {
+			return res.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * GET: Fetch a SINGLE Region by ID
@@ -68,16 +78,22 @@ router.get("/:id", async (req, res) => {
  * 	Success: Returns the updated Region object
  * 	Failure: Returns an error related to issue
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await regionsHelper.updateRegion(req);
-	if (response === "Region not found") {
-		return res.json({ message: "Region not found" });
-	}
-	if (response instanceof Error) {
-		return res.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	nameDescValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await regionsHelper.updateRegion(req);
+		if (response === "Region not found") {
+			return res.json({ message: "Region not found" });
+		}
+		if (response instanceof Error) {
+			return res.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: Delete a SINGLE existing Region by ID

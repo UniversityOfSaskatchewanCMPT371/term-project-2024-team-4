@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const router = express.Router();
 const bladeShapeHelper = require("../helperFiles/bladeShapesHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const { validate, nameValidationRules } = require("../middleware/sanitize.js");
 
 /**
  * POST: Creates a new BladeShape.
@@ -14,15 +15,21 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @post A new BladeShape is created in the database.
  * @return Returns the newly created BladeShape object.
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await bladeShapeHelper.newBladeShape(req);
-	if (response instanceof Error) {
-		return res
-			.status(response instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await bladeShapeHelper.newBladeShape(req);
+		if (response instanceof Error) {
+			return res
+				.status(response instanceof assert.AssertionError ? 400 : 500)
+				.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * GET: Fetches all BladeShapes.
@@ -68,13 +75,19 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified BladeShape in the database.
  * @return Returns the updated BladeShape object or a message indicating the BladeShape was not found.
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await bladeShapeHelper.updateBladeShape(req);
-	if (response instanceof Error) {
-		return res.status(500).json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await bladeShapeHelper.updateBladeShape(req);
+		if (response instanceof Error) {
+			return res.status(500).json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: Removes a BladeShape by ID.

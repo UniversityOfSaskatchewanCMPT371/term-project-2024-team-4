@@ -20,13 +20,7 @@ async function newArtifact(req) {
 	} = req.body;
 
 	assert.ok(
-		name &&
-			location &&
-			description &&
-			dimensions &&
-			photo &&
-			siteId &&
-			artifactTypeId,
+		name && siteId && artifactTypeId,
 		"Required artifact data fields are missing.",
 	);
 

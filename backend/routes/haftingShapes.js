@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const { validate, nameValidationRules } = require("../middleware/sanitize.js");
 
 /**
  * POST: Creates a new HaftingShape.
@@ -13,13 +14,19 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @post A new HaftingShape entity is created in the database.
  * @return Returns the newly created HaftingShape object.
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await haftingShapesHelper.newHaftingShape(req);
-	if (response instanceof Error) {
-		return res.status(400).json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await haftingShapesHelper.newHaftingShape(req);
+		if (response instanceof Error) {
+			return res.status(400).json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * GET: Fetches all HaftingShapes.
@@ -65,13 +72,19 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified HaftingShape in the database.
  * @return Returns the updated HaftingShape object or a message indicating the HaftingShape was not found.
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await haftingShapesHelper.updateHaftingShape(req);
-	if (response instanceof Error) {
-		return res.status(500).json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await haftingShapesHelper.updateHaftingShape(req);
+		if (response instanceof Error) {
+			return res.status(500).json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: Removes a HaftingShape by ID.
