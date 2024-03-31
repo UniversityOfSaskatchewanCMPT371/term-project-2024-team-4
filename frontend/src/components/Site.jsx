@@ -29,7 +29,7 @@ const Site = () => {
 
 	const [searchValue, setSearchValue] = useState("");
 	const [sortValue, setSortValue] = useState("newest");
-	const [filterValue, setFilterValue] = useState("");
+	const [filterValue, setFilterValue] = useState(""); // @TODO remove filter?
 
 	const inComingInfo = useLocation();
 	const siteID = inComingInfo.state.info.id;
@@ -133,8 +133,13 @@ const Site = () => {
 							size="small"
 						>
 							<MenuItem value="newest">Newest</MenuItem>
-							<MenuItem value="descendant">Descendant</MenuItem>
-							<MenuItem value="ascending">Ascending</MenuItem>
+							<MenuItem value="oldest">Oldest</MenuItem>
+							<MenuItem value="alphabetical_ascending">
+								Alphabetical Ascending
+							</MenuItem>
+							<MenuItem value="alphabetical_descending">
+								Alphabetical Descending
+							</MenuItem>
 						</TextField>
 					</Grid>
 					<Grid item xs={6} sm={3}>
@@ -156,7 +161,11 @@ const Site = () => {
 				</Grid>
 			</Grid>
 			<Grid item xs={12}>
-				<ProjectileList query={searchValue} siteId={siteID} />
+				<ProjectileList
+					query={searchValue}
+					siteId={siteID}
+					sortValue={sortValue}
+				/>
 			</Grid>
 		</BaseLayout>
 	);

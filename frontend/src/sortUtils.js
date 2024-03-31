@@ -14,5 +14,23 @@ Utility file for sorting data
  * @returns {Object[]} a sorted array of JSON objects
  */
 export function sortData(data, sortValue) {
-	return;
+	return data.sort((a, b) => {
+		switch (sortValue) {
+		case "newest":
+			console.info("Sorting sites from newest-oldest order");
+			return new Date(b.createdDate) - new Date(a.createdDate);
+		case "oldest":
+			console.info("Sorting sites from oldest-newest order");
+			return new Date(a.createdDate) - new Date(b.createdDate);
+		case "alphabetical_ascending":
+			console.info("Sorting sites in alphabetically ascending order");
+			return a.name.localeCompare(b.name);
+		case "alphabetical_descending":
+			console.info("Sorting sites in alphabetically descending order");
+			return b.name.localeCompare(a.name);
+		default:
+			console.warn("Could not sort sites.");
+			return 0;
+		}
+	});
 }
