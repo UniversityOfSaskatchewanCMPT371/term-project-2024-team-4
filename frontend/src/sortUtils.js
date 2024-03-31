@@ -13,6 +13,7 @@ Utility file for sorting data
  * @param {string} sortValue - criteria to be sorted: "newest", "oldest", "alphabetical_ascending", "alphabetical_descending"
  * @returns {Object[]} a sorted array of JSON objects
  */
+/* eslint-disable indent */
 export function sortData(data, sortValue) {
 	return data.sort((a, b) => {
 		switch (sortValue) {
