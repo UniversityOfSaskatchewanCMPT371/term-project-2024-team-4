@@ -257,7 +257,7 @@ const SiteModal = ({ setOpen }) => {
 									value={selectedRegion}
 									onChange={handleRegionChange}
 									renderValue={(selected) => selected}
-									error={Boolean(regionError)}
+									error={!!errors.regionID}
 								>
 									{regions.map((region) => (
 										<MenuItem key={region.id} value={region.name}>

@@ -50,7 +50,7 @@ describe("User Authentication API", () => {
 			});
 		});
 
-		test("It should return 401 if user is not found", async () => {
+		test("It should return 422 if user is not found", async () => {
 			// Mocking findOne to return null
 			// eslint-disable-next-line no-unused-vars
 			router.post("/", async (req, res) => {
@@ -65,7 +65,7 @@ describe("User Authentication API", () => {
 						userName: "nonexistentuser",
 						password: "nonexistentpassword",
 					})
-					.expect(401);
+					.expect(422);
 			});
 		});
 
@@ -91,40 +91,22 @@ describe("User Authentication API", () => {
 					.expect(401);
 			});
 		});
-		test("It should return 400 if userName is null or undefined", async () => {
+		test("It should return 422 if userName is null or undefined", async () => {
 			await request(app)
 				.post("/users")
 				.send({ password: "testpassword" })
-				.expect(400)
-				.then((response) => {
-					expect(response.body).toEqual({
-						message: "Username and password are required",
-					});
-				});
+				.expect(422);
 		});
 
-		test("It should return 400 if password is null or undefined", async () => {
+		test("It should return 422 if password is null or undefined", async () => {
 			await request(app)
 				.post("/users")
 				.send({ userName: "testuser" })
-				.expect(400)
-				.then((response) => {
-					expect(response.body).toEqual({
-						message: "Username and password are required",
-					});
-				});
+				.expect(422);
 		});
 
-		test("It should return 400 if both userName and password are null or undefined", async () => {
-			await request(app)
-				.post("/users")
-				.send({})
-				.expect(400)
-				.then((response) => {
-					expect(response.body).toEqual({
-						message: "Username and password are required",
-					});
-				});
+		test("It should return 422 if both userName and password are null or undefined", async () => {
+			await request(app).post("/users").send({}).expect(422);
 		});
 	});
 	describe("User Authentication API", () => {

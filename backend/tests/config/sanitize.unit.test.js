@@ -191,9 +191,21 @@ describe("Sanitization and Validation Checks", () => {
 			expect(response.statusCode).toBe(422);
 		});
 
+		test("should reject if start > end date", async () => {
+			const response = await request(app).post("/period").send({
+				name: "test",
+				start: "1990",
+				end: "1985",
+			});
+
+			expect(response.statusCode).toBe(422);
+		});
+
 		test("should accept if all fields valid", async () => {
 			const response = await request(app).post("/period").send({
 				name: "Name",
+				start: "1990",
+				end: "1995",
 			});
 
 			expect(response.statusCode).toBe(200);
