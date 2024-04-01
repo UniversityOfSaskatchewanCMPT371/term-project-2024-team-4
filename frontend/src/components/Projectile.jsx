@@ -208,23 +208,27 @@ const ViewProjectile = ({
 								{name}
 							</Typography>
 							{/* ------------ Dimensions ------------- */}
-							<Typography sx={{ mt: 2 }} variant="h6">
-								Dimensions
-							</Typography>
-							<Typography variant="body1">
-								{"L: " + (length || 0) + "mm"}
-							</Typography>
-							<Typography variant="body1">
-								{"W: " + (width || 0) + "mm"}
-							</Typography>
-							<Typography variant="body1">
-								{"H: " + (height || 0) + "mm"}
-							</Typography>
+							<div>
+								<Typography sx={{ mt: 2 }} variant="h6">
+									Dimensions
+								</Typography>
+								<Typography variant="body1">
+									{"L: " + (length || 0) + "mm"}
+								</Typography>
+								<Typography variant="body1">
+									{"W: " + (width || 0) + "mm"}
+								</Typography>
+								<Typography variant="body1">
+									{"H: " + (height || 0) + "mm"}
+								</Typography>
+							</div>
 							{/* ------------ Location ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Location
 							</Typography>
-							<Typography variant="body1">{location}</Typography>
+							<Typography variant="body1">
+								{location || "Indeterminate"}
+							</Typography>
 							{/* ------------ Artifact Type ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Artifact Type
@@ -234,33 +238,52 @@ const ViewProjectile = ({
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Period
 							</Typography>
-							<Typography variant="body1">{periodName}</Typography>
+							<Typography variant="body1">
+								{periodName || "Indeterminate"}
+							</Typography>
 							{/* ------------ Culture ------------- */}
 							<Typography sx={{ mt: 2 }} variant="h6">
 								Culture
 							</Typography>
-							<Typography variant="body1">{cultureName}</Typography>
+							<Typography variant="body1">
+								{cultureName || "Indeterminate"}
+							</Typography>
 							{/* ------------ Base Shape ------------- */}
-							<Typography sx={{ mt: 2 }} variant="h6">
-								Base Shape
-							</Typography>
-							<Typography variant="body1">{baseShapeName}</Typography>
-
+							{baseShapeName && (
+								<div>
+									<Typography sx={{ mt: 2 }} variant="h6">
+										Base Shape
+									</Typography>
+									<Typography variant="body1">{baseShapeName}</Typography>
+								</div>
+							)}
 							{/* ------------ Cross Section ------------- */}
-							<Typography sx={{ mt: 2 }} variant="h6">
-								Cross Section
-							</Typography>
-							<Typography variant="body1">{crossSectionName}</Typography>
+							{crossSectionName && (
+								<div>
+									<Typography sx={{ mt: 2 }} variant="h6">
+										Cross Section
+									</Typography>
+									<Typography variant="body1">{crossSectionName}</Typography>
+								</div>
+							)}
 							{/* ------------ Blade Shape ------------- */}
-							<Typography sx={{ mt: 2 }} variant="h6">
-								Blade Shape
-							</Typography>
-							<Typography variant="body1">{bladeShapeName}</Typography>
+							{bladeShapeName && (
+								<div>
+									<Typography sx={{ mt: 2 }} variant="h6">
+										Blade Shape
+									</Typography>
+									<Typography variant="body1">{bladeShapeName}</Typography>
+								</div>
+							)}
 							{/* ------------ Hafting Shape ------------- */}
-							<Typography sx={{ mt: 2 }} variant="h6">
-								Hafting Shape
-							</Typography>
-							<Typography variant="body1">{haftingShapeName}</Typography>
+							{haftingShapeName && (
+								<div>
+									<Typography sx={{ mt: 2 }} variant="h6">
+										Hafting Shape
+									</Typography>
+									<Typography variant="body1">{haftingShapeName}</Typography>
+								</div>
+							)}
 						</Grid>
 					</Grid>
 				</DialogContent>
