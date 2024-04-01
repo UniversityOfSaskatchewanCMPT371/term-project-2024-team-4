@@ -219,7 +219,7 @@ router.get("/", authenticateAdmin, async (req, res) => {
 	}
 });
 
-router.get("/:userId", async (req, res) => {
+router.get("/:userId", authenticateAdmin, async (req, res) => {
 	const { userId } = req.params;
 
 	try {
