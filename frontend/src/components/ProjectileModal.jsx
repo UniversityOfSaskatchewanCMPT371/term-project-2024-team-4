@@ -197,19 +197,28 @@ const AddProjectile = ({
 	useEffect(() => {
 		const isFloatRegExp = new RegExp("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
 
-		if (isFloatRegExp.test(length) || length.length === 0) {
+		if (
+			(isFloatRegExp.test(length) && parseFloat(length) > 0.0) ||
+			length.length === 0
+		) {
 			setLengthError(false);
 		} else {
 			setLengthError(true);
 		}
 
-		if (isFloatRegExp.test(width) || width.length === 0) {
+		if (
+			(isFloatRegExp.test(width) && parseFloat(width) > 0.0) ||
+			width.length === 0
+		) {
 			setWidthError(false);
 		} else {
 			setWidthError(true);
 		}
 
-		if (isFloatRegExp.test(height) || height.length === 0) {
+		if (
+			(isFloatRegExp.test(height) && parseFloat(height) > 0.0) ||
+			height.length === 0
+		) {
 			setHeightError(false);
 		} else {
 			setHeightError(true);

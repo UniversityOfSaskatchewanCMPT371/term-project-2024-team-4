@@ -111,7 +111,7 @@ const ViewProjectile = ({
 				var lengthDimension = dimensions[0].replace("{", "");
 				lengthDimension = lengthDimension.replace('"', "");
 				var widthDimension = dimensions[1].replace('"', "");
-				var heightDimension = dimensions[2].replace("{", "");
+				var heightDimension = dimensions[2].replace("}", "");
 				heightDimension = heightDimension.replace('"', "");
 
 				setLength(lengthDimension.trim() ? parseFloat(lengthDimension) : "");
