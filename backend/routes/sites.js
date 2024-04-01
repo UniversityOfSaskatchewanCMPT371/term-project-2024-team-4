@@ -1,9 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const sitesHelper = require("../helperFiles/sitesHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
-// POST: Create a New Site
-router.post("/", async (req, res) => {
+/**
+ * POST: Create a new Site
+ * @param {*} req - Request body must contain valid 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @param {*} res - Response to client
+ * @precond req.body contains 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ * @postcond
+ * 	Success: Returns the newly created Site object
+ * 	Failure: Returns an error message related to issue
+ */
+router.post("/", authenticateAdmin, async (req, res) => {
 	const newSite = await sitesHelper.newSite(req);
 	if (newSite instanceof Error) {
 		return res.json({ error: newSite.message });
@@ -53,11 +63,12 @@ router.get("/:id", async (req, res) => {
  * @param {*} req - req URL parameter contains the Site ID, body contains valid 'name', 'description', 'location', 'catalogueId', and 'regionId'
  * @param {*} res - Response to client
  * @precond Request URL parameter and body contain an existing Site ID and valid updates for 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Success: Returns the updated Site object
  * 	Failure: Returns an error message related to issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const siteToUpdate = await sitesHelper.updateSite(req);
 	if (siteToUpdate === "Site not found") {
 		return res.json({ message: "Site not found" });
@@ -73,11 +84,12 @@ router.put("/:id", async (req, res) => {
  * @param {*} req - Req URL parameter contains the Site ID
  * @param {*} res - Response to the client
  * @precond Site ID from req URL parameter exists in the database
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Success: Site is deleted from the database; sends an empty response
  * 	Failure: Returns an error message related to issue
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const result = await sitesHelper.deleteSite(req);
 	if (result === "Site not found") {
 		return res.json({ message: "Site not found" });

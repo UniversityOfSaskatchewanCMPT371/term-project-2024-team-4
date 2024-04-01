@@ -1,18 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const materialsHelper = require("../helperFiles/materialsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 
-// POST: create a new Material
 /**
  * POST: Create a new Material
  * @param {*} req - req.body containing material: name, description, artifactTypeId
  * @param {*} res - response to client
  * @precond req.body contains valid fields: name, description, artifactTypeId
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  *  Succesful: Returns newly created Material object
  * 	Failure: Returns error message based on what went wrong
  */
-router.post("/", async (req, res) => {
+router.post("/", authenticateAdmin, async (req, res) => {
 	const response = await materialsHelper.newMaterial(req);
 	if (response === "ArtifactType not found") {
 		return res.json({ message: "ArtifactType not found" });
@@ -68,11 +69,12 @@ router.get("/:id", async (req, res) => {
  * @precond
  * 	- req URL Parameters: Material with given material ID exists in Database.
  *  - req.body: Must have a valid name, description, and artifactTypeID
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: Returns the updated Material object
  * 	Failure: Returns an error message relating to the issue
  */
-router.put("/:id", async (req, res) => {
+router.put("/:id", authenticateAdmin, async (req, res) => {
 	const response = await materialsHelper.updateMaterial(req);
 	if (response === "Material not found") {
 		return res.json({ message: "Material not found" });
@@ -91,12 +93,13 @@ router.put("/:id", async (req, res) => {
  * @param {*} req - req URL parameters contain material ID to delete
  * @param {*} res - response to the client
  * @precond Material with specified ID exists in the database
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: Material is deleted from database; empty response is sent
  * 	Failure: Returns an error message relating to the issue
  */
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const response = await materialsHelper.deleteMaterial(req);
 	if (response === "Material not found") {
 		return res.json({ message: "Material not found" });

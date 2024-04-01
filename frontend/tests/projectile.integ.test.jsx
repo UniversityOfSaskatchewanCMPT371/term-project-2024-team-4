@@ -3,6 +3,7 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AddProjectil from "../src/components/ProjectileModal.jsx";
 import PeriodModal from "../src/components/PeriodModal.jsx";
+// eslint-disable-next-line no-unused-vars
 import http from "../http";
 
 test("ProjectilePoint renders correctly", async () => {
