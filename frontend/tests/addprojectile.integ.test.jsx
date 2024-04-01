@@ -110,27 +110,27 @@ test("clicking on a projectile point card And delete the projectile point", asyn
 		const response = await http.get("/sites/1");
 
 		if (response.ok) {
-			// Parse JSON response
+			
 			const siteData = await response.json();
 			const projectilePointId = siteData.artifacts[0].id;
 			const projectilepoint_name = "Saskatoon" + "-" + projectilePointId;
 
-			// Find and click the projectile point button
+			
 			const [projectilePointButton] = screen.getByRole("button", {
 				name: new RegExp(projectilepoint_name, "i"),
 			});
 			fireEvent.click(projectilePointButton);
-			// Wait for the delete button to appear
+			
 			await waitFor(() => {
 				const deleteButton = screen.getByText("Delete");
-				expect(deleteButton).toBeInTheDocument(); // Assert that the delete button is rendered
+				expect(deleteButton).toBeInTheDocument(); 
 			});
 			fireEvent.click(screen.getByRole("button", { name: /DELETE/i }));
 
 			// Wait for the projectile point to be deleted
 			await waitFor(() => {
 				const deletedProjectilePoint = screen.queryByText(projectilepoint_name);
-				expect(deletedProjectilePoint).not.toBeInTheDocument(); // Assert that the projectile point is deleted
+				expect(deletedProjectilePoint).not.toBeInTheDocument(); 
 			});
 		} else {
 			console.error("Failed to fetch site data:", response.statusText);
