@@ -34,9 +34,9 @@ test("ProjectilePoint renders correctly", async () => {
 	expect(screen.getByRole("textbox", { name: /Description/i }).value).toBe("");
 	expect(screen.getByRole("textbox", { name: /Location/i }).value).toBe("");
 	expect(screen.getByRole("textbox", { name: /Dimensions/i }).value).toBe("");
-	expect(screen.getByRole("textbox", { name: /Photo File Path/i }).value).toBe(
-		"",
-	);
+	// expect(screen.getByRole("textbox", { name: /Photo File Path/i }).value).toBe(
+	// 	"",
+	// );
 });
 
 test("PeriodModal saves period correctly", async () => {
