@@ -44,15 +44,19 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @param {object} res - The HTTP response object.
  * @returns {object} - The HTTP response containing the created ProjectilePoint entity or an error message.
  */
-router.post("/", upload.single("photo"), authenticateAdmin, async (req, res) => {
-	
-	const newProjectilePoint =
-		await projectilePointsHelper.newProjectilePoint(req);
-	if (newProjectilePoint instanceof Error) {
-		return res.status(500).json({ error: newProjectilePoint.message });
-	}
-	return res.status(201).json(newProjectilePoint);
-});
+router.post(
+	"/",
+	upload.single("photo"),
+	authenticateAdmin,
+	async (req, res) => {
+		const newProjectilePoint =
+			await projectilePointsHelper.newProjectilePoint(req);
+		if (newProjectilePoint instanceof Error) {
+			return res.status(500).json({ error: newProjectilePoint.message });
+		}
+		return res.status(201).json(newProjectilePoint);
+	},
+);
 
 /**
  * GET: Fetch ALL Projectile Points

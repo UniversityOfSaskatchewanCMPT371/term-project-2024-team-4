@@ -215,14 +215,19 @@ function Sidebar() {
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
 					{user && user.userName && (
-						<ListItem key="Settings" disablePadding onClick={handleSettingClick}>
+						<ListItem
+							key="Settings"
+							disablePadding
+							onClick={handleSettingClick}
+						>
 							<ListItemButton>
 								<SidebarIcon>
 									<RoomPreferencesIcon />
 								</SidebarIcon>
 								<ListItemText primary="Settings" />
 							</ListItemButton>
-						</ListItem>)}
+						</ListItem>
+					)}
 					{isLoggedIn ? (
 						<ListItem key="Logout" disablePadding onClick={handleLogout}>
 							<ListItemButton>

@@ -339,7 +339,7 @@ Behavior:
 - Returns a success message along with the updated user in JSON format if successful.
 - Handles errors such as user not found, validation errors, and internal server errors.
  */
-router.patch("/:userId/password",authenticateAdmin, async (req, res) => {
+router.patch("/:userId/password", authenticateAdmin, async (req, res) => {
 	const { userId } = req.params;
 	const { password } = req.body;
 
