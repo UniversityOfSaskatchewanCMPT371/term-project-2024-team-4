@@ -1,9 +1,11 @@
 import { test } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import AddProjectile from "../src/components/ProjectileModal.jsx";
+import ProjectileList from "../src/components/ProjectileList";
+import http from "../http";
 
-test("ProjectilePoint renders correctly test the error message for width, length and height", async () => {
+test("ProjectilePoint renders correctly and test the error message for width, length and height", async () => {
 	// Define needed data to render the componet. this data should be pre existing in the database.
 	const siteData = {
 		id: 1,
@@ -72,3 +74,68 @@ test("ProjectilePoint renders correctly and test the error message for width, le
 	fireEvent.change(heightInput, { target: { value: 0 } });
 	await screen.findByText(/Invalid Height/i);
 });
+
+test("add the projectile point without adding any info and artifacts Type shows the error message", async () => {
+	const siteData = {
+		id: 1,
+		name: "Saskatoon",
+		description: "sasakatoon is beautiful",
+		location: "saskatoon",
+		catalogue: {
+			id: 1,
+			name: "Default Catalogue",
+			description: "This is the default catalogue.",
+		},
+	};
+
+	render(
+		<MemoryRouter
+			initialEntries={[{ pathname: "/site", state: { info: siteData } }]}
+		>
+			{/* Render the AddProjectile component with openAdd prop set to true */}
+			<AddProjectile openAdd={true} />
+		</MemoryRouter>,
+	);
+
+	fireEvent.click(screen.getByRole("button", { name: /ADD/i }));
+	await screen.findAllByText("Please select an Artifact Type");
+});
+
+test("clicking on a projectile point card And delete the projectile point", async () => {
+	// Render the ProjectileList component
+	render(<ProjectileList siteId={1} siteName="Saskatoon" />);
+
+	try {
+		// Make GET request to fetch site data
+		const response = await http.get("/sites/1");
+
+		if (response.ok) {
+			// Parse JSON response
+			const siteData = await response.json();
+			const projectilePointId = siteData.artifacts[0].id;
+			const projectilepoint_name = "Saskatoon" + "-" + projectilePointId;
+
+			// Find and click the projectile point button
+			const [projectilePointButton] = screen.getByRole("button", {
+				name: new RegExp(projectilepoint_name, "i"),
+			});
+			fireEvent.click(projectilePointButton);
+			// Wait for the delete button to appear
+			await waitFor(() => {
+				const deleteButton = screen.getByText("Delete");
+				expect(deleteButton).toBeInTheDocument(); // Assert that the delete button is rendered
+			});
+			fireEvent.click(screen.getByRole("button", { name: /DELETE/i }));
+
+			// Wait for the projectile point to be deleted
+			await waitFor(() => {
+				const deletedProjectilePoint = screen.queryByText(projectilepoint_name);
+				expect(deletedProjectilePoint).not.toBeInTheDocument(); // Assert that the projectile point is deleted
+			});
+		} else {
+			console.error("Failed to fetch site data:", response.statusText);
+		}
+	} catch (error) {
+		console.error("Error fetching site data:", error);
+	}
+}, 10000);
