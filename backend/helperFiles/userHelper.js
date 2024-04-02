@@ -148,6 +148,8 @@ const verifyPassword = async (userId, password) => {
  * Note: Verify password before this (in route)
  * @param {*} userId the user for which to update the password
  * @param {*} newPassword the password for which to replace the old password
+ * @preconds
+ * 	- the user Id is a user that exists in the database
  * @returns {boolean}
  * 	- false: if password was not succesfully changed
  * 	- true: if password was succesfully changed
@@ -170,6 +172,38 @@ const updatePassword = async (userId, newPassword) => {
 		return true;
 	} catch (error) {
 		logger.error(`Error updating password for user ${userId}`);
+		return false;
+	}
+};
+
+/**
+ * Update existing password to new password
+ * Note: Verify password before this (in route)
+ * @param {*} userId the user for which to update the username
+ * @param {*} newUsername the new username for which to replace the old one
+ * @precond
+ * 	- the user ID is a user that exists in the database
+ * @returns
+ * 	- false: if username was not succesfully changed
+ * 	- true: if username was successfully changed
+ */
+const updateUsername = async (userId, newUsername) => {
+	const Users = await dataSource.getRepository(User);
+
+	try {
+		const user = await Users.findOneBy({ id: userId });
+		if (!user) {
+			logger.error(`User with ID ${userId} does not exist`);
+			return false;
+		}
+
+		// otherwise, replace username
+		user.userName = newUsername;
+		await Users.save(user);
+		logger.info(`Username updated for user ID ${userId} to ${newUsername}`);
+		return true;
+	} catch (error) {
+		logger.error(`Error updating username for user ID ${userId}`);
 		return false;
 	}
 };
