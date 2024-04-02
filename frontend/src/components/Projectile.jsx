@@ -1,6 +1,6 @@
 /* eslint-disable quotes */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import http from "../../http.js";
 import log from "../logger.js";
 import { baseURL } from "../../http";
@@ -14,7 +14,7 @@ import {
 	Grid,
 	Typography,
 } from "@mui/material";
-
+import { UserContext } from "../context/userContext.jsx";
 /**
  * Modal for viewing projectile point details
  * @param {function} setOpenView function to toggle view projectile point modal visibility
@@ -47,7 +47,7 @@ const ViewProjectile = ({
 	const [haftingShapeName, setHaftingShapeName] = useState("");
 	const [crossSectionName, setCrossSectionName] = useState("");
 	const [openAlertDelete, setOpenAlertDelete] = useState(false);
-
+	const { user } = useContext(UserContext);
 	/**
 	 * Set current modal visibility to false
 	 */
@@ -268,18 +268,20 @@ const ViewProjectile = ({
 					<Button onClick={handleClose} color="primary">
 						Close
 					</Button>
-					<Button onClick={handleOpenAlertDelete} color="primary">
+					{user && user.userName && (
+						<Button onClick={handleOpenAlertDelete} color="primary">
 						Delete
-					</Button>
-					<Button
-						onClick={() => {
-							handleEdit();
-							handleClose();
-						}}
-						color="primary"
-					>
+						</Button>)}
+					{user && user.userName && (
+						<Button
+							onClick={() => {
+								handleEdit();
+								handleClose();
+							}} 
+							color="primary"
+						>
 						Edit
-					</Button>
+						</Button>)}
 				</DialogActions>
 			</Dialog>
 			<div>
