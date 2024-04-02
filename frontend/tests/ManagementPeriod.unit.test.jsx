@@ -1,21 +1,19 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-// import { MemoryRouter } from "react-router-dom";
-// import ManagementPeriods from "../src/components/ManagementPeriods";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { UserContext } from "../src/context/userContext";
+
+import ManagementPeriods from "../src/components/ManagementPeriods";
 import AddPeriodDialog from "../src/components/AddPeriodDialog";
-// import http from "../http";
 
 vi.mock("../http", () => ({
 	__esModule: true,
 	default: {
-		get: vi.fn(() =>
-			Promise.resolve({
-				data: [
-					{ id: 1, name: "Period 1", start: 1000, end: 1500 },
-					{ id: 2, name: "Period 2", start: 1501, end: 2000 },
-				],
-			}),
-		),
+		get: vi.fn().mockResolvedValue({
+			data: [
+				{ id: 1, name: "Period 1", start: 1000, end: 1500, cultures: [] },
+				{ id: 2, name: "Period 2", start: 1501, end: 2000, cultures: [] },
+			],
+		}),
 	},
 }));
 
@@ -27,17 +25,28 @@ vi.mock("../src/components/Sidebar", () => {
 	};
 });
 
+// Mock UserContext
+const mockUserContextValue = {
+	user: {
+		userName: "admin",
+		isLoggedIn: true,
+	},
+};
+
 describe("AddPeriodDialog", () => {
 	beforeEach(() => {});
 
 	it("renders correctly", () => {
 		render(
-			<AddPeriodDialog
-				open={true}
-				onClose={vi.fn()}
-				onSave={vi.fn()}
-				periodNames={["Ancient"]}
-			/>,
+			<UserContext.Provider value={mockUserContextValue}>
+				<AddPeriodDialog
+					open={true}
+					onClose={vi.fn()}
+					onSave={vi.fn()}
+					periodNames={["Ancient"]}
+				/>
+				,
+			</UserContext.Provider>,
 		);
 		expect(screen.getByText("Add New Period")).toBeInTheDocument();
 	});
@@ -56,60 +65,31 @@ describe("AddPeriodDialog", () => {
 		expect(saveHandler).not.toHaveBeenCalled(); // Should not call onSave because fields are empty
 	});
 });
-/**
- * Temporarily commented out until usercontext testing is figured out.However, these tests worked 
- * before the usercontext was added to the branch.
- * 
-	describe("ManagementPeriods", () => {
-	beforeEach(() => {
+
+describe("ManagementPeriods", () => {
+	beforeEach(async () => {
 		vi.resetAllMocks();
-
 		render(
-			<MemoryRouter>
+			<UserContext.Provider value={mockUserContextValue}>
 				<ManagementPeriods />
-			</MemoryRouter>,
+			</UserContext.Provider>,
 		);
 	});
 
-	it("fetches periods from the API and displays them", async () => {
-		await waitFor(() => {
-			expect(http.get).toHaveBeenCalledTimes(1);
-		});
-
-		// Assert that period names are displayed in the document
-		await expect(screen.getByText("Period 1")).toBeInTheDocument();
-		await expect(screen.getByText("Period 2")).toBeInTheDocument();
-	});
-	
 	it("opens and closes the AddPeriodDialog", async () => {
-		const { getByText, queryByText } = render(
-			<MemoryRouter>
+		const { getByText, queryByText, getAllByText } = render(
+			<UserContext.Provider value={mockUserContextValue}>
 				<ManagementPeriods />
-			</MemoryRouter>,
+			</UserContext.Provider>,
 		);
-		fireEvent.click(getByText("Add Period"));
+		const addButtons = getAllByText("Add Period");
+		expect(addButtons.length).toBeGreaterThan(0);
+		fireEvent.click(addButtons[0]);
 		expect(getByText("Add New Period")).toBeInTheDocument();
 
-		// Simulate closing the dialog
 		fireEvent.click(getByText("Cancel"));
 		await waitFor(() => {
 			expect(queryByText("Add New Period")).not.toBeInTheDocument();
 		});
 	});
-	
-	it("opens and closes the AddPeriodDialog", async () => {
-		const { getByText, queryByText } = render(
-			<MemoryRouter>
-				<ManagementPeriods />
-			</MemoryRouter>,
-		);
-		fireEvent.click(getByText("Add Period"));
-		expect(getByText("Add New Period")).toBeInTheDocument();
-
-		// Simulate closing the dialog
-		fireEvent.click(getByText("Cancel"));
-		await waitFor(() => {
-			expect(queryByText("Add New Period")).not.toBeInTheDocument();
-		});
-	});
- */
+});

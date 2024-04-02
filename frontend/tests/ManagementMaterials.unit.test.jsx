@@ -1,9 +1,10 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { UserContext } from "../src/context/userContext";
 import AddMaterialDialog from "../src/components/AddMaterialDialog";
 import ManagementMaterials from "../src/components/ManagementMaterials";
 
-vi.mock("http", () => {
+vi.mock("../http", () => {
 	return {
 		__esModule: true,
 		default: () => ({
@@ -25,11 +26,21 @@ vi.mock("../src/components/Sidebar", () => ({
 	default: () => <div>Sidebar Mock</div>,
 }));
 
+// Mock UserContext
+const mockUserContextValue = {
+	user: {
+		userName: "admin",
+		isLoggedIn: true,
+	},
+};
+
 // AddMaterialDialog Test Example
 describe("AddMaterialDialog", () => {
 	beforeEach(() => {
 		render(
-			<AddMaterialDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />,
+			<UserContext.Provider value={mockUserContextValue}>
+				<AddMaterialDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />,
+			</UserContext.Provider>,
 		);
 	});
 
@@ -60,33 +71,21 @@ describe("AddMaterialDialog", () => {
 describe("ManagementMaterials", () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		render(<ManagementMaterials />);
+		render(
+			<UserContext.Provider value={mockUserContextValue}>
+				<ManagementMaterials />
+			</UserContext.Provider>,
+		);
 	});
 
 	it("should render correctly", async () => {
 		expect(screen.getByText("Materials Management")).toBeInTheDocument();
-		// await fireEvent.click(screen.getByText("Add Material"));
-		// expect(await screen.findByText("Add New Material")).toBeInTheDocument();
-	});
-
-	/**
-	 * Temporarily commented out until usercontext testing is figured out.However, these tests worked 
-	 * before the usercontext was added to the branch.
-	 * 
-	 * it("opens AddMaterialDialog on 'Add Material' button click", async () => {
 		await fireEvent.click(screen.getByText("Add Material"));
 		expect(await screen.findByText("Add New Material")).toBeInTheDocument();
-
-		it("handles error when fetching artifact types fails", async () => {
-		render(
-			<AddMaterialDialog open={true} onSave={vi.fn()} onClose={vi.fn()} />,
-		);
-
-		const errorMessage = await screen.findByText(
-			"Failed to load artifact types. Please try again later.",
-		);
-		expect(errorMessage).toBeInTheDocument();
 	});
+
+	it("opens AddMaterialDialog on 'Add Material' button click", async () => {
+		await fireEvent.click(screen.getByText("Add Material"));
+		expect(await screen.findByText("Add New Material")).toBeInTheDocument();
 	});
-	 */
 });
