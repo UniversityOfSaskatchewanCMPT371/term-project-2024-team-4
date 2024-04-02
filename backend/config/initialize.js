@@ -110,10 +110,10 @@ async function initializeBaseUser() {
 			logger.error("Test user credentials not deefined in .env file");
 			return;
 		} else {
-			await registerUser(testUsername, testPassword);
+			await registerUser(testUsername, testPassword, "tester", false);
 		}
 	} else {
-		// otherwise, delete the tester account if it exists
+		// @TODO should deactivate otherwise, delete the tester account if it exists
 		const wasDeleted = await deleteUserByUsername(testUsername);
 		if (wasDeleted) {
 			logger.info(`Tester account ${testUsername} deleted successfully.`);
