@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
 export type UserRoleType = "admin" | "tester";
 
 @Entity()
-class User {
+export class User {
 	@PrimaryGeneratedColumn()
 	id: number;
 
