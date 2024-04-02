@@ -62,7 +62,7 @@ const registerUser = async (
  * 	- username exists in the database already
  * @postcond
  * 	- user with given username is deleted from database
- * @returns
+ * @returns {boolean}
  * 	- false: if no user is deleted
  * 	- true: if user is succesfully deleteeed
  */
@@ -78,6 +78,35 @@ const deleteUserByUsername = async (username) => {
 		await Users.remove(user);
 		logger.info(`User ${username} succesfully deleted`);
 		return true;
+	}
+};
+
+/**
+ * Delete a user with a given user (database) ID
+ * @param {*} userId  - the ID of the user to delete
+ * @returns {boolean}
+ * 	- false: if no user is deleted
+ * 	- true: if user is succesfully deleted
+ */
+const deleteUserById = async (userId) => {
+	const Users = await dataSource.getRepository(User);
+
+	try {
+		const userToDelete = await Users.findOneBy({ id: userId });
+
+		// if user doesn't exist, abort
+		if (!userToDelete) {
+			logger.warn(`User with ID ${userId} not found.`);
+			return false;
+		}
+
+		// otherwise, delete
+		await Users.remove(userToDelete);
+		logger.info(`User with ID ${userId} was deleted`);
+		return true;
+	} catch (error) {
+		logger.error(`Error deleting user with ID ${userId}`);
+		return false;
 	}
 };
 
