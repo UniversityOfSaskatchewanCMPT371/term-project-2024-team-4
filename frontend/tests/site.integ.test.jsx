@@ -30,7 +30,9 @@ test("SiteModal renders correctly", async () => {
 
 	// input something without entering any data into database.
 	fireEvent.change(siteNameInput, { target: { value: "Test Site" } });
-	fireEvent.change(descriptionInput, { target: { value: "Test Description" } });
+	fireEvent.change(descriptionInput, {
+		target: { value: "Test Description" },
+	});
 	fireEvent.change(locationInput, { target: { value: "Test Location" } });
 });
 
@@ -117,9 +119,9 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 	const descriptionInput = screen.getByLabelText("Site Description");
 	const locationInput = screen.getByLabelText("Location");
 
-	userEvent.type(nameInput, siteData.name);
-	userEvent.type(descriptionInput, siteData.description);
-	userEvent.type(locationInput, siteData.location);
+	await userEvent.type(nameInput, siteData.name);
+	await userEvent.type(descriptionInput, siteData.description);
+	await userEvent.type(locationInput, siteData.location);
 
 	fireEvent.click(screen.getByText("Add"));
 
@@ -151,7 +153,9 @@ test("RegionModal renders correctly and handles addition of a new region", async
 	fireEvent.change(regionNameInput, { target: { value: "Test Region" } });
 
 	const descriptionInput = screen.getByLabelText("Description");
-	fireEvent.change(descriptionInput, { target: { value: "Test Description" } });
+	fireEvent.change(descriptionInput, {
+		target: { value: "Test Description" },
+	});
 
 	// Click the save button
 	const saveButton = screen.getByText("Save");
