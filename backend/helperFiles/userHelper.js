@@ -88,6 +88,7 @@ const deleteUserByUsername = async (username) => {
  * 	- false: if no user is deleted
  * 	- true: if user is succesfully deleted
  */
+// eslint-disable-next-line no-unused-vars
 const deleteUserById = async (userId) => {
 	const Users = await dataSource.getRepository(User);
 
@@ -107,6 +108,38 @@ const deleteUserById = async (userId) => {
 	} catch (error) {
 		logger.error(`Error deleting user with ID ${userId}`);
 		return false;
+	}
+};
+
+/**
+ * Checks if the given password matches the (encrypted) one in the database
+ * @param {*} userId - the user ID for which to check the password
+ * @param {*} password - the password to compare with the one in the database
+ * @precond
+ * 	- Given user ID is a user that exists in the database
+ * @returns {boolean}
+ * 	- false: if password does not match
+ * 	- true: if password does match
+ */
+const verifyPassword = async (userId, password) => {
+	const Users = await dataSource.getRepository(User);
+	const user = await Users.findOneBy({ id: userId });
+
+	// if user does not exist, return false
+	if (!user) {
+		logger.error(`User with ID ${userId} does not exist`);
+		return false;
+	}
+
+	// otherwise, compare if passwords are matching
+	const isMatch = await bcrypt.compare(password, user.password);
+	if (!isMatch) {
+		logger.warn(`Password verification failed for user ID ${userId}`);
+		return false;
+	} else {
+		// if matching
+		logger.info(`Password verified for user ID ${userId}`);
+		return true;
 	}
 };
 
