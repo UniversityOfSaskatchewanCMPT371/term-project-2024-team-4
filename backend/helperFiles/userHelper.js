@@ -143,4 +143,35 @@ const verifyPassword = async (userId, password) => {
 	}
 };
 
+/**
+ * Update existing password to new password
+ * Note: Verify password before this (in route)
+ * @param {*} userId the user for which to update the password
+ * @param {*} newPassword the password for which to replace the old password
+ * @returns {boolean}
+ * 	- false: if password was not succesfully changed
+ * 	- true: if password was succesfully changed
+ */
+const updatePassword = async (userId, newPassword) => {
+	const Users = await dataSource.getRepository(User);
+
+	try {
+		const user = await Users.findOneBy({ id: userId });
+		if (!user) {
+			logger.error(`User with ID ${userId} does not exist.`);
+			return false;
+		}
+
+		// hash new password and save
+		const hashedPassword = await bcrypt.hash(newPassword, 10);
+		user.password = hashedPassword;
+		await Users.save(user);
+		logger.info(`Password updated for user ID ${userId}`);
+		return true;
+	} catch (error) {
+		logger.error(`Error updating password for user ${userId}`);
+		return false;
+	}
+};
+
 module.exports = { registerUser, deleteUserByUsername };
