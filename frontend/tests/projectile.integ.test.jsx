@@ -28,7 +28,7 @@ test("ProjectilePoint renders correctly", async () => {
 			<AddProjectile />
 		</MemoryRouter>,
 	);
-	
+
 	expect(screen.getByLabelText("Description")).toBeInTheDocument();
 	expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
 });

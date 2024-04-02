@@ -45,15 +45,20 @@ const upload = multer({ storage });
  * @param {object} res - The HTTP response object.
  * @returns {object} - The HTTP response containing the created ProjectilePoint entity or an error message.
  */
-router.post("/", authenticateAdmin, upload.single("photo"), async (req, res) => {
-	console.log("Uploaded file:", req.file);
-	const newProjectilePoint =
-		await projectilePointsHelper.newProjectilePoint(req);
-	if (newProjectilePoint instanceof Error) {
-		return res.status(500).json({ error: newProjectilePoint.message });
-	}
-	return res.status(201).json(newProjectilePoint);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	upload.single("photo"),
+	async (req, res) => {
+		console.log("Uploaded file:", req.file);
+		const newProjectilePoint =
+			await projectilePointsHelper.newProjectilePoint(req);
+		if (newProjectilePoint instanceof Error) {
+			return res.status(500).json({ error: newProjectilePoint.message });
+		}
+		return res.status(201).json(newProjectilePoint);
+	},
+);
 
 /**
  * GET: Fetch ALL Projectile Points
@@ -106,17 +111,22 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: returns updated projectile point
  * 	Failure: Returns an error message related to the issue
  */
-router.put("/:id", authenticateAdmin, upload.single("photo"), async (req, res) => {
-	const projectilePoint =
-		await projectilePointsHelper.updateProjectilePoint(req);
-	if (projectilePoint === "ProjectilePoint not found") {
-		return res.json({ message: "ProjectilePoint not found" });
-	}
-	if (projectilePoint instanceof Error) {
-		return res.json({ error: projectilePoint.message });
-	}
-	return res.json(projectilePoint);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	upload.single("photo"),
+	async (req, res) => {
+		const projectilePoint =
+			await projectilePointsHelper.updateProjectilePoint(req);
+		if (projectilePoint === "ProjectilePoint not found") {
+			return res.json({ message: "ProjectilePoint not found" });
+		}
+		if (projectilePoint instanceof Error) {
+			return res.json({ error: projectilePoint.message });
+		}
+		return res.json(projectilePoint);
+	},
+);
 
 /**
  * DELETE: delete a single, EXISTING Projectile Point

@@ -270,18 +270,20 @@ const ViewProjectile = ({
 					</Button>
 					{user && user.userName && (
 						<Button onClick={handleOpenAlertDelete} color="primary">
-						Delete
-						</Button>)}
+							Delete
+						</Button>
+					)}
 					{user && user.userName && (
 						<Button
 							onClick={() => {
 								handleEdit();
 								handleClose();
-							}} 
+							}}
 							color="primary"
 						>
-						Edit
-						</Button>)}
+							Edit
+						</Button>
+					)}
 				</DialogActions>
 			</Dialog>
 			<div>

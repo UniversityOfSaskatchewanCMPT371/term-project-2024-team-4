@@ -382,7 +382,9 @@ router.patch("/:userId/password", async (req, res) => {
 		// Save updated user
 		await Users.save(user);
 		logger.info("Password successfully updated");
-		return res.status(200).json({ message: "Password successfully updated", user });
+		return res
+			.status(200)
+			.json({ message: "Password successfully updated", user });
 	} catch (error) {
 		logger.error("Internal server error:", error);
 		return res.status(500).json({ message: "Internal server error" });

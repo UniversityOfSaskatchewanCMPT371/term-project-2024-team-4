@@ -66,6 +66,7 @@ const AddProjectile = ({
 		if (openEdit) {
 			log.info("Updating a projectile point");
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const [name, setName] = useState(""); // remove once PP name column is removed in database
