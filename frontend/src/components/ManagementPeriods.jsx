@@ -200,20 +200,22 @@ export default function ManagementPeriods() {
 					)}
 				</Box>
 				{/* Deletion confirmation dialog */}
-				<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
-					<DialogTitle>Delete Period</DialogTitle>
-					<DialogContent>
-						<DialogContentText>
-							{formatPeriodDetails(deleteConfirmation.period)}
-						</DialogContentText>
-					</DialogContent>
-					<DialogActions>
-						<Button onClick={handleCancelDelete}>No</Button>
-						<Button onClick={handleConfirmDelete} color="primary">
-							Yes
-						</Button>
-					</DialogActions>
-				</Dialog>
+				{user && user.userName && (
+					<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
+						<DialogTitle>Delete Period</DialogTitle>
+						<DialogContent>
+							<DialogContentText>
+								{formatPeriodDetails(deleteConfirmation.period)}
+							</DialogContentText>
+						</DialogContent>
+						<DialogActions>
+							<Button onClick={handleCancelDelete}>No</Button>
+							<Button onClick={handleConfirmDelete} color="primary">
+								Yes
+							</Button>
+						</DialogActions>
+					</Dialog>
+				)}
 
 				<Box
 					sx={{
@@ -241,7 +243,9 @@ export default function ManagementPeriods() {
 					pageSize={5}
 					autoHeight
 					disableSelectionOnClick
-					components={{ Toolbar: GridToolbar }}
+					components={{
+						toolbar: user && user.userName ? GridToolbar : undefined,
+					}}
 				/>
 				<AddPeriodDialog
 					open={dialogOpen}

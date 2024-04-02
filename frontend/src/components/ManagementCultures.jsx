@@ -177,22 +177,24 @@ export default function ManagementCultures() {
 
 	return (
 		<Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-			<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
-				<DialogTitle>Delete Culture</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						{deleteConfirmation.culture
-							? `Are you sure you want to delete the culture with the following details: ${JSON.stringify(deleteConfirmation.culture, null, 2)}?`
-							: "Loading..."}
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleCancelDelete}>No</Button>
-					<Button onClick={handleConfirmDelete} color="primary">
-						Yes
-					</Button>
-				</DialogActions>
-			</Dialog>
+			{user && user.userName && (
+				<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
+					<DialogTitle>Delete Culture</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							{deleteConfirmation.culture
+								? `Are you sure you want to delete the culture with the following details: ${JSON.stringify(deleteConfirmation.culture, null, 2)}?`
+								: "Loading..."}
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleCancelDelete}>No</Button>
+						<Button onClick={handleConfirmDelete} color="primary">
+							Yes
+						</Button>
+					</DialogActions>
+				</Dialog>
+			)}
 			<Sidebar sx={{ width: 240, flexShrink: 0 }} />
 			<Box sx={{ flexGrow: 1, p: 3 }}>
 				{alert.open && (
@@ -232,7 +234,9 @@ export default function ManagementCultures() {
 					columns={columns}
 					pageSize={5}
 					autoHeight
-					components={{ Toolbar: GridToolbar }}
+					components={{
+						toolbar: user && user.userName ? GridToolbar : undefined,
+					}}
 				/>
 				<AddCultureDialog
 					open={dialogOpen}

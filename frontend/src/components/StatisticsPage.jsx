@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import log from "../logger.js";
 import http from "../../http.js";
 import Sidebar from "./Sidebar.jsx";
 import StatisticsModal from "./StatisticsModal.jsx";
-
+import { UserContext } from "../context/userContext.jsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
@@ -17,6 +17,7 @@ function StatisticsPage() {
 
 	const [data, setData] = useState([]);
 
+	const { user } = useContext(UserContext);
 	useEffect(() => {
 		/**
 		 * Gets all projectile points in the catalogue for display and places them in the state of the component
@@ -136,7 +137,9 @@ function StatisticsPage() {
 							columns={columns}
 							rows={rows1}
 							checkboxSelection
-							slots={{ toolbar: GridToolbar }}
+							slots={{
+								toolbar: user && user.userName ? GridToolbar : undefined,
+							}}
 						/>
 					</Box>
 				</Box>

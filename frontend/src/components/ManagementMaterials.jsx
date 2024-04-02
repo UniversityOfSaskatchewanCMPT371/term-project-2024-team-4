@@ -184,21 +184,23 @@ export default function ManagementMaterials() {
 
 	return (
 		<Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-			<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
-				<DialogTitle>Delete Material</DialogTitle>
-				<DialogContent>
-					<DialogContentText>
-						Are you sure you want to delete this material:{" "}
-						{deleteConfirmation.material?.name}?
-					</DialogContentText>
-				</DialogContent>
-				<DialogActions>
-					<Button onClick={handleCancelDelete}>No</Button>
-					<Button onClick={handleConfirmDelete} color="primary">
-						Yes
-					</Button>
-				</DialogActions>
-			</Dialog>
+			{user && user.userName && (
+				<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
+					<DialogTitle>Delete Material</DialogTitle>
+					<DialogContent>
+						<DialogContentText>
+							Are you sure you want to delete this material:{" "}
+							{deleteConfirmation.material?.name}?
+						</DialogContentText>
+					</DialogContent>
+					<DialogActions>
+						<Button onClick={handleCancelDelete}>No</Button>
+						<Button onClick={handleConfirmDelete} color="primary">
+							Yes
+						</Button>
+					</DialogActions>
+				</Dialog>
+			)}
 			<Sidebar sx={{ width: 240, flexShrink: 0 }} />
 			<Box sx={{ flexGrow: 1, p: 3 }}>
 				{alert.open && (
@@ -235,7 +237,9 @@ export default function ManagementMaterials() {
 					columns={columns}
 					pageSize={5}
 					autoHeight
-					components={{ Toolbar: GridToolbar }}
+					components={{
+						toolbar: user && user.userName ? GridToolbar : undefined,
+					}}
 				/>
 				<AddMaterialDialog
 					open={dialogOpen}
