@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useContext } from "react";
 import ProjectileList from "./ProjectileList";
+import SiteModal from "./SiteModal";
 import BaseLayout from "./BaseLayout";
 import http from "../../http.js";
 import SearchIcon from "@mui/icons-material/Search";
@@ -39,6 +40,7 @@ const Site = () => {
 	const [filterValue, setFilterValue] = useState("");
 
 	const [openAlertDelete, setOpenAlertDelete] = useState(false);
+	const [openEdit, setOpenEdit] = useState(false);
 
 	const { user } = useContext(UserContext);
 
@@ -64,7 +66,7 @@ const Site = () => {
 		}
 
 		fetchSite();
-	}, [siteID]);
+	}, [siteID, openEdit]);
 
 	/**
 	 * Updates the search value based on user input.
@@ -108,15 +110,22 @@ const Site = () => {
 	};
 
 	/**
-	 * Set delete projectile point alert modal visibility to false
+	 * Set delete site alert modal visibility to false
 	 */
 	const handleCloseAlertDelete = () => {
 		setOpenAlertDelete(false);
 	};
 
+	/**
+	 * Set edit projectile point modal visibility to true
+	 */
+	const handleEdit = () => {
+		setOpenEdit(true);
+	};
+
 	let navigate = useNavigate();
 	/**
-	 * Handles deletion of projectile point on click event
+	 * Handles deletion of site on click event
 	 */
 	const handleDelete = () => {
 		http
@@ -143,7 +152,7 @@ const Site = () => {
 					{user && user.userName && (
 						<Button
 							sx={{ paddingLeft: 0, minWidth: 0, justifyContent: "flex-start" }}
-							onClick={() => {}}
+							onClick={handleEdit}
 							color="primary"
 						>
 							Edit
@@ -218,6 +227,14 @@ const Site = () => {
 					</Grid>
 				</Grid>
 			</Grid>
+			{openEdit && (
+				<SiteModal
+					openEdit={openEdit}
+					setOpenEdit={setOpenEdit}
+					siteId={siteID}
+					siteName={siteName}
+				/>
+			)}
 			<Grid item xs={12}>
 				<ProjectileList
 					query={searchValue}

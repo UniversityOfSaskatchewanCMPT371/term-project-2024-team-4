@@ -32,11 +32,28 @@ import RegionModal from "./RegionModal";
  * @post Renders a form allowing users to create or edit site details. Communicates with backend services to update site information.
  * @returns {JSX.Element} The rendered modal component.
  */
-const SiteModal = ({ setOpen }) => {
+const SiteModal = ({
+	openAdd,
+	setOpenAdd,
+	openEdit,
+	setOpenEdit,
+	siteId,
+	siteName,
+}) => {
 	const [name, setSiteName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [regionID, setRegionID] = useState(0);
+
+	// Site selection and menu functionality
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [currentRegion, setCurrentRegion] = useState(null);
+	const [regions, setRegions] = useState([]);
+	const [selectedRegion, setSelectedRegion] = useState("");
+	const [editRegion, setEditRegion] = useState(false);
+	const [regionModalOpen, setRegionModalOpen] = useState(false);
+	const [selectedRegionID, setSelectedRegionID] = useState(null);
+	const [regionError, setRegionError] = useState("");
 
 	/**
 	 * Closes the modal and resets the parent's state.
@@ -45,7 +62,11 @@ const SiteModal = ({ setOpen }) => {
 	 * @post Sets the parent component's open state to false.
 	 */
 	const handleClose = () => {
-		setOpen(false);
+		if (openAdd) {
+			setOpenAdd(false);
+		} else {
+			setOpenEdit(false);
+		}
 	};
 
 	// Handlers for updating state based on form input
@@ -74,26 +95,50 @@ const SiteModal = ({ setOpen }) => {
 			regionId: regionID,
 		};
 
-		http
-			.post("/sites", newSite)
+		// set up API endpoint depending if modal is being used for add or edit
+		const requestUrl = `/sites/${siteId || ""}`;
+		const requestMethod = openAdd ? http.post : http.put;
+
+		requestMethod(requestUrl, newSite)
 			.then((response) => {
-				log.info("New site added successfully:", response.data);
+				if (openAdd) {
+					log.info("New site added successfully:", response.data);
+				} else {
+					log.info("Updated site successfully:", response.data);
+				}
 				handleClose();
 			})
 			.catch((error) => {
-				log.error("Error adding new site:", error);
+				if (openAdd) {
+					log.error("Error adding new site:", error);
+				} else {
+					log.error("Error updating site:", error);
+				}
+				handleClose();
 			});
+
+		log.info("Submitted:", newSite);
 	};
 
-	// Site selection and menu functionality
-	const [anchorEl, setAnchorEl] = useState(null);
-	const [currentRegion, setCurrentRegion] = useState(null);
-	const [regions, setRegions] = useState([]);
-	const [selectedRegion, setSelectedRegion] = useState("");
-	const [editRegion, setEditRegion] = useState(false);
-	const [regionModalOpen, setRegionModalOpen] = useState(false);
-	const [selectedRegionID, setSelectedRegionID] = useState(null);
-	const [regionError, setRegionError] = useState("");
+	/**
+	 * Pre-populate input fields for editing site
+	 */
+	useEffect(() => {
+		if (openEdit) {
+			http
+				.get(`/sites/${siteId}`)
+				.then((response) => {
+					log.info("Editing site: ", response.data);
+					setSiteName(response.data.name);
+					setDescription(response.data.description);
+					setLocation(response.data.location);
+					setSelectedRegion(response.data.region.name);
+				})
+				.catch((error) => {
+					log.error("Error fetching site: ", error);
+				});
+		}
+	}, [openEdit, siteId]);
 
 	/**
 	 * Fetches Site information from the backend when the component mounts.
@@ -187,7 +232,8 @@ const SiteModal = ({ setOpen }) => {
 				fullWidth
 				PaperProps={{ style: { maxHeight: "80vh" } }}
 			>
-				<DialogTitle>Create a Site</DialogTitle>
+				{openAdd && <DialogTitle>Create a Site</DialogTitle>}
+				{openEdit && <DialogTitle>Update {siteName} Site</DialogTitle>}
 				<DialogContent style={{ minHeight: "300px" }}>
 					<TextField
 						autoFocus
@@ -276,9 +322,16 @@ const SiteModal = ({ setOpen }) => {
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleSubmit} color="primary">
-						Add
-					</Button>
+					{openAdd && (
+						<Button onClick={handleSubmit} color="primary">
+							Add
+						</Button>
+					)}
+					{openEdit && (
+						<Button onClick={handleSubmit} color="primary">
+							Save Changes
+						</Button>
+					)}
 				</DialogActions>
 			</Dialog>
 			{editRegion && (

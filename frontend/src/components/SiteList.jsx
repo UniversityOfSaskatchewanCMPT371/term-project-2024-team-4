@@ -42,7 +42,7 @@ const Item = styled(Paper)(({ theme }) => ({
  * @returns {JSX.Element} The rendered component with a list of site cards.
  */
 export default function SiteList({ query }) {
-	const [open, setOpen] = useState(false); // Controls the visibility of the SiteModal.
+	const [openAdd, setOpenAdd] = useState(false); // Controls the visibility of the SiteModal.
 	const [data, setData] = useState([]); // Stores the list of sites.
 	const { user } = useContext(UserContext);
 	/**
@@ -52,7 +52,7 @@ export default function SiteList({ query }) {
 	 * @post Sets the 'open' state to true, making the SiteModal visible.
 	 */
 	const handleClick1 = () => {
-		setOpen(true);
+		setOpenAdd(true);
 		console.log("Add card clicked!");
 	};
 
@@ -79,7 +79,7 @@ export default function SiteList({ query }) {
 			.then((response) => response.json())
 			.then((json) => setData(json))
 			.catch((error) => console.error("Error fetching data:", error));
-	}, [open]); // Depend on 'open' to refetch when the modal is closed.
+	}, [openAdd]); // Depend on 'open' to refetch when the modal is closed.
 
 	/**
 	 * Filters the fetched sites data based on the search query.
@@ -131,7 +131,7 @@ export default function SiteList({ query }) {
 					</Box>
 				</Grid>
 			</Item>
-			{open && <SiteModal setOpen={setOpen} />}
+			{openAdd && <SiteModal openAdd={openAdd} setOpenAdd={setOpenAdd} />}
 		</div>
 	);
 }
