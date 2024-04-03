@@ -35,13 +35,13 @@ function StatisticsPage() {
 	//Converts all the points into objects with fields for every column in the data grid
 	const rows1 = data.map((item) => ({
 		id: item.id,
-		site: item.site.name,
-		location: item.location,
-		culture: item.culture.name,
-		bladeShape: item.bladeShape.name,
-		baseShape: item.baseShape.name,
-		haftingShape: item.haftingShape.name,
-		crossSection: item.crossSection.name,
+		site: item.site ? item.site.name : "Indeterminate",
+		location: item.location ? item.location : "Indeterminate",
+		culture: item.culture ? item.culture.name : "Indeterminate",
+		bladeShape: item.bladeShape ? item.bladeShape.name : "Indeterminate",
+		baseShape: item.baseShape ? item.baseShape.name : "Indeterminate",
+		haftingShape: item.haftingShape ? item.haftingShape.name : "Indeterminate",
+		crossSection: item.crossSection ? item.crossSection.name : "Indeterminate",
 	}));
 
 	//Holds all the information for the header row of the table and defines the fields for the data from projectile points.
