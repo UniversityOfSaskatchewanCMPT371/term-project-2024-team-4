@@ -45,6 +45,7 @@ const ViewProjectile = ({
 	const [baseShapeName, setBaseShapeName] = useState("");
 	const [haftingShapeName, setHaftingShapeName] = useState("");
 	const [crossSectionName, setCrossSectionName] = useState("");
+	const [materialName, setMaterialName] = useState("");
 	const [openAlertDelete, setOpenAlertDelete] = useState(false);
 	const { user } = useContext(UserContext);
 	/**
@@ -138,6 +139,9 @@ const ViewProjectile = ({
 
 				if (response.data.crossSection !== null) {
 					setCrossSectionName(response.data.crossSection.name);
+				}
+				if (response.data.material !== null) {
+					setMaterialName(response.data.material.name);
 				}
 			})
 			.catch((error) => {
@@ -259,6 +263,11 @@ const ViewProjectile = ({
 								Hafting Shape
 							</Typography>
 							<Typography variant="body1">{haftingShapeName}</Typography>
+							{/* ------------  Material ------------- */}
+							<Typography sx={{ mt: 2 }} variant="h6">
+								Material
+							</Typography>
+							<Typography variant="body1">{materialName}</Typography>
 						</Grid>
 					</Grid>
 				</DialogContent>

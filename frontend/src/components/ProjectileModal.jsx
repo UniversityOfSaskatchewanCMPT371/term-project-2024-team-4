@@ -303,6 +303,7 @@ const AddProjectile = ({
 			formData.append("baseShapeId", baseShapeID);
 			formData.append("haftingShapeId", haftingShapeID);
 			formData.append("crossSectionId", crossSectionID);
+			formData.append("materialId", materialID);
 
 			// set up API endpoint depending if modal is being used for add or edit
 			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
@@ -449,6 +450,10 @@ const AddProjectile = ({
 
 					if (response.data.crossSection !== null) {
 						setSelectedCrossSection(response.data.crossSection.name);
+					}
+
+					if (response.data.material !== null) {
+						setSelectedMaterial(response.data.material.name);
 					}
 				})
 				.catch((error) => {
