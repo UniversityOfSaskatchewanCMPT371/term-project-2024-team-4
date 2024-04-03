@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -70,6 +77,11 @@ export default function CrossSectionModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedCrossSectionID
+						? "Edit Cross Section"
+						: "Add New Cross Section"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="crossSection"
@@ -78,12 +90,16 @@ export default function CrossSectionModal({
 						fullWidth
 						value={crossSection} // Use value instead of defaultValue
 						onChange={(e) => setCrossSection(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

@@ -5,6 +5,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
+	DialogActions,
 } from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
@@ -123,10 +124,15 @@ export default function MaterialModal({
 							</option>
 						))}
 					</TextField>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

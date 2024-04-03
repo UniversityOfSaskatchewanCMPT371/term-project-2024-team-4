@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -70,6 +77,9 @@ export default function BladeShapeModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedBladeShapeID ? "Edit Blade Shape" : "Add New Blade Shape"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="bladeShape"
@@ -78,12 +88,16 @@ export default function BladeShapeModal({
 						fullWidth
 						value={bladeShape} // Use value instead of defaultValue
 						onChange={(e) => setbladeShape(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

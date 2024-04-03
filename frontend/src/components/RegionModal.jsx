@@ -5,6 +5,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
+	DialogActions,
 } from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
@@ -113,15 +114,15 @@ export default function RegionModal({
 						onChange={(e) => setDescription(e.target.value)}
 						margin="normal"
 					/>
-					<Button
-						onClick={handleSave}
-						variant="contained"
-						color="primary"
-						style={{ marginTop: "20px" }}
-					>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

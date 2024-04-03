@@ -5,6 +5,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
+	DialogActions,
 } from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
@@ -162,23 +163,15 @@ export default function PeriodModal({
 						helperText={errors.endDate || errors.dateRange}
 						margin="normal"
 					/>
-					<Button
-						onClick={handleSave}
-						variant="contained"
-						color="primary"
-						style={{ marginTop: "20px" }}
-					>
-						Save
-					</Button>
-					<Button
-						onClick={handleClose}
-						variant="outlined"
-						color="primary"
-						style={{ marginTop: "20px", marginLeft: "10px" }}
-					>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-				</DialogContent>
+					<Button onClick={handleSave} color="primary">
+						Save
+					</Button>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);
