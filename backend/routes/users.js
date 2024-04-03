@@ -134,11 +134,8 @@ router.post("/logout", authenticateAdmin, async (req, res) => {
 router.get("/", authenticateAdmin, async (req, res) => {
 	// check if request (token) has user
 	if (req.user) {
-		if (process.env.NODE_ENV === "development") {
-			return res.json(req.user);
-		} else {
-			return res.json({ message: "User authenticated succesfully" });
-		}
+		// send back shallow user data
+		return res.json(req.user);
 	} else {
 		// fallback if req.user does not exist
 		logger.warn("No token provided or token is invalid");
