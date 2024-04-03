@@ -160,7 +160,7 @@ router.get("/allUsers", authenticateAdmin, async (req, res) => {
 	try {
 		const Users = await dataSource.getRepository(User);
 		const users = await Users.find({
-			select: ["id", "userName", "role"],
+			select: ["id", "userName", "role", "isDefaultUser", "isActive"],
 		});
 
 		res.status(200).json(users);
@@ -196,8 +196,10 @@ router.patch("/changeUsername", authenticateAdmin, async (req, res) => {
 		const { newUsername, password } = req.body;
 
 		/// if password matches, change username
-		if (verifyPassword(userId, password)) {
-			if (!updateUsername(userId, newUsername)) {
+		const passwordMatches = await verifyPassword(userId, password);
+		if (passwordMatches) {
+			const usernameUpdated = await updateUsername(userId, newUsername);
+			if (!usernameUpdated) {
 				// if update failed for whatever reason
 				logger.error("Update username failed midway");
 				return res.status(500).json({ message: "Username update failed." });
@@ -245,8 +247,10 @@ router.patch("/changePassword", authenticateAdmin, async (req, res) => {
 		const { oldPassword, newPassword } = req.body;
 
 		// if old password passes verification, then replace with new password
-		if (verifyPassword(userId, oldPassword)) {
-			if (!updatePassword(userId, newPassword)) {
+		const passwordMatches = await verifyPassword(userId, oldPassword);
+		if (passwordMatches) {
+			const passwordUpdated = await updatePassword(userId, newPassword);
+			if (!passwordUpdated) {
 				// if update failed for whatever reason
 				logger.error("Password update failed.");
 				return res.status(500).json({ message: "Password update failed." });
