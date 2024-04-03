@@ -3,7 +3,6 @@
 import { useEffect, useState, useContext } from "react";
 import http from "../../http.js";
 import log from "../logger.js";
-import { baseURL } from "../../http";
 import {
 	Button,
 	Dialog,
