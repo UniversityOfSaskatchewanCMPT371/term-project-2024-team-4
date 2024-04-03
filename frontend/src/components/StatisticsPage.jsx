@@ -117,11 +117,6 @@ function StatisticsPage() {
 				>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
-							<Typography color="text.primary">
-								Breadcrumbs / Navigation / Component / Placeholder
-							</Typography>
-						</Grid>
-						<Grid item xs={12}>
 							<Button variant="contained" onClick={openModal}>
 								Generate Statistics
 							</Button>
