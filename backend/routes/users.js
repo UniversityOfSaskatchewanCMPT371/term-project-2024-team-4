@@ -147,6 +147,29 @@ router.get("/", authenticateAdmin, async (req, res) => {
 });
 
 /**
+ * GET API for retrieving all users
+ * Fetches a list of ALL users in the system and: [id, username, role]
+ * NOTE: Only works for intended app (small amount of users); if > 100, should update function
+ * @precond
+ * 	- User must be logged in (has valid JWToken)
+ * @postcond
+ * 	- Success: 200 OK-- gets all users id, role, and usernames
+ * 	- Failure: 500 Internal Server Error-- something went wrong in the server
+ */
+router.get("/allUsers", authenticateAdmin, async (req, res) => {
+	try {
+		const Users = await dataSource.getRepository(User);
+		const users = await Users.find({
+			select: ["id", "userName", "role"],
+		});
+
+		res.status(200).json(users);
+	} catch (error) {
+		console.error("Error fetching users:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+/**
  * PATCH API for changing usernames
  * Allows authenticated admin users to change their username
  *
