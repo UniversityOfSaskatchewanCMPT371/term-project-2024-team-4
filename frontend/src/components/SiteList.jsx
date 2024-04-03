@@ -29,6 +29,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	padding: theme.spacing(1),
 	textAlign: "center",
 	color: theme.palette.text.secondary,
+	minHeight: "700px !important",
 }));
 
 /**
@@ -90,16 +91,23 @@ export default function SiteList({ query }) {
 
 	return (
 		<div>
-			<Item variant="outlined" sx={{ mt: "40px", minHeight: "500px" }}>
-				<Grid maxWidth="md" style={{ padding: 30 }}>
+			<Item variant="outlined" sx={{ my: "40px" }}>
+				<Grid style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>
 							{user && user.userName && (
-								<Grid item xs={12} sm={6} md={3}>
+								<Grid item xl={2}>
 									<ButtonBase onClick={handleClick1}>
-										<Card sx={{ minWidth: 170, minHeight: 150 }}>
+										<Card
+											sx={{
+												minWidth: "12rem",
+												minHeight: "12rem",
+												alignContent: "center",
+											}}
+										>
 											<CardContent style={{ textAlign: "center" }}>
 												<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
+												<Typography variant="body2">Add Site</Typography>
 											</CardContent>
 										</Card>
 									</ButtonBase>
@@ -107,16 +115,25 @@ export default function SiteList({ query }) {
 							)}
 							{filteredData &&
 								filteredData.map((item) => (
-									<Grid item xs={12} sm={6} md={3} key={item.id}>
+									<Grid item xl={2} key={item.id}>
 										<ButtonBase onClick={handleClick2(item)}>
 											<Link to="/site" state={{ info: item }}>
-												<Card sx={{ minWidth: 170, minHeight: 150 }}>
+												<Card
+													sx={{
+														minWidth: "12rem",
+														minHeight: "12rem",
+														alignContent: "center",
+													}}
+												>
 													<CardContent>
 														<Typography variant="h5" component="h3">
 															{item.name}
 														</Typography>
 														<Typography color="textSecondary" gutterBottom>
-															{item.location}
+															{/* Limit description characters to prevent text overflow */}
+															{item.location.length <= 15
+																? item.location
+																: item.location.substr(0, 15) + "..."}
 														</Typography>
 														<Typography variant="body2" component="p">
 															{item.id}
