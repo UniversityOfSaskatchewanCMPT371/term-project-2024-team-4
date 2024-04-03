@@ -48,6 +48,7 @@ Behavior:
 const SettingsPage = () => {
 	// define vars
 	const [catalogueName, setCatalogueName] = useState("");
+	const [userInfo, setUserInfo] = useState({ username: "", role: "", id: "" });
 	const [changeUsernameModalVisible, setChangeUsernameModalVisible] =
 		useState(false);
 	const [changePasswordModalVisible, setChangePasswordModalVisible] =
@@ -55,7 +56,7 @@ const SettingsPage = () => {
 
 	const ip = window.location.host;
 
-	// fetch var data from API
+	// fetch catalogue data from API
 	useEffect(() => {
 		http
 			.get("/catalogues/1") // NOTE: HARDCODED (ONLY 1 CATALOGUE)
@@ -64,6 +65,23 @@ const SettingsPage = () => {
 			})
 			.catch((error) => {
 				log.error("Error fetching Catalogue data:", error);
+			});
+	}, []);
+
+	// fetch user data from API
+	useEffect(() => {
+		http
+			.get("/users")
+			.then((response) => {
+				const userData = response.data;
+				setUserInfo({
+					username: userData.username,
+					role: userData.role,
+					id: userData.id,
+				});
+			})
+			.catch((error) => {
+				log.error("Error fetching user info:", error);
 			});
 	}, []);
 
@@ -193,29 +211,71 @@ const SettingsPage = () => {
 
 					{/* Right Side Grid: */}
 					<Grid item xs={12} md={5}>
-						{/* Section 1: Placeholder*/}
-						<Typography variant="h5" fontWeight={"medium"} gutterBottom>
-							Lorem
+						{/* Section 1: User Info */}
+						<Typography variant="h5" fontWeight="medium" gutterBottom>
+							User Info
 						</Typography>
 						<Box
 							sx={{
 								border: 1,
 								borderColor: "grey.300",
 								borderRadius: "16px",
-								padding: 3,
+								p: 3,
 								bgcolor: "background.paper",
 								marginBottom: 2,
-								gap: 2,
+								display: "flex",
+								flexDirection: "column",
 							}}
 						>
-							<Typography variant="body1">
-								Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-							</Typography>
-							<Button variant="contained" sx={{ marginTop: 2 }}>
-								Ipsum
-							</Button>
+							<Box>
+								<Typography
+									variant="subtitle1"
+									component="span"
+									fontWeight="medium"
+								>
+									User ID:
+								</Typography>
+								<Typography
+									variant="body1"
+									component="span"
+									sx={{ marginLeft: 1 }}
+								>
+									{userInfo.id}
+								</Typography>
+							</Box>
+							<Box>
+								<Typography
+									variant="subtitle1"
+									component="span"
+									fontWeight="medium"
+								>
+									Username:
+								</Typography>
+								<Typography
+									variant="body1"
+									component="span"
+									sx={{ marginLeft: 1 }}
+								>
+									{userInfo.username}
+								</Typography>
+							</Box>
+							<Box>
+								<Typography
+									variant="subtitle1"
+									component="span"
+									fontWeight="medium"
+								>
+									Role:
+								</Typography>
+								<Typography
+									variant="body1"
+									component="span"
+									sx={{ marginLeft: 1 }}
+								>
+									{userInfo.role}
+								</Typography>
+							</Box>
 						</Box>
-
 						{/* Section 2: Change Credentials*/}
 						<Typography
 							variant="h5"

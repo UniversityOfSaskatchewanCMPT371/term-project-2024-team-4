@@ -36,23 +36,19 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 		}
 
 		try {
-			const response = await http.post("/users/check-password", {
-				password,
+			const response = await http.patch("/users/changePassword", {
+				oldPassword: password,
+				newPassword: newPassword,
 			});
-			log.info("New Password entered: " + password);
+
+			log.info("Password change request made");
 
 			if (response.status === 200) {
-				const response = await http.patch("/users/1/password", {
-					password: newPassword,
-				});
-
-				log.info("New Password entered: " + newPassword);
-
-				if (response.status === 200) {
-					alert("Password Changed successful");
-					closeModal();
-					window.location.reload();
-				}
+				alert("Password Changed succesfully");
+				closeModal();
+				window.location.reload();
+			} else {
+				alert("An unexpected status was received. Please try again later.");
 			}
 		} catch (error) {
 			if (error.response) {
@@ -117,38 +113,42 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 			>
 				<DialogTitle>Change Password</DialogTitle>
 				<DialogContent>
-					<DialogContentText>Enter Old Password</DialogContentText>
+					<DialogContentText>Enter Original Password</DialogContentText>
 					<TextField
 						autoFocus
 						required
 						margin="dense"
 						id="adminoldusername"
 						name="oldpassword"
-						placeholder="oldpassword"
-						type="string"
+						placeholder="Original/Old Password"
+						type="password"
 						fullWidth
 						variant="outlined"
 						onChange={oldPassword}
 					/>
-					<DialogContentText> Enter New password</DialogContentText>
+					<DialogContentText marginTop={"1rem"}>
+						Enter New Password
+					</DialogContentText>
 					<TextField
 						required
 						margin="dense"
 						id="adminpassword"
 						name="password"
-						placeholder="Password"
+						placeholder="New Password"
 						type="password"
 						fullWidth
 						variant="outlined"
 						onChange={passwordChanged}
 					/>
-					<DialogContentText> Confirm Your new password</DialogContentText>
+					<DialogContentText marginTop={"1rem"}>
+						Confirm New Password
+					</DialogContentText>
 					<TextField
 						required
 						margin="dense"
 						id="adminconfirmpassword"
 						name="Confirmpassword"
-						placeholder="Confirm Password"
+						placeholder="Confirm New Password"
 						type="password"
 						fullWidth
 						variant="outlined"
