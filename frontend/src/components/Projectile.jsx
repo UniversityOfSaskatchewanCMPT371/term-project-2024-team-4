@@ -81,9 +81,8 @@ const ViewProjectile = ({
 	 * Handles deletion of projectile point on click event
 	 */
 	const handleDelete = () => {
-		fetch(`${baseURL}/projectilePoints/${projectilePointId}`, {
-			method: "DELETE",
-		})
+		http
+			.delete(`projectilePoints/${projectilePointId}`)
 			.then(() => {
 				log.info("Successfully deleted projectile point");
 				handleCloseAlertDelete();
