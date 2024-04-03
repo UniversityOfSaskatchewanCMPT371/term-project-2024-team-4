@@ -10,6 +10,8 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 import {
 	Avatar,
+	Alert,
+	Snackbar,
 	Typography,
 	Grid,
 	Button,
@@ -22,32 +24,13 @@ import {
 } from "@mui/material";
 
 /**
- * Component: SettingsPage
-
-Dependencies:
-- React
-- useState
-- useEffect
-- Container
-- Typography
-- Button
-- LockIcon
-- ChangeUsernameModal
-- ChangePasswordModal
-- Sidebar
-- http (HTTP client for making requests)
-- logger (for logging)
-
-Behavior:
-- Fetches the current username from the server when the component mounts.
-- Provides buttons to open modal dialogs for changing username and password.
-- Displays the current username and a button to change the username.
-- Displays a button to change the password, accompanied by a lock icon.
-- Modals for changing username and password are rendered conditionally based on state variables.
-- Logs errors encountered during fetching username.
-- Handles user interactions to open and close modal dialogs for changing username and password.
-- Ensures proper layout and styling using MUI components.
- * 
+ * Settings Page
+ * Includes Sections:
+ * [Title, Catalogue Name, IP, Profile Picture]
+ * [Role Management] (non-functional)
+ * [Reset to Default Credentials]
+ * [User Info]
+ * [Change Credentials (username/password)]
  */
 const SettingsPage = () => {
 	// define vars
@@ -55,6 +38,8 @@ const SettingsPage = () => {
 	const [editingCatalogueName, setEditingCatalogueName] = useState(false); 
 	const [newCatalogueName, setNewCatalogueName] = useState(""); 
 	const [userInfo, setUserInfo] = useState({ username: "", role: "", id: "" });
+
+	// define modals
 	const [changeUsernameModalVisible, setChangeUsernameModalVisible] =
 		useState(false);
 	const [changePasswordModalVisible, setChangePasswordModalVisible] =
@@ -62,6 +47,16 @@ const SettingsPage = () => {
 	const [Cataloguedescription, setDescriptionName] = useState("");
 	const [newCatalogueDescription, setNewCatalogueDescription] = useState(""); 
 	const [editingCatalogueDescription, setEditingCatalogueDescription] = useState(false); 
+
+	// define alert
+	const [alertInfo, setAlertInfo] = useState({
+		open: false,
+		message: "",
+		severity: "success",
+	});
+
+	// define functionals
+	const [refreshUserInfo, setRefreshUserInfo] = useState(0);
 
 	const ip = window.location.host;
 
@@ -93,7 +88,40 @@ const SettingsPage = () => {
 			.catch((error) => {
 				log.error("Error fetching user info:", error);
 			});
-	}, []);
+	}, [refreshUserInfo]);
+
+	// route to reset default credentials
+	const resetDefaultCredentials = () => {
+		http
+			.patch("/users/resetDefaultUser")
+			.then((response) => {
+				if (response.status === 200) {
+					setAlertInfo({
+						open: true,
+						message: "Default credentials have been reset successfully.",
+						severity: "success",
+					});
+					log.info("Credentials Reset, received 200 OK response");
+				} else {
+					setAlertInfo({
+						open: true,
+						message: "Something unexpected occurred. Please try again.",
+						severity: "info",
+					});
+					log.warn("Credential Reset received an unexpected response");
+				}
+				// fetch user data again upon change
+				setRefreshUserInfo((count) => count + 1);
+			})
+			.catch((error) => {
+				setAlertInfo({
+					open: true,
+					message: "Failed to reset to default credentials.",
+					severity: "error",
+				});
+				log.error("Failed to reset to default credentials:", error);
+			});
+	};
 
 	const handleEditCatalogueName = () => {
 		setEditingCatalogueName(true);
@@ -317,7 +345,11 @@ const SettingsPage = () => {
 							>
 								Reset to Default Credentials
 							</Typography>
-							<Button variant="contained" sx={{ order: { xs: 1, sm: 2 } }}>
+							<Button
+								variant="contained"
+								sx={{ order: { xs: 1, sm: 2 } }}
+								onClick={resetDefaultCredentials}
+							>
 								Reset to Default
 							</Button>
 						</Box>
@@ -434,6 +466,22 @@ const SettingsPage = () => {
 					closeModal={closeChangePasswordModal}
 				/>
 			</Box>
+
+			{/* To show alerts on the middle-bottom of the screen */}
+			<Snackbar
+				open={alertInfo.open}
+				autoHideDuration={3000}
+				onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+				anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+			>
+				<Alert
+					onClose={() => setAlertInfo({ ...alertInfo, open: false })}
+					severity={alertInfo.severity}
+					sx={{ width: "100%" }}
+				>
+					{alertInfo.message}
+				</Alert>
+			</Snackbar>
 		</BaseLayout>
 	);
 };

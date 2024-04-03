@@ -10,6 +10,7 @@ const {
 	updateUsername,
 	updatePassword,
 	deleteUserById,
+	resetDefaultUserCredentials,
 } = require("../helperFiles/userHelper.js");
 const { logger } = require("../config/logger");
 require("dotenv").config();
@@ -263,6 +264,45 @@ router.patch("/changePassword", authenticateAdmin, async (req, res) => {
 		return res
 			.status(500)
 			.json({ message: "Internal server error upon changing password" });
+	}
+});
+
+/**
+ * PATCH API for resetting the default user's credentials
+ * NOTE: this ONLY changes the DEFAULT USER; CAN BE ACCESSED BY ANY USER
+ * IF MULTIPLE CONCURRENT USERS ARE ADDED, THIS NEEDS TO BE MODIFIED
+ */
+router.patch("/resetDefaultUser", authenticateAdmin, async (req, res) => {
+	// fallback if req.user does not exist
+	if (!req.user) {
+		logger.warn(
+			"Authentication middleware did not respond with user content from the JWToken",
+		);
+		return res.status(401).json({ message: "Unauthorized access" });
+	}
+
+	try {
+		const wasReset = await resetDefaultUserCredentials();
+		if (wasReset) {
+			// should be logged by the helper function
+			return res
+				.status(200)
+				.json({ message: "Default User credentials was succesfully updated" });
+		} else {
+			// should be logged by the helper function
+			return res
+				.status(500)
+				.json({ message: "Server failed to reset default user credentials" });
+		}
+	} catch (error) {
+		logger.error(
+			"Caught an error upon trying to reset user credentials: ",
+			error,
+		);
+		return res.status(500).json({
+			message:
+				"Internal server error upon trying to reset default user credentials",
+		});
 	}
 });
 
