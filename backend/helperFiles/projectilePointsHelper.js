@@ -155,6 +155,7 @@ async function getProjectilePointFromId(req) {
 async function updateProjectilePoint(req) {
 	const { id } = req.params;
 	console.log("Updating Projectile Point Id: " + id);
+
 	const {
 		name,
 		location,
