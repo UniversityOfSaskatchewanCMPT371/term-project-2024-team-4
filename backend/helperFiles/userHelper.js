@@ -208,6 +208,59 @@ const updateUsername = async (userId, newUsername) => {
 	}
 };
 
+/**
+ * Resets the credentials of the user tagged `isDefaultUser`
+ * Credentials specified in .ENV File
+ * @precond
+ * 	- There exists a user flagged as isDefaultUser in the database
+ * 	- The ENV File contains two variables: DEFAULT_USERNAME, DEFAULT_PASSWORD
+ * @postcond
+ * 	- Default user's credentials are reset to the values specified in the database
+ * @returns {boolean}
+ * 	- false: if the reset could not be carried out
+ * 	- true: if default user's credentials were succesfully reset
+ */
+const resetDefaultUserCredentials = async () => {
+	// first, find the user
+	const Users = await dataSource.getRepository(User);
+	const defaultUser = await Users.findOne({
+		where: { isDefaultUser: true },
+	});
+
+	if (!defaultUser) {
+		logger.error(
+			"Trying to reset default credentials: Default user was not found in the database",
+		);
+		return false;
+	}
+
+	// retrieve default credentials from .ENV
+	const defaultUsername = process.env.DEFAULT_USERNAME;
+	const defaultPassword = process.env.DEFAULT_PASSWORD;
+	if (!defaultUsername || !defaultPassword) {
+		logger.error(
+			"Trying to reset default credentials: Default credentials are not set in .env file.",
+		);
+		return false;
+	}
+
+	// otherwise, carry on with the reset
+	const hashedPassword = await bcrypt.hash(defaultPassword, 10);
+
+	// update with new credentials
+	defaultUser.userName = defaultUsername;
+	defaultUser.password = hashedPassword;
+
+	try {
+		await Users.save(defaultUser);
+		logger.info(`Default user credentials reset to ${defaultUsername}`);
+		return true;
+	} catch (error) {
+		logger.error("Failed to reset default user credentials.", error);
+		return false;
+	}
+};
+
 module.exports = {
 	registerUser,
 	deleteUserByUsername,
@@ -215,4 +268,5 @@ module.exports = {
 	verifyPassword,
 	updatePassword,
 	updateUsername,
+	resetDefaultUserCredentials,
 };
