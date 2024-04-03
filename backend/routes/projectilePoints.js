@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+const authenticateAdmin = require("../middleware/authenticate.js");
 /**
  * Middleware for handling file upload using Multer.
  * @module multerMiddleware
@@ -44,15 +45,20 @@ const upload = multer({ storage });
  * @param {object} res - The HTTP response object.
  * @returns {object} - The HTTP response containing the created ProjectilePoint entity or an error message.
  */
-router.post("/", upload.single("photo"), async (req, res) => {
-	console.log("Uploaded file:", req.file);
-	const newProjectilePoint =
-		await projectilePointsHelper.newProjectilePoint(req);
-	if (newProjectilePoint instanceof Error) {
-		return res.status(500).json({ error: newProjectilePoint.message });
-	}
-	return res.status(201).json(newProjectilePoint);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	upload.single("photo"),
+	async (req, res) => {
+		console.log("Uploaded file:", req.file);
+		const newProjectilePoint =
+			await projectilePointsHelper.newProjectilePoint(req);
+		if (newProjectilePoint instanceof Error) {
+			return res.status(500).json({ error: newProjectilePoint.message });
+		}
+		return res.status(201).json(newProjectilePoint);
+	},
+);
 
 /**
  * GET: Fetch ALL Projectile Points
@@ -100,33 +106,39 @@ router.get("/:id", async (req, res) => {
  * 					req body contains same details as when creating a Projectile Point
  * @param {*} res - Response to client
  * @precond specified Projectile Point ID exists in the database
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: returns updated projectile point
  * 	Failure: Returns an error message related to the issue
  */
-router.put("/:id", upload.single("photo"), async (req, res) => {
-	console.log("Uploaded file:", req.file);
-	const projectilePoint =
-		await projectilePointsHelper.updateProjectilePoint(req);
-	if (projectilePoint === "ProjectilePoint not found") {
-		return res.json({ message: "ProjectilePoint not found" });
-	}
-	if (projectilePoint instanceof Error) {
-		return res.json({ error: projectilePoint.message });
-	}
-	return res.json(projectilePoint);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	upload.single("photo"),
+	async (req, res) => {
+		const projectilePoint =
+			await projectilePointsHelper.updateProjectilePoint(req);
+		if (projectilePoint === "ProjectilePoint not found") {
+			return res.json({ message: "ProjectilePoint not found" });
+		}
+		if (projectilePoint instanceof Error) {
+			return res.json({ error: projectilePoint.message });
+		}
+		return res.json(projectilePoint);
+	},
+);
 
 /**
  * DELETE: delete a single, EXISTING Projectile Point
  * @param {*} req - req URL parameter contains a valid Projectile POint ID
  * @param {*} res - response to client
  * @precond specified Projectile Point ID exists in the database
+ * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
  * @postcond
  * 	Succesful: ProjectilePoint is deleted; empty response is sent
  *  Failure: Returns an error message related to the issue
  */
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateAdmin, async (req, res) => {
 	const result = await projectilePointsHelper.deleteProjectilePoint(req);
 	if (result === "ProjectilePoint not found") {
 		return res.json({ message: "ProjectilePoint not found" });

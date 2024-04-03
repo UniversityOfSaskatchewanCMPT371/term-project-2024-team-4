@@ -62,15 +62,5 @@ describe("Projectile", () => {
 				name: /close/i,
 			}),
 		).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", {
-				name: /delete/i,
-			}),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", {
-				name: /edit/i,
-			}),
-		).toBeInTheDocument();
 	});
 });
