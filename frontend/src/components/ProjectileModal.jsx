@@ -247,9 +247,16 @@ const AddProjectile = ({
 	};
 
 	const handlePhotoFilePathChange = (event) => {
-		log.info(event.target.files[0].name);
-		if (event.target.files[0].name.length !== 0) {
-			setPhotoFilePath(event.target.files[0]);
+		const file = event.target.files[0];
+		const allowedTypes = ["image/jpeg", "image/png", "image/gif"]; // Add more if needed
+		if (file && allowedTypes.includes(file.type)) {
+			log.info(file.name);
+			setPhotoFilePath(file);
+		} else {
+			// Handle invalid file type
+			alert("Please select a valid image file (JPEG, PNG, GIF).");
+			// Clear the input field if necessary
+			event.target.value = "";
 		}
 	};
 
