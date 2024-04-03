@@ -20,7 +20,7 @@ import {
 	ListItemText,
 	Box,
 	TextField,
-	IconButton
+	IconButton,
 } from "@mui/material";
 
 /**
@@ -35,8 +35,8 @@ import {
 const SettingsPage = () => {
 	// define vars
 	const [catalogueName, setCatalogueName] = useState("");
-	const [editingCatalogueName, setEditingCatalogueName] = useState(false); 
-	const [newCatalogueName, setNewCatalogueName] = useState(""); 
+	const [editingCatalogueName, setEditingCatalogueName] = useState(false);
+	const [newCatalogueName, setNewCatalogueName] = useState("");
 	const [userInfo, setUserInfo] = useState({ username: "", role: "", id: "" });
 
 	// define modals
@@ -45,8 +45,9 @@ const SettingsPage = () => {
 	const [changePasswordModalVisible, setChangePasswordModalVisible] =
 		useState(false);
 	const [Cataloguedescription, setDescriptionName] = useState("");
-	const [newCatalogueDescription, setNewCatalogueDescription] = useState(""); 
-	const [editingCatalogueDescription, setEditingCatalogueDescription] = useState(false); 
+	const [newCatalogueDescription, setNewCatalogueDescription] = useState("");
+	const [editingCatalogueDescription, setEditingCatalogueDescription] =
+		useState(false);
 
 	// define alert
 	const [alertInfo, setAlertInfo] = useState({
@@ -130,14 +131,16 @@ const SettingsPage = () => {
 
 	const handleSaveCatalogueName = () => {
 		http
-			.put("/catalogues/1", { name: newCatalogueName, description: Cataloguedescription  })
+			.put("/catalogues/1", {
+				name: newCatalogueName,
+				description: Cataloguedescription,
+			})
 			.then(() => {
 				setCatalogueName(newCatalogueName);
 				setEditingCatalogueName(false);
 			})
 			.catch((error) => {
 				console.error("Error updating catalogue name:", error);
-				
 			});
 	};
 
@@ -148,17 +151,19 @@ const SettingsPage = () => {
 
 	const handleSaveCatalogueDescription = () => {
 		http
-			.put("/catalogues/1", { name: catalogueName , description: newCatalogueDescription  })
+			.put("/catalogues/1", {
+				name: catalogueName,
+				description: newCatalogueDescription,
+			})
 			.then(() => {
 				setDescriptionName(newCatalogueDescription);
 				setEditingCatalogueDescription(false);
 			})
 			.catch((error) => {
 				console.error("Error updating catalogue name:", error);
-				
 			});
 	};
-	
+
 	// other states
 	const closeChangeUsernameModal = () => {
 		setChangeUsernameModalVisible(false);
@@ -200,7 +205,7 @@ const SettingsPage = () => {
 								sx={{ width: "6rem", height: "6rem" }}
 							/>
 							<Box sx={{ marginLeft: 2 }}>
-								<Box sx={{ display: "flex", alignItems: "center"}}>
+								<Box sx={{ display: "flex", alignItems: "center" }}>
 									{editingCatalogueName ? (
 										<>
 											<Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
@@ -210,8 +215,13 @@ const SettingsPage = () => {
 													variant="outlined"
 													margin="normal"
 												/>
-				
-												<Button variant="contained" onClick={handleSaveCatalogueName}>Save</Button>
+
+												<Button
+													variant="contained"
+													onClick={handleSaveCatalogueName}
+												>
+													Save
+												</Button>
 											</Box>
 										</>
 									) : (
@@ -237,7 +247,7 @@ const SettingsPage = () => {
 					<Grid item xs={12} md={8}>
 						{/* Section 1: User Info */}
 						<Typography variant="h5" fontWeight="medium" gutterBottom>
-						Description
+							Description
 						</Typography>
 						<Box
 							sx={{
@@ -251,22 +261,31 @@ const SettingsPage = () => {
 								flexDirection: "row",
 							}}
 						>
-							<Box sx={{ display: "flex", alignItems: "center"}}>
+							<Box sx={{ display: "flex", alignItems: "center" }}>
 								{editingCatalogueDescription ? (
 									<>
 										<Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
 											<TextField
 												value={newCatalogueDescription}
-												onChange={(e) => setNewCatalogueDescription(e.target.value)}
+												onChange={(e) =>
+													setNewCatalogueDescription(e.target.value)
+												}
 												variant="outlined"
 												margin="normal"
 											/>
-											<Button variant="contained" onClick={handleSaveCatalogueDescription}>Save</Button>
+											<Button
+												variant="contained"
+												onClick={handleSaveCatalogueDescription}
+											>
+												Save
+											</Button>
 										</Box>
 									</>
 								) : (
 									<>
-										<Typography variant="body1">{Cataloguedescription}</Typography>
+										<Typography variant="body1">
+											{Cataloguedescription}
+										</Typography>
 										<IconButton onClick={handleEditCatalogueDescription}>
 											<EditOutlinedIcon />
 										</IconButton>

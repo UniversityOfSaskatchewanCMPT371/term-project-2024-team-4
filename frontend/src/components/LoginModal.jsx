@@ -105,7 +105,9 @@ function LoginModal({ modalVisible, closeModal }) {
 			>
 				<DialogTitle>Login</DialogTitle>
 				<DialogContent>
-					<DialogContentText marginBottom={0.5}>Welcome to PCubed</DialogContentText>
+					<DialogContentText marginBottom={0.5}>
+						Welcome to PCubed
+					</DialogContentText>
 					<TextField
 						autoFocus
 						required
