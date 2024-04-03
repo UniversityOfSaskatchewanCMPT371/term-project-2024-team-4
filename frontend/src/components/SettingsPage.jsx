@@ -6,6 +6,8 @@ import ChangeUsernameModal from "./ChangeUsernameModal.jsx";
 import ChangePasswordModal from "./ChangePasswordModal.jsx";
 import log from "../logger.js";
 import BaseLayout from "./BaseLayout.jsx";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+
 import {
 	Avatar,
 	Typography,
@@ -15,6 +17,8 @@ import {
 	ListItem,
 	ListItemText,
 	Box,
+	TextField,
+	IconButton
 } from "@mui/material";
 
 /**
@@ -48,11 +52,16 @@ Behavior:
 const SettingsPage = () => {
 	// define vars
 	const [catalogueName, setCatalogueName] = useState("");
+	const [editingCatalogueName, setEditingCatalogueName] = useState(false); 
+	const [newCatalogueName, setNewCatalogueName] = useState(""); 
 	const [userInfo, setUserInfo] = useState({ username: "", role: "", id: "" });
 	const [changeUsernameModalVisible, setChangeUsernameModalVisible] =
 		useState(false);
 	const [changePasswordModalVisible, setChangePasswordModalVisible] =
 		useState(false);
+	const [Cataloguedescription, setDescriptionName] = useState("");
+	const [newCatalogueDescription, setNewCatalogueDescription] = useState(""); 
+	const [editingCatalogueDescription, setEditingCatalogueDescription] = useState(false); 
 
 	const ip = window.location.host;
 
@@ -62,6 +71,7 @@ const SettingsPage = () => {
 			.get("/catalogues/1") // NOTE: HARDCODED (ONLY 1 CATALOGUE)
 			.then((response) => {
 				setCatalogueName(response.data.name);
+				setDescriptionName(response.data.description);
 			})
 			.catch((error) => {
 				log.error("Error fetching Catalogue data:", error);
@@ -85,6 +95,42 @@ const SettingsPage = () => {
 			});
 	}, []);
 
+	const handleEditCatalogueName = () => {
+		setEditingCatalogueName(true);
+		setNewCatalogueName(catalogueName);
+	};
+
+	const handleSaveCatalogueName = () => {
+		http
+			.put("/catalogues/1", { name: newCatalogueName, description: Cataloguedescription  })
+			.then(() => {
+				setCatalogueName(newCatalogueName);
+				setEditingCatalogueName(false);
+			})
+			.catch((error) => {
+				console.error("Error updating catalogue name:", error);
+				
+			});
+	};
+
+	const handleEditCatalogueDescription = () => {
+		setEditingCatalogueDescription(true);
+		setNewCatalogueDescription(Cataloguedescription);
+	};
+
+	const handleSaveCatalogueDescription = () => {
+		http
+			.put("/catalogues/1", { name: catalogueName , description: newCatalogueDescription  })
+			.then(() => {
+				setDescriptionName(newCatalogueDescription);
+				setEditingCatalogueDescription(false);
+			})
+			.catch((error) => {
+				console.error("Error updating catalogue name:", error);
+				
+			});
+	};
+	
 	// other states
 	const closeChangeUsernameModal = () => {
 		setChangeUsernameModalVisible(false);
@@ -108,32 +154,100 @@ const SettingsPage = () => {
 				<Typography variant="h4" sx={{ marginBottom: 4, fontWeight: "bold" }}>
 					Settings
 				</Typography>
-
-				{/* Profile Picture, Username, IP Addres*/}
-				<Box
-					sx={{
-						display: "flex",
-						alignItems: "center",
-						marginBottom: 4,
-						marginLeft: 2,
-					}}
-				>
-					<Avatar
-						alt="Profile Picture"
-						// Note: Currently a random photo (not implemented)
-						src="https://media.cntraveler.com/photos/5a7b50d069c80815f37e604e/16:9/w_2560,c_limit/British-Museum__2018_00917427_001.jpg"
-						sx={{ width: "6rem", height: "6rem" }}
-					/>
-					<Box sx={{ marginLeft: 2 }}>
-						<Typography variant="h5">{catalogueName}</Typography>
-						<Typography
-							variant="h6"
-							sx={{ marginTop: 0, marginLeft: 0.5, fontWeight: 1 }}
+				<Grid container spacing={5} marginTop={0}>
+					<Grid item xs={12} md={4}>
+						{/* Profile Picture, Username, IP Addres*/}
+						<Box
+							sx={{
+								display: "flex",
+								alignItems: "center",
+								marginBottom: 4,
+								marginLeft: 2,
+							}}
 						>
-							{ip}
+							<Avatar
+								alt="Profile Picture"
+								// Note: Currently a random photo (not implemented)
+								src="https://media.cntraveler.com/photos/5a7b50d069c80815f37e604e/16:9/w_2560,c_limit/British-Museum__2018_00917427_001.jpg"
+								sx={{ width: "6rem", height: "6rem" }}
+							/>
+							<Box sx={{ marginLeft: 2 }}>
+								<Box sx={{ display: "flex", alignItems: "center"}}>
+									{editingCatalogueName ? (
+										<>
+											<Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
+												<TextField
+													value={newCatalogueName}
+													onChange={(e) => setNewCatalogueName(e.target.value)}
+													variant="outlined"
+													margin="normal"
+												/>
+				
+												<Button variant="contained" onClick={handleSaveCatalogueName}>Save</Button>
+											</Box>
+										</>
+									) : (
+										<>
+											<Typography variant="h5">{catalogueName}</Typography>
+											<IconButton onClick={handleEditCatalogueName}>
+												<EditOutlinedIcon />
+											</IconButton>
+										</>
+									)}
+								</Box>
+								<Typography
+									variant="h6"
+									sx={{ marginTop: 0, marginLeft: 0.5, fontWeight: 1 }}
+								>
+									{ip}
+								</Typography>
+							</Box>
+						</Box>
+					</Grid>
+
+					{/* Right Side Grid: */}
+					<Grid item xs={12} md={8}>
+						{/* Section 1: User Info */}
+						<Typography variant="h5" fontWeight="medium" gutterBottom>
+						Description
 						</Typography>
-					</Box>
-				</Box>
+						<Box
+							sx={{
+								border: 1,
+								borderColor: "grey.300",
+								borderRadius: "16px",
+								p: 3,
+								bgcolor: "background.paper",
+								marginBottom: 2,
+								display: "flex",
+								flexDirection: "row",
+							}}
+						>
+							<Box sx={{ display: "flex", alignItems: "center"}}>
+								{editingCatalogueDescription ? (
+									<>
+										<Box sx={{ display: "flex", gap: 2, marginTop: 2 }}>
+											<TextField
+												value={newCatalogueDescription}
+												onChange={(e) => setNewCatalogueDescription(e.target.value)}
+												variant="outlined"
+												margin="normal"
+											/>
+											<Button variant="contained" onClick={handleSaveCatalogueDescription}>Save</Button>
+										</Box>
+									</>
+								) : (
+									<>
+										<Typography variant="body1">{Cataloguedescription}</Typography>
+										<IconButton onClick={handleEditCatalogueDescription}>
+											<EditOutlinedIcon />
+										</IconButton>
+									</>
+								)}
+							</Box>
+						</Box>
+					</Grid>
+				</Grid>
 
 				<Grid container spacing={5} marginTop={5}>
 					{/* Left Side Grid: */}
