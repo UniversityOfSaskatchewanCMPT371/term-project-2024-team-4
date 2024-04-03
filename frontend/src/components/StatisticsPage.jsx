@@ -9,7 +9,6 @@ import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
 function StatisticsPage() {
