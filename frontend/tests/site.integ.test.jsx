@@ -112,7 +112,7 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 	};
 
 	// Render the component
-	render(<SiteModal setOpen={() => {}} />);
+	render(<SiteModal openAdd={true} />);
 
 	// Fill out the form fields with the site data
 	const nameInput = screen.getByLabelText("Site Name");
