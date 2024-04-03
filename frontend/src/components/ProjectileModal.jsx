@@ -93,20 +93,27 @@ const AddProjectile = ({
 	const [materialID, setMaterialID] = useState(0); // for future implementation of adding materials
 	const [periodID, setPeriodID] = useState(0); // not needed for adding projectile point, for testing only
 
-	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
-	const [anchorEl, setAnchorEl] = useState(null); // For the dropdown menu anchor
 	const [currentPeriod, setCurrentPeriod] = useState(null); // The period currently selected in the dropdown
+
+	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
+	const [periodAnchorEl, setPeriodAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [cultureAanchorEl, setCultureAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [materialAnchorEl, setMaterialAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [baseShapeAnchorEl, setBaseShapeAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [crossSectionAnchorEl, setCrossSectionAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [bladeShapeAnchorEl, setBladeShapeAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [haftingShapeAnchorEl, setHaftingShapeAnchorEl] = useState(null); // For the dropdown menu anchor
 
 	// Function to open the dropdown menu (Edit/Delete options for periods)
 	const handleOpenMenu = (event, period) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setPeriodAnchorEl(event.currentTarget);
 		setCurrentPeriod(period);
 	};
 
 	// Function to close the dropdown menu
 	const handleCloseMenu = () => {
-		setAnchorEl(null);
+		setPeriodAnchorEl(null);
 		setCurrentPeriod(null);
 	};
 
@@ -713,7 +720,7 @@ const AddProjectile = ({
 	// Also prepares to show options for editing or deleting the selected culture.
 	const handleOpenEditCultureMenu = (event, culture) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setCultureAnchorEl(event.currentTarget);
 		setSelectedCultureID(culture.id);
 	};
 
@@ -871,7 +878,7 @@ const AddProjectile = ({
 	// This function handles the selection of a base shape for editing.
 	const handleEditBaseShape = (event, baseShape) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setBaseShapeAnchorEl(event.currentTarget);
 		setSelectedBaseShapeID(baseShape.id);
 	};
 
@@ -949,7 +956,7 @@ const AddProjectile = ({
 	// This function handles the selection of a cross sections for editing.
 	const handleEditCrossSection = (event, crossSection) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setCrossSectionAnchorEl(event.currentTarget);
 		setSelectedCrossSectionID(crossSection.id);
 	};
 
@@ -1028,7 +1035,7 @@ const AddProjectile = ({
 	// This function handles the selection of a blade shape for editing.
 	const handleEditBladeShape = (event, bladeShape) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setBladeShapeAnchorEl(event.currentTarget);
 		setSelectedBladeShapeID(bladeShape.id);
 	};
 
@@ -1106,7 +1113,7 @@ const AddProjectile = ({
 	// This function handles the selection of a hafting shape for editing.
 	const handleEditHaftingShape = (event, haftingShape) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setHaftingShapeAnchorEl(event.currentTarget);
 		setSelectedHaftingShapeID(haftingShape.id);
 	};
 
@@ -1213,7 +1220,7 @@ const AddProjectile = ({
 
 	const handleOpenEditMaterialMenu = (event, material) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setMaterialAnchorEl(event.currentTarget);
 		setSelectedMaterialID(material.id);
 	};
 
@@ -1408,8 +1415,8 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="period-menu"
-								anchorEl={anchorEl}
-								open={Boolean(anchorEl)}
+								anchorEl={periodAnchorEl}
+								open={Boolean(periodAnchorEl)}
 								onClose={handleCloseMenu}
 							>
 								<MenuItem
@@ -1458,17 +1465,17 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="culture-menu"
-								anchorEl={anchorEl}
-								open={Boolean(anchorEl)}
+								anchorEl={cultureAanchorEl}
+								open={Boolean(cultureAanchorEl)}
 								onClose={() => {
-									setAnchorEl(null);
+									setCultureAnchorEl(null);
 								}}
 							>
 								<MenuItem
 									onClick={() => {
 										setEditCulture(true);
 										setCultureModalOpen(true);
-										setAnchorEl(null);
+										setCultureAnchorEl(null);
 									}}
 								>
 									<EditIcon fontSize="small" /> Edit
@@ -1476,7 +1483,7 @@ const AddProjectile = ({
 								<MenuItem
 									onClick={() => {
 										handleDeleteCulture();
-										setAnchorEl(null);
+										setCultureAnchorEl(null);
 									}}
 								>
 									<DeleteIcon fontSize="small" /> Delete
@@ -1516,18 +1523,17 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="material-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+								anchorEl={materialAnchorEl}
+								open={Boolean(materialAnchorEl)}
 								onClose={() => {
-									setAnchorEl(null);
+									setMaterialAnchorEl(null);
 								}}
 							>
 								<MenuItem
 									onClick={() => {
 										setEditMaterial(true);
 										setMaterialModalOpen(true);
-										setAnchorEl(null);
+										setMaterialAnchorEl(null);
 									}}
 								>
 									<EditIcon fontSize="small" /> Edit
@@ -1535,7 +1541,7 @@ const AddProjectile = ({
 								<MenuItem
 									onClick={() => {
 										handleDeleteMaterial();
-										setAnchorEl(null);
+										setMaterialAnchorEl(null);
 									}}
 								>
 									<DeleteIcon fontSize="small" /> Delete
@@ -1572,18 +1578,17 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="base-shape-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+								anchorEl={baseShapeAnchorEl}
+								open={Boolean(baseShapeAnchorEl)}
 								onClose={() => {
-									setAnchorEl(null);
+									setBaseShapeAnchorEl(null);
 								}}
 							>
 								<MenuItem
 									onClick={() => {
 										setEditBaseShape(true);
 										setBaseShapeModalOpen(true);
-										setAnchorEl(null);
+										setBaseShapeAnchorEl(null);
 									}}
 								>
 									<EditIcon fontSize="small" /> Edit
@@ -1591,7 +1596,7 @@ const AddProjectile = ({
 								<MenuItem
 									onClick={() => {
 										handleDeleteBaseShape();
-										setAnchorEl(null);
+										setBaseShapeAnchorEl(null);
 									}}
 								>
 									<DeleteIcon fontSize="small" /> Delete
@@ -1630,18 +1635,17 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="cross-section-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+								anchorEl={crossSectionAnchorEl}
+								open={Boolean(crossSectionAnchorEl)}
 								onClose={() => {
-									setAnchorEl(null);
+									setCrossSectionAnchorEl(null);
 								}}
 							>
 								<MenuItem
 									onClick={() => {
 										setEditCrossSection(true);
 										setCrossSectionModalOpen(true);
-										setAnchorEl(null);
+										setCrossSectionAnchorEl(null);
 									}}
 								>
 									<EditIcon fontSize="small" /> Edit
@@ -1649,7 +1653,7 @@ const AddProjectile = ({
 								<MenuItem
 									onClick={() => {
 										handleDeleteCrossSection();
-										setAnchorEl(null);
+										setCrossSectionAnchorEl(null);
 									}}
 								>
 									<DeleteIcon fontSize="small" /> Delete
@@ -1686,18 +1690,17 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="blade-shape-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+								anchorEl={bladeShapeAnchorEl}
+								open={Boolean(bladeShapeAnchorEl)}
 								onClose={() => {
-									setAnchorEl(null);
+									setBladeShapeAnchorEl(null);
 								}}
 							>
 								<MenuItem
 									onClick={() => {
 										setEditBladeShape(true);
 										setBladeShapeModalOpen(true);
-										setAnchorEl(null);
+										setBladeShapeAnchorEl(null);
 									}}
 								>
 									<EditIcon fontSize="small" /> Edit
@@ -1705,7 +1708,7 @@ const AddProjectile = ({
 								<MenuItem
 									onClick={() => {
 										handleDeleteBladeShape();
-										setAnchorEl(null);
+										setBladeShapeAnchorEl(null);
 									}}
 								>
 									<DeleteIcon fontSize="small" /> Delete
@@ -1744,18 +1747,17 @@ const AddProjectile = ({
 							</FormControl>
 							<Menu
 								id="hafting-shape-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+								anchorEl={haftingShapeAnchorEl}
+								open={Boolean(haftingShapeAnchorEl)}
 								onClose={() => {
-									setAnchorEl(null);
+									setHaftingShapeAnchorEl(null);
 								}}
 							>
 								<MenuItem
 									onClick={() => {
 										setEditHaftingShape(true);
 										setHaftingShapeModalOpen(true);
-										setAnchorEl(null);
+										setHaftingShapeAnchorEl(null);
 									}}
 								>
 									<EditIcon fontSize="small" /> Edit
@@ -1763,7 +1765,7 @@ const AddProjectile = ({
 								<MenuItem
 									onClick={() => {
 										handleDeleteHaftingShape();
-										setAnchorEl(null);
+										setHaftingShapeAnchorEl(null);
 									}}
 								>
 									<DeleteIcon fontSize="small" /> Delete
