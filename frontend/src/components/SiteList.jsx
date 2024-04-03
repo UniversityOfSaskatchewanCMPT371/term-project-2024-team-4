@@ -94,7 +94,7 @@ export default function SiteList({ query }) {
 				<Grid maxWidth="md" style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>
-							{user && user.userName && (
+							{user && (
 								<Grid item xs={12} sm={6} md={3}>
 									<ButtonBase onClick={handleClick1}>
 										<Card sx={{ minWidth: 170, minHeight: 150 }}>
