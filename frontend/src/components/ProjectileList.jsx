@@ -90,7 +90,7 @@ export default function ProjectileList({ query, siteId, siteName }) {
 
 	return (
 		<div>
-			<Item variant="outlined" sx={{ mt: "40px" }}>
+			<Item variant="outlined" sx={{ mb: "40px" }}>
 				<Grid style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>

@@ -163,18 +163,23 @@ function Sidebar() {
 				anchor="left"
 			>
 				<Toolbar>
-					<Typography variant="h6" noWrap component="div">
+					<Typography
+						variant="h4"
+						noWrap
+						component="div"
+						sx={{ marginTop: "20px", fontWeight: "medium" }}
+					>
 						PCubed
 					</Typography>
 				</Toolbar>
 				<SidebarList>
 					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-						<ListItem key="Home" disablePadding onClick={handleClick}>
+						<ListItem key="Catalogue" disablePadding onClick={handleClick}>
 							<ListItemButton>
 								<SidebarIcon>
 									<HomeIcon />
 								</SidebarIcon>
-								<ListItemText primary="Home" />
+								<ListItemText primary="Catalogue" />
 							</ListItemButton>
 						</ListItem>
 					</Link>
@@ -186,9 +191,6 @@ function Sidebar() {
 							<ListItemText primary="Connect" />
 						</ListItemButton>
 					</ListItem>
-				</SidebarList>
-				<Divider />
-				<SidebarList>
 					<Link
 						to="/stats"
 						style={{ textDecoration: "none", color: "inherit" }}

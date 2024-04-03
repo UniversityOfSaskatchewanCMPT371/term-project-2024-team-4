@@ -91,7 +91,7 @@ export default function SiteList({ query }) {
 
 	return (
 		<div>
-			<Item variant="outlined" sx={{ my: "40px" }}>
+			<Item variant="outlined" sx={{ mb: "40px" }}>
 				<Grid style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>

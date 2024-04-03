@@ -145,10 +145,14 @@ const Site = () => {
 		<BaseLayout>
 			<Grid item xs={12}>
 				<Grid sx={{ marginBottom: 4 }}>
-					<Typography variant="h4" sx={{ marginBottom: 2 }}>
-						{siteName}
+					<Typography variant="h4">{siteName}</Typography>
+
+					<Typography
+						sx={{ marginBottom: 0, fontWeight: "regular" }}
+						variant="h6"
+					>
+						{siteDescription}
 					</Typography>
-					<Typography sx={{ marginBottom: 0 }}>{siteDescription}</Typography>
 					{user && user.userName && (
 						<Button
 							sx={{ paddingLeft: 0, minWidth: 0, justifyContent: "flex-start" }}
@@ -168,13 +172,12 @@ const Site = () => {
 						</Button>
 					)}
 				</Grid>
-
 				{/* Search and filter UI */}
-				<Grid container spacing={2}>
-					<Grid item xs={12} sm={6}>
+				<Grid container>
+					<Grid item>
 						<form noValidate autoComplete="off">
 							<TextField
-								sx={{ marginBottom: 2 }}
+								sx={{ marginBottom: 4, minWidth: "300px" }}
 								id="search"
 								label="Search"
 								variant="standard"
@@ -193,7 +196,7 @@ const Site = () => {
 					</Grid>
 				</Grid>
 				<Grid container spacing={2} sx={{ marginBottom: 4 }}>
-					<Grid item xs={6} sm={3}>
+					<Grid item>
 						<TextField
 							id="sort"
 							select
@@ -203,6 +206,7 @@ const Site = () => {
 							value={sortValue}
 							onChange={handleSortChange}
 							size="small"
+							sx={{ minWidth: "250px" }}
 						>
 							<MenuItem value="newest">Newest</MenuItem>
 							<MenuItem value="descendant">Descendant</MenuItem>
@@ -219,6 +223,7 @@ const Site = () => {
 							value={filterValue}
 							onChange={handleFilterChange}
 							size="small"
+							sx={{ minWidth: "250px" }}
 						>
 							<MenuItem value="all">All</MenuItem>
 							<MenuItem value="category1">Category 1</MenuItem>
@@ -236,6 +241,9 @@ const Site = () => {
 				/>
 			)}
 			<Grid item xs={12}>
+				<Typography variant="body1" sx={{ fontWeight: "medium" }}>
+					Projectile Points
+				</Typography>
 				<ProjectileList
 					query={searchValue}
 					siteId={siteID}
