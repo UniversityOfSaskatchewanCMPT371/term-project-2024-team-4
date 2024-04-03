@@ -384,17 +384,19 @@ const AddProjectile = ({
 					http
 						.put(`/cultures/${cultureID}`, updatedCulture)
 						.then((response) => {
+							handleClose();
 							log.info(
 								`Culture processed successfully: ${JSON.stringify(response.data)}`,
 							);
-							handleClose();
 						})
 						.catch((error) => {
+							handleClose();
 							log.error(`Error processing culture: ${error}`);
 						});
 				})
 				.catch((error) => {
-					console.error("Error adding new  projectile point:", error);
+					handleClose();
+					console.error("Error fetching all cultures:", error);
 				});
 		}
 	};
