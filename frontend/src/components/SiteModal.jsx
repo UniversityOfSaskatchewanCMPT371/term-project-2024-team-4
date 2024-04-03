@@ -53,6 +53,8 @@ const SiteModal = ({
 	const [editRegion, setEditRegion] = useState(false);
 	const [regionModalOpen, setRegionModalOpen] = useState(false);
 	const [selectedRegionID, setSelectedRegionID] = useState(null);
+
+	const [siteNameError, setSiteNameError] = useState(false); // for artifact type dropdown error handling
 	const [regionError, setRegionError] = useState("");
 
 	/**
@@ -84,9 +86,20 @@ const SiteModal = ({
 		if (!regionID) {
 			// Check if the region is selected
 			setRegionError("Region is required"); // Set the region error message
+		} else {
+			setRegionError(""); // Clear any existing error message
+		}
+
+		if (name.trim() === "") {
+			setSiteNameError(true);
+		} else {
+			setSiteNameError(false);
+		}
+
+		if (!regionID || name.trim() === "") {
 			return; // Prevent form submission
 		}
-		setRegionError(""); // Clear any existing error message
+
 		const newSite = {
 			name,
 			description,
@@ -241,6 +254,9 @@ const SiteModal = ({
 						id="siteName"
 						label="Site Name"
 						fullWidth
+						required
+						error={Boolean(siteNameError)}
+						helperText={siteNameError && "Please enter a Site Name"}
 						value={name}
 						onChange={handleNameChange}
 					/>
@@ -294,7 +310,20 @@ const SiteModal = ({
 										+ Add New Region
 									</MenuItem>
 								</Select>
-								{regionError && <p style={{ color: "red" }}>{regionError}</p>}
+								{regionError && (
+									<p
+										style={{
+											color: "#d32f2f",
+											fontSize: "0.75rem",
+											marginTop: "3px",
+											marginRight: "14px",
+											marginBottom: "0",
+											marginLeft: "14px",
+										}}
+									>
+										{regionError}
+									</p>
+								)}
 							</FormControl>
 							<Menu
 								id="region-menu"

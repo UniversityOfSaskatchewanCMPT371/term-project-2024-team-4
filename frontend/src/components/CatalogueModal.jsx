@@ -30,6 +30,8 @@ const CatalogueModal = ({
 	const [name, setCatalogueName] = useState("");
 	const [description, setDescription] = useState("");
 
+	const [catalogueNameError, setCatalogueNameError] = useState(false); // for artifact type dropdown error handling
+
 	/**
 	 * Closes the modal and resets the parent's state.
 	 *
@@ -51,6 +53,14 @@ const CatalogueModal = ({
 	 * @post Sends the catalogue data to the backend and closes the modal if successful. Logs the action. Handles any errors.
 	 */
 	const handleSubmit = () => {
+		if (name.trim() === "") {
+			setCatalogueNameError(true);
+
+			return; // Prevent form submission
+		} else {
+			setCatalogueNameError(false);
+		}
+
 		const newCatalogue = {
 			name,
 			description,
@@ -106,6 +116,9 @@ const CatalogueModal = ({
 						id="catalogueName"
 						label="Catalogue Name"
 						fullWidth
+						required
+						error={Boolean(catalogueNameError)}
+						helperText={catalogueNameError && "Please enter a Catalogue Name"}
 						value={name}
 						onChange={handleNameChange}
 					/>
