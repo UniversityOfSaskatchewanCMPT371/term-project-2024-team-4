@@ -208,4 +208,11 @@ const updateUsername = async (userId, newUsername) => {
 	}
 };
 
-module.exports = { registerUser, deleteUserByUsername };
+module.exports = {
+	registerUser,
+	deleteUserByUsername,
+	deleteUserById,
+	verifyPassword,
+	updatePassword,
+	updateUsername,
+};
