@@ -36,6 +36,6 @@ describe("Site", () => {
 				name: /filter/i,
 			}),
 		).toBeInTheDocument();
-		*/ 
+		*/
 	});
 });
