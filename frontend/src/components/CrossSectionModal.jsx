@@ -38,6 +38,7 @@ export default function CrossSectionModal({
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
 	const [crossSection, setCrossSection] = useState(selectedCrossSection);
 
+	console.log("any id:" + selectedCrossSectionID);
 	/**
 	 * Handles the save action when the form is submitted.
 	 * Validates the form, updates the cross section, and closes the modal.
@@ -55,6 +56,7 @@ export default function CrossSectionModal({
 					`Cross Section ${selectedCrossSection ? "updated" : "created"} successfully: `,
 					response.data,
 				);
+				console.log("this is the data: " + response.data);
 				updateCrossSectionsList(response.data);
 				handleClose();
 			})

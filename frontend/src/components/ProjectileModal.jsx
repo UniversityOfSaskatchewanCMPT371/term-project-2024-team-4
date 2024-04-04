@@ -150,6 +150,8 @@ const AddProjectile = ({
 	const [crossSectionModalOpen, setCrossSectionModalOpen] = useState(false);
 	const [editCrossSection, setEditCrossSection] = useState(false);
 	const [selectedCrossSectionID, setSelectedCrossSectionID] = useState(null);
+	const [editingCrossSection, setEditingCrossSection] = useState(""); //temp fix
+
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing BladeShapes through the BladeShapeModal --------
@@ -949,7 +951,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching cross sections:", error);
 			});
-	}, [selectedCrossSection, selectedCulture]);
+	}, [selectedCrossSection, selectedCulture, editingCrossSection]);
 
 	// This function opens the CrossSectionModal for editing an existing cross sections or adding a new one.
 	const handleOpenCrossSectionModal = (crossSectionId = null) => {
@@ -963,6 +965,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setCrossSectionAnchorEl(event.currentTarget);
 		setSelectedCrossSectionID(crossSection.id);
+		setEditingCrossSection(crossSection.name); // temp fix
 	};
 
 	// This function updates the local list of cross sections after adding or editing a cross sections.
@@ -970,6 +973,7 @@ const AddProjectile = ({
 	// Otherwise, the new cross sections is added to the list.
 	const updateCrossSectionList = (newCrossSection) => {
 		setCrossSections((prevCrossSection) => {
+			console.log("what the id:" + newCrossSection.id);
 			const index = prevCrossSection.findIndex(
 				(shape) => shape.id === newCrossSection.id,
 			);
@@ -1839,7 +1843,7 @@ const AddProjectile = ({
 			{editCrossSection && (
 				<CrossSectionModal
 					setEditCrossSection={setEditCrossSection}
-					selectedCrossSection={selectedCrossSection}
+					selectedCrossSection={editingCrossSection} //temp fix
 					selectedCrossSectionID={selectedCrossSectionID}
 					updateCrossSectionsList={updateCrossSectionList}
 				/>
