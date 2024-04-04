@@ -736,7 +736,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setCultureAnchorEl(event.currentTarget);
 		setSelectedCultureID(culture.id);
-		setEditingCulture(culture.name); // temp fix
+		setEditingCulture(culture); // temp fix
 	};
 
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
@@ -1832,6 +1832,7 @@ const AddProjectile = ({
 				<CultureModal
 					setEditCulture={setEditCulture}
 					selectedCulture={editingCulture}
+					setSelectedCulture={setEditingCulture}
 					selectedCultureID={selectedCultureID}
 					updateCulturesList={updateCulturesList}
 					periods={periods}

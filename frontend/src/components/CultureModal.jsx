@@ -32,13 +32,16 @@ import log from "../logger";
 export default function CultureModal({
 	setEditCulture,
 	selectedCulture,
+	setSelectedCulture,
 	selectedCultureID,
 	updateCulturesList,
 	periods,
 }) {
 	const [open, setOpen] = useState(true);
-	const [cultureName, setCultureName] = useState(selectedCulture || "");
-	const [selectedPeriodID, setSelectedPeriodID] = useState("");
+	const [cultureName, setCultureName] = useState(selectedCulture.name || "");
+	const [selectedPeriodID, setSelectedPeriodID] = useState(
+		selectedCulture ? selectedCulture.period.id : "",
+	);
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -84,6 +87,7 @@ export default function CultureModal({
 	 * Closes the modal and resets the culture editing state.
 	 */ const handleClose = () => {
 		setOpen(false);
+		setSelectedCulture("");
 		setEditCulture(false);
 	};
 
