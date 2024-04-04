@@ -4,7 +4,11 @@ const assert = require("node:assert/strict");
 const { logger } = require("../config/logger.js");
 
 /**
- *
+ * POST: Create a new CrossSection.
+ * @param req Express request object, expecting 'name' in the request body.
+ * @pre 'name' field must be provided and should be unique.
+ * @post A new CrossSection entity is created in the database.
+ * @return Returns the newly created CrossSection object.
  */
 async function newCrossSection(req) {
 	const { name } = req.body;
@@ -25,7 +29,10 @@ async function newCrossSection(req) {
 }
 
 /**
- *
+ * GET: Fetch all CrossSections.
+ * @pre None.
+ * @post Retrieves all CrossSection entities from the database.
+ * @return Returns an array of CrossSection objects.
  */
 async function getAllCrossSections() {
 	try {
@@ -45,7 +52,11 @@ async function getAllCrossSections() {
 }
 
 /**
- *
+ * GET: Fetch a CrossSection by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The CrossSection with the given ID must exist in the database.
+ * @post Retrieves a specific CrossSection from the database based on its ID.
+ * @return Returns a CrossSection object or a message indicating the CrossSection was not found.
  */
 async function getCrossSectionById(req) {
 	try {
@@ -70,7 +81,11 @@ async function getCrossSectionById(req) {
 }
 
 /**
- *
+ * PUT: Update an existing CrossSection.
+ * @param req Express request object containing the new 'name' for the CrossSection.
+ * @pre The CrossSection with the given ID must exist in the database.
+ * @post Updates and returns the specified CrossSection in the database.
+ * @return Returns the updated CrossSection object or a message indicating the CrossSection was not found.
  */
 async function updateCrossSection(req) {
 	const { id } = req.params;
@@ -96,7 +111,11 @@ async function updateCrossSection(req) {
 }
 
 /**
- *
+ * DELETE: Remove a CrossSection.
+ * @route DELETE /crossSections/:id
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The CrossSection with the given ID must exist in the database.
+ * @post Deletes the specified CrossSection from the database.
  */
 async function deleteCrossSection(req) {
 	const id = parseInt(req.params.id);

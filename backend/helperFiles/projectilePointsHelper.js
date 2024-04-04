@@ -10,8 +10,10 @@ const {
 const myDatabase = require("../config/db");
 
 /**
- *
- * @param {*} req
+ * POST: Create a new ProjectilePoint
+ * This endpoint handles the creation of a new ProjectilePoint.
+ * It extracts various properties from the request body, including related entities like Culture and BladeShape.
+ * Each related entity is fetched from the database to ensure it exists before associating it with the new ProjectilePoint.
  */
 async function newProjectilePoint(req) {
 	const {
@@ -83,7 +85,12 @@ async function newProjectilePoint(req) {
 }
 
 /**
- *
+ * GET: Fetch ALL Projectile Points
+ * Retrieves all projectile points including their related entities
+ * @precond Database is accessible
+ * @postcond
+ * 	Succesful: Returns an array of ALL projectile points
+ *	Failure: Returns an error message
  */
 async function getAllProjectilePoints() {
 	console.log("Getting all Projectile Points");
@@ -112,8 +119,12 @@ async function getAllProjectilePoints() {
 }
 
 /**
- *
- * @param {*} req
+ * GET: Fetch a SINGLE projectile point given an ID
+ * @param {*} req - req URL parameter contains a valid projectile point ID
+ * @precond the given projectile point ID exists in the database
+ * @postcond
+ * 	Succesful: Returns requested Projectile Point
+ * 	Failure: Returns an error message related to the issue
  */
 async function getProjectilePointFromId(req) {
 	const { id } = req.params;
@@ -149,8 +160,13 @@ async function getProjectilePointFromId(req) {
 }
 
 /**
- *
- * @param {*} req
+ * PUT: Update a SINGLE, EXISTING Projectile Point
+ * @param {*} req - req URL parameter contains a valid Projectile Point ID.
+ * 					req body contains same details as when creating a Projectile Point
+ * @precond specified Projectile Point ID exists in the database
+ * @postcond
+ * 	Succesful: returns updated projectile point
+ * 	Failure: Returns an error message related to the issue
  */
 async function updateProjectilePoint(req) {
 	const { id } = req.params;
@@ -232,8 +248,12 @@ async function updateProjectilePoint(req) {
 }
 
 /**
- *
- * @param {*} req
+ * DELETE: delete a single, EXISTING Projectile Point
+ * @param {*} req - req URL parameter contains a valid Projectile POint ID
+ * @precond specified Projectile Point ID exists in the database
+ * @postcond
+ * 	Succesful: ProjectilePoint is deleted; empty response is sent
+ *  Failure: Returns an error message related to the issue
  */
 async function deleteProjectilePoint(req) {
 	const { id } = req.params;

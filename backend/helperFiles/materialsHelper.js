@@ -2,7 +2,12 @@ const { Material, ArtifactType } = require("../dist/entity");
 const myDatabase = require("../config/db");
 
 /**
- *
+ * POST: Create a new Material
+ * @param {*} req - req.body containing material: name, description, artifactTypeId
+ * @precond req.body contains valid fields: name, description, artifactTypeId
+ * @postcond
+ *  Succesful: Returns newly created Material object
+ * 	Failure: Returns error message based on what went wrong
  */
 async function newMaterial(req) {
 	const { name, description, artifactTypeId } = req.body;
@@ -35,7 +40,11 @@ async function newMaterial(req) {
 }
 
 /**
- *
+ * GET: Fetch ALL materials
+ * @precond Database is accessible
+ * @postcond
+ * 	Succesful: Returns an array of all Material objects
+ *  Failure: Returns an error message relating to issue
  */
 async function getAllMaterials() {
 	try {
@@ -52,7 +61,12 @@ async function getAllMaterials() {
 }
 
 /**
- *
+ * GET: Fetch a SINGLE material using ID
+ * @param {*} req - req URL parameter contains the id
+ * @precond req URL parameter contains a valid ID in the database
+ * @postcond
+ * 	Succesful: Returns requested material object (given ID)
+ *  Failure: Returns an error message relating to issue
  */
 async function getMaterialById(req) {
 	const { id } = req.params;
@@ -76,7 +90,14 @@ async function getMaterialById(req) {
 }
 
 /**
- *
+ * PUT: Update a SINGLE material given the ID
+ * @param {*} req - req URL parameters contain material ID. req body contains name, description, and artifactTypeID
+ * @precond
+ * 	- req URL Parameters: Material with given material ID exists in Database.
+ *  - req.body: Must have a valid name, description, and artifactTypeID
+ * @postcond
+ * 	Succesful: Returns the updated Material object
+ * 	Failure: Returns an error message relating to the issue
  */
 async function updateMaterial(req) {
 	const { id } = req.params;
@@ -114,7 +135,12 @@ async function updateMaterial(req) {
 }
 
 /**
- *
+ * DELETE: Delete a SINGLE material given the ID
+ * @param {*} req - req URL parameters contain material ID to delete
+ * @precond Material with specified ID exists in the database
+ * @postcond
+ * 	Succesful: Material is deleted from database; empty response is sent
+ * 	Failure: Returns an error message relating to the issue
  */
 async function deleteMaterial(req) {
 	const { id } = req.params;
