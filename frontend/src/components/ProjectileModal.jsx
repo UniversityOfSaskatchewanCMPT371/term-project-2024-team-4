@@ -1849,6 +1849,7 @@ const AddProjectile = ({
 				<BaseShapeModal
 					setEditBaseShape={setEditBaseShape}
 					selectedBaseShape={editingBaseShape}
+					setSelectedBaseShape={setEditingBaseShape}
 					selectedBaseShapeID={selectedBaseShapeID}
 					updateBaseShapesList={updateBaseShapesList}
 				/>
@@ -1857,6 +1858,7 @@ const AddProjectile = ({
 				<CrossSectionModal
 					setEditCrossSection={setEditCrossSection}
 					selectedCrossSection={editingCrossSection} //temp fix
+					setSelectedCrossSection={setEditingCrossSection}
 					selectedCrossSectionID={selectedCrossSectionID}
 					updateCrossSectionsList={updateCrossSectionList}
 				/>
@@ -1865,6 +1867,7 @@ const AddProjectile = ({
 				<BladeShapeModal
 					setEditBladeShape={setEditBladeShape}
 					selectedBladeShape={editingBladeShape}
+					setSelectedBladeShape={setEditingBladeShape}
 					selectedBladeShapeID={selectedBladeShapeID}
 					updateBladeShapesList={updateBladeShapesList}
 				/>
@@ -1873,6 +1876,7 @@ const AddProjectile = ({
 				<HaftingShapeModal
 					setEditHaftingShape={setEditHaftingShape}
 					selectedHaftingShape={editingHaftingShape}
+					setSelectedHaftingShape={setEditingHaftingShape}
 					selectedHaftingShapeID={selectedHaftingShapeID}
 					updateHaftingShapeList={updateHaftingShapeList}
 				/>

@@ -32,6 +32,7 @@ import log from "../logger";
 export default function CrossSectionModal({
 	setEditCrossSection,
 	selectedCrossSection,
+	setSelectedCrossSection,
 	selectedCrossSectionID,
 	updateCrossSectionsList,
 }) {
@@ -56,7 +57,6 @@ export default function CrossSectionModal({
 					`Cross Section ${selectedCrossSection ? "updated" : "created"} successfully: `,
 					response.data,
 				);
-				console.log("this is the data: " + response.data);
 				updateCrossSectionsList(response.data);
 				handleClose();
 			})
@@ -70,6 +70,7 @@ export default function CrossSectionModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedCrossSection("");
 		if (setEditCrossSection) setEditCrossSection(false);
 		log.debug(
 			`BaseShapeModal closed, mode: ${selectedCrossSectionID ? "edit" : "add"}.`,
@@ -90,7 +91,7 @@ export default function CrossSectionModal({
 						label="Cross Section"
 						variant="outlined"
 						fullWidth
-						value={selectedCrossSectionID ? crossSection : ""}
+						value={crossSection}
 						onChange={(e) => setCrossSection(e.target.value)} // Handle change in name field
 					/>
 				</DialogContent>

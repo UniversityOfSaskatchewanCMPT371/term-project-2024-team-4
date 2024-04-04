@@ -32,6 +32,7 @@ import log from "../logger";
 export default function BladeShapeModal({
 	setEditBladeShape,
 	selectedBladeShape,
+	setSelectedBladeShape,
 	selectedBladeShapeID,
 	updateBladeShapesList,
 }) {
@@ -68,6 +69,7 @@ export default function BladeShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedBladeShape("");
 		if (setEditBladeShape) setEditBladeShape(false);
 		log.debug(
 			`BladeShapeModal closed, mode: ${selectedBladeShapeID ? "edit" : "add"}.`,
@@ -86,7 +88,7 @@ export default function BladeShapeModal({
 						label="Blade Shape"
 						variant="outlined"
 						fullWidth
-						value={selectedBladeShapeID ? bladeShape : ""} // Use value instead of defaultValue
+						value={bladeShape}
 						onChange={(e) => setbladeShape(e.target.value)} // Handle change in name field
 					/>
 				</DialogContent>

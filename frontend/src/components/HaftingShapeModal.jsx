@@ -15,6 +15,7 @@ import logger from "../logger";
 export default function HaftingShapeModal({
 	setEditHaftingShape,
 	selectedHaftingShape,
+	setSelectedHaftingShape,
 	selectedHaftingShapeID,
 	updateHaftingShapeList,
 }) {
@@ -51,6 +52,7 @@ export default function HaftingShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedHaftingShape("");
 		if (setEditHaftingShape) setEditHaftingShape(false);
 		logger.debug(
 			`HaftingShapeModal closed, mode: ${selectedHaftingShape ? "edit" : "add"}.`,
@@ -71,7 +73,7 @@ export default function HaftingShapeModal({
 						label="Hafting Shape"
 						variant="outlined"
 						fullWidth
-						value={selectedHaftingShapeID ? haftingShape : ""} // Use value instead of defaultValue
+						value={haftingShape} // Use value instead of defaultValue
 						onChange={(e) => setHaftingShape(e.target.value)} // Handle change in name field
 					/>
 				</DialogContent>

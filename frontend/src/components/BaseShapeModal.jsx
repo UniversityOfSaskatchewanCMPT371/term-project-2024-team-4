@@ -34,6 +34,7 @@ import log from "../logger";
 export default function BaseShapeModal({
 	setEditBaseShape,
 	selectedBaseShape,
+	setSelectedBaseShape,
 	selectedBaseShapeID,
 	updateBaseShapesList,
 }) {
@@ -70,6 +71,7 @@ export default function BaseShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedBaseShape("");
 		if (setEditBaseShape) setEditBaseShape(false);
 		log.debug(
 			`BaseShapeModal closed, mode: ${selectedBaseShapeID ? "edit" : "add"}.`,
@@ -88,7 +90,7 @@ export default function BaseShapeModal({
 						label="Base Shape"
 						variant="outlined"
 						fullWidth
-						value={selectedBaseShapeID ? baseShape : ""}
+						value={baseShape}
 						onChange={(e) => setbaseShape(e.target.value)}
 					/>
 				</DialogContent>
