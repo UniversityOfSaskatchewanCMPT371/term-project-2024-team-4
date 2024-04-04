@@ -32,11 +32,31 @@ import RegionModal from "./RegionModal";
  * @post Renders a form allowing users to create or edit site details. Communicates with backend services to update site information.
  * @returns {JSX.Element} The rendered modal component.
  */
-const SiteModal = ({ setOpen }) => {
+const SiteModal = ({
+	openAdd,
+	setOpenAdd,
+	openEdit,
+	setOpenEdit,
+	siteId,
+	siteName,
+}) => {
 	const [name, setSiteName] = useState("");
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
 	const [regionID, setRegionID] = useState(0);
+
+	// Site selection and menu functionality
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [currentRegion, setCurrentRegion] = useState(null);
+	const [regions, setRegions] = useState([]);
+	const [selectedRegion, setSelectedRegion] = useState("");
+	const [editRegion, setEditRegion] = useState(false);
+	const [regionModalOpen, setRegionModalOpen] = useState(false);
+	const [selectedRegionID, setSelectedRegionID] = useState(null);
+	const [editingRegion, setEditingRegion] = useState("");
+
+	const [siteNameError, setSiteNameError] = useState(false); // for artifact type dropdown error handling
+	const [regionError, setRegionError] = useState("");
 
 	/**
 	 * Closes the modal and resets the parent's state.
@@ -45,7 +65,11 @@ const SiteModal = ({ setOpen }) => {
 	 * @post Sets the parent component's open state to false.
 	 */
 	const handleClose = () => {
-		setOpen(false);
+		if (openAdd) {
+			setOpenAdd(false);
+		} else {
+			setOpenEdit(false);
+		}
 	};
 
 	// Handlers for updating state based on form input
@@ -63,9 +87,20 @@ const SiteModal = ({ setOpen }) => {
 		if (!regionID) {
 			// Check if the region is selected
 			setRegionError("Region is required"); // Set the region error message
+		} else {
+			setRegionError(""); // Clear any existing error message
+		}
+
+		if (name.trim() === "") {
+			setSiteNameError(true);
+		} else {
+			setSiteNameError(false);
+		}
+
+		if (!regionID || name.trim() === "") {
 			return; // Prevent form submission
 		}
-		setRegionError(""); // Clear any existing error message
+
 		const newSite = {
 			name,
 			description,
@@ -74,26 +109,50 @@ const SiteModal = ({ setOpen }) => {
 			regionId: regionID,
 		};
 
-		http
-			.post("/sites", newSite)
+		// set up API endpoint depending if modal is being used for add or edit
+		const requestUrl = `/sites/${siteId || ""}`;
+		const requestMethod = openAdd ? http.post : http.put;
+
+		requestMethod(requestUrl, newSite)
 			.then((response) => {
-				log.info("New site added successfully:", response.data);
+				if (openAdd) {
+					log.info("New site added successfully:", response.data);
+				} else {
+					log.info("Updated site successfully:", response.data);
+				}
 				handleClose();
 			})
 			.catch((error) => {
-				log.error("Error adding new site:", error);
+				if (openAdd) {
+					log.error("Error adding new site:", error);
+				} else {
+					log.error("Error updating site:", error);
+				}
+				handleClose();
 			});
+
+		log.info("Submitted:", newSite);
 	};
 
-	// Site selection and menu functionality
-	const [anchorEl, setAnchorEl] = useState(null);
-	const [currentRegion, setCurrentRegion] = useState(null);
-	const [regions, setRegions] = useState([]);
-	const [selectedRegion, setSelectedRegion] = useState("");
-	const [editRegion, setEditRegion] = useState(false);
-	const [regionModalOpen, setRegionModalOpen] = useState(false);
-	const [selectedRegionID, setSelectedRegionID] = useState(null);
-	const [regionError, setRegionError] = useState("");
+	/**
+	 * Pre-populate input fields for editing site
+	 */
+	useEffect(() => {
+		if (openEdit) {
+			http
+				.get(`/sites/${siteId}`)
+				.then((response) => {
+					log.info("Editing site: ", response.data);
+					setSiteName(response.data.name);
+					setDescription(response.data.description);
+					setLocation(response.data.location);
+					setSelectedRegion(response.data.region.name);
+				})
+				.catch((error) => {
+					log.error("Error fetching site: ", error);
+				});
+		}
+	}, [openEdit, siteId]);
 
 	/**
 	 * Fetches Site information from the backend when the component mounts.
@@ -115,7 +174,7 @@ const SiteModal = ({ setOpen }) => {
 				}
 			})
 			.catch((error) => log.error("Error fetching regions:", error));
-	}, [selectedRegion]);
+	}, [selectedRegion, editingRegion]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -132,6 +191,7 @@ const SiteModal = ({ setOpen }) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setAnchorEl(event.currentTarget);
 		setCurrentRegion(region);
+		setEditingRegion(region);
 	};
 
 	// Function to close the dropdown menu
@@ -187,7 +247,8 @@ const SiteModal = ({ setOpen }) => {
 				fullWidth
 				PaperProps={{ style: { maxHeight: "80vh" } }}
 			>
-				<DialogTitle>Create a Site</DialogTitle>
+				{openAdd && <DialogTitle>Create a Site</DialogTitle>}
+				{openEdit && <DialogTitle>Update {siteName} Site</DialogTitle>}
 				<DialogContent style={{ minHeight: "300px" }}>
 					<TextField
 						autoFocus
@@ -195,6 +256,9 @@ const SiteModal = ({ setOpen }) => {
 						id="siteName"
 						label="Site Name"
 						fullWidth
+						required
+						error={Boolean(siteNameError)}
+						helperText={siteNameError && "Please enter a Site Name"}
 						value={name}
 						onChange={handleNameChange}
 					/>
@@ -248,7 +312,20 @@ const SiteModal = ({ setOpen }) => {
 										+ Add New Region
 									</MenuItem>
 								</Select>
-								{regionError && <p style={{ color: "red" }}>{regionError}</p>}
+								{regionError && (
+									<p
+										style={{
+											color: "#d32f2f",
+											fontSize: "0.75rem",
+											marginTop: "3px",
+											marginRight: "14px",
+											marginBottom: "0",
+											marginLeft: "14px",
+										}}
+									>
+										{regionError}
+									</p>
+								)}
 							</FormControl>
 							<Menu
 								id="region-menu"
@@ -276,15 +353,23 @@ const SiteModal = ({ setOpen }) => {
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleSubmit} color="primary">
-						Add
-					</Button>
+					{openAdd && (
+						<Button onClick={handleSubmit} color="primary">
+							Add
+						</Button>
+					)}
+					{openEdit && (
+						<Button onClick={handleSubmit} color="primary">
+							Save Changes
+						</Button>
+					)}
 				</DialogActions>
 			</Dialog>
 			{editRegion && (
 				<RegionModal
 					setEditRegion={setEditRegion}
-					selectedRegion={selectedRegion}
+					selectedRegion={editingRegion}
+					setSelectedRegion={setEditingRegion}
 					selectedRegionID={selectedRegionID}
 					regions={regions}
 					setRegions={setRegions}

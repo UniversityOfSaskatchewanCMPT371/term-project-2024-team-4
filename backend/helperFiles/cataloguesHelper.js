@@ -4,8 +4,9 @@ const assert = require("node:assert/strict");
 const { logger } = require("../config/logger.js");
 
 /**
- *
- * @returns
+ * @pre None.
+ * @post Retrieves all catalogues from the database.
+ * @return Returns an array of Catalogue objects.
  */
 async function getAllCatalogues() {
 	try {
@@ -23,8 +24,11 @@ async function getAllCatalogues() {
 }
 
 /**
- *
- * @param {*} req
+ * POST: Create a new catalogue.
+ * @param req Express request object, expecting 'name' and 'description' in the request body.
+ * @pre The request body must contain both 'name' and 'description' fields.
+ * @post A new Catalogue is created and saved in the database.
+ * @return Returns the newly created Catalogue object.
  */
 async function newCatalogue(req) {
 	const { name, description } = req.body;
@@ -46,8 +50,11 @@ async function newCatalogue(req) {
 }
 
 /**
- *
- * @param {*} req
+ * GET: Fetch a catalogue by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The Catalogue with the provided ID must exist in the database.
+ * @post Retrieves a specific Catalogue from the database based on its ID.
+ * @return Returns a Catalogue object or a message indicating the Catalogue was not found.
  */
 async function getCatalogueFromId(req) {
 	try {
@@ -81,8 +88,11 @@ async function getCatalogueFromId(req) {
 }
 
 /**
- *
- * @param {*} req
+ * PUT: Update an existing catalogue.
+ * @param req Express request object containing the new 'name' and 'description' for the Catalogue.
+ * @pre The Catalogue with the given ID must exist in the database.
+ * @post Updates and returns the specified Catalogue in the database.
+ * @return Returns the updated Catalogue object or a message indicating the Catalogue was not found.
  */
 async function updateCatalogue(req) {
 	const { id } = req.params;
@@ -110,8 +120,11 @@ async function updateCatalogue(req) {
 }
 
 /**
- *
- * @param {*} req
+ * DELETE: Remove a catalogue.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The Catalogue with the given ID must exist in the database.
+ * @post Deletes the specified Catalogue from the database.
+ * @return Returns a message indicating success or failure of the deletion.
  */
 async function deleteCatalogue(req) {
 	const id = parseInt(req.params.id);

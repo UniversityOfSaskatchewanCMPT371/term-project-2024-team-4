@@ -2,8 +2,12 @@ const { Site } = require("../dist/entity");
 const myDatabase = require("../config/db");
 
 /**
- *
- * @param {*} req
+ * GET: Fetch ALL Sites
+ * @param {*} req - Contains an object the values: name, description, location, catalogue, region
+ * @precond Database is accessible
+ * @postcond
+ * 	Success: Returns ALL Site entities from the database
+ * 	Failure: Returns an error message indicating the failure reason
  */
 async function newSite(req) {
 	console.log("Creating new Site: " + req.body);
@@ -28,7 +32,11 @@ async function newSite(req) {
 }
 
 /**
- *
+ * GET: Fetch ALL Sites
+ * @precond Database is accessible
+ * @postcond
+ * 	Success: Returns ALL Site entities from the database
+ * 	Failure: Returns an error message indicating the failure reason
  */
 async function getAllSites() {
 	console.log("Getting All Sites");
@@ -57,8 +65,12 @@ async function getAllSites() {
 }
 
 /**
- *
- * @param {*} req
+ * GET: Fetch a SINGLE Site by ID
+ * @param {*} req - req URL parameter contains the Site ID
+ * @precond Request URL parameter contains a valid Site ID that exists in the database
+ * @postcond
+ * 	Success: Returns the SINGLE requested Site object including its relations to 'catalogue', 'region', and 'artifacts'
+ * 	Failure: Returns an error message indicating the failure reason
  */
 async function getSiteFromId(req) {
 	console.log("Getting Site From Id: " + req.params.id);
@@ -93,8 +105,12 @@ async function getSiteFromId(req) {
 }
 
 /**
- *
- * @param {*} req
+ * PUT: Update an existing Site
+ * @param {*} req - req URL parameter contains the Site ID, body contains valid 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @precond Request URL parameter and body contain an existing Site ID and valid updates for 'name', 'description', 'location', 'catalogueId', and 'regionId'
+ * @postcond
+ * 	Success: Returns the updated Site object
+ * 	Failure: Returns an error message related to issue
  */
 async function updateSite(req) {
 	console.log("Updating Site Id: " + req.params.id + " With: " + req.body);
@@ -125,8 +141,12 @@ async function updateSite(req) {
 }
 
 /**
- *
- * @param {*} req
+ * DELETE: Delete a SINGLE existing Site by ID
+ * @param {*} req - Req URL parameter contains the Site ID
+ * @precond Site ID from req URL parameter exists in the database
+ * @postcond
+ * 	Success: Site is deleted from the database; sends an empty response
+ * 	Failure: Returns an error message related to issue
  */
 async function deleteSite(req) {
 	console.log("Deleting Site Id: " + req.params.id);

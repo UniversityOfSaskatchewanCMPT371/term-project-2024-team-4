@@ -4,7 +4,11 @@ const assert = require("node:assert/strict");
 const { logger } = require("../config/logger.js");
 
 /**
- *
+ * POST: Create a new BaseShape.
+ * @param req Express request object, expecting 'name' in the request body.
+ * @pre The request body must contain a 'name' field.
+ * @post A new BaseShape is created and saved in the database.
+ * @return Returns the newly created BaseShape object.
  */
 async function newBaseShape(req) {
 	const { name } = req.body;
@@ -26,7 +30,10 @@ async function newBaseShape(req) {
 }
 
 /**
- *
+ * GET: Fetch all BaseShapes.
+ * @pre None.
+ * @post Retrieves and returns all BaseShapes from the database.
+ * @return Returns an array of BaseShape objects.
  */
 async function getAllBaseShapes() {
 	try {
@@ -46,7 +53,11 @@ async function getAllBaseShapes() {
 }
 
 /**
- *
+ * GET: Fetch a BaseShape by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The BaseShape with the given ID must exist in the database.
+ * @post Retrieves and returns the specified BaseShape from the database.
+ * @return Returns a BaseShape object or a message indicating the BaseShape was not found.
  */
 async function getBaseShapeById(req) {
 	const { id } = req.params;
@@ -68,7 +79,11 @@ async function getBaseShapeById(req) {
 }
 
 /**
- *
+ * PUT: Update an existing BaseShape.
+ * @param req Express request object containing the new 'name' for the BaseShape.
+ * @pre The BaseShape with the given ID must exist in the database.
+ * @post Updates and returns the specified BaseShape in the database.
+ * @return Returns the updated BaseShape object or a message indicating the BaseShape was not found.
  */
 async function updateBaseShape(req) {
 	const { id } = req.params;
@@ -96,7 +111,11 @@ async function updateBaseShape(req) {
 }
 
 /**
- *
+ * DELETE: Remove a BaseShape by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The BaseShape with the given ID must exist in the database.
+ * @post Deletes the specified BaseShape from the database.
+ * @return Returns a message indicating success or failure of the deletion.
  */
 async function deleteBaseShape(req) {
 	const id = parseInt(req.params.id);

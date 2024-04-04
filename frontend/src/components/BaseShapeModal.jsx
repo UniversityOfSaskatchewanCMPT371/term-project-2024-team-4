@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -27,6 +34,7 @@ import log from "../logger";
 export default function BaseShapeModal({
 	setEditBaseShape,
 	selectedBaseShape,
+	setSelectedBaseShape,
 	selectedBaseShapeID,
 	updateBaseShapesList,
 }) {
@@ -63,6 +71,7 @@ export default function BaseShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedBaseShape("");
 		if (setEditBaseShape) setEditBaseShape(false);
 		log.debug(
 			`BaseShapeModal closed, mode: ${selectedBaseShapeID ? "edit" : "add"}.`,
@@ -72,6 +81,9 @@ export default function BaseShapeModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedBaseShapeID ? "Edit Base Shape" : "Add New Base Shape"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="baseShape"
@@ -80,12 +92,16 @@ export default function BaseShapeModal({
 						fullWidth
 						value={baseShape}
 						onChange={(e) => setbaseShape(e.target.value)}
-						style={{ marginBottom: "15px" }}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

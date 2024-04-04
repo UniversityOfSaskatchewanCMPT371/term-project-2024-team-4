@@ -35,7 +35,5 @@ describe("Site", () => {
 				name: /filter/i,
 			}),
 		).toBeInTheDocument();
-
-		screen.logTestingPlaygroundURL();
 	});
 });

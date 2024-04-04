@@ -84,7 +84,7 @@ describe("CultureModal", () => {
 		render(
 			<CultureModal
 				setEditCulture={() => {}}
-				selectedCulture="Existing Culture"
+				selectedCulture={{ name: "selected culture", period: { id: 1 } }}
 				selectedCultureID="1"
 				updateCulturesList={() => {}}
 				periods={mockPeriods}
