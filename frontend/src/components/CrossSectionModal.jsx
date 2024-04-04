@@ -90,7 +90,7 @@ export default function CrossSectionModal({
 						label="Cross Section"
 						variant="outlined"
 						fullWidth
-						value={crossSection} // Use value instead of defaultValue
+						value={selectedCrossSectionID ? crossSection : ""}
 						onChange={(e) => setCrossSection(e.target.value)} // Handle change in name field
 					/>
 				</DialogContent>
