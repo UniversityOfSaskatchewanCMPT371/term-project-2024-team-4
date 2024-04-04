@@ -47,11 +47,16 @@ router.post("/", async (req, res) => {
 			return res.status(500).json({ message: "Internal server error" });
 		}
 
-		// If Base user does not exist, then register them
-		if (!(await Users.findOneBy({ userName: defaultUsername }))) {
+		// if base user
+		const defaultUserExists = await Users.findOne({
+			where: { isDefaultUser: true },
+		});
+		
+		if (!defaultUserExists){
 			await registerUser(defaultUsername, defaultPassword);
 			logger.info("Default user did not exist. Recreating...");
 		}
+	
 		/* ------------------------------------------------------------------------------------------------------------------------------ */
 
 		// Continue with login process:
