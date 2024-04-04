@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import http from "../../http.js";
@@ -10,11 +11,16 @@ import {
 	DialogTitle,
 	DialogContent,
 	DialogActions,
+	FormControl,
+	InputLabel,
 	TextField,
+	Select,
 	MenuItem,
 	Grid,
 	IconButton,
 	Menu,
+	FormLabel,
+	InputAdornment,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -37,39 +43,78 @@ import HaftingShapeModal from "./HaftingShapeModal.jsx";
  * @returns {JSX.Element} AddProjectile React component
  */
 // eslint-disable-next-line no-unused-vars, react/prop-types
-const AddProjectile = ({ setOpenAdd }) => {
+const AddProjectile = ({
+	openAdd,
+	setOpenAdd,
+	setOpenView,
+	openEdit,
+	setOpenEdit,
+	projectilePointId,
+}) => {
 	const inComingSiteInfo = useLocation();
 
 	const siteID = inComingSiteInfo.state.info.id;
 	const siteName = inComingSiteInfo.state.info.name;
 
-	const [name, setName] = useState("");
+	/**
+	 * Check if modal is being used for add or edit projectile points
+	 */
+	useEffect(() => {
+		if (openAdd) {
+			log.info("Adding new projectile point");
+		}
+		if (openEdit) {
+			log.info("Updating a projectile point");
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const [name, setName] = useState(""); // remove once PP name column is removed in database
 	const [description, setDescription] = useState("");
 	const [location, setLocation] = useState("");
-	const [dimensions, setDimensions] = useState("");
-	const [photoFilePath, setPhotoFilePath] = useState("");
+	const [height, setHeight] = useState("");
+	const [width, setWidth] = useState("");
+	const [length, setLength] = useState("");
+	const [photoFilePath, setPhotoFilePath] = useState(null);
 	const [artifactTypeID, setArtifactTypeID] = useState("");
 	const [cultureID, setCultureID] = useState(0);
 	const [bladeShapeID, setBladeShapeID] = useState(0);
 	const [baseShapeID, setBaseShapeID] = useState(0);
 	const [haftingShapeID, setHaftingShapeID] = useState(0);
 	const [crossSectionID, setCrossSectionID] = useState(0);
+
+	const [artifactTypeError, setArtifactTypeError] = useState(false); // for artifact type dropdown error handling
+
+	// for dimension fields validation
+	const [lengthError, setLengthError] = useState(false);
+	const [widthError, setWidthError] = useState(false);
+	const [heightError, setHeightError] = useState(false);
+
 	const [materialID, setMaterialID] = useState(0); // for future implementation of adding materials
 	const [periodID, setPeriodID] = useState(0); // not needed for adding projectile point, for testing only
 
-	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
-	const [anchorEl, setAnchorEl] = useState(null); // For the dropdown menu anchor
 	const [currentPeriod, setCurrentPeriod] = useState(null); // The period currently selected in the dropdown
+
+	// ------- For state variables for managing period dropdown and edit/delete functionalities -------
+	const [periodAnchorEl, setPeriodAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [cultureAanchorEl, setCultureAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [materialAnchorEl, setMaterialAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [baseShapeAnchorEl, setBaseShapeAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [crossSectionAnchorEl, setCrossSectionAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [bladeShapeAnchorEl, setBladeShapeAnchorEl] = useState(null); // For the dropdown menu anchor
+	const [haftingShapeAnchorEl, setHaftingShapeAnchorEl] = useState(null); // For the dropdown menu anchor
 
 	// Function to open the dropdown menu (Edit/Delete options for periods)
 	const handleOpenMenu = (event, period) => {
-		setAnchorEl(event.currentTarget);
+		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
+		setPeriodAnchorEl(event.currentTarget);
 		setCurrentPeriod(period);
+		setEditingPeriod(period); // temp fix
 	};
 
 	// Function to close the dropdown menu
 	const handleCloseMenu = () => {
-		setAnchorEl(null);
+		setPeriodAnchorEl(null);
 		setCurrentPeriod(null);
 	};
 
@@ -81,6 +126,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [editPeriod, setEditPeriod] = useState(false);
 	const [periodModalOpen, setPeriodModalOpen] = useState(false);
 	const [selectedPeriodID, setSelectedPeriodID] = useState(null);
+	const [editingPeriod, setEditingPeriod] = useState("");
 
 	// -----------------------------------------------------------------------------------------
 
@@ -90,6 +136,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [cultureModalOpen, setCultureModalOpen] = useState(false);
 	const [editCulture, setEditCulture] = useState(false);
 	const [selectedCultureID, setSelectedCultureID] = useState(null);
+	const [editingCulture, setEditingCulture] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
@@ -98,6 +145,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [baseShapeModalOpen, setBaseShapeModalOpen] = useState(false);
 	const [editBaseShape, setEditBaseShape] = useState(false);
 	const [selectedBaseShapeID, setSelectedBaseShapeID] = useState(null);
+	const [editingBaseShape, setEditingBaseShape] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing CrossSections through the CrossSectionModal --------
@@ -106,6 +154,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [crossSectionModalOpen, setCrossSectionModalOpen] = useState(false);
 	const [editCrossSection, setEditCrossSection] = useState(false);
 	const [selectedCrossSectionID, setSelectedCrossSectionID] = useState(null);
+	const [editingCrossSection, setEditingCrossSection] = useState("");
+
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing BladeShapes through the BladeShapeModal --------
@@ -114,6 +164,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [bladeShapeModalOpen, setBladeShapeModalOpen] = useState(false);
 	const [editBladeShape, setEditBladeShape] = useState(false);
 	const [selectedBladeShapeID, setSelectedBladeShapeID] = useState(null);
+	const [editingBladeShape, setEditingBladeShape] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing HaftingShapes through the HaftinfShapeModal --------
@@ -122,6 +173,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [haftingShapeModalOpen, setHaftingShapeModalOpen] = useState(false);
 	const [editHaftingShape, setEditHaftingShape] = useState(false);
 	const [selectedHaftingShapeID, setSelectedHaftingShapeID] = useState(null);
+	const [editingHaftingShape, setEditingHaftingShape] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing Material through the MaterialModal --------
@@ -130,16 +182,21 @@ const AddProjectile = ({ setOpenAdd }) => {
 	const [materialModalOpen, setMaterialModalOpen] = useState(false);
 	const [editMaterial, setEditMaterial] = useState(false);
 	const [selectedMaterialID, setSelectedMaterialID] = useState(null);
+	const [editingMaterial, setEditingMaterial] = useState("");
 
 	const [artifactTypes, setArtifactTypes] = useState([]);
 	// -----------------------------------------------------------------------------------------
 
+	/**
+	 * Handle modal visibility depending if being used for add or edit
+	 */
 	const handleClose = () => {
-		setOpenAdd(false);
-	};
-
-	const handleNameChange = (event) => {
-		setName(event.target.value);
+		if (openAdd) {
+			setOpenAdd(false);
+		} else {
+			setOpenEdit(false);
+			setOpenView(true);
+		}
 	};
 
 	const handleDescriptionChange = (event) => {
@@ -150,118 +207,269 @@ const AddProjectile = ({ setOpenAdd }) => {
 		setLocation(event.target.value);
 	};
 
-	const handleDimensionsChange = (event) => {
-		setDimensions(event.target.value);
+	/**
+	 * Validation of length, width, and height input values to only accept float values
+	 * everytime length, width, or height values change
+	 */
+	useEffect(() => {
+		const isFloatRegExp = new RegExp("^[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)$");
+
+		if (
+			(isFloatRegExp.test(length) && parseFloat(length) > 0.0) ||
+			length.length === 0
+		) {
+			setLengthError(false);
+		} else {
+			setLengthError(true);
+		}
+
+		if (
+			(isFloatRegExp.test(width) && parseFloat(width) > 0.0) ||
+			width.length === 0
+		) {
+			setWidthError(false);
+		} else {
+			setWidthError(true);
+		}
+
+		if (
+			(isFloatRegExp.test(height) && parseFloat(height) > 0.0) ||
+			height.length === 0
+		) {
+			setHeightError(false);
+		} else {
+			setHeightError(true);
+		}
+	}, [length, width, height]);
+
+	const handleLengthChange = (event) => {
+		setLength(event.target.value);
+	};
+
+	const handleWidthChange = (event) => {
+		setWidth(event.target.value);
+	};
+
+	const handleHeightChange = (event) => {
+		setHeight(event.target.value);
+	};
+
+	const handleArtifactTypeChange = (event) => {
+		if (event.target.value.trim() === "") {
+			setArtifactTypeError(true);
+		} else {
+			setArtifactTypeError(false);
+			setArtifactTypeID(event.target.value);
+		}
 	};
 
 	const handlePhotoFilePathChange = (event) => {
-		setPhotoFilePath(event.target.value);
+		const file = event.target.files[0];
+		const allowedTypes = ["image/jpeg", "image/png", "image/gif"]; // Add more if needed
+		if (file && allowedTypes.includes(file.type)) {
+			log.info(file.name);
+			setPhotoFilePath(file);
+		} else {
+			// Handle invalid file type
+			alert("Please select a valid image file (JPEG, PNG, GIF).");
+			// Clear the input field if necessary
+			event.target.value = "";
+		}
 	};
 
 	const handleSubmit = () => {
-		log.info("Adding new projectile");
+		if (artifactTypeID.trim() === "") {
+			setArtifactTypeError(true);
+		} else if (!lengthError && !widthError && !heightError) {
+			log.info("Adding new projectile");
 
-		const newProjectilePoint = {
-			name: siteID + "-" + name,
-			location,
-			description,
-			dimensions,
-			photo: photoFilePath,
-			siteId: siteID,
-			artifactTypeId: artifactTypeID,
-			cultureId: cultureID,
-			bladeShapeId: bladeShapeID,
-			baseShapeId: baseShapeID,
-			haftingShapeId: haftingShapeID,
-			crossSectionId: crossSectionID,
-		};
+			const formData = new FormData();
+			formData.append("name", name); // remove once PP name column is removed in database
+			formData.append("location", location);
+			formData.append("description", description);
 
-		http
-			.post("/projectilePoints", newProjectilePoint)
-			.then((response) => {
-				console.log("New projectile point added successfully:", response.data);
-			})
-			.catch((error) => {
-				console.error("Error adding new  projectile point:", error);
-			});
+			if (length.trim()) {
+				setLength(length.replace(/[^0-9.]/g, ""));
+			}
 
-		//Add Base/Blade/Hafting shape and cross section to selected culture.
-		//first, if the currently selected Base/Blade/Hafting shape and cross sections are not in the current culture, add them
+			if (width.trim()) {
+				setWidth(width.replace(/[^0-9.]/g, ""));
+			}
 
-		http
-			.get(`/cultures/${cultureID}`)
-			.then((response) => {
-				console.log("New projectile point added successfully:", response.data);
-				let cultureToUpdate = response.data;
-				//check if the selected base shape is in the selected culture.
-				if (
-					!cultureToUpdate.baseShapes.find(
-						(baseShapeObj) => baseShapeObj.id === baseShapeID,
-					)
-				) {
-					cultureToUpdate.baseShapes.push(baseShapeID);
-				}
-				//check if the selected hafting shape is in the selected culture.
-				if (
-					!cultureToUpdate.haftingShapes.find(
-						(haftingShapeObj) => haftingShapeObj.id === haftingShapeID,
-					)
-				) {
-					cultureToUpdate.haftingShapes.push(haftingShapeID);
-				}
-				//check if the selected blade shape is in the selected culture.
-				if (
-					!cultureToUpdate.bladeShapes.find(
-						(bladeShapeObj) => bladeShapeObj.id === bladeShapeID,
-					)
-				) {
-					cultureToUpdate.bladeShapes.push(bladeShapeID);
-				}
-				//check if the selected cross section is in the selected culture.
-				if (
-					!cultureToUpdate.crossSections.find(
-						(crossSectionObj) => crossSectionObj.id === crossSectionID,
-					)
-				) {
-					cultureToUpdate.crossSections.push(crossSectionID);
-				}
-				//check if the selected material is in the selected culture.
-				if (
-					!cultureToUpdate.materials.find(
-						(materialObj) => materialObj.id === materialID,
-					)
-				) {
-					cultureToUpdate.materials.push(materialID);
-				}
-				const updatedCulture = {
-					name: cultureToUpdate.name,
-					periodId: cultureToUpdate.periodId,
-					baseShapes: cultureToUpdate.baseShapes,
-					bladeShapes: cultureToUpdate.bladeShapes,
-					haftingShapes: cultureToUpdate.haftingShapes,
-					crossSections: cultureToUpdate.crossSections,
-					materials: cultureToUpdate.materials,
-				};
-				log.info("PM 231: " + updatedCulture);
+			if (height.trim()) {
+				setHeight(height.replace(/[^0-9.]/g, ""));
+			}
 
-				http
-					.put(`/cultures/${cultureID}`, updatedCulture)
-					.then((response) => {
-						log.info(
-							`Culture processed successfully: ${JSON.stringify(response.data)}`,
-						);
-						handleClose();
-					})
-					.catch((error) => {
-						log.error(`Error processing culture: ${error}`);
-					});
-			})
-			.catch((error) => {
-				console.error("Error adding new  projectile point:", error);
-			});
+			formData.append(
+				"dimensions",
+				new Array(parseFloat(length), parseFloat(width), parseFloat(height)),
+			);
+			formData.append("photo", photoFilePath);
+			formData.append("siteId", siteID);
+			formData.append("artifactTypeId", artifactTypeID);
+			formData.append("cultureId", cultureID);
+			formData.append("bladeShapeId", bladeShapeID);
+			formData.append("baseShapeId", baseShapeID);
+			formData.append("haftingShapeId", haftingShapeID);
+			formData.append("crossSectionId", crossSectionID);
+			formData.append("materialId", materialID);
 
-		console.log("Submitted:", newProjectilePoint);
+			// set up API endpoint depending if modal is being used for add or edit
+			const requestUrl = `/projectilePoints/${projectilePointId || ""}`;
+			const requestMethod = openAdd ? http.post : http.put;
+
+			requestMethod(requestUrl, formData)
+				.then((response) => {
+					if (openAdd) {
+						log.info("New projectile point added successfully:", response.data);
+					} else {
+						log.info("Updated projectile point successfully:", response.data);
+					}
+				})
+				.catch((error) => {
+					if (openAdd) {
+						log.error("Error adding new  projectile point:", error);
+					} else {
+						log.error("Error updating projectile point:", error);
+					}
+				});
+
+			log.info("Submitted:", ...formData);
+
+			//Add Base/Blade/Hafting shape and cross section to selected culture.
+			//first, if the currently selected Base/Blade/Hafting shape and cross sections are not in the current culture, add them
+
+			http
+				.get(`/cultures/${cultureID}`)
+				.then((response) => {
+					console.log(
+						"New projectile point added successfully:",
+						response.data,
+					);
+					let cultureToUpdate = response.data;
+					//check if the selected base shape is in the selected culture.
+					if (
+						!cultureToUpdate.baseShapes.find(
+							(baseShapeObj) => baseShapeObj.id === baseShapeID,
+						)
+					) {
+						cultureToUpdate.baseShapes.push(baseShapeID);
+					}
+					//check if the selected hafting shape is in the selected culture.
+					if (
+						!cultureToUpdate.haftingShapes.find(
+							(haftingShapeObj) => haftingShapeObj.id === haftingShapeID,
+						)
+					) {
+						cultureToUpdate.haftingShapes.push(haftingShapeID);
+					}
+					//check if the selected blade shape is in the selected culture.
+					if (
+						!cultureToUpdate.bladeShapes.find(
+							(bladeShapeObj) => bladeShapeObj.id === bladeShapeID,
+						)
+					) {
+						cultureToUpdate.bladeShapes.push(bladeShapeID);
+					}
+					//check if the selected cross section is in the selected culture.
+					if (
+						!cultureToUpdate.crossSections.find(
+							(crossSectionObj) => crossSectionObj.id === crossSectionID,
+						)
+					) {
+						cultureToUpdate.crossSections.push(crossSectionID);
+					}
+					//check if the selected material is in the selected culture.
+					if (
+						!cultureToUpdate.materials.find(
+							(materialObj) => materialObj.id === materialID,
+						)
+					) {
+						cultureToUpdate.materials.push(materialID);
+					}
+					const updatedCulture = {
+						name: cultureToUpdate.name,
+						periodId: cultureToUpdate.periodId,
+						baseShapes: cultureToUpdate.baseShapes,
+						bladeShapes: cultureToUpdate.bladeShapes,
+						haftingShapes: cultureToUpdate.haftingShapes,
+						crossSections: cultureToUpdate.crossSections,
+						materials: cultureToUpdate.materials,
+					};
+					log.info("PM 231: " + updatedCulture);
+
+					http
+						.put(`/cultures/${cultureID}`, updatedCulture)
+						.then((response) => {
+							handleClose();
+							log.info(
+								`Culture processed successfully: ${JSON.stringify(response.data)}`,
+							);
+						})
+						.catch((error) => {
+							handleClose();
+							log.error(`Error processing culture: ${error}`);
+						});
+				})
+				.catch((error) => {
+					handleClose();
+					console.error("Error fetching all cultures:", error);
+				});
+		}
 	};
+
+	/**
+	 * Pre-populate input fields for editing projectile point
+	 */
+	useEffect(() => {
+		if (openEdit) {
+			http
+				.get(`/projectilePoints/${projectilePointId}`)
+				.then((response) => {
+					log.info("Editing projectile point: ", response.data);
+					setName(response.data.site.name + "-" + response.data.id);
+					setDescription(response.data.description);
+					setLocation(response.data.location);
+
+					const dimensions = response.data.dimensions.split(",");
+
+					setLength(dimensions[0].trim().replace(/[^0-9.]/g, ""));
+					setWidth(dimensions[1].trim().replace(/[^0-9.]/g, ""));
+					setHeight(dimensions[2].trim().replace(/[^0-9.]/g, ""));
+
+					// setPhotoFilePath(response.data.photo);
+					setArtifactTypeID(response.data.artifactType.id);
+
+					if (response.data.culture !== null) {
+						setSelectedPeriod(response.data.culture.period.name);
+						setSelectedCulture(response.data.culture.name);
+					}
+
+					if (response.data.bladeShape !== null) {
+						setSelectedBladeShape(response.data.bladeShape.name);
+					}
+
+					if (response.data.baseShape !== null) {
+						setSelectedBaseShape(response.data.baseShape.name);
+					}
+
+					if (response.data.haftingShape !== null) {
+						setSelectedHaftingShape(response.data.haftingShape.name);
+					}
+
+					if (response.data.crossSection !== null) {
+						setSelectedCrossSection(response.data.crossSection.name);
+					}
+
+					if (response.data.material !== null) {
+						setSelectedMaterial(response.data.material.name);
+					}
+				})
+				.catch((error) => {
+					log.error("Error fetching projectile point: ", error);
+				});
+		}
+	}, [openEdit, projectilePointId]);
 
 	// ------------ For EDIT Period Modal ------------
 	// Load periods from the database on component mount
@@ -283,7 +491,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching periods:", error);
 			});
-	}, [selectedPeriod]);
+	}, [selectedPeriod, editingPeriod]);
 
 	// Function to update the list of periods after an edit or addition
 	const updatePeriodsList = (newPeriod) => {
@@ -320,11 +528,11 @@ const AddProjectile = ({ setOpenAdd }) => {
 	};
 
 	const handlePeriodChange = async (event) => {
-		const selectedPeriodName = event.target.value.trim();
+		const selectedPeriodName = event.target.value;
 		setSelectedPeriod(selectedPeriodName);
 
 		const selectedPeriod = periods.find(
-			(period) => period.name.trim() === selectedPeriodName,
+			(period) => period.name === selectedPeriodName,
 		);
 
 		if (selectedPeriod) {
@@ -511,7 +719,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching cultures:", error);
 			});
-	}, [selectedCulture, selectedPeriod]);
+	}, [selectedCulture, selectedPeriod, editingCulture]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -526,8 +734,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// Also prepares to show options for editing or deleting the selected culture.
 	const handleOpenEditCultureMenu = (event, culture) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setCultureAnchorEl(event.currentTarget);
 		setSelectedCultureID(culture.id);
+		setEditingCulture(culture); // temp fix
 	};
 
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
@@ -549,7 +758,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 		} else {
 			setSelectedPeriod(selectedCulture.period.name);
 			const selectedPeriod = periods.find(
-				(period) => period.name.trim() === selectedCulture.period.name,
+				(period) => period.name === selectedCulture.period.name,
 			);
 
 			setCultures(selectedPeriod.cultures);
@@ -672,7 +881,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching base shapes:", error);
 			});
-	}, [selectedBaseShape, selectedCulture]);
+	}, [selectedBaseShape, selectedCulture, editingBaseShape]);
 
 	// This function opens the BaseShapeModal for editing an existing base shape or adding a new one.
 	const handleOpenBaseShapeModal = (baseShapeId = null) => {
@@ -684,8 +893,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// This function handles the selection of a base shape for editing.
 	const handleEditBaseShape = (event, baseShape) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setBaseShapeAnchorEl(event.currentTarget);
 		setSelectedBaseShapeID(baseShape.id);
+		setEditingBaseShape(baseShape.name); // temp fix
 	};
 
 	// This function updates the local list of base shapes after adding or editing a base shape.
@@ -750,7 +960,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching cross sections:", error);
 			});
-	}, [selectedCrossSection, selectedCulture]);
+	}, [selectedCrossSection, selectedCulture, editingCrossSection]);
 
 	// This function opens the CrossSectionModal for editing an existing cross sections or adding a new one.
 	const handleOpenCrossSectionModal = (crossSectionId = null) => {
@@ -762,8 +972,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// This function handles the selection of a cross sections for editing.
 	const handleEditCrossSection = (event, crossSection) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setCrossSectionAnchorEl(event.currentTarget);
 		setSelectedCrossSectionID(crossSection.id);
+		setEditingCrossSection(crossSection.name); // temp fix
 	};
 
 	// This function updates the local list of cross sections after adding or editing a cross sections.
@@ -771,6 +982,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// Otherwise, the new cross sections is added to the list.
 	const updateCrossSectionList = (newCrossSection) => {
 		setCrossSections((prevCrossSection) => {
+			console.log("what the id:" + newCrossSection.id);
 			const index = prevCrossSection.findIndex(
 				(shape) => shape.id === newCrossSection.id,
 			);
@@ -829,7 +1041,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching blade shapes:", error);
 			});
-	}, [selectedBladeShape, selectedCulture]);
+	}, [selectedBladeShape, selectedCulture, editingBladeShape]);
 
 	// This function opens the BladeShapeModal for editing an existing blade shape or adding a new one.
 	const handleOpenBladeShapeModal = (bladeShapeId = null) => {
@@ -841,8 +1053,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// This function handles the selection of a blade shape for editing.
 	const handleEditBladeShape = (event, bladeShape) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setBladeShapeAnchorEl(event.currentTarget);
 		setSelectedBladeShapeID(bladeShape.id);
+		setEditingBladeShape(bladeShape.name); // temp fix
 	};
 
 	// This function updates the local list of blade shapes after adding or editing a blade shape.
@@ -907,7 +1120,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching hafting shapes:", error);
 			});
-	}, [selectedCulture, selectedHaftingShape]);
+	}, [selectedCulture, selectedHaftingShape, editingHaftingShape]);
 
 	// This function opens the HaftingShapeModal for editing an existing hafting shape or adding a new one.
 	const handleOpenHaftingShapeModal = (haftingShapeID = null) => {
@@ -919,8 +1132,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// This function handles the selection of a hafting shape for editing.
 	const handleEditHaftingShape = (event, haftingShape) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setHaftingShapeAnchorEl(event.currentTarget);
 		setSelectedHaftingShapeID(haftingShape.id);
+		setEditingHaftingShape(haftingShape.name); // temp fix
 	};
 
 	// This function updates the local list of hafting shapes after adding or editing a hafting shape.
@@ -933,7 +1147,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			);
 			if (index > -1) {
 				const updatedHaftingShape = [...prevHaftingShapes];
-				updateHaftingShapeList[index] = newHaftingShape;
+				updatedHaftingShape[index] = newHaftingShape;
 				return updatedHaftingShape;
 			} else {
 				return [...prevHaftingShapes, newHaftingShape];
@@ -993,8 +1207,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching artifact types:", error);
 			});
-	}, [selectedCulture, selectedMaterial]);
+	}, [selectedCulture, selectedMaterial, editingMaterial]);
 
+	// ---------------------------- DUPLICATE USE EFFECT ---------------------------------
 	useEffect(() => {
 		http
 			.get("/materials")
@@ -1016,7 +1231,7 @@ const AddProjectile = ({ setOpenAdd }) => {
 			.catch((error) => {
 				console.error("Error fetching material:", error);
 			});
-	}, [selectedCulture, selectedMaterial]);
+	}, [selectedCulture, selectedMaterial, editingMaterial]);
 
 	const handleOpenMaterialModal = (materialID = null) => {
 		setSelectedMaterialID(materialID);
@@ -1026,8 +1241,9 @@ const AddProjectile = ({ setOpenAdd }) => {
 
 	const handleOpenEditMaterialMenu = (event, material) => {
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
-		setAnchorEl(event.currentTarget);
+		setMaterialAnchorEl(event.currentTarget);
 		setSelectedMaterialID(material.id);
+		setEditingMaterial(material);
 	};
 
 	const handleMaterialChange = (event) => {
@@ -1063,20 +1279,20 @@ const AddProjectile = ({ setOpenAdd }) => {
 	// ---------------- End of MaterialModal functions --------------------
 
 	return (
-		<div>
+		<>
 			<Dialog open={true} onClose={handleClose} maxWidth="md" fullWidth>
-				<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
+				{openAdd && (
+					<DialogTitle>Add Projectile Point to {siteName}</DialogTitle>
+				)}
+				{openEdit && (
+					<DialogTitle>
+						Update {siteName}-{projectilePointId} Projectile Point
+					</DialogTitle>
+				)}
 				<DialogContent style={{ minHeight: "300px" }}>
 					<Grid container spacing={2} sx={{ paddingTop: 0 }}>
 						<Grid item xs={6}>
-							<TextField
-								margin="dense"
-								id="name"
-								label="Name"
-								fullWidth
-								value={name}
-								onChange={handleNameChange}
-							/>
+							{/* ------------ Description ------------- */}
 							<TextField
 								margin="dense"
 								id="description"
@@ -1084,39 +1300,145 @@ const AddProjectile = ({ setOpenAdd }) => {
 								multiline
 								rows={4}
 								fullWidth
-								value={description}
+								value={description || ""}
 								onChange={handleDescriptionChange}
 							/>
-							{/* ------------ Start of PeriodModal ------------- */}
+							{/* ------------ Upload Photo ------------- */}
+							<FormControl sx={{ my: 3.4 }}>
+								<FormLabel sx={{ mb: 1.5 }}>
+									Upload {photoFilePath && "New"} Photo
+								</FormLabel>
+								<input type="file" onChange={handlePhotoFilePathChange} />
+							</FormControl>
+							{/* ------------ Dimensions ------------- */}
+							<div>
+								<FormLabel id="dimensions-label">Dimensions</FormLabel>
+								<Grid
+									container
+									sx={{
+										mt: 1,
+										"& .MuiTextField-root": { width: "14.5ch" },
+										display: "flex",
+										justifyContent: "space-between",
+									}}
+								>
+									<Grid item>
+										<TextField
+											id="lengthdimension"
+											label="Length"
+											value={length || ""}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment disableTypography position="end">
+														mm
+													</InputAdornment>
+												),
+											}}
+											error={Boolean(lengthError)}
+											helperText={lengthError && "Invalid length"}
+											onChange={handleLengthChange}
+										/>
+									</Grid>
+									<Grid item>
+										<TextField
+											id="widthdimension"
+											label="Width"
+											value={width || ""}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment disableTypography position="end">
+														mm
+													</InputAdornment>
+												),
+											}}
+											error={Boolean(widthError)}
+											helperText={widthError && "Invalid width"}
+											onChange={handleWidthChange}
+										/>
+									</Grid>
+									<Grid item>
+										<TextField
+											id="heightdimension"
+											label="Height"
+											value={height || ""}
+											InputProps={{
+												endAdornment: (
+													<InputAdornment disableTypography position="end">
+														mm
+													</InputAdornment>
+												),
+											}}
+											error={Boolean(heightError)}
+											helperText={heightError && "Invalid height"}
+											onChange={handleHeightChange}
+										/>
+									</Grid>
+								</Grid>
+							</div>
+							{/* ------------ Location ------------- */}
 							<TextField
-								select
-								label="Period"
-								value={selectedPeriod}
-								onChange={handlePeriodChange}
-								fullWidth
+								sx={{ mt: 1.5, width: "100%" }}
 								margin="dense"
+								id="location"
+								label="Location"
+								fullWidth
+								value={location || ""}
+								onChange={handleLocationChange}
+							/>
+							{/* ------------ Artifact Type ------------- */}
+							<TextField
+								sx={{ mt: 1, width: "100%" }}
+								id="artifactTypeID"
+								label="Artifact Type"
+								variant="outlined"
+								fullWidth
+								select
+								required
+								error={Boolean(artifactTypeError)}
+								helperText={
+									artifactTypeError && "Please select an Artifact Type"
+								}
+								value={artifactTypeID || ""}
+								onChange={handleArtifactTypeChange}
 							>
-								{periods.map((period) => (
-									<MenuItem key={period.id} value={period.name}>
-										{period.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleOpenMenu(event, period)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
-									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenPeriodModal()}>
-									+ Add New Period
-								</MenuItem>
+								<MenuItem value="Lithic">Lithic</MenuItem>
+								<MenuItem value="Ceramic">Ceramic</MenuItem>
+								<MenuItem value="Faunal">Faunal</MenuItem>
 							</TextField>
+						</Grid>
+						<Grid item xs={6}>
+							{/* ------------ Start of PeriodModal ------------- */}
+							<FormControl sx={{ mt: 1, width: "100%" }}>
+								<InputLabel id="period-label">Period</InputLabel>
+								<Select
+									id="period"
+									label="Period"
+									labelId="period-label"
+									value={selectedPeriod}
+									onChange={handlePeriodChange}
+									renderValue={(selected) => selected}
+								>
+									{periods.map((period) => (
+										<MenuItem key={period.id} value={period.name}>
+											{period.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleOpenMenu(event, period)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenPeriodModal()}>
+										+ Add New Period
+									</MenuItem>
+								</Select>
+							</FormControl>
 							<Menu
 								id="period-menu"
-								anchorEl={anchorEl}
-								keepMounted
-								open={Boolean(anchorEl)}
+								anchorEl={periodAnchorEl}
+								open={Boolean(periodAnchorEl)}
 								onClose={handleCloseMenu}
 							>
 								<MenuItem
@@ -1133,385 +1455,344 @@ const AddProjectile = ({ setOpenAdd }) => {
 							</Menu>
 							{/* ------------ End of PeriodModal  ------------- */}
 							{/* ------------ Start of CultureModal  ------------- */}
-							<TextField
-								select
-								label="Culture"
-								value={selectedCulture}
-								onChange={handleCultureChange}
-								fullWidth
-								margin="dense"
-							>
-								{cultures.map((culture) => (
-									<MenuItem key={culture.id} value={culture.name}>
-										{culture.name}
-										<IconButton
-											size="small"
-											onClick={(event) =>
-												handleOpenEditCultureMenu(event, culture)
-											}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
-									</MenuItem>
-								))}
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="culture-label">Culture</InputLabel>
+								<Select
+									id="culture"
+									label="Culture"
+									labelId="culture-label"
+									value={selectedCulture}
+									onChange={handleCultureChange}
+									renderValue={(selected) => selected}
+								>
+									{cultures.map((culture) => (
+										<MenuItem key={culture.id} value={culture.name}>
+											{culture.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleOpenEditCultureMenu(event, culture)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
 
-								<MenuItem onClick={() => handleOpenCultureModal()}>
-									+ Add New Culture
-								</MenuItem>
-								<Menu
-									id="culture-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
-										setAnchorEl(null);
+									<MenuItem onClick={() => handleOpenCultureModal()}>
+										+ Add New Culture
+									</MenuItem>
+								</Select>
+							</FormControl>
+							<Menu
+								id="culture-menu"
+								anchorEl={cultureAanchorEl}
+								open={Boolean(cultureAanchorEl)}
+								onClose={() => {
+									setCultureAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditCulture(true);
+										setCultureModalOpen(true);
+										setCultureAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditCulture(true);
-											setCultureModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteCulture();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteCulture();
+										setCultureAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of CultureModal  ------------- */}
-							{/*Should be renamed(maybe just drop the ID?)  also, Menu items will need to be dynamic at some point*/}
-							<TextField
-								margin="dense"
-								id="artifactTypeID"
-								label="ArtifactTypeID"
-								variant="outlined"
-								fullWidth
-								select
-								value={artifactTypeID}
-								onChange={(e) => setArtifactTypeID(e.target.value)}
-							>
-								<MenuItem value="Lithic">Lithic</MenuItem>
-								<MenuItem value="Ceramic">Ceramic</MenuItem>
-								<MenuItem value="Faunal">Faunal</MenuItem>
-							</TextField>
 							{/* ------------ Start of MaterialModal  ------------- */}
-							<TextField
-								select
-								label="Material"
-								value={selectedMaterial}
-								onChange={handleMaterialChange}
-								fullWidth
-								margin="dense"
-								disabled={!selectedPeriod || !selectedCulture}
-							>
-								{materials.map((material) => (
-									<MenuItem key={material.id} value={material.name}>
-										{material.name}
-										<IconButton
-											size="small"
-											onClick={(event) =>
-												handleOpenEditMaterialMenu(event, material)
-											}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
-									</MenuItem>
-								))}
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="material-label">Material</InputLabel>
+								<Select
+									id="material"
+									label="Material"
+									labelId="material-label"
+									value={selectedMaterial}
+									onChange={handleMaterialChange}
+									renderValue={(selected) => selected}
+								>
+									{materials.map((material) => (
+										<MenuItem key={material.id} value={material.name}>
+											{material.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleOpenEditMaterialMenu(event, material)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
 
-								<MenuItem onClick={() => handleOpenMaterialModal()}>
-									+ Add New Material
-								</MenuItem>
-								<Menu
-									id="material-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
-										setAnchorEl(null);
+									<MenuItem onClick={() => handleOpenMaterialModal()}>
+										+ Add New Material
+									</MenuItem>
+								</Select>
+							</FormControl>
+							<Menu
+								id="material-menu"
+								anchorEl={materialAnchorEl}
+								open={Boolean(materialAnchorEl)}
+								onClose={() => {
+									setMaterialAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditMaterial(true);
+										setMaterialModalOpen(true);
+										setMaterialAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditMaterial(true);
-											setMaterialModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteMaterial();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteMaterial();
+										setMaterialAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of MaterialModal  ------------- */}
-						</Grid>
-						<Grid item xs={6}>
-							{/*This should removed, as the location is attached to the site*/}
-							<TextField
-								margin="dense"
-								id="location"
-								label="Location"
-								fullWidth
-								value={location}
-								onChange={handleLocationChange}
-							/>
-							{/* The dimensions should be three different fields(length, width, height and )
-						if you are making this change, make sure the database was changed to hold a list of
-						float/double and not a string*/}
-							<TextField
-								margin="dense"
-								id="dimensions"
-								label="Dimensions"
-								fullWidth
-								value={dimensions}
-								onChange={handleDimensionsChange}
-							/>
-							{/* <FileUpload margin="dense" /> */}
-							<TextField
-								margin="dense"
-								id="photoFilePath"
-								label="Photo File Path"
-								fullWidth
-								value={photoFilePath}
-								onChange={handlePhotoFilePathChange}
-							/>
 							{/* ------------ Start of BaseShapeModal  ------------- */}
-							<TextField
-								select
-								label="Base Shape"
-								fullWidth
-								margin="dense"
-								value={selectedBaseShape}
-								onChange={handleBaseShapeChange}
-								disabled={!selectedPeriod || !selectedCulture}
-							>
-								{baseShapes.map((shape) => (
-									<MenuItem key={shape.id} value={shape.name}>
-										{shape.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleEditBaseShape(event, shape)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="baseshape-label">Base Shape</InputLabel>
+								<Select
+									id="baseshape"
+									label="Base Shape"
+									labelId="baseshape-label"
+									value={selectedBaseShape}
+									onChange={handleBaseShapeChange}
+									renderValue={(selected) => selected}
+								>
+									{baseShapes.map((shape) => (
+										<MenuItem key={shape.id} value={shape.name}>
+											{shape.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleEditBaseShape(event, shape)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenBaseShapeModal()}>
+										+ Add New Base Shape
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenBaseShapeModal()}>
-									+ Add New Base Shape
-								</MenuItem>
-
-								<Menu
-									id="base-shape-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
-										setAnchorEl(null);
+								</Select>
+							</FormControl>
+							<Menu
+								id="base-shape-menu"
+								anchorEl={baseShapeAnchorEl}
+								open={Boolean(baseShapeAnchorEl)}
+								onClose={() => {
+									setBaseShapeAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditBaseShape(true);
+										setBaseShapeModalOpen(true);
+										setBaseShapeAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditBaseShape(true);
-											setBaseShapeModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteBaseShape();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteBaseShape();
+										setBaseShapeAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of BaseShapeModal  ------------- */}
 							{/* ------------ Start of CrossSectionModal  ------------- */}
-							<TextField
-								select
-								label="Cross Section"
-								fullWidth
-								margin="dense"
-								value={selectedCrossSection}
-								onChange={handleCrossSectionChange}
-								disabled={!selectedPeriod || !selectedCulture}
-							>
-								{crossSections.map((crossSect) => (
-									<MenuItem key={crossSect.id} value={crossSect.name}>
-										{crossSect.name}
-										<IconButton
-											size="small"
-											onClick={(event) =>
-												handleEditCrossSection(event, crossSect)
-											}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="crosssection-label">Cross Section</InputLabel>
+								<Select
+									id="crosssection"
+									label="Cross Section"
+									labelId="crosssection-label"
+									value={selectedCrossSection}
+									onChange={handleCrossSectionChange}
+									renderValue={(selected) => selected}
+								>
+									{crossSections.map((crossSect) => (
+										<MenuItem key={crossSect.id} value={crossSect.name}>
+											{crossSect.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleEditCrossSection(event, crossSect)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenCrossSectionModal()}>
+										+ Add New Cross Section
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenCrossSectionModal()}>
-									+ Add New Cross Section
-								</MenuItem>
-
-								<Menu
-									id="cross-section-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
-										setAnchorEl(null);
+								</Select>
+							</FormControl>
+							<Menu
+								id="cross-section-menu"
+								anchorEl={crossSectionAnchorEl}
+								open={Boolean(crossSectionAnchorEl)}
+								onClose={() => {
+									setCrossSectionAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditCrossSection(true);
+										setCrossSectionModalOpen(true);
+										setCrossSectionAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditCrossSection(true);
-											setCrossSectionModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteCrossSection();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteCrossSection();
+										setCrossSectionAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of CrossSectionModal  ------------- */}
 							{/* ------------ Start of BladeShapeModal  ------------- */}
-							<TextField
-								select
-								label="Blade Shape"
-								fullWidth
-								margin="dense"
-								value={selectedBladeShape}
-								onChange={handleBladeShapeChange}
-								disabled={!selectedPeriod || !selectedCulture}
-							>
-								{bladeShapes.map((shape) => (
-									<MenuItem key={shape.id} value={shape.name}>
-										{shape.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleEditBladeShape(event, shape)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="blaseshape-label">Blade Shape</InputLabel>
+								<Select
+									id="bladeshape"
+									label="Blade Shape"
+									labelId="bladeshape-label"
+									value={selectedBladeShape}
+									onChange={handleBladeShapeChange}
+									renderValue={(selected) => selected}
+								>
+									{bladeShapes.map((shape) => (
+										<MenuItem key={shape.id} value={shape.name}>
+											{shape.name}
+											<IconButton
+												size="small"
+												onClick={(event) => handleEditBladeShape(event, shape)}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenBladeShapeModal()}>
+										+ Add New Blade Shape
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenBladeShapeModal()}>
-									+ Add New Blade Shape
-								</MenuItem>
-
-								<Menu
-									id="blade-shape-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
-										setAnchorEl(null);
+								</Select>
+							</FormControl>
+							<Menu
+								id="blade-shape-menu"
+								anchorEl={bladeShapeAnchorEl}
+								open={Boolean(bladeShapeAnchorEl)}
+								onClose={() => {
+									setBladeShapeAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditBladeShape(true);
+										setBladeShapeModalOpen(true);
+										setBladeShapeAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditBladeShape(true);
-											setBladeShapeModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteBladeShape();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteBladeShape();
+										setBladeShapeAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of BladeShapeModal  ------------- */}
 							{/* ------------ Start of HaftingShapeModal  ------------- */}
-							<TextField
-								select
-								label="Hafting Shape"
-								fullWidth
-								margin="dense"
-								value={selectedHaftingShape}
-								onChange={handleHaftingShapeChange}
-								disabled={!selectedPeriod || !selectedCulture}
-							>
-								{haftingShapes.map((shape) => (
-									<MenuItem key={shape.id} value={shape.name}>
-										{shape.name}
-										<IconButton
-											size="small"
-											onClick={(event) => handleEditHaftingShape(event, shape)}
-											style={{ marginLeft: "auto" }}
-										>
-											<MoreHorizIcon />
-										</IconButton>
+							<FormControl sx={{ mt: 1.5, width: "100%" }}>
+								<InputLabel id="haftingshape-label">Hafting Shape</InputLabel>
+								<Select
+									id="haftingshape"
+									label="Hafting Shape"
+									labelId="haftingshape-label"
+									value={selectedHaftingShape}
+									onChange={handleHaftingShapeChange}
+									renderValue={(selected) => selected}
+								>
+									{haftingShapes.map((shape) => (
+										<MenuItem key={shape.id} value={shape.name}>
+											{shape.name}
+											<IconButton
+												size="small"
+												onClick={(event) =>
+													handleEditHaftingShape(event, shape)
+												}
+												style={{ marginLeft: "auto" }}
+											>
+												<MoreHorizIcon />
+											</IconButton>
+										</MenuItem>
+									))}
+									<MenuItem onClick={() => handleOpenHaftingShapeModal()}>
+										+ Add New Hafting Shape
 									</MenuItem>
-								))}
-								<MenuItem onClick={() => handleOpenHaftingShapeModal()}>
-									+ Add New Hafting Shape
-								</MenuItem>
-
-								<Menu
-									id="hafting-shape-menu"
-									anchorEl={anchorEl}
-									keepMounted
-									open={Boolean(anchorEl)}
-									onClose={() => {
-										setAnchorEl(null);
+								</Select>
+							</FormControl>
+							<Menu
+								id="hafting-shape-menu"
+								anchorEl={haftingShapeAnchorEl}
+								open={Boolean(haftingShapeAnchorEl)}
+								onClose={() => {
+									setHaftingShapeAnchorEl(null);
+								}}
+							>
+								<MenuItem
+									onClick={() => {
+										setEditHaftingShape(true);
+										setHaftingShapeModalOpen(true);
+										setHaftingShapeAnchorEl(null);
 									}}
 								>
-									<MenuItem
-										onClick={() => {
-											setEditHaftingShape(true);
-											setHaftingShapeModalOpen(true);
-											setAnchorEl(null);
-										}}
-									>
-										<EditIcon fontSize="small" /> Edit
-									</MenuItem>
-									<MenuItem
-										onClick={() => {
-											handleDeleteHaftingShape();
-											setAnchorEl(null);
-										}}
-									>
-										<DeleteIcon fontSize="small" /> Delete
-									</MenuItem>
-								</Menu>
-							</TextField>
+									<EditIcon fontSize="small" /> Edit
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleDeleteHaftingShape();
+										setHaftingShapeAnchorEl(null);
+									}}
+								>
+									<DeleteIcon fontSize="small" /> Delete
+								</MenuItem>
+							</Menu>
 							{/* ------------ End of HaftingShapeModal  ------------- */}
 						</Grid>
 					</Grid>
@@ -1520,27 +1801,38 @@ const AddProjectile = ({ setOpenAdd }) => {
 					<Button onClick={handleClose} color="primary">
 						Cancel
 					</Button>
-					<Button onClick={handleSubmit} color="primary">
-						Add
-					</Button>
+					{openAdd && (
+						<Button onClick={handleSubmit} color="primary">
+							Add
+						</Button>
+					)}
+					{openEdit && (
+						<Button onClick={handleSubmit} color="primary">
+							Save Changes
+						</Button>
+					)}
 				</DialogActions>
 			</Dialog>
 			{editPeriod && (
 				<PeriodModal
 					setEditPeriod={setEditPeriod}
-					selectedPeriod={selectedPeriod}
+					selectedPeriod={editingPeriod.name}
+					setSelectedPeriod={setEditingPeriod}
 					selectedPeriodID={selectedPeriodID}
 					periods={periods}
 					setPeriods={setPeriods}
 					updatePeriodsList={updatePeriodsList}
 					periodModalOpen={periodModalOpen}
 					setPeriodModalOpen={setPeriodModalOpen}
+					selectedPeriodStartDate={editingPeriod.start}
+					selectedPeriodEndDate={editingPeriod.end}
 				/>
 			)}
 			{editCulture && (
 				<CultureModal
 					setEditCulture={setEditCulture}
-					selectedCulture={selectedCulture}
+					selectedCulture={editingCulture}
+					setSelectedCulture={setEditingCulture}
 					selectedCultureID={selectedCultureID}
 					updateCulturesList={updateCulturesList}
 					periods={periods}
@@ -1551,7 +1843,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 			{editMaterial && (
 				<MaterialModal
 					setEditMaterial={setEditMaterial}
-					selectedMaterial={selectedMaterial}
+					selectedMaterial={editingMaterial}
+					setSelectedMaterial={setEditingMaterial}
 					selectedMaterialID={selectedMaterialID}
 					updateMaterialList={updateMaterialList}
 					artifactTypes={artifactTypes}
@@ -1560,7 +1853,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 			{editBaseShape && (
 				<BaseShapeModal
 					setEditBaseShape={setEditBaseShape}
-					selectedBaseShape={selectedBaseShape}
+					selectedBaseShape={editingBaseShape}
+					setSelectedBaseShape={setEditingBaseShape}
 					selectedBaseShapeID={selectedBaseShapeID}
 					updateBaseShapesList={updateBaseShapesList}
 				/>
@@ -1568,7 +1862,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 			{editCrossSection && (
 				<CrossSectionModal
 					setEditCrossSection={setEditCrossSection}
-					selectedCrossSection={selectedCrossSection}
+					selectedCrossSection={editingCrossSection} //temp fix
+					setSelectedCrossSection={setEditingCrossSection}
 					selectedCrossSectionID={selectedCrossSectionID}
 					updateCrossSectionsList={updateCrossSectionList}
 				/>
@@ -1576,7 +1871,8 @@ const AddProjectile = ({ setOpenAdd }) => {
 			{editBladeShape && (
 				<BladeShapeModal
 					setEditBladeShape={setEditBladeShape}
-					selectedBladeShape={selectedBladeShape}
+					selectedBladeShape={editingBladeShape}
+					setSelectedBladeShape={setEditingBladeShape}
 					selectedBladeShapeID={selectedBladeShapeID}
 					updateBladeShapesList={updateBladeShapesList}
 				/>
@@ -1584,12 +1880,13 @@ const AddProjectile = ({ setOpenAdd }) => {
 			{editHaftingShape && (
 				<HaftingShapeModal
 					setEditHaftingShape={setEditHaftingShape}
-					selectedHaftingShape={selectedHaftingShape}
+					selectedHaftingShape={editingHaftingShape}
+					setSelectedHaftingShape={setEditingHaftingShape}
 					selectedHaftingShapeID={selectedHaftingShapeID}
 					updateHaftingShapeList={updateHaftingShapeList}
 				/>
 			)}
-		</div>
+		</>
 	);
 };
 

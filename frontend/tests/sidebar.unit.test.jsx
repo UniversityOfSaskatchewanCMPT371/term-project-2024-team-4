@@ -14,13 +14,15 @@ describe("Sidebar", () => {
 
 		expect(screen.getByText(/pcubed/i)).toBeInTheDocument();
 		expect(screen.getByTestId("HomeIcon")).toBeInTheDocument();
-		expect(screen.getByText(/home/i)).toBeInTheDocument();
+		expect(screen.getByText(/catalogue/i)).toBeInTheDocument();
 		expect(screen.getByTestId("UploadIcon")).toBeInTheDocument();
 		expect(screen.getByText(/connect/i)).toBeInTheDocument();
 		expect(screen.getByTestId("BarChartIcon")).toBeInTheDocument();
 		expect(screen.getByText(/statistics/i)).toBeInTheDocument();
-		expect(screen.getByTestId("FolderCopyIcon")).toBeInTheDocument();
-		expect(screen.getByText(/data management/i)).toBeInTheDocument();
+		expect(screen.getAllByTestId("FolderCopyIcon")).toBeTruthy();
+		expect(screen.getByText(/cultures management/i)).toBeInTheDocument();
+		expect(screen.getByText(/periods management/i)).toBeInTheDocument();
+		expect(screen.getByText(/materials management/i)).toBeInTheDocument();
 		expect(screen.getByTestId("RoomPreferencesIcon")).toBeInTheDocument();
 		expect(screen.getByText(/settings/i)).toBeInTheDocument();
 		expect(screen.getByTestId("LoginIcon")).toBeInTheDocument();

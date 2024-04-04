@@ -250,8 +250,10 @@ export class Artifact {
 	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Material)
-	materials: Material[];
+	@ManyToOne(() => Material, (material) => material.artifacts, {
+		onDelete: "SET NULL",
+	})
+	material: Site;
 }
 
 // Material Entity
@@ -271,8 +273,7 @@ export class Material {
 	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Artifact, (artifact) => artifact.materials)
-	@JoinTable()
+	@OneToMany(() => Artifact, (artifact) => artifact.material)
 	artifacts: Artifact[];
 
 	@ManyToMany(() => Culture, (culture) => culture.materials)

@@ -4,8 +4,9 @@ import RegionModal from "../src/components/RegionModal";
 import http from "../http";
 
 test("RegionModal renders correctly with every field empty", () => {
+	const selectedRegion = { name: "" };
 	// Render the RegionModal component
-	render(<RegionModal />);
+	render(<RegionModal selectedRegion={selectedRegion} />);
 
 	// Find input fields
 	const regionInput = screen.getByLabelText("Region Name");
@@ -17,12 +18,13 @@ test("RegionModal renders correctly with every field empty", () => {
 });
 
 test("should edit region on button click", async () => {
-	const selectedRegion = "Existing Region";
+	const selectedRegion = { name: "Existing Region" };
 	const selectedRegionID = "123";
 
 	// Mocking setEditRegion and updateRegionsList functions
 	const setEditRegion = vi.fn();
 	const updateRegionsList = vi.fn();
+	const setSelectedRegion = vi.fn();
 
 	// Mocking http.put
 	vi.spyOn(http, "put").mockResolvedValue({});
@@ -33,6 +35,7 @@ test("should edit region on button click", async () => {
 			selectedRegion={selectedRegion}
 			selectedRegionID={selectedRegionID}
 			updateRegionsList={updateRegionsList}
+			setSelectedRegion={setSelectedRegion}
 		/>,
 	);
 

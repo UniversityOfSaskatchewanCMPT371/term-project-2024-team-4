@@ -89,7 +89,8 @@ async function getBladeShapeById(req) {
  * @return Returns the updated BladeShape object or a message indicating the BladeShape was not found.
  */
 async function updateBladeShape(req) {
-	const { id, name } = req.params;
+	const { id } = req.params;
+	const { name } = req.body;
 	try {
 		assert(name, "BladeShape name is required for update.");
 		const bladeShapeRepository = await myDatabase.getRepository(BladeShape);

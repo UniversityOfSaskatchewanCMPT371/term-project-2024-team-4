@@ -5,6 +5,7 @@ const {
 	BaseShape,
 	HaftingShape,
 	CrossSection,
+	Material,
 } = require("../dist/entity");
 const myDatabase = require("../config/db");
 
@@ -20,7 +21,6 @@ async function newProjectilePoint(req) {
 		location,
 		description,
 		dimensions,
-		photo,
 		siteId,
 		artifactTypeId,
 		cultureId,
@@ -28,9 +28,12 @@ async function newProjectilePoint(req) {
 		baseShapeId,
 		haftingShapeId,
 		crossSectionId,
+		materialId,
 	} = req.body;
 
-	console.log("Creating new Projectile Point: " + req.body);
+	const photo = req.file ? req.file.path : null;
+
+	console.log("Creating new Projectile Point: " + JSON.stringify(req.body));
 
 	try {
 		// Fetch related entities by their IDs
@@ -49,6 +52,9 @@ async function newProjectilePoint(req) {
 		const crossSection = await myDatabase
 			.getRepository(CrossSection)
 			.findOneBy({ id: crossSectionId });
+		const material = await myDatabase
+			.getRepository(Material)
+			.findOneBy({ id: materialId });
 
 		// Then create a new instance of ProjectilePoint with the provided and fetched data
 		const projectilePoint = new ProjectilePoint();
@@ -64,6 +70,7 @@ async function newProjectilePoint(req) {
 		projectilePoint.baseShape = baseShape;
 		projectilePoint.haftingShape = haftingShape;
 		projectilePoint.crossSection = crossSection;
+		projectilePoint.material = material;
 
 		// Set properties directly and through fetched entities
 		// Save the new instance to the database
@@ -99,6 +106,7 @@ async function getAllProjectilePoints() {
 					"baseShape",
 					"haftingShape",
 					"crossSection",
+					"material",
 				],
 			});
 		return projectilePoints;
@@ -134,6 +142,8 @@ async function getProjectilePointFromId(req) {
 					"baseShape",
 					"haftingShape",
 					"crossSection",
+					"culture.period",
+					"material",
 				],
 			});
 		if (!projectilePoint) {
@@ -161,12 +171,12 @@ async function getProjectilePointFromId(req) {
 async function updateProjectilePoint(req) {
 	const { id } = req.params;
 	console.log("Updating Projectile Point Id: " + id);
+
 	const {
 		name,
 		location,
 		description,
 		dimensions,
-		photo,
 		siteId,
 		artifactTypeId,
 		cultureId,
@@ -174,7 +184,16 @@ async function updateProjectilePoint(req) {
 		baseShapeId,
 		haftingShapeId,
 		crossSectionId,
+		materialId,
 	} = req.body;
+
+	// Initialize photo variable
+	let photo;
+
+	// Check if file is provided
+	if (req.file) {
+		photo = req.file.path;
+	}
 
 	try {
 		// Fetch the existing ProjectilePoint entity
@@ -194,6 +213,7 @@ async function updateProjectilePoint(req) {
 		projectilePoint.photo = photo;
 		projectilePoint.site = { id: siteId };
 		projectilePoint.artifactType = { id: artifactTypeId };
+		projectilePoint.material = { id: materialId };
 
 		// Fetch and set the related entities
 		projectilePoint.culture = await myDatabase
@@ -211,6 +231,9 @@ async function updateProjectilePoint(req) {
 		projectilePoint.crossSection = await myDatabase
 			.getRepository(CrossSection)
 			.findOneBy({ id: crossSectionId });
+		projectilePoint.material = await myDatabase
+			.getRepository(Material)
+			.findOneBy({ id: materialId });
 
 		// Save the updated entity
 		await myDatabase.getRepository(ProjectilePoint).save(projectilePoint);

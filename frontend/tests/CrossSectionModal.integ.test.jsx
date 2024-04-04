@@ -26,6 +26,7 @@ describe("CrossSectionModal", () => {
 			selectedCrossSection: "",
 			selectedCrossSectionID: "",
 			updateCrossSectionsList: vi.fn(),
+			setSelectedCrossSection: vi.fn(),
 		};
 
 		const { getByText, getByLabelText } = render(

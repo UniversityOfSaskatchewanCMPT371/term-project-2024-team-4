@@ -40,7 +40,21 @@ describe("BladeShapeModal", () => {
 			/>,
 		);
 
-		expect(screen.getByLabelText(/Blade Shape/i)).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				name: /add new blade shape/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /cancel/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /save/i,
+			}),
+		).toBeInTheDocument();
 	});
 
 	it("should call http.post on save when adding a new blade shape", async () => {
@@ -59,9 +73,14 @@ describe("BladeShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Blade Shape/i), {
-			target: { value: newBladeShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /blade shape/i,
+			}),
+			{
+				target: { value: newBladeShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
@@ -91,9 +110,14 @@ describe("BladeShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Blade Shape/i), {
-			target: { value: updatedBladeShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /blade shape/i,
+			}),
+			{
+				target: { value: updatedBladeShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>

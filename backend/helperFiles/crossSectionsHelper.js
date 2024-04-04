@@ -102,6 +102,7 @@ async function updateCrossSection(req) {
 		await crossSectionRepository.save(crossSectionToUpdate);
 		// res.json(crossSectionToUpdate);
 		logger.info(`Updated CrossSection with ID: ${id}`);
+		return crossSectionToUpdate; //temp fix
 	} catch (error) {
 		logger.error(`Error updating CrossSection with ID ${id}: ${error.message}`);
 		return error;
