@@ -31,27 +31,23 @@ function ChangeUsernameModal({ modalVisible, closeModal }) {
 		event.preventDefault();
 
 		try {
-			const response = await http.post("/users/check-password", {
-				password,
+			const response = await http.patch("/users/changeUsername", {
+				newUsername: userName,
+				password: password,
 			});
-			log.info("New Username entered: " + password);
+
+			log.info("Username change request made with new username: " + userName);
 
 			if (response.status === 200) {
-				const response = await http.patch("/users/1/username", {
-					userName,
-				});
-
-				log.info("New Username entered: " + userName);
-
-				if (response.status === 200) {
-					alert("Username Changed successful");
-					closeModal();
-					window.location.reload();
-				}
+				alert("Username Changed successfully");
+				closeModal();
+				window.location.reload();
+			} else {
+				alert("An unexpected status was received. Please try again later.");
 			}
 		} catch (error) {
 			if (error.response) {
-				if (error.response.status === 401) {
+				if (error.response.status === 400 || error.response.status === 500) {
 					alert("Password does not match");
 				} else {
 					alert("An error occurred. Please try again later.");
@@ -117,7 +113,10 @@ function ChangeUsernameModal({ modalVisible, closeModal }) {
 						variant="outlined"
 						onChange={userNameChanged}
 					/>
-					<DialogContentText> Confirm password</DialogContentText>
+					<DialogContentText marginTop={"1rem"}>
+						{" "}
+						Confirm password
+					</DialogContentText>
 					<TextField
 						required
 						margin="dense"

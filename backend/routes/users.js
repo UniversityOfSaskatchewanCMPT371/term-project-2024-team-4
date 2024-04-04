@@ -6,7 +6,11 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const {
 	registerUser,
-	deleteUserByUsername,
+	verifyPassword,
+	updateUsername,
+	updatePassword,
+	deleteUserById,
+	resetDefaultUserCredentials,
 } = require("../helperFiles/userHelper.js");
 const { logger } = require("../config/logger");
 require("dotenv").config();
@@ -16,41 +20,23 @@ const authenticateAdmin = require("../middleware/authenticate.js");
 const JWT_SECRET = process.env.JWT_SECRET;
 
 /**
- * POST /api/users
+ * POST API for User Login
+ * Handles user login: verifies user credentials and signs a JWToken
+ * Ensures there is always a base user in the system
  *
- * Purpose: Authenticate a user and generate a JWT token for authentication.
- *
- * Pre-conditions:
- * - Request body must contain 'userName' and 'password' fields.
- * - 'userName' and 'password' fields must not be null or empty.
- *
- * Post-conditions:
- * - If authentication is successful, returns a JWT token and user details with status code 200.
- * - If authentication fails due to invalid credentials, returns a message "Unauthorized" with status code 401.
- * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
+ * @precond
+ * 	- req.body must contain: username and password
+ * 	- Default user credentials must be defined in .ENV file
+ * @postcond
+ * 	- Correct credentials: 200 OK Response-- signs a JWToken and signs in
+ * 	- Incorrect Credentials: 401 Unauthorize Response-- denied access
  */
-
 router.post("/", async (req, res) => {
 	const { userName, password } = req.body;
-
-	// Check if userName or password is null or undefined
-	// Should be checking instead if password is not empty
-	if (
-		!userName ||
-		userName.length === 0 ||
-		!password ||
-		password.length === 0
-	) {
-		// Use logger.error() for logging errors
-		logger.error("Username and password are required");
-		return res
-			.status(400)
-			.json({ message: "Username and password are required" });
-	}
-
 	const Users = await dataSource.getRepository(User);
 
 	try {
+		/* ----------- NOTE: THIS PART CREATES A BASE USER UPON LOGIN TO MAKE SURE THERE IS ALWAYS A BASE USER IN THE SYSTEM ------------- */
 		// Check Base User ENV Credentials
 		const defaultUsername = process.env.DEFAULT_USERNAME;
 		const defaultPassword = process.env.DEFAULT_PASSWORD;
@@ -61,11 +47,19 @@ router.post("/", async (req, res) => {
 			return res.status(500).json({ message: "Internal server error" });
 		}
 
-		// If Base user does not exist, then register them
-		if (!(await Users.findOneBy({ userName: defaultUsername }))) {
+		// if base user
+		const defaultUserExists = await Users.findOne({
+			where: { isDefaultUser: true },
+		});
+		
+		if (!defaultUserExists){
 			await registerUser(defaultUsername, defaultPassword);
 			logger.info("Default user did not exist. Recreating...");
 		}
+	
+		/* ------------------------------------------------------------------------------------------------------------------------------ */
+
+		// Continue with login process:
 		// Check if any user exists in the database with the provided username
 		const existingUser = await Users.findOne({ where: { userName } });
 		if (existingUser) {
@@ -74,11 +68,7 @@ router.post("/", async (req, res) => {
 			if (!match) {
 				return res.status(401).json({ message: "Unauthorized" });
 			}
-			const token = jwt.sign(
-				{ id: existingUser.id, userName: existingUser.userName },
-				JWT_SECRET,
-				{},
-			);
+			const token = jwt.sign({ id: existingUser.id }, JWT_SECRET, {});
 			res.cookie("token", token, {
 				secure: true,
 				sameSite: "None", // allows cookie to be sent on cross-site requests
@@ -108,68 +98,16 @@ router.post("/", async (req, res) => {
 });
 
 /**
- * POST request to check password:
-Endpoint: /check-password
-Method: POST
-
-Parameters:
-- password: The password to be checked (extracted from request body).
-
-Behavior:
-- Validates if the password is provided.
-- Fetches the user from the data source using a predefined identifier (e.g., user ID).
-- Compares the provided password with the hashed password stored in the database for the user.
-- Returns a success message if the passwords match.
-- Returns an error message if the user is not found or if the passwords do not match.
-- Handles errors such as missing password, user not found, and internal server errors.
+ * POST API for User Log out
+ * Handles user logout: clears the JWToken cookie
+ *
+ * @precond
+ * 	- User must be logged in (has valid JWtoken)
+ *
+ * @postcond
+ * 	Successful Logout: 204 No Content-- Clears JWToken cookie and logs out
+ * 	Failure: 500 Internal Server Error-- error occurred in the server
  */
-router.post("/check-password", async (req, res) => {
-	const { password } = req.body;
-
-	// Check if password is null or undefined
-	if (!password || password.length === 0) {
-		// Use logger.error() for logging errors
-		logger.error("Password is required");
-		return res.status(400).json({ message: "Password is required" });
-	}
-
-	const Users = await dataSource.getRepository(User);
-
-	try {
-		// Assuming you have a way to identify the user whose password you want to check
-		const existingUser = await Users.findOne({ where: { id: 1 } });
-		if (existingUser) {
-			// Compare the provided password with the hashed password from the database
-			const match = await bcrypt.compare(password, existingUser.password);
-			if (!match) {
-				logger.info("Password does not match");
-				return res.status(401).json({ message: "Password does not match" });
-			}
-			logger.info("Password matches");
-			return res.status(200).json({ message: "Password matches" });
-		} else {
-			logger.error("User not found");
-			return res.status(404).json({ message: "User not found" });
-		}
-	} catch (error) {
-		logger.error("Internal server error:", error);
-		res.status(500).json({ message: "Internal server error" });
-	}
-});
-
-/**
- * POST /api/users/logout
- *
- * Purpose: Log out a user by clearing the JWT token cookie.
- *
- * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
- *
- * Post-conditions:
- * - Clears the token cookie.
- * - Returns status code 204 on successful logout.
- * - If an internal server error occurs, returns a message "Internal server error" with status code 500.
- */
-// POST route for user logout
 router.post("/logout", authenticateAdmin, async (req, res) => {
 	try {
 		// Clear the token cookie
@@ -190,253 +128,214 @@ router.post("/logout", authenticateAdmin, async (req, res) => {
 });
 
 /**
- * GET /api/users
+ * GET API for single user authentication
+ * Verifies if the incoming request has a valid user token and returns it in dev environments
  *
- * Purpose: Retrieve user details using a JWT token.
- *
- * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
- *
- * Post-conditions:
- * - If a valid token is provided, returns user details with status code 200.
- * - If no token is provided, returns null with status code 200.
- * - If an error occurs during token verification, returns a message "Internal server error" with status code 500.
+ * @precond
+ * 	- User must be logged in (has valid JWToken)
+ * @postcond
+ * 	Success: Responds with user details (development) or a generic message (production)
+ * 	Failure: 401 Unauthorized Access-- incoming request was not succesfully validated (invalid user)
  */
-// GET route to fetch the single user's details
 router.get("/", authenticateAdmin, async (req, res) => {
-	const { token } = req.cookies;
-	if (token) {
-		jwt.verify(token, JWT_SECRET, {}, (err, user) => {
-			if (err) {
-				logger.error("Error verifying JWT:", err);
-				throw err;
-			}
-
-			return res.json(user);
-		});
+	// check if request (token) has user
+	if (req.user) {
+		// send back shallow user data
+		return res.json(req.user);
 	} else {
-		logger.info("No token provided");
-		return res.json(null);
-	}
-});
-
-router.get("/:userId", authenticateAdmin, async (req, res) => {
-	const { userId } = req.params;
-
-	try {
-		// Initialize data source
-		const Users = await dataSource.getRepository(User);
-		// Fetch the user by userId
-		const user = await Users.findOne({ where: { id: userId } });
-
-		if (!user) {
-			logger.error("User not found");
-			return res.status(404).json({ message: "User not found" });
-		}
-
-		// If user is found, return username and password
-		return res.status(200).json({ username: user.userName });
-	} catch (error) {
-		logger.error("Internal server error:", error);
-		return res.status(500).json({ message: "Internal server error" });
-	}
-});
-
-const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!]).{8,}$/;
-
-/**
- * 
-PATCH request to update username:
-Endpoint: /:userId/username
-Method: PATCH
-
-Parameters:
-- userId: The ID of the user whose username is to be updated (extracted from request parameters).
-- userName: The new username (extracted from request body).
-
-Behavior:
-- Fetches the user with the provided userId from the data source.
-- Validates the provided username:
-  - Checks if the username is provided and meets length requirements (5 to 12 characters).
-  - Ensures that the username contains only alphanumeric characters.
-- Updates the username for the user.
-- Saves the updated user to the data source.
-- Returns a success message along with the updated user in JSON format if successful.
-- Handles errors such as user not found, validation errors, and internal server errors.
-
- */
-
-router.patch("/:userId/username", authenticateAdmin, async (req, res) => {
-	const { userId } = req.params;
-	const { userName } = req.body;
-
-	try {
-		// Initialize data source
-		const Users = await dataSource.getRepository(User);
-		// Fetch the user by userId
-		const user = await Users.findOne({ where: { id: userId } });
-		if (!user) {
-			logger.error("User not found");
-			return res.status(404).json({ message: "User not found" });
-		}
-
-		// Validate username
-		if (!userName || userName.length == 0) {
-			logger.error("Username is required");
-			return res.status(400).json({ message: "Username is required" });
-		}
-		if (userName.length < 5) {
-			logger.error("Username must be at least 5 characters long");
-			return res
-				.status(400)
-				.json({ message: "Username must be at least 5 characters long" });
-		}
-		if (userName.length > 12) {
-			logger.error("Username must be at most 12 characters long");
-			return res
-				.status(400)
-				.json({ message: "Username must be at most 12 characters long" });
-		}
-		// Regular expression to match alphanumeric characters only
-		const alphanumericRegex = /^[a-zA-Z0-9]+$/;
-		if (!alphanumericRegex.test(userName)) {
-			logger.error("Username must contain only letters and numbers");
-			return res
-				.status(400)
-				.json({ message: "Username must contain only letters and numbers" });
-		}
-		// Update username
-		user.userName = userName;
-
-		// Save updated user
-		await Users.save(user);
-		logger.info("Username successfully updated");
-		return res
-			.status(200)
-			.json({ message: "Username successfully updated", user });
-	} catch (error) {
-		logger.error("Internal server error:", error);
-		return res.status(500).json({ message: "Internal server error" });
+		// fallback if req.user does not exist
+		logger.warn("No token provided or token is invalid");
+		return res.status(401).json({ message: "Unauthorized access" });
 	}
 });
 
 /**
- * PATCH request to update password:
-Endpoint: /:userId/password
-Method: PATCH
-
-Parameters:
-- userId: The ID of the user whose password is to be updated (extracted from request parameters).
-- password: The new password (extracted from request body).
-
-Behavior:
-- Fetches the user with the provided userId from the data source.
-- Validates the provided password:
-  - Checks if the password is provided and meets length requirements (up to 12 characters).
-  - Performs additional data validation for password complexity (e.g., minimum length, special characters).
-- Hashes the new password using bcrypt for security.
-- Updates the password for the user.
-- Saves the updated user to the data source.
-- Returns a success message along with the updated user in JSON format if successful.
-- Handles errors such as user not found, validation errors, and internal server errors.
- */
-router.patch("/:userId/password", authenticateAdmin, async (req, res) => {
-	const { userId } = req.params;
-	const { password } = req.body;
-
-	try {
-		// Initialize data source
-		const Users = await dataSource.getRepository(User);
-		// Fetch the user by userId
-		const user = await Users.findOne({ where: { id: userId } });
-		if (!user) {
-			logger.error("User not found");
-			return res.status(404).json({ message: "User not found" });
-		}
-
-		// Validate password
-		if (!password || password.length == 0) {
-			logger.error("Password is required");
-			return res.status(400).json({ message: "Password is required" });
-		}
-		if (password.length > 12) {
-			logger.error("Password must be at most 12 characters long");
-			return res
-				.status(400)
-				.json({ message: "Password must be at most 12 characters long" });
-		}
-		// Perform data validation for password (e.g., minimum length, special characters, etc.)
-		// Example: Ensure minimum length of password is 10 characters
-		if (!passwordRegex.test(password)) {
-			logger.error(
-				"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
-			);
-			return res.status(400).json({
-				message:
-					"Password must contain at least 8 characters, including one uppercase letter, one lowercase letter, one digit, and one special character",
-			});
-		}
-
-		// Update password
-		user.password = await bcrypt.hash(password, 10); // Hash the new password
-
-		// Save updated user
-		await Users.save(user);
-		logger.info("Password successfully updated");
-		return res
-			.status(200)
-			.json({ message: "Password successfully updated", user });
-	} catch (error) {
-		logger.error("Internal server error:", error);
-		return res.status(500).json({ message: "Internal server error" });
-	}
-});
-
-/**
- * Delete an existing account via given username
- * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
+ * GET API for retrieving all users
+ * Fetches a list of ALL users in the system and: [id, username, role]
+ * NOTE: Only works for intended app (small amount of users); if > 100, should update function
  * @precond
- * 	- username must be existing in database
- * 	- req param must include username
+ * 	- User must be logged in (has valid JWToken)
  * @postcond
- * 	- user with given username is deleted from database
+ * 	- Success: 200 OK-- gets all users id, role, and usernames
+ * 	- Failure: 500 Internal Server Error-- something went wrong in the server
  */
-router.delete("/:username", authenticateAdmin, async (req, res) => {
-	const { username } = req.params;
+router.get("/allUsers", authenticateAdmin, async (req, res) => {
+	try {
+		const Users = await dataSource.getRepository(User);
+		const users = await Users.find({
+			select: ["id", "userName", "role", "isDefaultUser", "isActive"],
+		});
+
+		res.status(200).json(users);
+	} catch (error) {
+		console.error("Error fetching users:", error);
+		res.status(500).json({ message: "Internal server error" });
+	}
+});
+/**
+ * PATCH API for changing usernames
+ * Allows authenticated admin users to change their username
+ *
+ * @precond
+ * 	- User must be logged in (has valid JWToken)
+ * 	- req.body must contain: newUsername & password
+ * @postcond
+ * 	- Success: 200 OK-- Username updated, but password & id stays the same
+ * 	- Failure (server): 500 Internal Server Error-- problem with server
+ * 	- Failure (client): 400 Bad Request-- password verification failed
+ */
+router.patch("/changeUsername", authenticateAdmin, async (req, res) => {
+	// fallback if req.user does not exist
+	if (!req.user) {
+		logger.warn(
+			"Authentication middleware did not respond with user content from the JWToken",
+		);
+		return res.status(401).json({ message: "Unauthorized access" });
+	}
 
 	try {
-		const wasDeleted = await deleteUserByUsername(username);
+		// Gather info
+		const userId = req.user.id;
+		const { newUsername, password } = req.body;
+
+		/// if password matches, change username
+		const passwordMatches = await verifyPassword(userId, password);
+		if (passwordMatches) {
+			const usernameUpdated = await updateUsername(userId, newUsername);
+			if (!usernameUpdated) {
+				// if update failed for whatever reason
+				logger.error("Update username failed midway");
+				return res.status(500).json({ message: "Username update failed." });
+			}
+			logger.info(`Username succesfully updated for user ${userId}`);
+			return res.status(200).json({ message: "Username succesfully updated" });
+		}
+		// if password does not match
+		else {
+			return res.status(400).json({ message: "Password verification failed" });
+		}
+	} catch (error) {
+		logger.error("Caught an error upon changing username:", error);
+		return res
+			.status(500)
+			.json({ message: "Internal server error upon changing username" });
+	}
+});
+
+/**
+ * PATCH API for changing passwords
+ * Allows authenticated admin users to change their password
+ *
+ * @precond
+ * 	- User must be logged in (has valid JWToken)
+ * 	- req.body must contain: oldPassword & newPassword
+ *
+ * @postcond
+ * 	- Success: 200 OK-- Password updated, but username & id stays the same
+ * 	- Failure (server): 500 Internal Server Error-- problem with server
+ * 	- Failure (client): 400 Bad Request-- password verification failed
+ */
+router.patch("/changePassword", authenticateAdmin, async (req, res) => {
+	// fallback if req.user does not exist
+	if (!req.user) {
+		logger.warn(
+			"Authentication middleware did not respond with user content from the JWToken",
+		);
+		return res.status(401).json({ message: "Unauthorized access" });
+	}
+
+	try {
+		// Gather info
+		const userId = req.user.id;
+		const { oldPassword, newPassword } = req.body;
+
+		// if old password passes verification, then replace with new password
+		const passwordMatches = await verifyPassword(userId, oldPassword);
+		if (passwordMatches) {
+			const passwordUpdated = await updatePassword(userId, newPassword);
+			if (!passwordUpdated) {
+				// if update failed for whatever reason
+				logger.error("Password update failed.");
+				return res.status(500).json({ message: "Password update failed." });
+			}
+			logger.info(`Password successfully updated for user ${userId}`);
+			return res.status(200).json({ message: "Password successfully updated" });
+		} else {
+			// if password does not match, return error
+			return res.status(400).json({ message: "Password verification failed" });
+		}
+	} catch (error) {
+		logger.error("Caught an error upon changing password:", error);
+		return res
+			.status(500)
+			.json({ message: "Internal server error upon changing password" });
+	}
+});
+
+/**
+ * PATCH API for resetting the default user's credentials
+ * NOTE: this ONLY changes the DEFAULT USER; CAN BE ACCESSED BY ANY USER
+ * IF MULTIPLE CONCURRENT USERS ARE ADDED, THIS NEEDS TO BE MODIFIED
+ */
+router.patch("/resetDefaultUser", authenticateAdmin, async (req, res) => {
+	// fallback if req.user does not exist
+	if (!req.user) {
+		logger.warn(
+			"Authentication middleware did not respond with user content from the JWToken",
+		);
+		return res.status(401).json({ message: "Unauthorized access" });
+	}
+
+	try {
+		const wasReset = await resetDefaultUserCredentials();
+		if (wasReset) {
+			// should be logged by the helper function
+			return res
+				.status(200)
+				.json({ message: "Default User credentials was succesfully updated" });
+		} else {
+			// should be logged by the helper function
+			return res
+				.status(500)
+				.json({ message: "Server failed to reset default user credentials" });
+		}
+	} catch (error) {
+		logger.error(
+			"Caught an error upon trying to reset user credentials: ",
+			error,
+		);
+		return res.status(500).json({
+			message:
+				"Internal server error upon trying to reset default user credentials",
+		});
+	}
+});
+
+/**
+ * Delete an existing account via user id
+ * @precond
+ * 	- id must be an existing user in the database
+ * 	- user must be signed in (valid JWToken)
+ * @postcond
+ * 	- user with given id is deleted from database
+ */
+router.delete("/deleteUser", authenticateAdmin, async (req, res) => {
+	if (!req.user) {
+		logger.warn(
+			"Authentication middleware did not respond with user content from the JWToken",
+		);
+		return res.status(401).json({ message: "Unauthorized access" });
+	}
+
+	try {
+		const userId = req.user.id;
+		const wasDeleted = await deleteUserById(userId);
 
 		// If delete status is false (not deleted), then return error
 		if (!wasDeleted) {
 			return res.status(404).json({ message: "User not found" });
 		}
-		return res.status(200).json({ message: "user succesfully deleted" });
-	} catch (error) {
-		logger.error("Internal server error:", error);
-		return res.status(500).json({ message: "Internal server error" });
-	}
-});
-
-/**
- * Delete an existing account via given username
- * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
- * @precond
- * 	- username must be existing in database
- * 	- req param must include username
- * @postcond
- * 	- user with given username is deleted from database
- */
-router.delete("/:username", authenticateAdmin, async (req, res) => {
-	const { username } = req.params;
-
-	try {
-		const wasDeleted = await deleteUserByUsername(username);
-
-		// If delete status is false (not deleted), then return error
-		if (!wasDeleted) {
-			return res.status(404).json({ message: "User not found" });
-		}
-		return res.status(200).json({ message: "user succesfully deleted" });
+		return res.status(200).json({ message: "User succesfully deleted" });
 	} catch (error) {
 		logger.error("Internal server error:", error);
 		return res.status(500).json({ message: "Internal server error" });

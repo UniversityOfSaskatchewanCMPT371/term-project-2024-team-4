@@ -214,7 +214,7 @@ function Sidebar() {
 					</ListItem>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
-					{user && user.userName && (
+					{user && (
 						<ListItem
 							key="Settings"
 							disablePadding
