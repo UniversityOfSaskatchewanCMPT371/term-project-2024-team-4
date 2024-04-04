@@ -1147,7 +1147,7 @@ const AddProjectile = ({
 			);
 			if (index > -1) {
 				const updatedHaftingShape = [...prevHaftingShapes];
-				updateHaftingShapeList[index] = newHaftingShape;
+				updatedHaftingShape[index] = newHaftingShape;
 				return updatedHaftingShape;
 			} else {
 				return [...prevHaftingShapes, newHaftingShape];

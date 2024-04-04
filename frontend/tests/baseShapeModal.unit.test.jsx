@@ -48,7 +48,23 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		expect(screen.getByLabelText(/Base Shape/i)).toBeInTheDocument();
+		screen.logTestingPlaygroundURL();
+
+		expect(
+			screen.getByRole("heading", {
+				name: /add new base shape/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /cancel/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /save/i,
+			}),
+		).toBeInTheDocument();
 	});
 
 	it("should call http.post on save when adding a new base shape", async () => {
