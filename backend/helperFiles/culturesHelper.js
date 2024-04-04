@@ -143,174 +143,198 @@ async function updateCulture(req) {
 		//have to do this 4 times, once for each shape.
 		logger.info(Array(haftingShapes));
 		const haftingShapeObjArray = new Array();
-		for (let i = 0; i < haftingShapes.length; i++) {
-			let currentId = parseInt(haftingShapes[i]);
-			let currentHaftingShape;
-			//check if the current index is just an id, or a hafting shape object with an id key.
-			assert(
-				!isNaN(currentId) || Object.hasOwn(haftingShapes[i], "id"),
-				"Index " +
-					i +
-					" of the given haftingShape array is not a hafting shape object or an id.",
-			);
-			//check if its an id
-			if (isNaN(currentId) && Object.hasOwn(haftingShapes[i], "id")) {
-				currentId = parseInt(haftingShapes[i].id);
-			} else if (isNaN(currentId) && !Object.hasOwn(haftingShapes[i], "id")) {
-				logger.debug(
+		if (haftingShapes) {
+			for (let i = 0; i < haftingShapes.length; i++) {
+				let currentId = parseInt(haftingShapes[i]);
+				let currentHaftingShape;
+				//check if the current index is just an id, or a hafting shape object with an id key.
+				assert(
+					!isNaN(currentId) || Object.hasOwn(haftingShapes[i], "id"),
 					"Index " +
 						i +
-						" of the given haftingShape array is not a hafting shape object or an id. But passed assertion",
+						" of the given haftingShape array is not a hafting shape object or an id.",
 				);
-				continue;
-			}
-			currentHaftingShape = currentId
-				? await myDatabase
-						.getRepository(HaftingShape)
-						.findOneBy({ id: currentId })
-				: null;
-			if (currentHaftingShape != null) {
-				haftingShapeObjArray.push(currentHaftingShape);
+				//check if its an id
+				if (isNaN(currentId) && Object.hasOwn(haftingShapes[i], "id")) {
+					currentId = parseInt(haftingShapes[i].id);
+				} else if (isNaN(currentId) && !Object.hasOwn(haftingShapes[i], "id")) {
+					logger.debug(
+						"Index " +
+							i +
+							" of the given haftingShape array is not a hafting shape object or an id. But passed assertion",
+					);
+					continue;
+				}
+				currentHaftingShape = currentId
+					? await myDatabase
+							.getRepository(HaftingShape)
+							.findOneBy({ id: currentId })
+					: null;
+				if (currentHaftingShape != null) {
+					haftingShapeObjArray.push(currentHaftingShape);
+				}
 			}
 		}
 
 		//go through given blade shapes, get their objects and store it in an array for updating.
 		logger.info(Array(bladeShapes));
 		const bladeShapeObjArray = new Array();
-		for (let i = 0; i < bladeShapes.length; i++) {
-			let currentId = parseInt(bladeShapes[i]);
-			let currentBladeShape;
-			//check if the current index is just an id, or a hafting shape object with an id key.
-			assert(
-				!isNaN(currentId) || Object.hasOwn(bladeShapes[i], "id"),
-				"Index " +
-					i +
-					" of the given haftingShape array is not a hafting shape object or an id.",
-			);
-			//if its not an id, check if the object has an id key and set that as the currentid
-			if (isNaN(currentId) && Object.hasOwn(bladeShapes[i], "id")) {
-				currentId = parseInt(bladeShapes[i].id);
-			} else if (isNaN(currentId) && !Object.hasOwn(bladeShapes[i], "id")) {
-				logger.debug(
+		if (bladeShapes) {
+			for (let i = 0; i < bladeShapes.length; i++) {
+				let currentId = parseInt(bladeShapes[i]);
+				let currentBladeShape;
+				//check if the current index is just an id, or a hafting shape object with an id key.
+				assert(
+					!isNaN(currentId) || Object.hasOwn(bladeShapes[i], "id"),
 					"Index " +
 						i +
-						" of the given bladeShape array is not a hafting shape object or an id. But passed assertion",
+						" of the given haftingShape array is not a hafting shape object or an id.",
 				);
-				continue;
-			}
-			currentBladeShape = currentId
-				? await myDatabase
-						.getRepository(BladeShape)
-						.findOneBy({ id: currentId })
-				: null;
-			if (currentBladeShape != null) {
-				bladeShapeObjArray.push(currentBladeShape);
+				//if its not an id, check if the object has an id key and set that as the currentid
+				if (isNaN(currentId) && Object.hasOwn(bladeShapes[i], "id")) {
+					currentId = parseInt(bladeShapes[i].id);
+				} else if (isNaN(currentId) && !Object.hasOwn(bladeShapes[i], "id")) {
+					logger.debug(
+						"Index " +
+							i +
+							" of the given bladeShape array is not a hafting shape object or an id. But passed assertion",
+					);
+					continue;
+				}
+				currentBladeShape = currentId
+					? await myDatabase
+							.getRepository(BladeShape)
+							.findOneBy({ id: currentId })
+					: null;
+				if (currentBladeShape != null) {
+					bladeShapeObjArray.push(currentBladeShape);
+				}
 			}
 		}
 
 		//go through given base shapes, get their objects and store it in an array for updating.
 		logger.info(Array(baseShapes));
 		const baseShapeObjArray = new Array();
-		for (let i = 0; i < baseShapes.length; i++) {
-			let currentId = parseInt(baseShapes[i]);
-			let currentBaseShape;
-			//check if the current index is just an id, or a hafting shape object with an id key.
-			assert(
-				!isNaN(currentId) || Object.hasOwn(baseShapes[i], "id"),
-				"Index " +
-					i +
-					" of the given haftingShape array is not a hafting shape object or an id.",
-			);
-			//check if its an id
-			if (isNaN(currentId) && Object.hasOwn(baseShapes[i], "id")) {
-				currentId = parseInt(baseShapes[i].id);
-			} else if (isNaN(currentId) && !Object.hasOwn(baseShapes[i], "id")) {
-				logger.debug(
+		if (baseShapes) {
+			for (let i = 0; i < baseShapes.length; i++) {
+				let currentId = parseInt(baseShapes[i]);
+				let currentBaseShape;
+				//check if the current index is just an id, or a hafting shape object with an id key.
+				assert(
+					!isNaN(currentId) || Object.hasOwn(baseShapes[i], "id"),
 					"Index " +
 						i +
-						" of the given baseShape array is not a hafting shape object or an id. But passed assertion",
+						" of the given haftingShape array is not a hafting shape object or an id.",
 				);
-				continue;
-			}
-			currentBaseShape = currentId
-				? await myDatabase.getRepository(BaseShape).findOneBy({ id: currentId })
-				: null;
-			if (currentBaseShape != null) {
-				baseShapeObjArray.push(currentBaseShape);
+				//check if its an id
+				if (isNaN(currentId) && Object.hasOwn(baseShapes[i], "id")) {
+					currentId = parseInt(baseShapes[i].id);
+				} else if (isNaN(currentId) && !Object.hasOwn(baseShapes[i], "id")) {
+					logger.debug(
+						"Index " +
+							i +
+							" of the given baseShape array is not a hafting shape object or an id. But passed assertion",
+					);
+					continue;
+				}
+				currentBaseShape = currentId
+					? await myDatabase
+							.getRepository(BaseShape)
+							.findOneBy({ id: currentId })
+					: null;
+				if (currentBaseShape != null) {
+					baseShapeObjArray.push(currentBaseShape);
+				}
 			}
 		}
 
 		//go through given base shapes, get their objects and store it in an array for updating.
 		logger.info(Array(crossSections));
 		const crossSectionObjArray = new Array();
-		for (let i = 0; i < crossSections.length; i++) {
-			let currentId = parseInt(crossSections[i]);
-			let currentCrossSection;
-			//check if the current index is just an id, or a hafting shape object with an id key.
-			assert(
-				!isNaN(currentId) || Object.hasOwn(crossSections[i], "id"),
-				"Index " +
-					i +
-					" of the given haftingShape array is not a hafting shape object or an id.",
-			);
-			//check if its an id
-			if (isNaN(currentId) && Object.hasOwn(crossSections[i], "id")) {
-				currentId = parseInt(crossSections[i].id);
-			} else if (isNaN(currentId) && !Object.hasOwn(crossSections[i], "id")) {
-				logger.debug(
+		if (crossSections) {
+			for (let i = 0; i < crossSections.length; i++) {
+				let currentId = parseInt(crossSections[i]);
+				let currentCrossSection;
+				//check if the current index is just an id, or a hafting shape object with an id key.
+				assert(
+					!isNaN(currentId) || Object.hasOwn(crossSections[i], "id"),
 					"Index " +
 						i +
-						" of the given crossSection array is not a hafting shape object or an id. But passed assertion",
+						" of the given haftingShape array is not a hafting shape object or an id.",
 				);
-				continue;
-			}
-			currentCrossSection = currentId
-				? await myDatabase
-						.getRepository(CrossSection)
-						.findOneBy({ id: currentId })
-				: null;
-			if (currentCrossSection != null) {
-				crossSectionObjArray.push(currentCrossSection);
+				//check if its an id
+				if (isNaN(currentId) && Object.hasOwn(crossSections[i], "id")) {
+					currentId = parseInt(crossSections[i].id);
+				} else if (isNaN(currentId) && !Object.hasOwn(crossSections[i], "id")) {
+					logger.debug(
+						"Index " +
+							i +
+							" of the given crossSection array is not a hafting shape object or an id. But passed assertion",
+					);
+					continue;
+				}
+				currentCrossSection = currentId
+					? await myDatabase
+							.getRepository(CrossSection)
+							.findOneBy({ id: currentId })
+					: null;
+				if (currentCrossSection != null) {
+					crossSectionObjArray.push(currentCrossSection);
+				}
 			}
 		}
 
 		logger.info(Array(materials));
 		const materialObjArray = new Array();
-		for (let i = 0; i < materials.length; i++) {
-			let currentId = parseInt(materials[i]);
-			let currentMaterial;
-			//check if the current index is just an id, or a hafting shape object with an id key.
-			assert(
-				!isNaN(currentId) || Object.hasOwn(materials[i], "id"),
-				"Index " +
-					i +
-					" of the given haftingShape array is not a hafting shape object or an id.",
-			);
-			//check if its an id
-			if (isNaN(currentId) && Object.hasOwn(materials[i], "id")) {
-				currentId = parseInt(materials[i].id);
-			} else if (isNaN(currentId) && !Object.hasOwn(materials[i], "id")) {
-				logger.debug(
+		if (materials) {
+			for (let i = 0; i < materials.length; i++) {
+				let currentId = parseInt(materials[i]);
+				let currentMaterial;
+				//check if the current index is just an id, or a hafting shape object with an id key.
+				assert(
+					!isNaN(currentId) || Object.hasOwn(materials[i], "id"),
 					"Index " +
 						i +
-						" of the given material array is not a hafting shape object or an id. But passed assertion",
+						" of the given haftingShape array is not a hafting shape object or an id.",
 				);
-				continue;
-			}
-			currentMaterial = currentId
-				? await myDatabase.getRepository(Material).findOneBy({ id: currentId })
-				: null;
-			if (currentMaterial != null) {
-				materialObjArray.push(currentMaterial);
+				//check if its an id
+				if (isNaN(currentId) && Object.hasOwn(materials[i], "id")) {
+					currentId = parseInt(materials[i].id);
+				} else if (isNaN(currentId) && !Object.hasOwn(materials[i], "id")) {
+					logger.debug(
+						"Index " +
+							i +
+							" of the given material array is not a hafting shape object or an id. But passed assertion",
+					);
+					continue;
+				}
+				currentMaterial = currentId
+					? await myDatabase
+							.getRepository(Material)
+							.findOneBy({ id: currentId })
+					: null;
+				if (currentMaterial != null) {
+					materialObjArray.push(currentMaterial);
+				}
 			}
 		}
 
 		cultureToUpdate.name = name;
-		cultureToUpdate.bladeShapes = bladeShapeObjArray;
-		cultureToUpdate.baseShapes = baseShapeObjArray;
-		cultureToUpdate.haftingShapes = haftingShapeObjArray;
-		cultureToUpdate.crossSections = crossSectionObjArray;
-		cultureToUpdate.materials = materialObjArray;
+		cultureToUpdate.bladeShapes = bladeShapes
+			? bladeShapeObjArray
+			: cultureToUpdate.bladeShapes;
+		cultureToUpdate.baseShapes = baseShapes
+			? baseShapeObjArray
+			: cultureToUpdate.baseShapes;
+		cultureToUpdate.haftingShapes = haftingShapes
+			? haftingShapeObjArray
+			: cultureToUpdate.haftingShapes;
+		cultureToUpdate.crossSections = crossSections
+			? crossSectionObjArray
+			: cultureToUpdate.crossSections;
+		cultureToUpdate.materials = materials
+			? materialObjArray
+			: cultureToUpdate.materials;
 
 		await cultureRepository.save(cultureToUpdate);
 		// res.json(cultureToUpdate);
