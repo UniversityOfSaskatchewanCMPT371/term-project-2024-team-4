@@ -22,7 +22,8 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 const drawerWidth = 240;
-
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 /**
  * Styled List component for the sidebar navigation.
  */
@@ -64,7 +65,7 @@ const SidebarIcon = styled(ListItemIcon)(() => ({
 function Sidebar() {
 	const [modalVisible, setModalShow] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+	const { user } = useContext(UserContext);
 	useEffect(() => {
 		/**
 		 * Checks the user's login status with the backend and updates state accordingly.
@@ -135,6 +136,7 @@ function Sidebar() {
 		try {
 			await http.post("/users/logout");
 			setIsLoggedIn(false);
+			navigate("/");
 			window.location.reload();
 		} catch (error) {
 			console.error("Error logging out:", error);
@@ -256,14 +258,20 @@ function Sidebar() {
 					</Link>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
-					<ListItem key="Settings" disablePadding onClick={handleSettingClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<RoomPreferencesIcon />
-							</SidebarIcon>
-							<ListItemText primary="Settings" />
-						</ListItemButton>
-					</ListItem>
+					{user && (
+						<ListItem
+							key="Settings"
+							disablePadding
+							onClick={handleSettingClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<RoomPreferencesIcon />
+								</SidebarIcon>
+								<ListItemText primary="Settings" />
+							</ListItemButton>
+						</ListItem>
+					)}
 					{isLoggedIn ? (
 						<ListItem key="Logout" disablePadding onClick={handleLogout}>
 							<ListItemButton>

@@ -132,7 +132,7 @@ function StatisticsPage() {
 							rows={rows1}
 							checkboxSelection
 							slots={{
-								toolbar: user && user.userName ? GridToolbar : undefined,
+								toolbar: user ? GridToolbar : undefined,
 							}}
 						/>
 					</Box>

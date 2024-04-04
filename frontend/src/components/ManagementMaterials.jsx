@@ -167,7 +167,7 @@ export default function ManagementMaterials() {
 			headerName: "Actions",
 			flex: 1,
 			getActions: (params) =>
-				user && user.userName
+				user
 					? [
 							<GridActionsCellItem
 								icon={<DeleteIcon />}
@@ -184,7 +184,7 @@ export default function ManagementMaterials() {
 
 	return (
 		<Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-			{user && user.userName && (
+			{user && (
 				<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
 					<DialogTitle>Delete Material</DialogTitle>
 					<DialogContent>
@@ -222,7 +222,7 @@ export default function ManagementMaterials() {
 					<Typography variant="h6" sx={{ mb: 2 }}>
 						Materials Management
 					</Typography>
-					{user && user.userName && (
+					{user && (
 						<Button
 							variant="contained"
 							startIcon={<AddIcon />}
@@ -238,7 +238,7 @@ export default function ManagementMaterials() {
 					pageSize={5}
 					autoHeight
 					components={{
-						toolbar: user && user.userName ? GridToolbar : undefined,
+						toolbar: user ? GridToolbar : undefined,
 					}}
 				/>
 				<AddMaterialDialog

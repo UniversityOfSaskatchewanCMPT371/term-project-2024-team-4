@@ -98,7 +98,7 @@ const Catalogue = () => {
 					>
 						{catalogueDescription}
 					</Typography>
-					{user && user.userName && (
+					{user && (
 						<Button
 							sx={{ paddingLeft: 0, minWidth: 0, justifyContent: "flex-start" }}
 							onClick={handleEdit}

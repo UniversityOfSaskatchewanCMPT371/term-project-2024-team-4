@@ -160,7 +160,7 @@ export default function ManagementCultures() {
 			headerName: "Actions",
 			flex: 1,
 			getActions: (params) =>
-				user && user.userName
+				user
 					? [
 							<GridActionsCellItem
 								icon={<DeleteIcon />}
@@ -177,7 +177,7 @@ export default function ManagementCultures() {
 
 	return (
 		<Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-			{user && user.userName && (
+			{user && (
 				<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
 					<DialogTitle>Delete Culture</DialogTitle>
 					<DialogContent>
@@ -217,7 +217,7 @@ export default function ManagementCultures() {
 					<Typography variant="h6" sx={{ mb: 2 }}>
 						Cultures Management
 					</Typography>
-					{user && user.userName && (
+					{user && (
 						<Button
 							variant="contained"
 							startIcon={<AddIcon />}
@@ -235,7 +235,7 @@ export default function ManagementCultures() {
 					pageSize={5}
 					autoHeight
 					components={{
-						toolbar: user && user.userName ? GridToolbar : undefined,
+						toolbar: user ? GridToolbar : undefined,
 					}}
 				/>
 				<AddCultureDialog

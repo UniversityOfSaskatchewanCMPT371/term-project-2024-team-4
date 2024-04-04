@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
-const authenticateAdmin = require("../middleware/authenticate.js");
 /**
  * Middleware for handling file upload using Multer.
  * @module multerMiddleware
@@ -35,7 +34,7 @@ const storage = multer.diskStorage({
 });
 // Multer middleware
 const upload = multer({ storage });
-
+const authenticateAdmin = require("../middleware/authenticate.js");
 /**
  * Handles POST requests to create a new ProjectilePoint.
  * This endpoint creates a new ProjectilePoint entity, extracting necessary properties from the request body.
@@ -47,10 +46,9 @@ const upload = multer({ storage });
  */
 router.post(
 	"/",
-	authenticateAdmin,
 	upload.single("photo"),
+	authenticateAdmin,
 	async (req, res) => {
-		console.log("Uploaded file:", req.file);
 		const newProjectilePoint =
 			await projectilePointsHelper.newProjectilePoint(req);
 		if (newProjectilePoint instanceof Error) {

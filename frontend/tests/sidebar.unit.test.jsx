@@ -23,8 +23,8 @@ describe("Sidebar", () => {
 		expect(screen.getByText(/cultures management/i)).toBeInTheDocument();
 		expect(screen.getByText(/periods management/i)).toBeInTheDocument();
 		expect(screen.getByText(/materials management/i)).toBeInTheDocument();
-		expect(screen.getByTestId("RoomPreferencesIcon")).toBeInTheDocument();
-		expect(screen.getByText(/settings/i)).toBeInTheDocument();
+		// expect(screen.getByTestId("RoomPreferencesIcon")).toBeInTheDocument(); (cannot be seen by normal users)
+		// expect(screen.getByText(/settings/i)).toBeInTheDocument(); (cannot be seen by normal users)
 		expect(screen.getByTestId("LoginIcon")).toBeInTheDocument();
 		expect(screen.getByText(/login/i)).toBeInTheDocument();
 	});
