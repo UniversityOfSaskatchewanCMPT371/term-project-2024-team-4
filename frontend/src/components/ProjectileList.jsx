@@ -16,6 +16,8 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+
+import { sortData } from "../sortUtils.js";
 /**
  * Create styled Item component, based on Paper MUI component
  */
@@ -37,7 +39,7 @@ const Item = styled(Paper)(({ theme }) => ({
  * @returns {JSX.Element} ProjectileList React component
  */
 // eslint-disable-next-line react/prop-types
-export default function ProjectileList({ query, siteId, siteName }) {
+export default function ProjectileList({ query, siteId, siteName, sortValue }) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openView, setOpenView] = useState(false);
 	const [openEdit, setOpenEdit] = useState(false);
@@ -70,14 +72,17 @@ export default function ProjectileList({ query, siteId, siteName }) {
 			try {
 				const response = await http.get("/projectilePoints");
 				log.info("Projectile points: ", response.data);
-				setData(response.data);
+
+				// Sort JSON
+				const sortedData = sortData(response.data, sortValue);
+				setData(sortedData);
 			} catch (error) {
 				log.error("Error fetching projectile points:", error);
 			}
 		}
 
 		fetchprojectilePoints();
-	}, [openAdd, openView]);
+	}, [openAdd, openView, sortValue]);
 
 	// Filter projectile points to current selected site
 	const siteData = data?.filter((item) => item.site.id == siteId);

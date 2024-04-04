@@ -18,6 +18,7 @@ import { baseURL } from "../../http";
 
 import { useContext } from "react";
 import { UserContext } from "../context/userContext";
+import { sortData } from "../sortUtils";
 
 /**
  * Item component styled from the Paper MUI component.
@@ -42,7 +43,7 @@ const Item = styled(Paper)(({ theme }) => ({
  * @post Renders a list of site cards filtered by the provided query. Each card is clickable.
  * @returns {JSX.Element} The rendered component with a list of site cards.
  */
-export default function SiteList({ query }) {
+export default function SiteList({ query, sortValue }) {
 	const [openAdd, setOpenAdd] = useState(false); // Controls the visibility of the SiteModal.
 	const [data, setData] = useState([]); // Stores the list of sites.
 	const { user } = useContext(UserContext);
@@ -78,9 +79,13 @@ export default function SiteList({ query }) {
 	useEffect(() => {
 		fetch(`${baseURL}/sites`)
 			.then((response) => response.json())
-			.then((json) => setData(json))
+			.then((json) => {
+				// sort JSON first
+				const sortedData = sortData(json, sortValue);
+				setData(sortedData);
+			})
 			.catch((error) => console.error("Error fetching data:", error));
-	}, [openAdd]); // Depend on 'open' to refetch when the modal is closed.
+	}, [openAdd, sortValue]); // Depend on 'open' to refetch when the modal is closed.
 
 	/**
 	 * Filters the fetched sites data based on the search query.
