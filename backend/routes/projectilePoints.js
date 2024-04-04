@@ -1,6 +1,39 @@
 const express = require("express");
 const router = express.Router();
 const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
+/**
+ * Middleware for handling file upload using Multer.
+ * @module multerMiddleware
+ */
+const multer = require("multer");
+const path = require("path");
+
+/**
+ * Configures disk storage options for Multer.
+ * @constant {object}
+ * @default
+ */
+const storage = multer.diskStorage({
+	/**
+	 * Specifies the destination directory for storing uploaded files.
+	 * @type {string}
+	 */
+	destination: "./uploads/",
+	/**
+	 * Generates a filename for the uploaded file.
+	 * @param {object} req - The HTTP request object.
+	 * @param {object} file - The uploaded file object.
+	 * @param {function} cb - The callback function to return the filename.
+	 */
+	filename: function (req, file, cb) {
+		cb(
+			null,
+			file.fieldname + "-" + Date.now() + path.extname(file.originalname),
+		);
+	},
+});
+// Multer middleware
+const upload = multer({ storage });
 const authenticateAdmin = require("../middleware/authenticate.js");
 const {
 	validate,
@@ -8,25 +41,20 @@ const {
 } = require("../middleware/sanitize.js");
 
 /**
- * POST: Creates a new Projectile Point
- * Extracts various properties from request body including related entities like Culture and Bladeshape.
- * Each related entity is fetched from the database to ensure it exists before associating it with the new Projectile Point
- * @param {*} req - req.body contains: name,
- * 					location, description, dimensions, photo,
- * 					siteId, artifactTypeId, cultureId, bladeShapeId,
- * 					baseShapeId, haftingShapeId, crossSectionId
- * @param {*} res - response to client
- * @precond all referenced entities (foreign-key IDs) must exist in the database
- * @precond A valid signed token cookie must be present in the request which is checked by authenticateAdmin middleware.
- * @postcond
- * 	Succesful: Returns newly created Projectile Point with 201 status code
- * 	Failure: Error; 500 status code
+ * Handles POST requests to create a new ProjectilePoint.
+ * This endpoint creates a new ProjectilePoint entity, extracting necessary properties from the request body.
+ * It also fetches related entities such as Culture and BladeShape from the database to ensure their existence before association.
+ * @function
+ * @param {object} req - The HTTP request object.
+ * @param {object} res - The HTTP response object.
+ * @returns {object} - The HTTP response containing the created ProjectilePoint entity or an error message.
  */
 router.post(
 	"/",
 	authenticateAdmin,
 	artifactValidationRules(),
 	validate,
+	upload.single("photo"),
 	async (req, res) => {
 		const newProjectilePoint =
 			await projectilePointsHelper.newProjectilePoint(req);
@@ -93,6 +121,7 @@ router.put(
 	authenticateAdmin,
 	artifactValidationRules(),
 	validate,
+	upload.single("photo"),
 	async (req, res) => {
 		const projectilePoint =
 			await projectilePointsHelper.updateProjectilePoint(req);
@@ -124,6 +153,7 @@ router.delete("/:id", authenticateAdmin, async (req, res) => {
 	if (result instanceof Error) {
 		return res.json({ error: result.message });
 	}
+	return res.send();
 });
 
 module.exports = router;

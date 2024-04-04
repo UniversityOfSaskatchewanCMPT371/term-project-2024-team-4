@@ -4,7 +4,11 @@ const assert = require("node:assert/strict");
 const { logger } = require("../config/logger");
 
 /**
- *
+ * POST: Creates a new BladeShape.
+ * @param req Express request object, expecting 'name' in the request body.
+ * @pre 'name' field should be provided in the body and must be unique.
+ * @post A new BladeShape is created in the database.
+ * @return Returns the newly created BladeShape object.
  */
 async function newBladeShape(req) {
 	const { name } = req.body;
@@ -26,7 +30,10 @@ async function newBladeShape(req) {
 }
 
 /**
- *
+ * GET: Fetches all BladeShapes.
+ * @pre None.
+ * @post Retrieves all BladeShapes from the database.
+ * @return Returns an array of BladeShape objects.
  */
 async function getAllBladeShapes() {
 	try {
@@ -46,7 +53,11 @@ async function getAllBladeShapes() {
 }
 
 /**
- *
+ * GET: Fetches a BladeShape by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The BladeShape with the provided ID must exist in the database.
+ * @post Retrieves a specific BladeShape from the database based on its ID.
+ * @return Returns a BladeShape object or a message indicating the BladeShape was not found.
  */
 async function getBladeShapeById(req) {
 	try {
@@ -71,7 +82,11 @@ async function getBladeShapeById(req) {
 }
 
 /**
- *
+ * PUT: Updates an existing BladeShape.
+ * @param req Express request object containing the new 'name' for the BladeShape.
+ * @pre The BladeShape with the given ID must exist in the database.
+ * @post Updates and returns the specified BladeShape in the database.
+ * @return Returns the updated BladeShape object or a message indicating the BladeShape was not found.
  */
 async function updateBladeShape(req) {
 	const { id } = req.params;
@@ -96,7 +111,11 @@ async function updateBladeShape(req) {
 }
 
 /**
- *
+ * DELETE: Removes a BladeShape by ID.
+ * @param req Express request object, expecting 'id' as a route parameter.
+ * @pre The BladeShape with the given ID must exist in the database.
+ * @post Deletes the specified BladeShape from the database.
+ * @return Returns a message indicating success or failure of the deletion.
  */
 async function deleteBladeShape(req) {
 	const id = parseInt(req.params.id);

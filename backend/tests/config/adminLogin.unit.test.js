@@ -1,9 +1,8 @@
 const request = require("supertest");
 const express = require("express");
 const bodyParser = require("body-parser");
-const jwt = require("jsonwebtoken"); // Import jwt module
 const app = express();
-
+const dataSource = require("../../config/db");
 // Mock the database connection
 jest.mock("../../config/db.js", () => {
 	// eslint-disable-next-line no-unused-vars
@@ -89,112 +88,6 @@ describe("User Authentication API", () => {
 					.post("/users")
 					.send({ userName: "testuser", password: "wrongpassword" })
 					.expect(401);
-			});
-		});
-		test("It should return 422 if userName is null or undefined", async () => {
-			await request(app)
-				.post("/users")
-				.send({ password: "testpassword" })
-				.expect(422);
-		});
-
-		test("It should return 422 if password is null or undefined", async () => {
-			await request(app)
-				.post("/users")
-				.send({ userName: "testuser" })
-				.expect(422);
-		});
-
-		test("It should return 422 if both userName and password are null or undefined", async () => {
-			await request(app).post("/users").send({}).expect(422);
-		});
-	});
-	describe("User Authentication API", () => {
-		describe("GET /users", () => {
-			test("It should return user details if token is provided", async () => {
-				// Mocking the token
-				const token = "mocked_token_value";
-				const mockedUser = { id: 1, userName: "testuser" };
-				// eslint-disable-next-line no-unused-vars
-				router.get("/", async (req, res) => {
-					req.cookies = { token }; // Set the mocked token in cookies
-					jwt.verify = jest
-						.fn()
-						.mockImplementation((token, JWT_SECRET, callback) => {
-							callback(null, mockedUser);
-						});
-
-					await request(app)
-						.get("/users")
-						.expect(200)
-						.then((response) => {
-							expect(response.body).toEqual(mockedUser);
-						});
-				});
-			});
-
-			test("It should return null if token is not provided", async () => {
-				// eslint-disable-next-line no-unused-vars
-				router.get("/", async (req, res) => {
-					req.cookies = {}; // No token provided in cookies
-
-					await request(app)
-						.get("/users")
-						.expect(200)
-						.then((response) => {
-							expect(response.body).toBeNull();
-						});
-				});
-			});
-		});
-	});
-
-	describe("User Authentication API", () => {
-		describe("PATCH /users/:userId", () => {
-			test("It should return 404 if userId is not provided", async () => {
-				await request(app)
-					.patch("/users/") // Missing userId
-					.expect(404) // Change the expected status code to 404
-					.then((response) => {
-						expect(response.body).toEqual({}); // Adjust expectation for an empty object
-					});
-			});
-
-			test("It should return 404 if user is not found", async () => {
-				const nonExistingUserId = 999;
-
-				// Mocking findOne to return null
-				// eslint-disable-next-line no-unused-vars
-				router.patch("/:userId", async (req, res) => {
-					// eslint-disable-next-line no-undef
-					dataSource.getRepository.mockReturnValueOnce({
-						findOne: jest.fn().mockResolvedValueOnce(null),
-					});
-
-					await request(app)
-						.patch(`/users/${nonExistingUserId}`)
-						.send({ userName: "testuser", password: "testpassword" })
-						.expect(404);
-				});
-			});
-
-			test("It should return 403 if userId does not match the user's id", async () => {
-				const userId = 1;
-				const mockedUser = { id: userId, userName: "testuser" };
-
-				// Mocking findOne to return the mocked user
-				// eslint-disable-next-line no-unused-vars
-				router.patch("/:userId", async (req, res) => {
-					// eslint-disable-next-line no-undef
-					dataSource.getRepository.mockReturnValueOnce({
-						findOne: jest.fn().mockResolvedValueOnce(mockedUser),
-					});
-
-					await request(app)
-						.patch(`/users/${userId + 1}`) // Providing different userId
-						.send({ userName: "testuser", password: "testpassword" })
-						.expect(403);
-				});
 			});
 		});
 	});

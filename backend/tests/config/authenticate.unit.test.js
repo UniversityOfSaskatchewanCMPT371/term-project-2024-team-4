@@ -1,104 +1,87 @@
 /**
  * Unit Tests for the Admin Authentication Middleware (config/authenticate.js)
  */
-
+const request = require("supertest");
+const express = require("express");
 const jwt = require("jsonwebtoken");
+const bodyParser = require("body-parser");
 const authenticateAdmin = require("../../middleware/authenticate");
-require("dotenv").config();
+const dataSource = require("../../config/db");
 
-describe("Admin Authentication Middleware Test ", () => {
-	let next; // mock to check succesful authentications
-	const secret = process.env.JWT_SECRET; // uses actual JWT_SECRET
-	const validToken = jwt.sign({ id: 1, userName: "admin" }, secret);
+// mock import
+jest.mock("../../config/db");
 
-	beforeEach(() => {
-		next = jest.fn();
+const app = express();
+app.use(bodyParser.json());
+
+app.use((req, res, next) => {
+	req.cookies = req.cookies || {};
+	next();
+});
+
+// supertest endpoint to simulate middleware
+app.post("/api", authenticateAdmin, (req, res) => {
+	res.status(200).send("Success");
+});
+
+// test vars
+const validUserId = "user123";
+const invalidUserId = "invalid123";
+const userPayload = {
+	id: validUserId,
+	userName: "testUser",
+	role: "admin",
+};
+
+beforeEach(() => {
+	// mock for when middleware is searching the database for a user
+	const Users = {
+		findOneBy: jest.fn((query) => {
+			if (query.id === validUserId) return Promise.resolve(userPayload);
+			else return Promise.resolve(null);
+		}),
+	};
+	dataSource.getRepository.mockReturnValue(Users);
+});
+
+const secret = process.env.JWT_SECRET; // using real token
+
+describe("Admin Authentication Middleware Test", () => {
+	// 1. Cookie Token is not valid; expect response: 401
+	test("fails if user has an invalid cookie token", async () => {
+		const token = jwt.sign({ id: validUserId }, "wrong_secret");
+		await request(app).post("/api").set("Cookie", `token=${token}`).expect(401);
 	});
 
-	// 1. Cookie Token is not valid; expect response: 401 & json + should not move on to next()
-	test("fails if user has an invalid cookie token", () => {
-		// Mock req
-		const req = {
-			cookies: { token: "invalid_cookie_token" },
-			header: jest.fn().mockReturnValue(undefined),
-		};
-
-		// Mock res
-		const res = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn().mockReturnThis(),
-		};
-
-		authenticateAdmin(req, res, next);
-
-		// expect response: 401 & json + should not move on to next()
-		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalled();
-		expect(next).not.toHaveBeenCalled();
+	// 2. Header Token is not valid; expect response: 401
+	test("fails if user has an invalid header token", async () => {
+		const token = jwt.sign({ id: validUserId }, "wrong_secret");
+		await request(app)
+			.post("/api")
+			.set("Authorization", `Bearer ${token}`)
+			.expect(401);
 	});
 
-	// 2. Header Token is not valid; expect response: 401 & json + should not move on to next()
-	test("fails if user has an invalid header token", () => {
-		// Mock req
-		const req = {
-			cookies: {},
-			header: jest.fn().mockReturnValue("Bearer invalid_header_token"),
-		};
-
-		// Mock res
-		const res = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn().mockReturnThis(),
-		};
-
-		authenticateAdmin(req, res, next);
-
-		// expect response: 401 & json + should not move on to next()
-		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalled();
-		expect(next).not.toHaveBeenCalled();
+	// 3. No token provided at all; expect response: 401
+	test("fails if user has no token at all", async () => {
+		await request(app).post("/api").expect(401);
 	});
 
-	// 3. No token provided at all; expect response: 401 & json + should not move on to next()
-	test("fails if user has no token at all", () => {
-		// Mock req
-		const req = {
-			cookies: {},
-			header: jest.fn().mockReturnValue(undefined),
-		};
-
-		// Mock res
-		const res = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn().mockReturnThis(),
-		};
-
-		authenticateAdmin(req, res, next);
-
-		// expect response: 401 & json + should not move on to next()
-		expect(res.status).toHaveBeenCalledWith(401);
-		expect(res.json).toHaveBeenCalled();
-		expect(next).not.toHaveBeenCalled();
+	// 4. Token is valid, but user id is NOT associated with a user in db; expect response: 404
+	test("fails if token is valid BUT is not associated with a user in the database", async () => {
+		const token = jwt.sign({ id: invalidUserId }, secret);
+		await request(app)
+			.post("/api")
+			.set("Authorization", `Bearer ${token}`)
+			.expect(404);
 	});
 
-	// 4. Token is valid; expect to move onto next();
-	test("passes and moves to next middleware if token is valid", () => {
-		// Mock req
-		const req = {
-			cookies: { token: validToken }, // Using a valid token in cookies
-			header: jest.fn().mockReturnValue(`Bearer ${validToken}`), // Also providing a valid token in header for completeness
-		};
-
-		// Mock res
-		const res = {
-			status: jest.fn().mockReturnThis(),
-			json: jest.fn().mockReturnThis(),
-		};
-
-		authenticateAdmin(req, res, next);
-
-		// expect no status response + move on to next middleware/admin-only action
-		expect(res.status).not.toHaveBeenCalled();
-		expect(next).toHaveBeenCalled();
+	// 5. Token is valid and is associated with an existing user in the database; move towards API call (expect 200 response)
+	test("passes and moves past towards the API call (200 response)", async () => {
+		const token = jwt.sign({ id: validUserId }, secret);
+		await request(app)
+			.post("/api")
+			.set("Authorization", `Bearer ${token}`)
+			.expect(200);
 	});
 });

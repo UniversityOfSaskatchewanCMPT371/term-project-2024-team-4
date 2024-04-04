@@ -4,8 +4,11 @@ const assert = require("node:assert/strict");
 const { logger } = require("../config/logger.js");
 
 /**
- *
- * @param {*} req
+ * Creates a new ArtifactType in the database.
+ * @param req Express request object, expecting 'id' in the request body.
+ * @pre The 'id' provided in the body must be one of the predetermined values ('Lithic', 'Ceramic', 'Faunal').
+ * @post A new ArtifactType is created and saved in the database.
+ * @return Returns the newly created ArtifactType object or an error message.
  */
 async function newArtifactType(req) {
 	const { id } = req.body;
@@ -34,8 +37,10 @@ async function newArtifactType(req) {
 }
 
 /**
- *
- * @param {*} req
+ * Fetches all ArtifactTypes from the database.
+ * @pre None.
+ * @post Retrieves and returns all ArtifactTypes from the database.
+ * @return Returns an array of ArtifactType objects or an error message.
  */
 async function getAllArtifactTypes() {
 	try {
@@ -56,8 +61,11 @@ async function getAllArtifactTypes() {
 }
 
 /**
- *
- * @param {*} req
+ * Fetches a single ArtifactType identified by ID from the database.
+ * @param req Express request object, expecting 'id' as a parameter.
+ * @pre The ArtifactType with the given ID must exist in the database.
+ * @post Retrieves and returns the specified ArtifactType from the database.
+ * @return Returns an ArtifactType object or an error message.
  */
 async function getArtifactTypeFromId(req) {
 	const { id } = req.params;
@@ -88,8 +96,11 @@ async function getArtifactTypeFromId(req) {
 }
 
 /**
- *
- * @param {*} req
+ * Deletes a single ArtifactType identified by ID from the database.
+ * @param req Express request object, expecting 'id' as a parameter.
+ * @pre The ArtifactType with the given ID must exist in the database.
+ * @post Deletes the specified ArtifactType from the database.
+ * @return Does not return any content on successful deletion, otherwise returns an error message.
  */
 async function deleteArtifactType(req) {
 	const { id } = req.params;

@@ -103,9 +103,11 @@ function LoginModal({ modalVisible, closeModal }) {
 					},
 				}}
 			>
-				<DialogTitle>Admin</DialogTitle>
+				<DialogTitle>Login</DialogTitle>
 				<DialogContent>
-					<DialogContentText>Lorem ipsum dolor sit amet.</DialogContentText>
+					<DialogContentText marginBottom={0.5}>
+						Welcome to PCubed
+					</DialogContentText>
 					<TextField
 						autoFocus
 						required

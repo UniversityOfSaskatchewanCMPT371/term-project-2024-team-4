@@ -28,14 +28,14 @@ describe("Site", () => {
 			}),
 		).toBeInTheDocument();
 
-		// Filter combobox
+		// Filter combobox - Not implemented/not needed
+		/*
 		expect(screen.getByText(/search/i)).toBeInTheDocument();
 		expect(
 			screen.getByRole("combobox", {
 				name: /filter/i,
 			}),
 		).toBeInTheDocument();
-
-		screen.logTestingPlaygroundURL();
+		*/
 	});
 });

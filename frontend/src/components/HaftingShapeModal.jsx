@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -8,6 +15,7 @@ import log from "../logger";
 export default function HaftingShapeModal({
 	setEditHaftingShape,
 	selectedHaftingShape,
+	setSelectedHaftingShape,
 	selectedHaftingShapeID,
 	updateHaftingShapeList,
 }) {
@@ -68,6 +76,7 @@ export default function HaftingShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedHaftingShape("");
 		if (setEditHaftingShape) setEditHaftingShape(false);
 		log.debug(
 			`HaftingShapeModal closed, mode: ${selectedHaftingShape ? "edit" : "add"}.`,
@@ -77,6 +86,11 @@ export default function HaftingShapeModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedHaftingShapeID
+						? "Edit Hafting Shape"
+						: "Add New Hafting Shape"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="haftingShape"
@@ -85,14 +99,16 @@ export default function HaftingShapeModal({
 						fullWidth
 						value={haftingShape} // Use value instead of defaultValue
 						onChange={(e) => setHaftingShape(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
-						error={!!errors.haftingShape}
-						helperText={errors.haftingShape}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);
