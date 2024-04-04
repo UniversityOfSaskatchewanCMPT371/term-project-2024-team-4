@@ -153,7 +153,7 @@ const Site = () => {
 					>
 						{siteDescription}
 					</Typography>
-					{user && user.userName && (
+					{user && (
 						<Button
 							sx={{ paddingLeft: 0, minWidth: 0, justifyContent: "flex-start" }}
 							onClick={handleEdit}
@@ -162,7 +162,7 @@ const Site = () => {
 							Edit
 						</Button>
 					)}
-					{user && user.userName && (
+					{user && (
 						<Button
 							sx={{ justifyContent: "flex-start" }}
 							onClick={handleOpenAlertDelete}

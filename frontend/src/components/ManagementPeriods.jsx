@@ -168,7 +168,7 @@ export default function ManagementPeriods() {
 			flex: 1,
 			cellClassName: "actions",
 			getActions: (params) =>
-				user && user.userName
+				user
 					? [
 							<GridActionsCellItem
 								icon={<DeleteIcon />}
@@ -200,7 +200,7 @@ export default function ManagementPeriods() {
 					)}
 				</Box>
 				{/* Deletion confirmation dialog */}
-				{user && user.userName && (
+				{user && (
 					<Dialog open={deleteConfirmation.open} onClose={handleCancelDelete}>
 						<DialogTitle>Delete Period</DialogTitle>
 						<DialogContent>
@@ -226,7 +226,7 @@ export default function ManagementPeriods() {
 					}}
 				>
 					<Typography variant="h6">Periods Management</Typography>
-					{user && user.userName && (
+					{user && (
 						<Button
 							variant="contained"
 							startIcon={<AddIcon />}
@@ -244,7 +244,7 @@ export default function ManagementPeriods() {
 					autoHeight
 					disableSelectionOnClick
 					components={{
-						toolbar: user && user.userName ? GridToolbar : undefined,
+						toolbar: user ? GridToolbar : undefined,
 					}}
 				/>
 				<AddPeriodDialog
