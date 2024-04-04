@@ -29,6 +29,7 @@ import logger from "../logger";
 export default function PeriodModal({
 	setEditPeriod,
 	selectedPeriod,
+	setSelectedPeriod,
 	selectedPeriodStartDate,
 	selectedPeriodEndDate,
 	selectedPeriodID,
@@ -54,12 +55,12 @@ export default function PeriodModal({
 			dateRange: "",
 		};
 
-		if (!periodName.trim()) {
+		if (!periodName) {
 			newErrors.periodName = "Period name is required.";
 			isValid = false;
 		}
 
-		if (!startDate.trim()) {
+		if (!startDate) {
 			newErrors.startDate = "Start date is required.";
 			isValid = false;
 		} else if (!/^\d+$/.test(startDate)) {
@@ -70,7 +71,7 @@ export default function PeriodModal({
 			isValid = false;
 		}
 
-		if (!endDate.trim()) {
+		if (!endDate) {
 			newErrors.endDate = "End date is required.";
 			isValid = false;
 		} else if (!/^\d+$/.test(endDate)) {
@@ -118,6 +119,7 @@ export default function PeriodModal({
 
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedPeriod("");
 		setEditPeriod(false);
 	};
 

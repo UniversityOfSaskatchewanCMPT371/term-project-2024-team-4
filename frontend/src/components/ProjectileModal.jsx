@@ -109,7 +109,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setPeriodAnchorEl(event.currentTarget);
 		setCurrentPeriod(period);
-		setEditingPeriod(period.name); // temp fix
+		setEditingPeriod(period); // temp fix
 	};
 
 	// Function to close the dropdown menu
@@ -528,11 +528,11 @@ const AddProjectile = ({
 	};
 
 	const handlePeriodChange = async (event) => {
-		const selectedPeriodName = event.target.value.trim();
+		const selectedPeriodName = event.target.value;
 		setSelectedPeriod(selectedPeriodName);
 
 		const selectedPeriod = periods.find(
-			(period) => period.name.trim() === selectedPeriodName,
+			(period) => period.name === selectedPeriodName,
 		);
 
 		if (selectedPeriod) {
@@ -758,7 +758,7 @@ const AddProjectile = ({
 		} else {
 			setSelectedPeriod(selectedCulture.period.name);
 			const selectedPeriod = periods.find(
-				(period) => period.name.trim() === selectedCulture.period.name,
+				(period) => period.name === selectedCulture.period.name,
 			);
 
 			setCultures(selectedPeriod.cultures);
@@ -1816,13 +1816,16 @@ const AddProjectile = ({
 			{editPeriod && (
 				<PeriodModal
 					setEditPeriod={setEditPeriod}
-					selectedPeriod={editingPeriod}
+					selectedPeriod={editingPeriod.name}
+					setSelectedPeriod={setEditingPeriod}
 					selectedPeriodID={selectedPeriodID}
 					periods={periods}
 					setPeriods={setPeriods}
 					updatePeriodsList={updatePeriodsList}
 					periodModalOpen={periodModalOpen}
 					setPeriodModalOpen={setPeriodModalOpen}
+					selectedPeriodStartDate={editingPeriod.start}
+					selectedPeriodEndDate={editingPeriod.end}
 				/>
 			)}
 			{editCulture && (
