@@ -59,7 +59,7 @@ export default function BladeShapeModal({
 				handleClose();
 			})
 			.catch((error) => {
-				log.error("Error saving Base Shape: ", error);
+				log.error("Error saving Blade Shape: ", error);
 			});
 	};
 
