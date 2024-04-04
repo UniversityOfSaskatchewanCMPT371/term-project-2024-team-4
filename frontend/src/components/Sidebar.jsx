@@ -203,14 +203,57 @@ function Sidebar() {
 							</ListItemButton>
 						</ListItem>
 					</Link>
-					<ListItem key="Data Management" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<FolderCopyIcon />
-							</SidebarIcon>
-							<ListItemText primary="Data Management" />
-						</ListItemButton>
-					</ListItem>
+					<Link
+						to="/manageCultures"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Cultures Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Cultures Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/managePeriods"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Periods Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Periods Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/manageMaterials"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Materials Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Materials Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
 					<ListItem key="Settings" disablePadding onClick={handleSettingClick}>
