@@ -128,7 +128,8 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 
 	fireEvent.click(screen.getByText("Add"));
 
-	await screen.findAllByText("Region is required.");
+	const errorMessage = await screen.findByText("Region is required");
+	expect(errorMessage).toBeInTheDocument();
 
 	await waitFor(
 		async () => {

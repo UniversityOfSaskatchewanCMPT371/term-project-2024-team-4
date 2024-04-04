@@ -61,7 +61,9 @@ describe("MaterialModal", () => {
 		const { getByText } = render(<MaterialModal {...props} />);
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
-		await screen.findAllByText("Must select an Artifact Type");
+		await screen.findAllByText(
+			"Please select the artifact type this material belongs to",
+		);
 	});
 
 	it("updates material list and closes modal upon successful save", async () => {
