@@ -10,7 +10,7 @@ test("SiteModal renders correctly with every field empty", async () => {
 	const { getByLabelText } = render(<SiteModal setOpen={() => {}} />);
 
 	// Assert that the input fields are empty
-	const siteNameInput = getByLabelText("Site Name");
+	const siteNameInput = getByLabelText("Site Name *");
 	const descriptionInput = getByLabelText("Site Description");
 	const locationInput = getByLabelText("Location");
 
@@ -24,7 +24,7 @@ test("SiteModal renders correctly", async () => {
 	const { getByLabelText } = render(<SiteModal setOpen={() => {}} />);
 
 	// Find input fields and buttons
-	const siteNameInput = getByLabelText("Site Name");
+	const siteNameInput = getByLabelText("Site Name *");
 	const descriptionInput = getByLabelText("Site Description");
 	const locationInput = getByLabelText("Location");
 
@@ -115,7 +115,7 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 	render(<SiteModal openAdd={true} />);
 
 	// Fill out the form fields with the site data
-	const nameInput = screen.getByLabelText("Site Name");
+	const nameInput = screen.getByLabelText("Site Name *");
 	const descriptionInput = screen.getByLabelText("Site Description");
 	const locationInput = screen.getByLabelText("Location");
 
