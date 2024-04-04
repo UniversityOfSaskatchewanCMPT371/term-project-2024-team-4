@@ -48,8 +48,6 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		screen.logTestingPlaygroundURL();
-
 		expect(
 			screen.getByRole("heading", {
 				name: /add new base shape/i,
@@ -83,9 +81,14 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Base Shape/i), {
-			target: { value: newBaseShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /base shape/i,
+			}),
+			{
+				target: { value: newBaseShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
@@ -111,9 +114,14 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Base Shape/i), {
-			target: { value: updatedBaseShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /base shape/i,
+			}),
+			{
+				target: { value: updatedBaseShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>

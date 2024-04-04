@@ -39,22 +39,7 @@ describe("Projectile", () => {
 		).toBeInTheDocument();
 		expect(
 			screen.getByRole("heading", {
-				name: /base shape/i,
-			}),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("heading", {
-				name: /cross section/i,
-			}),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("heading", {
-				name: /blade shape/i,
-			}),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("heading", {
-				name: /hafting shape/i,
+				name: /material/i,
 			}),
 		).toBeInTheDocument();
 		expect(
