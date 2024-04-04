@@ -40,7 +40,21 @@ describe("CrossSectionModal", () => {
 			/>,
 		);
 
-		expect(screen.getByLabelText(/Cross Section/i)).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				name: /add new cross section/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /cancel/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /save/i,
+			}),
+		).toBeInTheDocument();
 	});
 
 	it("should call http.post on save when adding a new cross section", async () => {
@@ -59,9 +73,14 @@ describe("CrossSectionModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Cross Section/i), {
-			target: { value: newCrossSectionName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /cross section/i,
+			}),
+			{
+				target: { value: newCrossSectionName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
@@ -91,9 +110,14 @@ describe("CrossSectionModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Cross Section/i), {
-			target: { value: updatedCrossSectionName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /cross section/i,
+			}),
+			{
+				target: { value: updatedCrossSectionName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>

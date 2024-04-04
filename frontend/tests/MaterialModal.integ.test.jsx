@@ -77,6 +77,7 @@ describe("MaterialModal", () => {
 				{ id: "1", name: "Artifact Type 1" },
 				{ id: "2", name: "Artifact Type 2" },
 			],
+			setSelectedMaterial: vi.fn(),
 		};
 
 		const mockAxiosPost = vi

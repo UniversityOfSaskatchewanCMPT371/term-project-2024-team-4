@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -25,12 +32,14 @@ import log from "../logger";
 export default function CrossSectionModal({
 	setEditCrossSection,
 	selectedCrossSection,
+	setSelectedCrossSection,
 	selectedCrossSectionID,
 	updateCrossSectionsList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
 	const [crossSection, setCrossSection] = useState(selectedCrossSection);
 
+	console.log("any id:" + selectedCrossSectionID);
 	/**
 	 * Handles the save action when the form is submitted.
 	 * Validates the form, updates the cross section, and closes the modal.
@@ -61,6 +70,7 @@ export default function CrossSectionModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedCrossSection("");
 		if (setEditCrossSection) setEditCrossSection(false);
 		log.debug(
 			`BaseShapeModal closed, mode: ${selectedCrossSectionID ? "edit" : "add"}.`,
@@ -70,20 +80,29 @@ export default function CrossSectionModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedCrossSectionID
+						? "Edit Cross Section"
+						: "Add New Cross Section"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="crossSection"
 						label="Cross Section"
 						variant="outlined"
 						fullWidth
-						value={crossSection} // Use value instead of defaultValue
+						value={crossSection}
 						onChange={(e) => setCrossSection(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

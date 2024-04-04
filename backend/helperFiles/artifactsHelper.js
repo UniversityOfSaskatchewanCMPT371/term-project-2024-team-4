@@ -67,7 +67,7 @@ async function getAllArtifacts() {
 	try {
 		const artifactRepository = await myDatabase.getRepository(Artifact);
 		const artifacts = await artifactRepository.find({
-			relations: ["site", "artifactType"],
+			relations: ["site", "artifactType", "material"],
 		});
 
 		assert.ok(artifacts.length > 0, "No artifacts found.");

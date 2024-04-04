@@ -40,7 +40,7 @@ async function newMaterial(req) {
 async function getAllMaterials() {
 	try {
 		const materials = await myDatabase.getRepository(Material).find({
-			relations: ["artifactType", "artifacts"],
+			relations: ["artifactType", "artifacts", "cultures"],
 		});
 		// res.json(materials);
 		return materials;
@@ -59,7 +59,7 @@ async function getMaterialById(req) {
 	try {
 		const material = await myDatabase.getRepository(Material).findOne({
 			where: { id },
-			relations: ["artifactType", "artifacts"],
+			relations: ["artifactType", "artifacts", "cultures"],
 		});
 		if (!material) {
 			return "Material not found";

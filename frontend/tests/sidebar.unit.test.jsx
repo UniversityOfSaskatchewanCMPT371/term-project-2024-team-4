@@ -14,7 +14,7 @@ describe("Sidebar", () => {
 
 		expect(screen.getByText(/pcubed/i)).toBeInTheDocument();
 		expect(screen.getByTestId("HomeIcon")).toBeInTheDocument();
-		expect(screen.getByText(/home/i)).toBeInTheDocument();
+		expect(screen.getByText(/catalogue/i)).toBeInTheDocument();
 		expect(screen.getByTestId("UploadIcon")).toBeInTheDocument();
 		expect(screen.getByText(/connect/i)).toBeInTheDocument();
 		expect(screen.getByTestId("BarChartIcon")).toBeInTheDocument();

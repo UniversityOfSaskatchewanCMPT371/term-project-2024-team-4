@@ -123,7 +123,8 @@ export class Culture {
 	@JoinTable()
 	crossSections: CrossSection[];
 
-	@ManyToMany(() => Material)
+	@ManyToMany(() => Material, (material) => material.cultures)
+	@JoinTable()
 	materials: Material[];
 }
 
@@ -249,8 +250,10 @@ export class Artifact {
 	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Material)
-	materials: Material[];
+	@ManyToOne(() => Material, (material) => material.artifacts, {
+		onDelete: "SET NULL",
+	})
+	material: Site;
 }
 
 // Material Entity
@@ -270,12 +273,10 @@ export class Material {
 	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Artifact)
-	@JoinTable()
+	@OneToMany(() => Artifact, (artifact) => artifact.material)
 	artifacts: Artifact[];
 
-	@ManyToMany(() => Culture)
-	@JoinTable()
+	@ManyToMany(() => Culture, (culture) => culture.materials)
 	cultures: Culture[];
 }
 

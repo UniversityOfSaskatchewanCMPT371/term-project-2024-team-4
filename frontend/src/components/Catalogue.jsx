@@ -1,17 +1,21 @@
 /* eslint-disable react/prop-types */
-import { useState, useEffect } from "react";
+import { useEffect, useState, useContext } from "react";
 import SiteList from "./SiteList";
+import CatalogueModal from "./CatalogueModal";
 import BaseLayout from "./BaseLayout";
 import http from "../../http";
 import SearchIcon from "@mui/icons-material/Search";
 import log from "../logger";
 import {
+	Button,
 	TextField,
 	IconButton,
 	Typography,
 	Grid,
 	MenuItem,
 } from "@mui/material";
+
+import { UserContext } from "../context/userContext.jsx";
 
 /**
  * Default catalogue main page for viewing and adding sites
@@ -26,6 +30,10 @@ const Catalogue = () => {
 	const [searchValue, setSearchValue] = useState("");
 	const [sortValue, setSortValue] = useState("newest"); // does nothing atm
 	const [filterValue, setFilterValue] = useState(""); // does nothing atm
+
+	const [openEdit, setOpenEdit] = useState(false);
+
+	const { user } = useContext(UserContext);
 
 	/**
 	 * Fetch default catalogue initialized in database
@@ -43,7 +51,7 @@ const Catalogue = () => {
 		}
 
 		fetchCatalogue();
-	}, []);
+	}, [openEdit]);
 
 	/**
 	 * Set search value every textfield input change
@@ -69,24 +77,43 @@ const Catalogue = () => {
 		setFilterValue(event.target.value);
 	};
 
+	/**
+	 * Set edit catalogue modal visibility to true
+	 */
+	const handleEdit = () => {
+		setOpenEdit(true);
+	};
+
 	return (
 		<BaseLayout>
 			<Grid item xs={12}>
 				{/* Default catalogue labels */}
-				<Grid>
-					<Typography sx={{ marginBottom: 2 }} variant="h4">
+				<Grid sx={{ marginBottom: 4 }}>
+					<Typography variant="h4">
 						{catalogueName || "Base Catalogue"}
 					</Typography>
-					<Typography sx={{ marginBottom: 4 }}>
+					<Typography
+						sx={{ marginBottom: 0, fontWeight: "regular" }}
+						variant="h6"
+					>
 						{catalogueDescription}
 					</Typography>
+					{user && user.userName && (
+						<Button
+							sx={{ paddingLeft: 0, minWidth: 0, justifyContent: "flex-start" }}
+							onClick={handleEdit}
+							color="primary"
+						>
+							Edit
+						</Button>
+					)}
 				</Grid>
-				<Grid container spacing={2}>
-					<Grid item xs={12} sm={6}>
+				<Grid container>
+					<Grid item>
 						{/*Search bar*/}
 						<form noValidate autoComplete="off">
 							<TextField
-								sx={{ marginBottom: 4 }}
+								sx={{ marginBottom: 4, minWidth: "300px" }}
 								id="standard-basic"
 								label="Search"
 								variant="standard"
@@ -105,7 +132,7 @@ const Catalogue = () => {
 					</Grid>
 				</Grid>
 				<Grid container spacing={2} sx={{ marginBottom: 4 }}>
-					<Grid item xs={6} sm={3}>
+					<Grid item>
 						{/*Sort widget*/}
 						<TextField
 							id="sort"
@@ -116,13 +143,14 @@ const Catalogue = () => {
 							value={sortValue}
 							onChange={handleSortChange}
 							size="small"
+							sx={{ minWidth: "250px" }}
 						>
 							<MenuItem value="newest">Newest</MenuItem>
 							<MenuItem value="descendant">Descendant</MenuItem>
 							<MenuItem value="ascending">Ascending</MenuItem>
 						</TextField>
 					</Grid>
-					<Grid item xs={6} sm={3}>
+					<Grid item>
 						{/*Filter widget*/}
 						<TextField
 							id="filter"
@@ -133,6 +161,7 @@ const Catalogue = () => {
 							value={filterValue}
 							onChange={handleFilterChange}
 							size="small"
+							sx={{ minWidth: "250px" }}
 						>
 							{/*Filter Values | NOTE: these should be dynamic, right*/}
 							<MenuItem value="all">All</MenuItem>
@@ -142,7 +171,18 @@ const Catalogue = () => {
 					</Grid>
 				</Grid>
 			</Grid>
+			{openEdit && (
+				<CatalogueModal
+					openEdit={openEdit}
+					setOpenEdit={setOpenEdit}
+					catalogueId={1}
+					catalogueName={catalogueName}
+				/>
+			)}
 			<Grid item xs={12}>
+				<Typography variant="body1" sx={{ fontWeight: "medium" }}>
+					Sites
+				</Typography>
 				{/* Note: this shows all the sites attached to the catalogue oldest first(as of March 9th, 2023) */}
 				<SiteList query={searchValue} />
 			</Grid>
