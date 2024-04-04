@@ -31,6 +31,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * 	- Correct credentials: 200 OK Response-- signs a JWToken and signs in
  * 	- Incorrect Credentials: 401 Unauthorize Response-- denied access
  */
+
 router.post("/", async (req, res) => {
 	const { userName, password } = req.body;
 	const Users = await dataSource.getRepository(User);

@@ -8,7 +8,6 @@ import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -165,18 +164,23 @@ function Sidebar() {
 				anchor="left"
 			>
 				<Toolbar>
-					<Typography variant="h6" noWrap component="div">
+					<Typography
+						variant="h4"
+						noWrap
+						component="div"
+						sx={{ marginTop: "20px", fontWeight: "medium" }}
+					>
 						PCubed
 					</Typography>
 				</Toolbar>
 				<SidebarList>
 					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-						<ListItem key="Home" disablePadding onClick={handleClick}>
+						<ListItem key="Catalogue" disablePadding onClick={handleClick}>
 							<ListItemButton>
 								<SidebarIcon>
 									<HomeIcon />
 								</SidebarIcon>
-								<ListItemText primary="Home" />
+								<ListItemText primary="Catalogue" />
 							</ListItemButton>
 						</ListItem>
 					</Link>
@@ -188,9 +192,6 @@ function Sidebar() {
 							<ListItemText primary="Connect" />
 						</ListItemButton>
 					</ListItem>
-				</SidebarList>
-				<Divider />
-				<SidebarList>
 					<Link
 						to="/stats"
 						style={{ textDecoration: "none", color: "inherit" }}
@@ -204,14 +205,57 @@ function Sidebar() {
 							</ListItemButton>
 						</ListItem>
 					</Link>
-					<ListItem key="Data Management" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<FolderCopyIcon />
-							</SidebarIcon>
-							<ListItemText primary="Data Management" />
-						</ListItemButton>
-					</ListItem>
+					<Link
+						to="/manageCultures"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Cultures Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Cultures Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/managePeriods"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Periods Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Periods Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/manageMaterials"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Materials Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Materials Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
 					{user && (

@@ -5,6 +5,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
+	DialogActions,
 } from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
@@ -33,14 +34,14 @@ import log from "../logger";
 export default function RegionModal({
 	setEditRegion,
 	selectedRegion,
-	selectedRegionDescription,
+	setSelectedRegion,
 	selectedRegionID,
 	updateRegionsList,
 }) {
 	const [open, setOpen] = useState(true);
-	const [regionName, setRegionName] = useState(selectedRegion || "");
+	const [regionName, setRegionName] = useState(selectedRegion.name || "");
 	const [description, setDescription] = useState(
-		selectedRegionDescription || "",
+		selectedRegion ? selectedRegion.description : "",
 	);
 
 	/**
@@ -82,6 +83,7 @@ export default function RegionModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedRegion("");
 		setEditRegion(false);
 	};
 
@@ -113,15 +115,15 @@ export default function RegionModal({
 						onChange={(e) => setDescription(e.target.value)}
 						margin="normal"
 					/>
-					<Button
-						onClick={handleSave}
-						variant="contained"
-						color="primary"
-						style={{ marginTop: "20px" }}
-					>
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

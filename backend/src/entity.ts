@@ -58,10 +58,12 @@ export class Site {
 	@Column()
 	location: string;
 
-	@ManyToOne(() => Catalogue, (catalogue) => catalogue.sites)
+	@ManyToOne(() => Catalogue, (catalogue) => catalogue.sites, {
+		onDelete: "CASCADE",
+	})
 	catalogue: Catalogue;
 
-	@ManyToOne(() => Region, (region) => region.sites)
+	@ManyToOne(() => Region, (region) => region.sites, { onDelete: "SET NULL" })
 	region: Region;
 
 	@OneToMany(() => Artifact, (artifact) => artifact.site)
@@ -96,7 +98,7 @@ export class Culture {
 	@Column()
 	name: string;
 
-	@ManyToOne(() => Period, (period) => period.cultures)
+	@ManyToOne(() => Period, (period) => period.cultures, { onDelete: "CASCADE" })
 	period: Period;
 
 	@OneToMany(
@@ -120,6 +122,10 @@ export class Culture {
 	@ManyToMany(() => CrossSection, (crossSection) => crossSection.cultures)
 	@JoinTable()
 	crossSections: CrossSection[];
+
+	@ManyToMany(() => Material, (material) => material.cultures)
+	@JoinTable()
+	materials: Material[];
 }
 
 // Shape Entity (Blade Shape)
@@ -236,14 +242,18 @@ export class Artifact {
 	@Column({ nullable: true })
 	photo: string;
 
-	@ManyToOne(() => Site, (site) => site.artifacts)
+	@ManyToOne(() => Site, (site) => site.artifacts, { onDelete: "CASCADE" })
 	site: Site;
 
-	@ManyToOne(() => ArtifactType, (artifactType) => artifactType.artifacts)
+	@ManyToOne(() => ArtifactType, (artifactType) => artifactType.artifacts, {
+		onDelete: "CASCADE",
+	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Material)
-	materials: Material[];
+	@ManyToOne(() => Material, (material) => material.artifacts, {
+		onDelete: "SET NULL",
+	})
+	material: Site;
 }
 
 // Material Entity
@@ -258,35 +268,47 @@ export class Material {
 	@Column("text")
 	description: string;
 
-	@ManyToOne(() => ArtifactType, (artifactType) => artifactType.materials)
+	@ManyToOne(() => ArtifactType, (artifactType) => artifactType.materials, {
+		onDelete: "SET NULL",
+	})
 	artifactType: ArtifactType;
 
-	@ManyToMany(() => Artifact)
-	@JoinTable()
+	@OneToMany(() => Artifact, (artifact) => artifact.material)
 	artifacts: Artifact[];
+
+	@ManyToMany(() => Culture, (culture) => culture.materials)
+	cultures: Culture[];
 }
 
 // Lithic Subtypes (Projectile Point, Basal Knife)
 @ChildEntity()
 export class ProjectilePoint extends Artifact {
-	@ManyToOne(() => Culture, (culture) => culture.projectilePoints)
+	@ManyToOne(() => Culture, (culture) => culture.projectilePoints, {
+		onDelete: "SET NULL",
+	})
 	culture: Culture;
 
-	@ManyToOne(() => BladeShape, (bladeShape) => bladeShape.projectilePoints)
+	@ManyToOne(() => BladeShape, (bladeShape) => bladeShape.projectilePoints, {
+		onDelete: "SET NULL",
+	})
 	bladeShape: BladeShape;
 
-	@ManyToOne(() => BaseShape, (baseShape) => baseShape.projectilePoints)
+	@ManyToOne(() => BaseShape, (baseShape) => baseShape.projectilePoints, {
+		onDelete: "SET NULL",
+	})
 	baseShape: BaseShape;
 
 	@ManyToOne(
 		() => HaftingShape,
 		(haftingShape) => haftingShape.projectilePoints,
+		{ onDelete: "SET NULL" },
 	)
 	haftingShape: HaftingShape;
 
 	@ManyToOne(
 		() => CrossSection,
 		(crossSection) => crossSection.projectilePoints,
+		{ onDelete: "SET NULL" },
 	)
 	crossSection: CrossSection;
 }

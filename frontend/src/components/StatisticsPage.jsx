@@ -1,15 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import log from "../logger.js";
 import http from "../../http.js";
 import Sidebar from "./Sidebar.jsx";
 import StatisticsModal from "./StatisticsModal.jsx";
-
+import { UserContext } from "../context/userContext.jsx";
 import CssBaseline from "@mui/material/CssBaseline";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Divider from "@mui/material/Divider";
-import Typography from "@mui/material/Typography";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 
 function StatisticsPage() {
@@ -17,6 +16,7 @@ function StatisticsPage() {
 
 	const [data, setData] = useState([]);
 
+	const { user } = useContext(UserContext);
 	useEffect(() => {
 		/**
 		 * Gets all projectile points in the catalogue for display and places them in the state of the component
@@ -35,13 +35,13 @@ function StatisticsPage() {
 	//Converts all the points into objects with fields for every column in the data grid
 	const rows1 = data.map((item) => ({
 		id: item.id,
-		site: item.site.name,
-		location: item.location,
-		culture: item.culture.name,
-		bladeShape: item.bladeShape.name,
-		baseShape: item.baseShape.name,
-		haftingShape: item.haftingShape.name,
-		crossSection: item.crossSection.name,
+		site: item.site ? item.site.name : "Indeterminate",
+		location: item.location ? item.location : "Indeterminate",
+		culture: item.culture ? item.culture.name : "Indeterminate",
+		bladeShape: item.bladeShape ? item.bladeShape.name : "Indeterminate",
+		baseShape: item.baseShape ? item.baseShape.name : "Indeterminate",
+		haftingShape: item.haftingShape ? item.haftingShape.name : "Indeterminate",
+		crossSection: item.crossSection ? item.crossSection.name : "Indeterminate",
 	}));
 
 	//Holds all the information for the header row of the table and defines the fields for the data from projectile points.
@@ -117,11 +117,6 @@ function StatisticsPage() {
 				>
 					<Grid container spacing={2}>
 						<Grid item xs={12}>
-							<Typography color="text.primary">
-								Breadcrumbs / Navigation / Component / Placeholder
-							</Typography>
-						</Grid>
-						<Grid item xs={12}>
 							<Button variant="contained" onClick={openModal}>
 								Generate Statistics
 							</Button>
@@ -136,7 +131,9 @@ function StatisticsPage() {
 							columns={columns}
 							rows={rows1}
 							checkboxSelection
-							slots={{ toolbar: GridToolbar }}
+							slots={{
+								toolbar: user && user.userName ? GridToolbar : undefined,
+							}}
 						/>
 					</Box>
 				</Box>

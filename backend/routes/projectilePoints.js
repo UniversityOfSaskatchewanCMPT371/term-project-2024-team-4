@@ -109,17 +109,22 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: returns updated projectile point
  * 	Failure: Returns an error message related to the issue
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const projectilePoint =
-		await projectilePointsHelper.updateProjectilePoint(req);
-	if (projectilePoint === "ProjectilePoint not found") {
-		return res.json({ message: "ProjectilePoint not found" });
-	}
-	if (projectilePoint instanceof Error) {
-		return res.json({ error: projectilePoint.message });
-	}
-	return res.json(projectilePoint);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	upload.single("photo"),
+	async (req, res) => {
+		const projectilePoint =
+			await projectilePointsHelper.updateProjectilePoint(req);
+		if (projectilePoint === "ProjectilePoint not found") {
+			return res.json({ message: "ProjectilePoint not found" });
+		}
+		if (projectilePoint instanceof Error) {
+			return res.json({ error: projectilePoint.message });
+		}
+		return res.json(projectilePoint);
+	},
+);
 
 /**
  * DELETE: delete a single, EXISTING Projectile Point
@@ -139,6 +144,7 @@ router.delete("/:id", authenticateAdmin, async (req, res) => {
 	if (result instanceof Error) {
 		return res.json({ error: result.message });
 	}
+	return res.send();
 });
 
 module.exports = router;
