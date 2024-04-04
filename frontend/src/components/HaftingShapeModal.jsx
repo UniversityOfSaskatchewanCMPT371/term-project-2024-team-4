@@ -71,7 +71,7 @@ export default function HaftingShapeModal({
 						label="Hafting Shape"
 						variant="outlined"
 						fullWidth
-						value={haftingShape} // Use value instead of defaultValue
+						value={selectedHaftingShapeID ? haftingShape : ""} // Use value instead of defaultValue
 						onChange={(e) => setHaftingShape(e.target.value)} // Handle change in name field
 					/>
 				</DialogContent>

@@ -86,7 +86,7 @@ export default function BladeShapeModal({
 						label="Blade Shape"
 						variant="outlined"
 						fullWidth
-						value={bladeShape} // Use value instead of defaultValue
+						value={selectedBladeShapeID ? bladeShape : ""} // Use value instead of defaultValue
 						onChange={(e) => setbladeShape(e.target.value)} // Handle change in name field
 					/>
 				</DialogContent>

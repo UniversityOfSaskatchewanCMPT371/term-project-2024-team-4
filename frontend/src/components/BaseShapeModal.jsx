@@ -88,7 +88,7 @@ export default function BaseShapeModal({
 						label="Base Shape"
 						variant="outlined"
 						fullWidth
-						value={baseShape}
+						value={selectedBaseShapeID ? baseShape : ""}
 						onChange={(e) => setbaseShape(e.target.value)}
 					/>
 				</DialogContent>
