@@ -1243,6 +1243,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setMaterialAnchorEl(event.currentTarget);
 		setSelectedMaterialID(material.id);
+		setEditingMaterial(material.name);
 	};
 
 	const handleMaterialChange = (event) => {
@@ -1863,7 +1864,7 @@ const AddProjectile = ({
 			{editBladeShape && (
 				<BladeShapeModal
 					setEditBladeShape={setEditBladeShape}
-					selectedBladeShape={editBladeShape}
+					selectedBladeShape={editingBladeShape}
 					selectedBladeShapeID={selectedBladeShapeID}
 					updateBladeShapesList={updateBladeShapesList}
 				/>
@@ -1871,7 +1872,7 @@ const AddProjectile = ({
 			{editHaftingShape && (
 				<HaftingShapeModal
 					setEditHaftingShape={setEditHaftingShape}
-					selectedHaftingShape={editHaftingShape}
+					selectedHaftingShape={editingHaftingShape}
 					selectedHaftingShapeID={selectedHaftingShapeID}
 					updateHaftingShapeList={updateHaftingShapeList}
 				/>
