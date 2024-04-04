@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useContext } from "react";
 import ProjectileList from "./ProjectileList";
@@ -219,6 +220,7 @@ const Site = () => {
 						</TextField>
 					</Grid>
 					<Grid item xs={6} sm={3}>
+						{/* Filter 
 						<TextField
 							id="filter"
 							select
@@ -234,6 +236,7 @@ const Site = () => {
 							<MenuItem value="category1">Category 1</MenuItem>
 							<MenuItem value="category2">Category 2</MenuItem>
 						</TextField>
+							*/}
 					</Grid>
 				</Grid>
 			</Grid>

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { useEffect, useState, useContext } from "react";
 import SiteList from "./SiteList";
@@ -156,8 +157,8 @@ const Catalogue = () => {
 						</TextField>
 					</Grid>
 					<Grid item>
-						{/*Filter widget*/}
-						<TextField
+						{/*
+							<TextField
 							id="filter"
 							select
 							label="Filter"
@@ -168,11 +169,11 @@ const Catalogue = () => {
 							size="small"
 							sx={{ minWidth: "250px" }}
 						>
-							{/*Filter Values | NOTE: these should be dynamic, right*/}
 							<MenuItem value="all">All</MenuItem>
 							<MenuItem value="category1">Category 1</MenuItem>
 							<MenuItem value="category2">Category 2</MenuItem>
 						</TextField>
+						*/}
 					</Grid>
 				</Grid>
 			</Grid>
