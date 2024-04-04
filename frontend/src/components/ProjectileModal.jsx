@@ -109,6 +109,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setPeriodAnchorEl(event.currentTarget);
 		setCurrentPeriod(period);
+		setEditingPeriod(period.name); // temp fix
 	};
 
 	// Function to close the dropdown menu
@@ -125,6 +126,7 @@ const AddProjectile = ({
 	const [editPeriod, setEditPeriod] = useState(false);
 	const [periodModalOpen, setPeriodModalOpen] = useState(false);
 	const [selectedPeriodID, setSelectedPeriodID] = useState(null);
+	const [editingPeriod, setEditingPeriod] = useState("");
 
 	// -----------------------------------------------------------------------------------------
 
@@ -134,6 +136,7 @@ const AddProjectile = ({
 	const [cultureModalOpen, setCultureModalOpen] = useState(false);
 	const [editCulture, setEditCulture] = useState(false);
 	const [selectedCultureID, setSelectedCultureID] = useState(null);
+	const [editingCulture, setEditingCulture] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing BaseShapes through the BaseShapeModal --------
@@ -142,6 +145,7 @@ const AddProjectile = ({
 	const [baseShapeModalOpen, setBaseShapeModalOpen] = useState(false);
 	const [editBaseShape, setEditBaseShape] = useState(false);
 	const [selectedBaseShapeID, setSelectedBaseShapeID] = useState(null);
+	const [editingBaseShape, setEditingBaseShape] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing CrossSections through the CrossSectionModal --------
@@ -150,7 +154,7 @@ const AddProjectile = ({
 	const [crossSectionModalOpen, setCrossSectionModalOpen] = useState(false);
 	const [editCrossSection, setEditCrossSection] = useState(false);
 	const [selectedCrossSectionID, setSelectedCrossSectionID] = useState(null);
-	const [editingCrossSection, setEditingCrossSection] = useState(""); //temp fix
+	const [editingCrossSection, setEditingCrossSection] = useState("");
 
 	// -----------------------------------------------------------------------------------------
 
@@ -160,6 +164,7 @@ const AddProjectile = ({
 	const [bladeShapeModalOpen, setBladeShapeModalOpen] = useState(false);
 	const [editBladeShape, setEditBladeShape] = useState(false);
 	const [selectedBladeShapeID, setSelectedBladeShapeID] = useState(null);
+	const [editingBladeShape, setEditingBladeShape] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing HaftingShapes through the HaftinfShapeModal --------
@@ -168,6 +173,7 @@ const AddProjectile = ({
 	const [haftingShapeModalOpen, setHaftingShapeModalOpen] = useState(false);
 	const [editHaftingShape, setEditHaftingShape] = useState(false);
 	const [selectedHaftingShapeID, setSelectedHaftingShapeID] = useState(null);
+	const [editingHaftingShape, setEditingHaftingShape] = useState("");
 	// -----------------------------------------------------------------------------------------
 
 	// ---------- For state variables for editing Material through the MaterialModal --------
@@ -176,6 +182,7 @@ const AddProjectile = ({
 	const [materialModalOpen, setMaterialModalOpen] = useState(false);
 	const [editMaterial, setEditMaterial] = useState(false);
 	const [selectedMaterialID, setSelectedMaterialID] = useState(null);
+	const [editingMaterial, setEditingMaterial] = useState("");
 
 	const [artifactTypes, setArtifactTypes] = useState([]);
 	// -----------------------------------------------------------------------------------------
@@ -484,7 +491,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching periods:", error);
 			});
-	}, [selectedPeriod]);
+	}, [selectedPeriod, editingPeriod]);
 
 	// Function to update the list of periods after an edit or addition
 	const updatePeriodsList = (newPeriod) => {
@@ -712,7 +719,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching cultures:", error);
 			});
-	}, [selectedCulture, selectedPeriod]);
+	}, [selectedCulture, selectedPeriod, editingCulture]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -729,6 +736,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setCultureAnchorEl(event.currentTarget);
 		setSelectedCultureID(culture.id);
+		setEditingCulture(culture.name); // temp fix
 	};
 
 	// This function the selectedCulture state when a user selects a different culture from the dropdown
@@ -873,7 +881,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching base shapes:", error);
 			});
-	}, [selectedBaseShape, selectedCulture]);
+	}, [selectedBaseShape, selectedCulture, editingBaseShape]);
 
 	// This function opens the BaseShapeModal for editing an existing base shape or adding a new one.
 	const handleOpenBaseShapeModal = (baseShapeId = null) => {
@@ -887,6 +895,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setBaseShapeAnchorEl(event.currentTarget);
 		setSelectedBaseShapeID(baseShape.id);
+		setEditingBaseShape(baseShape.name); // temp fix
 	};
 
 	// This function updates the local list of base shapes after adding or editing a base shape.
@@ -1032,7 +1041,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching blade shapes:", error);
 			});
-	}, [selectedBladeShape, selectedCulture]);
+	}, [selectedBladeShape, selectedCulture, editingBladeShape]);
 
 	// This function opens the BladeShapeModal for editing an existing blade shape or adding a new one.
 	const handleOpenBladeShapeModal = (bladeShapeId = null) => {
@@ -1046,6 +1055,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setBladeShapeAnchorEl(event.currentTarget);
 		setSelectedBladeShapeID(bladeShape.id);
+		setEditingBladeShape(bladeShape.name); // temp fix
 	};
 
 	// This function updates the local list of blade shapes after adding or editing a blade shape.
@@ -1110,7 +1120,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching hafting shapes:", error);
 			});
-	}, [selectedCulture, selectedHaftingShape]);
+	}, [selectedCulture, selectedHaftingShape, editingHaftingShape]);
 
 	// This function opens the HaftingShapeModal for editing an existing hafting shape or adding a new one.
 	const handleOpenHaftingShapeModal = (haftingShapeID = null) => {
@@ -1124,6 +1134,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setHaftingShapeAnchorEl(event.currentTarget);
 		setSelectedHaftingShapeID(haftingShape.id);
+		setEditingHaftingShape(haftingShape.name); // temp fix
 	};
 
 	// This function updates the local list of hafting shapes after adding or editing a hafting shape.
@@ -1196,8 +1207,9 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching artifact types:", error);
 			});
-	}, [selectedCulture, selectedMaterial]);
+	}, [selectedCulture, selectedMaterial, editingMaterial]);
 
+	// ---------------------------- DUPLICATE USE EFFECT ---------------------------------
 	useEffect(() => {
 		http
 			.get("/materials")
@@ -1219,7 +1231,7 @@ const AddProjectile = ({
 			.catch((error) => {
 				console.error("Error fetching material:", error);
 			});
-	}, [selectedCulture, selectedMaterial]);
+	}, [selectedCulture, selectedMaterial, editingMaterial]);
 
 	const handleOpenMaterialModal = (materialID = null) => {
 		setSelectedMaterialID(materialID);
@@ -1803,7 +1815,7 @@ const AddProjectile = ({
 			{editPeriod && (
 				<PeriodModal
 					setEditPeriod={setEditPeriod}
-					selectedPeriod={selectedPeriod}
+					selectedPeriod={editingPeriod}
 					selectedPeriodID={selectedPeriodID}
 					periods={periods}
 					setPeriods={setPeriods}
@@ -1815,7 +1827,7 @@ const AddProjectile = ({
 			{editCulture && (
 				<CultureModal
 					setEditCulture={setEditCulture}
-					selectedCulture={selectedCulture}
+					selectedCulture={editingCulture}
 					selectedCultureID={selectedCultureID}
 					updateCulturesList={updateCulturesList}
 					periods={periods}
@@ -1826,7 +1838,7 @@ const AddProjectile = ({
 			{editMaterial && (
 				<MaterialModal
 					setEditMaterial={setEditMaterial}
-					selectedMaterial={selectedMaterial}
+					selectedMaterial={editingMaterial}
 					selectedMaterialID={selectedMaterialID}
 					updateMaterialList={updateMaterialList}
 					artifactTypes={artifactTypes}
@@ -1835,7 +1847,7 @@ const AddProjectile = ({
 			{editBaseShape && (
 				<BaseShapeModal
 					setEditBaseShape={setEditBaseShape}
-					selectedBaseShape={selectedBaseShape}
+					selectedBaseShape={editingBaseShape}
 					selectedBaseShapeID={selectedBaseShapeID}
 					updateBaseShapesList={updateBaseShapesList}
 				/>
@@ -1851,7 +1863,7 @@ const AddProjectile = ({
 			{editBladeShape && (
 				<BladeShapeModal
 					setEditBladeShape={setEditBladeShape}
-					selectedBladeShape={selectedBladeShape}
+					selectedBladeShape={editBladeShape}
 					selectedBladeShapeID={selectedBladeShapeID}
 					updateBladeShapesList={updateBladeShapesList}
 				/>
@@ -1859,7 +1871,7 @@ const AddProjectile = ({
 			{editHaftingShape && (
 				<HaftingShapeModal
 					setEditHaftingShape={setEditHaftingShape}
-					selectedHaftingShape={selectedHaftingShape}
+					selectedHaftingShape={editHaftingShape}
 					selectedHaftingShapeID={selectedHaftingShapeID}
 					updateHaftingShapeList={updateHaftingShapeList}
 				/>
