@@ -24,6 +24,7 @@ test("should edit region on button click", async () => {
 	// Mocking setEditRegion and updateRegionsList functions
 	const setEditRegion = vi.fn();
 	const updateRegionsList = vi.fn();
+	const setSelectedRegion = vi.fn();
 
 	// Mocking http.put
 	vi.spyOn(http, "put").mockResolvedValue({});
@@ -34,6 +35,7 @@ test("should edit region on button click", async () => {
 			selectedRegion={selectedRegion}
 			selectedRegionID={selectedRegionID}
 			updateRegionsList={updateRegionsList}
+			setSelectedRegion={setSelectedRegion}
 		/>,
 	);
 
