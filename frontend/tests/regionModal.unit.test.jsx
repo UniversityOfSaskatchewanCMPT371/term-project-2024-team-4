@@ -22,9 +22,11 @@ describe("RegionModal", () => {
 	});
 
 	it("renders correctly for adding a new region", () => {
+		const selectedRegion = { name: "" };
 		render(
 			<RegionModal
 				setEditRegion={mockSetEditRegion}
+				selectedRegion={selectedRegion}
 				updateRegionsList={mockUpdateRegionsList}
 			/>,
 		);
@@ -37,6 +39,7 @@ describe("RegionModal", () => {
 	it("calls http.post on save when adding a new region", async () => {
 		const newRegionName = "New Region";
 		const newRegionDescription = "A new region description.";
+		const selectedRegion = { name: "" };
 
 		http.post.mockResolvedValue({
 			data: {
@@ -49,6 +52,7 @@ describe("RegionModal", () => {
 		render(
 			<RegionModal
 				setEditRegion={mockSetEditRegion}
+				selectedRegion={selectedRegion}
 				updateRegionsList={mockUpdateRegionsList}
 			/>,
 		);

@@ -37,8 +37,11 @@ test("SiteModal renders correctly", async () => {
 });
 
 test("RegionModal renders correctly with every field empty", () => {
+	const selectedRegion = { name: "" };
 	// Render the RegionModal component
-	const { getByLabelText } = render(<RegionModal />);
+	const { getByLabelText } = render(
+		<RegionModal selectedRegion={selectedRegion} />,
+	);
 
 	// Find input fields
 	const regionInput = getByLabelText("Region Name");
@@ -145,8 +148,9 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 });
 
 test("RegionModal renders correctly and handles addition of a new region", async () => {
+	const selectedRegion = { name: "" };
 	// Render the RegionModal component
-	render(<RegionModal />);
+	render(<RegionModal selectedRegion={selectedRegion} />);
 
 	// Simulate user input by typing in the region name and description fields
 	const regionNameInput = screen.getByLabelText("Region Name");
