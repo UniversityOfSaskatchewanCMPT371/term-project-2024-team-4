@@ -53,6 +53,7 @@ const SiteModal = ({
 	const [editRegion, setEditRegion] = useState(false);
 	const [regionModalOpen, setRegionModalOpen] = useState(false);
 	const [selectedRegionID, setSelectedRegionID] = useState(null);
+	const [editingRegion, setEditingRegion] = useState("");
 
 	const [siteNameError, setSiteNameError] = useState(false); // for artifact type dropdown error handling
 	const [regionError, setRegionError] = useState("");
@@ -173,7 +174,7 @@ const SiteModal = ({
 				}
 			})
 			.catch((error) => log.error("Error fetching regions:", error));
-	}, [selectedRegion]);
+	}, [selectedRegion, editingRegion]);
 
 	// This function opens the CultureModal for editing an existing culture or adding a new one.
 	// If a cultureId is provided, the modal is configured for editing that culture.
@@ -190,6 +191,7 @@ const SiteModal = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setAnchorEl(event.currentTarget);
 		setCurrentRegion(region);
+		setEditingRegion(region.name);
 	};
 
 	// Function to close the dropdown menu
@@ -366,7 +368,7 @@ const SiteModal = ({
 			{editRegion && (
 				<RegionModal
 					setEditRegion={setEditRegion}
-					selectedRegion={selectedRegion}
+					selectedRegion={editingRegion}
 					selectedRegionID={selectedRegionID}
 					regions={regions}
 					setRegions={setRegions}
