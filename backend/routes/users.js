@@ -52,12 +52,12 @@ router.post("/", async (req, res) => {
 		const defaultUserExists = await Users.findOne({
 			where: { isDefaultUser: true },
 		});
-		
-		if (!defaultUserExists){
+
+		if (!defaultUserExists) {
 			await registerUser(defaultUsername, defaultPassword);
 			logger.info("Default user did not exist. Recreating...");
 		}
-	
+
 		/* ------------------------------------------------------------------------------------------------------------------------------ */
 
 		// Continue with login process:
