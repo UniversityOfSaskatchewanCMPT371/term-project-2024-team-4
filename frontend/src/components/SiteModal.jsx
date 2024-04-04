@@ -191,7 +191,7 @@ const SiteModal = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setAnchorEl(event.currentTarget);
 		setCurrentRegion(region);
-		setEditingRegion(region.name);
+		setEditingRegion(region);
 	};
 
 	// Function to close the dropdown menu
@@ -369,6 +369,7 @@ const SiteModal = ({
 				<RegionModal
 					setEditRegion={setEditRegion}
 					selectedRegion={editingRegion}
+					setSelectedRegion={setEditingRegion}
 					selectedRegionID={selectedRegionID}
 					regions={regions}
 					setRegions={setRegions}

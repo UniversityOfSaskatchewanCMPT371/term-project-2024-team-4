@@ -1243,7 +1243,7 @@ const AddProjectile = ({
 		event.stopPropagation(); // To prevent the dropdown menu from closing when clicking the icon.
 		setMaterialAnchorEl(event.currentTarget);
 		setSelectedMaterialID(material.id);
-		setEditingMaterial(material.name);
+		setEditingMaterial(material);
 	};
 
 	const handleMaterialChange = (event) => {
@@ -1844,6 +1844,7 @@ const AddProjectile = ({
 				<MaterialModal
 					setEditMaterial={setEditMaterial}
 					selectedMaterial={editingMaterial}
+					setSelectedMaterial={setEditingMaterial}
 					selectedMaterialID={selectedMaterialID}
 					updateMaterialList={updateMaterialList}
 					artifactTypes={artifactTypes}

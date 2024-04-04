@@ -34,14 +34,14 @@ import log from "../logger";
 export default function RegionModal({
 	setEditRegion,
 	selectedRegion,
-	selectedRegionDescription,
+	setSelectedRegion,
 	selectedRegionID,
 	updateRegionsList,
 }) {
 	const [open, setOpen] = useState(true);
-	const [regionName, setRegionName] = useState(selectedRegion || "");
+	const [regionName, setRegionName] = useState(selectedRegion.name || "");
 	const [description, setDescription] = useState(
-		selectedRegionDescription || "",
+		selectedRegion ? selectedRegion.description : "",
 	);
 
 	/**
@@ -83,6 +83,7 @@ export default function RegionModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedRegion("");
 		setEditRegion(false);
 	};
 

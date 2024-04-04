@@ -14,17 +14,19 @@ import log from "../logger";
 export default function MaterialModal({
 	setEditMaterial,
 	selectedMaterial,
-	selectedMaterialDescription,
+	setSelectedMaterial,
 	selectedMaterialID,
 	updateMaterialList,
 	artifactTypes,
 }) {
 	const [open, setOpen] = useState(true);
-	const [materialName, setMaterialName] = useState(selectedMaterial || "");
+	const [materialName, setMaterialName] = useState(selectedMaterial.name || "");
 	const [materialDescription, setMaterialDescription] = useState(
-		selectedMaterialDescription || "",
+		selectedMaterial.name ? selectedMaterial.description : "",
 	);
-	const [selectedArtifactTypeID, setSelectedArtifactTypeID] = useState("");
+	const [selectedArtifactTypeID, setSelectedArtifactTypeID] = useState(
+		selectedMaterial.name ? selectedMaterial.artifactType.id : "",
+	);
 	const [errors, setErrors] = useState({ selectedArtifactType: "" });
 
 	/**
@@ -75,6 +77,7 @@ export default function MaterialModal({
 	 * Closes the modal and resets the culture editing state.
 	 */ const handleClose = () => {
 		setOpen(false);
+		setSelectedMaterial("");
 		setEditMaterial(false);
 	};
 
