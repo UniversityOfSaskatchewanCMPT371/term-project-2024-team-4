@@ -211,11 +211,11 @@ const Site = () => {
 						>
 							<MenuItem value="newest">Newest</MenuItem>
 							<MenuItem value="oldest">Oldest</MenuItem>
-							<MenuItem value="alphabetical_ascending">
-								Alphabetical Ascending
+							<MenuItem value="numeric_ascending">
+								Numerically Ascending
 							</MenuItem>
-							<MenuItem value="alphabetical_descending">
-								Alphabetical Descending
+							<MenuItem value="numeric_descending">
+								Numerically Descending
 							</MenuItem>
 						</TextField>
 					</Grid>
