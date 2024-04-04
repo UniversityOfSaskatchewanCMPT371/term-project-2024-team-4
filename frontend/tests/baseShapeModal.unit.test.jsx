@@ -48,7 +48,21 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		expect(screen.getByLabelText(/Base Shape/i)).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				name: /add new base shape/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /cancel/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /save/i,
+			}),
+		).toBeInTheDocument();
 	});
 
 	it("should call http.post on save when adding a new base shape", async () => {
@@ -67,9 +81,14 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Base Shape/i), {
-			target: { value: newBaseShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /base shape/i,
+			}),
+			{
+				target: { value: newBaseShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
@@ -95,9 +114,14 @@ describe("BaseShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Base Shape/i), {
-			target: { value: updatedBaseShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /base shape/i,
+			}),
+			{
+				target: { value: updatedBaseShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>

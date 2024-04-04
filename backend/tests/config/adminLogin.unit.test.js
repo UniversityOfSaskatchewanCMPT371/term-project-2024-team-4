@@ -3,7 +3,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken"); // Import jwt module
 const app = express();
-
+const dataSource = require("../../config/db");
 // Mock the database connection
 jest.mock("../../config/db.js", () => {
 	// eslint-disable-next-line no-unused-vars
@@ -202,7 +202,7 @@ describe("User Authentication API", () => {
 
 				// Mocking findOne to return the mocked user
 				// eslint-disable-next-line no-unused-vars
-				router.patch("/:userId", async (req, res) => {
+				router.patch("/:userId/username", async (req, res) => {
 					// eslint-disable-next-line no-undef
 					dataSource.getRepository.mockReturnValueOnce({
 						findOne: jest.fn().mockResolvedValueOnce(mockedUser),
@@ -213,6 +213,83 @@ describe("User Authentication API", () => {
 						.send({ userName: "testuser", password: "testpassword" })
 						.expect(403);
 				});
+			});
+			test("It should return 404 if username is missing", async () => {
+				const userId = 1;
+
+				await request(app)
+					.patch(`/users/${userId}/username`)
+					.send({}) // Sending empty body
+					.expect(404);
+			});
+
+			test("It should return 404 if username is too short", async () => {
+				const userId = 1;
+
+				await request(app)
+					.patch(`/users/${userId}/username`)
+					.send({ userName: "short" }) // Sending short username
+					.expect(404);
+			});
+
+			test("It should return 404 if username is too long", async () => {
+				const userId = 1;
+
+				await request(app)
+					.patch(`/users/${userId}/username`)
+					.send({ userName: "thisusernameistoolong" }) // Sending long username
+					.expect(404);
+			});
+
+			test("It should return 404 if username contains special characters", async () => {
+				const userId = 1;
+
+				await request(app)
+					.patch(`/users/${userId}/username`)
+					.send({ userName: "user$name" }) // Sending username with special characters
+					.expect(404);
+			});
+
+			test("It should return 404 if user is not found", async () => {
+				const userId = 999; // Assuming this userId does not exist
+
+				await request(app)
+					.patch(`/users/${userId}/username`)
+					.send({ userName: "testuser" })
+					.expect(404);
+			});
+
+			test("It should update username successfully", async () => {
+				const userId = 1;
+				const newUsername = "newusername";
+
+				// Mocking getRepository method
+				const mockedRepository = {
+					findOne: jest.fn().mockResolvedValueOnce({
+						id: userId,
+						userName: "existingUsername",
+					}),
+					// Mocking save method to simulate successful update
+					save: jest
+						.fn()
+						.mockImplementationOnce((user) =>
+							Promise.resolve({ ...user, userName: newUsername }),
+						),
+				};
+
+				// Mocking getRepository to return mockedRepository
+				// eslint-disable-next-line no-undef
+				jest
+					.spyOn(dataSource, "getRepository")
+					.mockReturnValueOnce(mockedRepository);
+
+				await request(app)
+					.patch(`/users/${userId}/username`)
+					.send({ userName: newUsername })
+					.expect(200)
+					.then((response) => {
+						expect(response.body.user.userName).toBe(newUsername);
+					});
 			});
 		});
 	});

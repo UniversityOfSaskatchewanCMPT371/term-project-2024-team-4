@@ -32,6 +32,7 @@ describe("HaftingShapeModal", () => {
 			selectedHaftingShape: "",
 			selectedHaftingShapeID: "",
 			updateHaftingShapeList: vi.fn(),
+			setSelectedHaftingShape: vi.fn(),
 		};
 
 		const mockAxiosPost = vi

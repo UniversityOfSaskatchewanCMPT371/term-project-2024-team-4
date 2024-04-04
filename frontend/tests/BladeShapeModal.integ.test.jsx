@@ -32,6 +32,7 @@ describe("BladeShapeModal", () => {
 			selectedBladeShape: "",
 			selectedBladeShapeID: "",
 			updateBladeShapesList: vi.fn(),
+			setSelectedBladeShape: vi.fn(),
 		};
 
 		const mockAxiosPost = vi
