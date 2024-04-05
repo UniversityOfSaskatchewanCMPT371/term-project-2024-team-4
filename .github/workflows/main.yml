@@ -230,7 +230,7 @@ jobs:
         # Upload the deploy directory as an artifact
       - name: Upload Test Reports for Deployment
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v1
         with:
           name: github-pages
           path: ./deploy
@@ -256,7 +256,7 @@ jobs:
 
     steps:
       - name: Download Combined Test Reports Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v1
         with:
           name: github-pages
           path: ./deploy
