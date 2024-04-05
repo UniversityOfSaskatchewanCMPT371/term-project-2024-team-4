@@ -232,7 +232,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v3
         with:
-          name: deployment-reports
+          name: github-pages
           path: ./deploy
 
       - name: Cleanup
@@ -258,7 +258,7 @@ jobs:
       - name: Download Combined Test Reports Artifact
         uses: actions/download-artifact@v3
         with:
-          name: deployment-reports
+          name: github-pages
           path: ./deploy
 
       - name: Deploy to GitHub Pages
