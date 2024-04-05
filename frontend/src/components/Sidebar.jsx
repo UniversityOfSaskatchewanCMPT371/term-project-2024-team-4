@@ -8,7 +8,6 @@ import Drawer from "@mui/material/Drawer";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
@@ -21,9 +20,10 @@ import RoomPreferencesIcon from "@mui/icons-material/RoomPreferences";
 import LoginIcon from "@mui/icons-material/Login";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import { styled } from "@mui/material/styles";
-
+import { useNavigate } from "react-router-dom";
 const drawerWidth = 240;
-
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 /**
  * Styled List component for the sidebar navigation.
  */
@@ -65,7 +65,7 @@ const SidebarIcon = styled(ListItemIcon)(() => ({
 function Sidebar() {
 	const [modalVisible, setModalShow] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
-
+	const { user } = useContext(UserContext);
 	useEffect(() => {
 		/**
 		 * Checks the user's login status with the backend and updates state accordingly.
@@ -120,6 +120,12 @@ function Sidebar() {
 		logger.info("LoginModal closed");
 	};
 
+	const navigate = useNavigate();
+
+	const handleSettingClick = () => {
+		navigate("/settings");
+	};
+
 	/**
 	 * Handles the user logout process.
 	 *
@@ -130,6 +136,7 @@ function Sidebar() {
 		try {
 			await http.post("/users/logout");
 			setIsLoggedIn(false);
+			navigate("/");
 			window.location.reload();
 		} catch (error) {
 			console.error("Error logging out:", error);
@@ -157,18 +164,23 @@ function Sidebar() {
 				anchor="left"
 			>
 				<Toolbar>
-					<Typography variant="h6" noWrap component="div">
+					<Typography
+						variant="h4"
+						noWrap
+						component="div"
+						sx={{ marginTop: "20px", fontWeight: "medium" }}
+					>
 						PCubed
 					</Typography>
 				</Toolbar>
 				<SidebarList>
 					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-						<ListItem key="Home" disablePadding onClick={handleClick}>
+						<ListItem key="Catalogue" disablePadding onClick={handleClick}>
 							<ListItemButton>
 								<SidebarIcon>
 									<HomeIcon />
 								</SidebarIcon>
-								<ListItemText primary="Home" />
+								<ListItemText primary="Catalogue" />
 							</ListItemButton>
 						</ListItem>
 					</Link>
@@ -180,35 +192,86 @@ function Sidebar() {
 							<ListItemText primary="Connect" />
 						</ListItemButton>
 					</ListItem>
-				</SidebarList>
-				<Divider />
-				<SidebarList>
-					<ListItem key="Statistics" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<BarChartIcon />
-							</SidebarIcon>
-							<ListItemText primary="Statistics" />
-						</ListItemButton>
-					</ListItem>
-					<ListItem key="Data Management" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<FolderCopyIcon />
-							</SidebarIcon>
-							<ListItemText primary="Data Management" />
-						</ListItemButton>
-					</ListItem>
+					<Link
+						to="/stats"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem key="Statistics" disablePadding onClick={handleClick}>
+							<ListItemButton>
+								<SidebarIcon>
+									<BarChartIcon />
+								</SidebarIcon>
+								<ListItemText primary="Statistics" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/manageCultures"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Cultures Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Cultures Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/managePeriods"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Periods Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Periods Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
+					<Link
+						to="/manageMaterials"
+						style={{ textDecoration: "none", color: "inherit" }}
+					>
+						<ListItem
+							key="Materials Data Management"
+							disablePadding
+							onClick={handleClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<FolderCopyIcon />
+								</SidebarIcon>
+								<ListItemText primary="Materials Management" />
+							</ListItemButton>
+						</ListItem>
+					</Link>
 				</SidebarList>
 				<SidebarList sx={{ marginTop: "auto" }}>
-					<ListItem key="Settings" disablePadding onClick={handleClick}>
-						<ListItemButton>
-							<SidebarIcon>
-								<RoomPreferencesIcon />
-							</SidebarIcon>
-							<ListItemText primary="Settings" />
-						</ListItemButton>
-					</ListItem>
+					{user && (
+						<ListItem
+							key="Settings"
+							disablePadding
+							onClick={handleSettingClick}
+						>
+							<ListItemButton>
+								<SidebarIcon>
+									<RoomPreferencesIcon />
+								</SidebarIcon>
+								<ListItemText primary="Settings" />
+							</ListItemButton>
+						</ListItem>
+					)}
 					{isLoggedIn ? (
 						<ListItem key="Logout" disablePadding onClick={handleLogout}>
 							<ListItemButton>

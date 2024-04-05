@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -27,11 +34,31 @@ import log from "../logger";
 export default function BaseShapeModal({
 	setEditBaseShape,
 	selectedBaseShape,
+	setSelectedBaseShape,
 	selectedBaseShapeID,
 	updateBaseShapesList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [baseShape, setbaseShape] = useState(selectedBaseShape);
+	const [baseShape, setBaseShape] = useState(selectedBaseShape || "");
+	const [errors, setErrors] = useState({
+		baseShape: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			baseShape: "",
+		};
+
+		// Validate Base Shape Name
+		if (!baseShape.trim()) {
+			newErrors.baseShape = "Base Shape name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action for the modal form. Sends a PUT request if editing, POST if adding.
@@ -39,6 +66,11 @@ export default function BaseShapeModal({
 	 */
 	const handleSave = () => {
 		const baseShapeData = { name: baseShape };
+
+		if (!validateForm()) {
+			log.debug("Base Shape Form fails frontend validation");
+			return;
+		}
 
 		const apiCall = selectedBaseShapeID
 			? http.put(`/baseShapes/${selectedBaseShapeID}`, baseShapeData)
@@ -63,6 +95,7 @@ export default function BaseShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedBaseShape("");
 		if (setEditBaseShape) setEditBaseShape(false);
 		log.debug(
 			`BaseShapeModal closed, mode: ${selectedBaseShapeID ? "edit" : "add"}.`,
@@ -72,6 +105,9 @@ export default function BaseShapeModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedBaseShapeID ? "Edit Base Shape" : "Add New Base Shape"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="baseShape"
@@ -79,13 +115,19 @@ export default function BaseShapeModal({
 						variant="outlined"
 						fullWidth
 						value={baseShape}
-						onChange={(e) => setbaseShape(e.target.value)}
-						style={{ marginBottom: "15px" }}
+						onChange={(e) => setBaseShape(e.target.value)}
+						error={!!errors.baseShape}
+						helperText={errors.baseShape}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

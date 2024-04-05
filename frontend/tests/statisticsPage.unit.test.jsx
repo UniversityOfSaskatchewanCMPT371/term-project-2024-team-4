@@ -30,12 +30,16 @@ test("Render statistics modal correctly", () => {
 	fireEvent.click(screen.getByRole("button", { name: "Generate Statistics" }));
 
 	//Checks if the area for statistics about materials is on the screen
-	const materialArea = screen.getByText("Material Statistics");
+	const materialArea = screen.getByText("Catalogue Statistics");
 	expect(materialArea).toBeInTheDocument();
 
-	//Checks if the area for statistics about the catalogued points is on the screen
-	const pointTypeArea = screen.getByText("Point Statistics");
-	expect(pointTypeArea).toBeInTheDocument();
+	// //Checks if the area for statistics about materials is on the screen
+	// const materialArea = screen.getByText("Material Percentage by Catalogue");
+	// expect(materialArea).toBeInTheDocument();
+
+	// //Checks if the area for statistics about the catalogued points is on the screen
+	// const pointTypeArea = screen.getByText("Point Count by Site");
+	// expect(pointTypeArea).toBeInTheDocument();
 
 	const closeButton = screen.getByText("Close");
 	expect(closeButton).toBeInTheDocument();

@@ -1,6 +1,13 @@
 /* eslint-disable indent */
 /* eslint-disable react/prop-types */
-import { TextField, Button, Dialog, DialogContent } from "@mui/material";
+import {
+	TextField,
+	Button,
+	Dialog,
+	DialogTitle,
+	DialogContent,
+	DialogActions,
+} from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
 import log from "../logger";
@@ -25,11 +32,31 @@ import log from "../logger";
 export default function BladeShapeModal({
 	setEditBladeShape,
 	selectedBladeShape,
+	setSelectedBladeShape,
 	selectedBladeShapeID,
 	updateBladeShapesList,
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
-	const [bladeShape, setbladeShape] = useState(selectedBladeShape);
+	const [bladeShape, setbladeShape] = useState(selectedBladeShape || "");
+	const [errors, setErrors] = useState({
+		bladeShape: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			bladeShape: "",
+		};
+
+		// Validate Blade Shape Name
+		if (!bladeShape.trim()) {
+			newErrors.bladeShape = "Blade Shape name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -37,6 +64,11 @@ export default function BladeShapeModal({
 	 */
 	const handleSave = () => {
 		const bladeShapeData = { name: bladeShape };
+
+		if (!validateForm()) {
+			log.debug("Blade Shape form fails frontend validation");
+			return;
+		}
 
 		const apiCall = selectedBladeShapeID
 			? http.put(`/bladeShapes/${selectedBladeShapeID}`, bladeShapeData)
@@ -52,7 +84,7 @@ export default function BladeShapeModal({
 				handleClose();
 			})
 			.catch((error) => {
-				log.error("Error saving Base Shape: ", error);
+				log.error("Error saving Blade Shape: ", error);
 			});
 	};
 
@@ -61,6 +93,7 @@ export default function BladeShapeModal({
 	 */
 	const handleClose = () => {
 		setOpen(false);
+		setSelectedBladeShape("");
 		if (setEditBladeShape) setEditBladeShape(false);
 		log.debug(
 			`BladeShapeModal closed, mode: ${selectedBladeShapeID ? "edit" : "add"}.`,
@@ -70,20 +103,29 @@ export default function BladeShapeModal({
 	return (
 		<div>
 			<Dialog open={open} onClose={handleClose}>
+				<DialogTitle>
+					{selectedBladeShapeID ? "Edit Blade Shape" : "Add New Blade Shape"}
+				</DialogTitle>
 				<DialogContent>
 					<TextField
 						id="bladeShape"
 						label="Blade Shape"
 						variant="outlined"
 						fullWidth
-						value={bladeShape} // Use value instead of defaultValue
+						value={bladeShape}
 						onChange={(e) => setbladeShape(e.target.value)} // Handle change in name field
-						style={{ marginBottom: "15px" }}
+						error={!!errors.bladeShape}
+						helperText={errors.bladeShape}
 					/>
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);

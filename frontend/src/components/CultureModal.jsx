@@ -5,6 +5,7 @@ import {
 	Dialog,
 	DialogContent,
 	DialogTitle,
+	DialogActions,
 } from "@mui/material";
 import { useState } from "react";
 import http from "../../http";
@@ -31,13 +32,38 @@ import log from "../logger";
 export default function CultureModal({
 	setEditCulture,
 	selectedCulture,
+	setSelectedCulture,
 	selectedCultureID,
 	updateCulturesList,
 	periods,
 }) {
 	const [open, setOpen] = useState(true);
-	const [cultureName, setCultureName] = useState(selectedCulture || "");
-	const [selectedPeriodID, setSelectedPeriodID] = useState("");
+	const [cultureName, setCultureName] = useState(selectedCulture.name || "");
+	const [selectedPeriodID, setSelectedPeriodID] = useState(
+		selectedCulture ? selectedCulture.period.id : "",
+	);
+	const [errors, setErrors] = useState({
+		cultureName: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			cultureName: "",
+		};
+
+		if (!cultureName.trim()) {
+			newErrors.cultureName = "Culture name is required.";
+			isValid = false;
+		}
+
+		if (!selectedPeriodID) {
+			newErrors.cultureName = "Please select an associated period";
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -46,6 +72,11 @@ export default function CultureModal({
 		log.debug(
 			`Saving culture: ${cultureName} with period ID: ${selectedPeriodID}`,
 		);
+		if (!validateForm()) {
+			log.debug("Projectile Form fails frontend validation");
+			return;
+		}
+
 		if (!selectedPeriodID) {
 			alert("Please select a period to proceed.");
 			log.warn("Attempted to save culture without selecting a period.");
@@ -83,6 +114,7 @@ export default function CultureModal({
 	 * Closes the modal and resets the culture editing state.
 	 */ const handleClose = () => {
 		setOpen(false);
+		setSelectedCulture("");
 		setEditCulture(false);
 	};
 
@@ -101,6 +133,8 @@ export default function CultureModal({
 						value={cultureName}
 						onChange={(e) => setCultureName(e.target.value)}
 						style={{ marginBottom: "15px" }}
+						error={!!errors.cultureName}
+						helperText={errors.cultureName}
 					/>
 					<TextField
 						select
@@ -112,7 +146,8 @@ export default function CultureModal({
 						SelectProps={{
 							native: true,
 						}}
-						helperText="Please select the period this culture belongs to"
+						error={!!errors.cultureName}
+						helperText={errors.cultureName}
 						style={{ marginBottom: "15px" }}
 					>
 						<option value=""></option>
@@ -122,11 +157,15 @@ export default function CultureModal({
 							</option>
 						))}
 					</TextField>
-
-					<Button onClick={handleSave} variant="contained" color="primary">
+				</DialogContent>
+				<DialogActions>
+					<Button onClick={handleClose} color="primary">
+						Cancel
+					</Button>
+					<Button onClick={handleSave} color="primary">
 						Save
 					</Button>
-				</DialogContent>
+				</DialogActions>
 			</Dialog>
 		</div>
 	);
