@@ -256,9 +256,9 @@ jobs:
           path: deployment/backend
       
       - name: Upload Combined Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
-          name: combined-artifacts
+          name: github-pages
           path: deployment/
   
   deploy-tests:
@@ -280,9 +280,9 @@ jobs:
       - name: Download Combined Artifacts
         uses: actions/download-artifact@v2
         with:
-          name: combined-artifacts
+          name: github-pages
           path: deployment/
-          
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
