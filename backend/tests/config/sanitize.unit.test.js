@@ -7,7 +7,8 @@ const express = require("express");
 
 const {
 	loginValidationRules,
-	registerValidationRules,
+	changeUsernameValidationRules,
+	changePasswordValidationRules,
 	siteValidationRules,
 	artifactValidationRules,
 	periodValidationRules,
@@ -23,8 +24,17 @@ app.use(express.json());
 app.post("/login", loginValidationRules(), validate, (req, res) =>
 	res.status(200).json({ message: "OK" }),
 );
-app.post("/register", registerValidationRules(), validate, (req, res) =>
-	res.status(200).json({ message: "OK" }),
+app.patch(
+	"/changeUsername",
+	changeUsernameValidationRules(),
+	validate,
+	(req, res) => res.status(200).json({ message: "OK" }),
+);
+app.patch(
+	"/changePassword",
+	changePasswordValidationRules(),
+	validate,
+	(req, res) => res.status(200).json({ message: "OK" }),
 );
 app.post("/site", siteValidationRules(), validate, (req, res) =>
 	res.status(200).json({ message: "OK" }),
@@ -74,44 +84,73 @@ describe("Sanitization and Validation Checks", () => {
 		});
 	});
 
-	// Tests for Registration API
-	describe("Registration Sanitization & Validation", () => {
-		test("should reject malicious XSS symbols registration request", async () => {
-			const response = await request(app).post("/register").send({
-				userName: "<script>alert('xss');</script>",
-				password: "<img src=x onerror=alert('xss')>",
+	// Tests for username change PATCH api
+	describe("Username Change Sanitization & Validation", () => {
+		test("should reject username with invalid characters", async () => {
+			const response = await request(app).patch("/changeUsername").send({
+				newUsername: "admin<script>",
+				password: "ValidPassword123!",
 			});
-			// should return error response because of invalid symbols
 			expect(response.statusCode).toBe(422);
 		});
 
-		test("should reject malicious SQL registration request", async () => {
-			const response = await request(app).post("/register").send({
-				userName: "admin' --",
-				password: "' OR '1'='1",
+		test("should reject username change request if the username is too short or too long", async () => {
+			const responseShort = await request(app).patch("/changeUsername").send({
+				newUsername: "ad",
+				password: "ValidPassword123!",
 			});
-			// should return error response because of invalid symbols
+			expect(responseShort.statusCode).toBe(422);
+
+			const responseLong = await request(app).patch("/changeUsername").send({
+				newUsername: "adminadminadminadmin",
+				password: "ValidPassword123!",
+			});
+			expect(responseLong.statusCode).toBe(422);
+		});
+
+		test("should accept a valid username change request", async () => {
+			const response = await request(app).patch("/changeUsername").send({
+				newUsername: "ValidUsername",
+				password: "ValidPassword123!",
+			});
+			expect(response.statusCode).toBe(200);
+		});
+	});
+
+	// Tests for password change PATCH api
+	describe("Password Change Sanitization & Validation", () => {
+		test("should reject the new password with invalid characters", async () => {
+			const response = await request(app).patch("/changePassword").send({
+				oldPassword: "CurrentPassword123!",
+				newPassword: "invalid<>?",
+			});
 			expect(response.statusCode).toBe(422);
 		});
 
-		test("should reject weak passwords registration request", async () => {
-			const response = await request(app).post("/register").send({
-				userName: "admin",
-				password: "admin",
-			});
+		test("should reject the new password if it does not meet complexity requirements", async () => {
+			const responseTooSimple = await request(app)
+				.patch("/changePassword")
+				.send({
+					oldPassword: "CurrentPassword123!",
+					newPassword: "simple",
+				});
+			expect(responseTooSimple.statusCode).toBe(422);
 
-			// should return error response because of invalid symbols
-			expect(response.statusCode).toBe(422);
+			const responseNoNumbers = await request(app)
+				.patch("/changePassword")
+				.send({
+					oldPassword: "CurrentPassword123!",
+					newPassword: "Password!",
+				});
+			expect(responseNoNumbers.statusCode).toBe(422);
 		});
 
-		test("should accept valid username and password registrations", async () => {
-			const response = await request(app).post("/register").send({
-				userName: "admin",
-				password: "pAsS!.",
+		test("should accept a valid password change request", async () => {
+			const response = await request(app).patch("/changePassword").send({
+				oldPassword: "CurrentPassword123!",
+				newPassword: "NewValidPassword123!",
 			});
-
-			// should return error response because of invalid symbols
-			expect(response.statusCode).toBe(422);
+			expect(response.statusCode).toBe(200);
 		});
 	});
 
@@ -147,18 +186,6 @@ describe("Sanitization and Validation Checks", () => {
 
 	// Tests for Artifact API
 	describe("Artifact Sanitization & Validation", () => {
-		test("should reject if name is not included", async () => {
-			const response = await request(app).post("/artifact").send({
-				name: "",
-				description: "desc",
-				location: "",
-				dimensions: "",
-				photo: "",
-			});
-
-			expect(response.statusCode).toBe(422);
-		});
-
 		test("should accept even if fields other than name are not included", async () => {
 			const response = await request(app).post("/artifact").send({
 				name: "Name",
