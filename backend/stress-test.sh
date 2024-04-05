@@ -13,7 +13,7 @@ test_endpoint() {
     local endpoint=$1
     local method=$2
     echo "Testing $method request for endpoint: $endpoint"
-    autocannon -c 100 -d 5 -p 10 -m "$method" "http://localhost:3000$endpoint"
+    autocannon -c 100 -d 60 -p 10 -m "$method" "http://localhost:3000$endpoint"
     read_from_stdin
 }
 

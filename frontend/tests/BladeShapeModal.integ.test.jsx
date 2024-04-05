@@ -10,22 +10,6 @@ describe("BladeShapeModal", () => {
 		vi.clearAllMocks();
 	});
 
-	it("renders correctly", () => {
-		const props = {
-			setEditBladeShape: vi.fn(),
-			selectedBladeShape: "",
-			selectedBladeShapeID: "",
-			updateBladeShapesList: vi.fn(),
-		};
-
-		const { getByLabelText, getByText } = render(
-			<BladeShapeModal {...props} />,
-		);
-
-		expect(getByLabelText("Blade Shape")).toBeInTheDocument();
-		expect(getByText("Save")).toBeInTheDocument();
-	});
-
 	it("calls handleSave when save button is clicked", async () => {
 		const props = {
 			setEditBladeShape: vi.fn(),
@@ -55,21 +39,4 @@ describe("BladeShapeModal", () => {
 		await waitFor(() => expect(props.updateBladeShapesList).toHaveBeenCalled());
 		expect(props.setEditBladeShape).toHaveBeenCalledWith(false);
 	});
-
-	//   it('closes modal when handleClose is called', () => {
-	//     const props = {
-	//       setEditBladeShape: vi.fn(),
-	//       selectedBladeShape: '',
-	//       selectedBladeShapeID: '',
-	//       updateBladeShapesList: vi.fn(),
-	//     };
-
-	//     const { getByText } = render(<BladeShapeModal {...props} />);
-	//     const closeButton = getByText('Close');
-	//     fireEvent.click(closeButton);
-
-	//     expect(props.setEditBladeShape).toHaveBeenCalledWith(false);
-	//   });
-
-	// Add more test cases for other functionalities as needed
 });

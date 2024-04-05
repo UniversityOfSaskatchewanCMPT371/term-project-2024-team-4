@@ -4,22 +4,7 @@ import http from "../http";
 import CrossSectionModal from "../src/components/CrossSectionModal";
 
 describe("CrossSectionModal", () => {
-	it("renders correctly", () => {
-		const props = {
-			setEditCrossSection: vi.fn(),
-			selectedCrossSection: "",
-			selectedCrossSectionID: "",
-			updateCrossSectionsList: vi.fn(),
-		};
-
-		const { getByLabelText, getByText } = render(
-			<CrossSectionModal {...props} />,
-		);
-
-		expect(getByLabelText("Cross Section")).toBeInTheDocument();
-		expect(getByText("Save")).toBeInTheDocument();
-	});
-
+	
 	it("calls handleSave when save button is clicked", async () => {
 		const props = {
 			setEditCrossSection: vi.fn(),

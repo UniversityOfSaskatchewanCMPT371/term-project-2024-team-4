@@ -1,22 +1,22 @@
-const db = require("../config/db.js");
+const db = require("../../config/db.js");
 const {
 	aggregateSiteStatistics,
 	aggregateCatalogueStatistics,
 	aggregatePointTypeStatistics,
-} = require("../controllers/aggregateStatisticsController.js");
+} = require("../../controllers/aggregateStatisticsController.js");
 
-const sitesHelper = require("../helperFiles/sitesHelper.js");
-const cataloguesHelper = require("../helperFiles/cataloguesHelper.js");
-const artifactTypesHelper = require("../helperFiles/artifactTypesHelper.js");
-const projectilePointsHelper = require("../helperFiles/projectilePointsHelper.js");
-const regionsHelper = require("../helperFiles/regionsHelper.js");
-const materialsHelper = require("../helperFiles/materialsHelper.js");
-const periodsHelper = require("../helperFiles/periodsHelper.js");
-const culturesHelper = require("../helperFiles/culturesHelper.js");
-const bladeShapesHelper = require("../helperFiles/bladeShapesHelper.js");
-const baseShapesHelper = require("../helperFiles/baseShapesHelper.js");
-const haftingShapesHelper = require("../helperFiles/haftingShapesHelper.js");
-const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
+const sitesHelper = require("../../helperFiles/sitesHelper.js");
+const cataloguesHelper = require("../../helperFiles/cataloguesHelper.js");
+const artifactTypesHelper = require("../../helperFiles/artifactTypesHelper.js");
+const projectilePointsHelper = require("../../helperFiles/projectilePointsHelper.js");
+const regionsHelper = require("../../helperFiles/regionsHelper.js");
+const materialsHelper = require("../../helperFiles/materialsHelper.js");
+const periodsHelper = require("../../helperFiles/periodsHelper.js");
+const culturesHelper = require("../../helperFiles/culturesHelper.js");
+const bladeShapesHelper = require("../../helperFiles/bladeShapesHelper.js");
+const baseShapesHelper = require("../../helperFiles/baseShapesHelper.js");
+const haftingShapesHelper = require("../../helperFiles/haftingShapesHelper.js");
+const crossSectionsHelper = require("../../helperFiles/crossSectionsHelper.js");
 
 // const assert = require("node:assert/strict");
 

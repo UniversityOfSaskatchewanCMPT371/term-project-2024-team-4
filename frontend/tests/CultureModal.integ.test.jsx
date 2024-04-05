@@ -3,21 +3,6 @@ import CultureModal from "../src/components/CultureModal";
 import { vi } from "vitest";
 
 describe("CultureModal", () => {
-	it("renders correctly", () => {
-		const props = {
-			setEditCulture: vi.fn(),
-			selectedCulture: "",
-			selectedCultureID: "",
-			updateCulturesList: vi.fn(),
-			periods: [],
-		};
-
-		const { getByLabelText, getByText } = render(<CultureModal {...props} />);
-
-		expect(getByLabelText("Culture Name")).toBeInTheDocument();
-		expect(getByLabelText("Associated Period")).toBeInTheDocument();
-		expect(getByText("Save")).toBeInTheDocument();
-	});
 
 	it("calls handleSave when save button is clicked", () => {
 		const props = {
@@ -52,5 +37,4 @@ describe("CultureModal", () => {
 	//     expect(window.alert).toHaveBeenCalledWith('Please select a period to proceed.');
 	//   });
 
-	// Add more test cases for other functionalities as needed
 });

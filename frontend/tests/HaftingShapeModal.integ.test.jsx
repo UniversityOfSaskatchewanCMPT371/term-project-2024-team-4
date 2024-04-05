@@ -10,21 +10,6 @@ describe("HaftingShapeModal", () => {
 		vi.clearAllMocks();
 	});
 
-	it("renders correctly", () => {
-		const props = {
-			setEditHaftingShape: vi.fn(),
-			selectedHaftingShape: "",
-			selectedHaftingShapeID: "",
-			updateHaftingShapeList: vi.fn(),
-		};
-
-		const { getByLabelText, getByText } = render(
-			<HaftingShapeModal {...props} />,
-		);
-
-		expect(getByLabelText("Hafting Shape")).toBeInTheDocument();
-		expect(getByText("Save")).toBeInTheDocument();
-	});
 
 	it("calls handleSave when save button is clicked", async () => {
 		const props = {

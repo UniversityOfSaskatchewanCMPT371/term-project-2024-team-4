@@ -1,0 +1,36 @@
+# Load testing will use small incremental number of users as the target audience of the project is small
+  target: http://localhost:8080/
+  phases:
+    # for 60 seconds, range from 1 - 3 users
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 3
+      name: Warm up phase
+    # for 60 seconds, range from 4 - 6 users
+    - duration: 60
+      arrivalRate: 4
+      rampTo: 6
+      name: Ramp up load
+    # Sustained load of 8 users for 30 seconds
+    - duration: 30
+      arrivalRate: 8
+      name: Sustained load 
+
+  plugins:
+    ensure: {}
+    apdex: {}
+    metrics-by-endpoint: {}
+  apdex:
+    threshold: 100
+  ensure:
+      thresholds:
+        - http.response_time.p99: 100
+        - http.response_time.p95: 75
+scenarios:
+  - flow:
+      get:
+
+      
+
+
+  
