@@ -259,7 +259,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: deployment-reports
-          path: deployment/
+          path: ./deploy
 
       - name: Deploy to GitHub Pages
         id: deployment
