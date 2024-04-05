@@ -216,56 +216,34 @@ jobs:
         run: npm run coverage -- --test-timeout=10000
         
         ### Run all E2E Tests
+
+        ### Combine all testing reports
+      - name: Create test deployment directory
+        run: mkdir -p ./deploy/backend ./deploy/frontend
+
+      - name: Copy Backend Test Reports
+        run: cp -r backend/test-report/* ./deploy/backend/
         
-        ### Upload Testing Reports as Artifacts
-      - name: Upload Backend Test Reports
+      - name: Copy Frontend Test Reports
+        run: cp -r frontend/test-report/* ./deploy/frontend/
+
+        # Upload the deploy directory as an artifact
+      - name: Upload Test Reports for Deployment
         if: always()
         uses: actions/upload-artifact@v2
         with:
-          name: backend-test-reports
-          path: backend/test-report/
-        
-      - name: Upload Frontend Test Reports
-        if: always()
-        uses: actions/upload-artifact@v2
-        with:
-          name: frontend-test-reports
-          path: frontend/test-report/
-      
+          name: deployment-reports
+          path: ./deploy
+
       - name: Cleanup
         if: always()
         run: kill $(jobs -p) || true
 
-  combine-artifacts:
-    runs-on: ubuntu-latest
-    needs: [tests]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      
-      - name: Download Frontend Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: frontend-test-reports
-          path: deployment/frontend
-
-      - name: Download Backend Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: backend-test-reports
-          path: deployment/backend
-      
-      - name: Upload Combined Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-pages
-          path: deployment/
-  
   deploy-tests:
     # currently running on pull requests going into develop
     if: github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'develop'
     runs-on: ubuntu-latest
-    needs: [combine-artifacts]
+    needs: tests
     
     permissions:
       pages: write
@@ -277,10 +255,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Download Combined Artifacts
+      - name: Download Combined Test Reports Artifact
         uses: actions/download-artifact@v2
         with:
-          name: github-pages
+          name: deployment-reports
           path: deployment/
 
       - name: Deploy to GitHub Pages
