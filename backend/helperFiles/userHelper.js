@@ -22,14 +22,7 @@ const registerUser = async (
 ) => {
 	const Users = await dataSource.getRepository(User);
 
-	// first check if username exists in database already (unique)
-	const userExists = await Users.findOneBy({ userName: username });
-	if (userExists) {
-		logger.warn(`Trying to register user: ${username} already exists`);
-		return;
-	}
-
-	// next, check there is only one default user in database
+	// check there is only one default user in database
 	if (isDefaultUser) {
 		const existingDefaultUser = await Users.findOne({
 			where: { isDefaultUser: true },
@@ -38,6 +31,13 @@ const registerUser = async (
 			logger.warn("Error registering user: Default user already exists");
 			return;
 		}
+	}
+
+	// check if username exists in database already (unique)
+	const userExists = await Users.findOneBy({ userName: username });
+	if (userExists) {
+		logger.warn(`Trying to register user: ${username} already exists`);
+		return;
 	}
 
 	// Otherwise, create a new user

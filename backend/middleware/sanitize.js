@@ -48,27 +48,48 @@ const loginValidationRules = () => {
 };
 
 /**
- * Validation rules for user registration
- * @precond request body needs to contain `userName` and `password` fields
+ * Validation rules for changing username (and confirming password)
+ * @precond request body needs to contain `newUsername` and `password` fields
  */
-const registerValidationRules = () => {
+const changeUsernameValidationRules = () => {
 	return [
-		// validate and sanitize username
-		body("userName")
+		// Validate newUsername
+		body("newUsername")
 			.trim()
 			.isLength({ min: 3, max: 15 })
-			.withMessage("Username must be less than 15 characters")
+			.withMessage("Username must be between 3 to 15 characters long")
 			.matches(/^[a-zA-Z0-9!@#$%^&*(),.?]+$/)
 			.withMessage("Username contains invalid characters"),
 
-		// validate and sanitize passssword
+		// sanitize password
 		body("password")
+			.trim()
+			.customSanitizer((value) => value.substring(0, 20))
+			.matches(/^[a-zA-Z0-9!@#$%^&*(),.?]+$/)
+			.withMessage("Password contains invalid characters"),
+	];
+};
+
+/**
+ *
+ */
+const changePasswordValidationRules = () => {
+	return [
+		// sanitize password
+		body("oldPassword")
+			.trim()
+			.customSanitizer((value) => value.substring(0, 20))
+			.matches(/^[a-zA-Z0-9!@#$%^&*(),.?]+$/)
+			.withMessage("Password contains invalid characters"),
+
+		// sanitize and validate the new password
+		body("newPassword")
 			.trim()
 			.isLength({ min: 5, max: 20 })
 			.withMessage("Password must be at least 5 characters long")
 			.matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?]).+$/)
 			.withMessage(
-				"Password must include uppercase, lowercase, numbers, and special characters",
+				"New Password must include uppercase, lowercase, numbers, and special characters",
 			),
 	];
 };
@@ -102,17 +123,11 @@ const siteValidationRules = () => {
 /**
  * Validation rules for creating an artifact
  * @precond requeset body needs to contain:
- *  name: str, description: str, location, dimensions, photo
+ *  description, location, dimensions,
  *  foreign-keys: siteId, artifactTypeId, cultureId, bladeShapeId, baseShapeId, haftingShapeId, crossSectionId
  */
 const artifactValidationRules = () => {
 	return [
-		body("name")
-			.trim()
-			.escape()
-			.isLength({ min: 1 })
-			.withMessage("Name is required"),
-
 		body("description")
 			.trim()
 			.escape()
@@ -124,11 +139,6 @@ const artifactValidationRules = () => {
 			.optional({ nullable: true, checkFalsy: true }),
 
 		body("dimensions")
-			.trim()
-			.escape()
-			.optional({ nullable: true, checkFalsy: true }),
-
-		body("photo")
 			.trim()
 			.escape()
 			.optional({ nullable: true, checkFalsy: true }),
@@ -239,7 +249,8 @@ const validate = (req, res, next) => {
 
 module.exports = {
 	loginValidationRules,
-	registerValidationRules,
+	changeUsernameValidationRules,
+	changePasswordValidationRules,
 	siteValidationRules,
 	artifactValidationRules,
 	periodValidationRules,

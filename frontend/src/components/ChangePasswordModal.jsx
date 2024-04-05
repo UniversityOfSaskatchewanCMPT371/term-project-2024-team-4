@@ -19,9 +19,41 @@ import DialogTitle from "@mui/material/DialogTitle";
  */
 // eslint-disable-next-line react/prop-types
 function ChangePasswordModal({ modalVisible, closeModal }) {
-	const [newPassword, setNewPassword] = useState();
-	const [password, setOldPassword] = useState();
-	const [confirmPassword, setConfirmPassword] = useState();
+	const [newPassword, setNewPassword] = useState("");
+	const [password, setOldPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
+
+	const [errors, setErrors] = useState({
+		newPassword: "",
+	});
+
+	// validation rules
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			newPassword: "",
+		};
+
+		// validate new password based on backend validation rules
+		if (!newPassword.trim()) {
+			newErrors.newPassword = "Password is required.";
+			isValid = false;
+		} else if (newPassword.length < 8) {
+			newErrors.newPassword = "Password must be at least 8 characters long.";
+			isValid = false;
+		} else if (
+			!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?]).+$/.test(
+				newPassword,
+			)
+		) {
+			newErrors.newPassword =
+				"Password must include uppercase, lowercase, numbers, and special characters.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Submit login information for authentication.
@@ -29,6 +61,11 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+
+		if (!validateForm()) {
+			log.debug("Change password modal fails frontend validation");
+			return;
+		}
 
 		if (confirmPassword !== newPassword) {
 			alert("Confirmed Passwords do not match");
@@ -52,7 +89,7 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 			}
 		} catch (error) {
 			if (error.response) {
-				if (error.response.status === 401) {
+				if (error.response.status === 401 || error.response.status === 422) {
 					alert("Password does not match");
 				} else {
 					alert("An error occurred. Please try again later.");
@@ -139,6 +176,8 @@ function ChangePasswordModal({ modalVisible, closeModal }) {
 						fullWidth
 						variant="outlined"
 						onChange={passwordChanged}
+						error={!!errors.newPassword}
+						helperText={errors.newPassword}
 					/>
 					<DialogContentText marginTop={"1rem"}>
 						Confirm New Password

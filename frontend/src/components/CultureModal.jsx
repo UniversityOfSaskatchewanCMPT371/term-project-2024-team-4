@@ -57,6 +57,10 @@ export default function CultureModal({
 			isValid = false;
 		}
 
+		if (!selectedPeriodID) {
+			newErrors.cultureName = "Please select an associated period";
+		}
+
 		setErrors(newErrors);
 		return isValid;
 	};
@@ -142,7 +146,8 @@ export default function CultureModal({
 						SelectProps={{
 							native: true,
 						}}
-						helperText="Please select the period this culture belongs to"
+						error={!!errors.cultureName}
+						helperText={errors.cultureName}
 						style={{ marginBottom: "15px" }}
 					>
 						<option value=""></option>
