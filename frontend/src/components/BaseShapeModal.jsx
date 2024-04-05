@@ -116,6 +116,8 @@ export default function BaseShapeModal({
 						fullWidth
 						value={baseShape}
 						onChange={(e) => setBaseShape(e.target.value)}
+						error={!!errors.baseShape}
+						helperText={errors.baseShape}
 					/>
 				</DialogContent>
 				<DialogActions>

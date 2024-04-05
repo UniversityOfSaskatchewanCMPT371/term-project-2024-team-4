@@ -27,7 +27,33 @@ export default function MaterialModal({
 	const [selectedArtifactTypeID, setSelectedArtifactTypeID] = useState(
 		selectedMaterial.name ? selectedMaterial.artifactType.id : "",
 	);
-	const [errors, setErrors] = useState({ selectedArtifactType: "" });
+	const [errors, setErrors] = useState({
+		materialName: "",
+		selectedArtifactTypeID: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			materialName: "",
+			selectedArtifactTypeID: "",
+		};
+
+		// Validate name
+		if (!materialName.trim()) {
+			newErrors.materialName = "Material name is required.";
+			isValid = false;
+		}
+
+		// Validate Artifact Type ID
+		if (!selectedArtifactTypeID) {
+			newErrors.selectedArtifactTypeID = "Must select an Artifact Type";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.

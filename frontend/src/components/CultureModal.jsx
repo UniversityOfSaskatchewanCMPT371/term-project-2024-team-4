@@ -42,6 +42,24 @@ export default function CultureModal({
 	const [selectedPeriodID, setSelectedPeriodID] = useState(
 		selectedCulture ? selectedCulture.period.id : "",
 	);
+	const [errors, setErrors] = useState({
+		cultureName: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			cultureName: "",
+		};
+
+		if (!cultureName.trim()) {
+			newErrors.cultureName = "Culture name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.

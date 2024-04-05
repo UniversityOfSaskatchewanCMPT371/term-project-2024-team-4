@@ -114,6 +114,8 @@ export default function BladeShapeModal({
 						fullWidth
 						value={bladeShape}
 						onChange={(e) => setbladeShape(e.target.value)} // Handle change in name field
+						error={!!errors.baseShape}
+						helperText={errors.baseShape}
 					/>
 				</DialogContent>
 				<DialogActions>

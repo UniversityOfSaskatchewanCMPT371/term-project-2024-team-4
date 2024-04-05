@@ -99,6 +99,8 @@ export default function HaftingShapeModal({
 						fullWidth
 						value={haftingShape} // Use value instead of defaultValue
 						onChange={(e) => setHaftingShape(e.target.value)} // Handle change in name field
+						error={!!errors.haftingShape}
+						helperText={errors.haftingShape}
 					/>
 				</DialogContent>
 				<DialogActions>

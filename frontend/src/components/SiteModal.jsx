@@ -261,8 +261,6 @@ const SiteModal = ({
 						helperText={siteNameError && "Please enter a Site Name"}
 						value={name}
 						onChange={handleNameChange}
-						error={!!errors.name}
-						helperText={errors.name}
 					/>
 					<TextField
 						margin="dense"
@@ -296,7 +294,6 @@ const SiteModal = ({
 									value={selectedRegion}
 									onChange={handleRegionChange}
 									renderValue={(selected) => selected}
-									error={!!errors.regionID}
 								>
 									{regions.map((region) => (
 										<MenuItem key={region.id} value={region.name}>

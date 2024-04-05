@@ -38,6 +38,25 @@ export default function CrossSectionModal({
 }) {
 	const [open, setOpen] = useState(true); // State to manage the dialog open/close
 	const [crossSection, setCrossSection] = useState(selectedCrossSection);
+	const [errors, setErrors] = useState({
+		crossSection: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			crossSection: "",
+		};
+
+		// Validate Cross Section name
+		if (!crossSection.trim()) {
+			newErrors.crossSection = "Cross Section name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	console.log("any id:" + selectedCrossSectionID);
 	/**
@@ -98,6 +117,8 @@ export default function CrossSectionModal({
 						fullWidth
 						value={crossSection}
 						onChange={(e) => setCrossSection(e.target.value)} // Handle change in name field
+						error={!!errors.crossSection}
+						helperText={errors.crossSection}
 					/>
 				</DialogContent>
 				<DialogActions>
