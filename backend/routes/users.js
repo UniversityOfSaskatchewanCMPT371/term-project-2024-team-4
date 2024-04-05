@@ -15,6 +15,12 @@ const {
 const { logger } = require("../config/logger");
 require("dotenv").config();
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	loginValidationRules,
+	changeUsernameValidationRules,
+	changePasswordValidationRules,
+} = require("../middleware/sanitize.js");
 
 // JWT Secret is in .env file
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -32,7 +38,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
  * 	- Incorrect Credentials: 401 Unauthorize Response-- denied access
  */
 
-router.post("/", async (req, res) => {
+router.post("/", loginValidationRules(), validate, async (req, res) => {
 	const { userName, password } = req.body;
 	const Users = await dataSource.getRepository(User);
 
@@ -185,43 +191,53 @@ router.get("/allUsers", authenticateAdmin, async (req, res) => {
  * 	- Failure (server): 500 Internal Server Error-- problem with server
  * 	- Failure (client): 400 Bad Request-- password verification failed
  */
-router.patch("/changeUsername", authenticateAdmin, async (req, res) => {
-	// fallback if req.user does not exist
-	if (!req.user) {
-		logger.warn(
-			"Authentication middleware did not respond with user content from the JWToken",
-		);
-		return res.status(401).json({ message: "Unauthorized access" });
-	}
+router.patch(
+	"/changeUsername",
+	authenticateAdmin,
+	changeUsernameValidationRules(),
+	validate,
+	async (req, res) => {
+		// fallback if req.user does not exist
+		if (!req.user) {
+			logger.warn(
+				"Authentication middleware did not respond with user content from the JWToken",
+			);
+			return res.status(401).json({ message: "Unauthorized access" });
+		}
 
-	try {
-		// Gather info
-		const userId = req.user.id;
-		const { newUsername, password } = req.body;
+		try {
+			// Gather info
+			const userId = req.user.id;
+			const { newUsername, password } = req.body;
 
-		/// if password matches, change username
-		const passwordMatches = await verifyPassword(userId, password);
-		if (passwordMatches) {
-			const usernameUpdated = await updateUsername(userId, newUsername);
-			if (!usernameUpdated) {
-				// if update failed for whatever reason
-				logger.error("Update username failed midway");
-				return res.status(500).json({ message: "Username update failed." });
+			/// if password matches, change username
+			const passwordMatches = await verifyPassword(userId, password);
+			if (passwordMatches) {
+				const usernameUpdated = await updateUsername(userId, newUsername);
+				if (!usernameUpdated) {
+					// if update failed for whatever reason
+					logger.error("Update username failed midway");
+					return res.status(500).json({ message: "Username update failed." });
+				}
+				logger.info(`Username succesfully updated for user ${userId}`);
+				return res
+					.status(200)
+					.json({ message: "Username succesfully updated" });
 			}
-			logger.info(`Username succesfully updated for user ${userId}`);
-			return res.status(200).json({ message: "Username succesfully updated" });
+			// if password does not match
+			else {
+				return res
+					.status(400)
+					.json({ message: "Password verification failed" });
+			}
+		} catch (error) {
+			logger.error("Caught an error upon changing username:", error);
+			return res
+				.status(500)
+				.json({ message: "Internal server error upon changing username" });
 		}
-		// if password does not match
-		else {
-			return res.status(400).json({ message: "Password verification failed" });
-		}
-	} catch (error) {
-		logger.error("Caught an error upon changing username:", error);
-		return res
-			.status(500)
-			.json({ message: "Internal server error upon changing username" });
-	}
-});
+	},
+);
 
 /**
  * PATCH API for changing passwords
@@ -236,42 +252,52 @@ router.patch("/changeUsername", authenticateAdmin, async (req, res) => {
  * 	- Failure (server): 500 Internal Server Error-- problem with server
  * 	- Failure (client): 400 Bad Request-- password verification failed
  */
-router.patch("/changePassword", authenticateAdmin, async (req, res) => {
-	// fallback if req.user does not exist
-	if (!req.user) {
-		logger.warn(
-			"Authentication middleware did not respond with user content from the JWToken",
-		);
-		return res.status(401).json({ message: "Unauthorized access" });
-	}
-
-	try {
-		// Gather info
-		const userId = req.user.id;
-		const { oldPassword, newPassword } = req.body;
-
-		// if old password passes verification, then replace with new password
-		const passwordMatches = await verifyPassword(userId, oldPassword);
-		if (passwordMatches) {
-			const passwordUpdated = await updatePassword(userId, newPassword);
-			if (!passwordUpdated) {
-				// if update failed for whatever reason
-				logger.error("Password update failed.");
-				return res.status(500).json({ message: "Password update failed." });
-			}
-			logger.info(`Password successfully updated for user ${userId}`);
-			return res.status(200).json({ message: "Password successfully updated" });
-		} else {
-			// if password does not match, return error
-			return res.status(400).json({ message: "Password verification failed" });
+router.patch(
+	"/changePassword",
+	authenticateAdmin,
+	changePasswordValidationRules(),
+	validate,
+	async (req, res) => {
+		// fallback if req.user does not exist
+		if (!req.user) {
+			logger.warn(
+				"Authentication middleware did not respond with user content from the JWToken",
+			);
+			return res.status(401).json({ message: "Unauthorized access" });
 		}
-	} catch (error) {
-		logger.error("Caught an error upon changing password:", error);
-		return res
-			.status(500)
-			.json({ message: "Internal server error upon changing password" });
-	}
-});
+
+		try {
+			// Gather info
+			const userId = req.user.id;
+			const { oldPassword, newPassword } = req.body;
+
+			// if old password passes verification, then replace with new password
+			const passwordMatches = await verifyPassword(userId, oldPassword);
+			if (passwordMatches) {
+				const passwordUpdated = await updatePassword(userId, newPassword);
+				if (!passwordUpdated) {
+					// if update failed for whatever reason
+					logger.error("Password update failed.");
+					return res.status(500).json({ message: "Password update failed." });
+				}
+				logger.info(`Password successfully updated for user ${userId}`);
+				return res
+					.status(200)
+					.json({ message: "Password successfully updated" });
+			} else {
+				// if password does not match, return error
+				return res
+					.status(400)
+					.json({ message: "Password verification failed" });
+			}
+		} catch (error) {
+			logger.error("Caught an error upon changing password:", error);
+			return res
+				.status(500)
+				.json({ message: "Internal server error upon changing password" });
+		}
+	},
+);
 
 /**
  * PATCH API for resetting the default user's credentials

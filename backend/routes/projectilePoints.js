@@ -35,6 +35,11 @@ const storage = multer.diskStorage({
 // Multer middleware
 const upload = multer({ storage });
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	artifactValidationRules,
+} = require("../middleware/sanitize.js");
+
 /**
  * Handles POST requests to create a new ProjectilePoint.
  * This endpoint creates a new ProjectilePoint entity, extracting necessary properties from the request body.
@@ -46,8 +51,10 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  */
 router.post(
 	"/",
-	upload.single("photo"),
 	authenticateAdmin,
+	artifactValidationRules(),
+	validate,
+	upload.single("photo"),
 	async (req, res) => {
 		const newProjectilePoint =
 			await projectilePointsHelper.newProjectilePoint(req);
@@ -112,6 +119,8 @@ router.get("/:id", async (req, res) => {
 router.put(
 	"/:id",
 	authenticateAdmin,
+	artifactValidationRules(),
+	validate,
 	upload.single("photo"),
 	async (req, res) => {
 		const projectilePoint =

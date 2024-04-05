@@ -49,7 +49,7 @@ describe("User Authentication API", () => {
 			});
 		});
 
-		test("It should return 401 if user is not found", async () => {
+		test("It should return 422 if user is not found", async () => {
 			// Mocking findOne to return null
 			// eslint-disable-next-line no-unused-vars
 			router.post("/", async (req, res) => {
@@ -64,7 +64,7 @@ describe("User Authentication API", () => {
 						userName: "nonexistentuser",
 						password: "nonexistentpassword",
 					})
-					.expect(401);
+					.expect(422);
 			});
 		});
 

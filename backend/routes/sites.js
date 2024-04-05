@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const sitesHelper = require("../helperFiles/sitesHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const { validate, siteValidationRules } = require("../middleware/sanitize.js");
 
 /**
  * POST: Create a new Site
@@ -13,13 +14,19 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * 	Success: Returns the newly created Site object
  * 	Failure: Returns an error message related to issue
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const newSite = await sitesHelper.newSite(req);
-	if (newSite instanceof Error) {
-		return res.json({ error: newSite.message });
-	}
-	return res.json(newSite);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	siteValidationRules(),
+	validate,
+	async (req, res) => {
+		const newSite = await sitesHelper.newSite(req);
+		if (newSite instanceof Error) {
+			return res.json({ error: newSite.message });
+		}
+		return res.json(newSite);
+	},
+);
 
 /**
  * GET: Fetch ALL Sites
@@ -68,16 +75,22 @@ router.get("/:id", async (req, res) => {
  * 	Success: Returns the updated Site object
  * 	Failure: Returns an error message related to issue
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const siteToUpdate = await sitesHelper.updateSite(req);
-	if (siteToUpdate === "Site not found") {
-		return res.json({ message: "Site not found" });
-	}
-	if (siteToUpdate instanceof Error) {
-		return res.json({ error: siteToUpdate.message });
-	}
-	return res.json(siteToUpdate);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	siteValidationRules(),
+	validate,
+	async (req, res) => {
+		const siteToUpdate = await sitesHelper.updateSite(req);
+		if (siteToUpdate === "Site not found") {
+			return res.json({ message: "Site not found" });
+		}
+		if (siteToUpdate instanceof Error) {
+			return res.json({ error: siteToUpdate.message });
+		}
+		return res.json(siteToUpdate);
+	},
+);
 
 /**
  * DELETE: Delete a SINGLE existing Site by ID

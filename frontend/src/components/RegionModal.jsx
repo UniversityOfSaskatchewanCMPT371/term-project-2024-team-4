@@ -43,6 +43,25 @@ export default function RegionModal({
 	const [description, setDescription] = useState(
 		selectedRegion ? selectedRegion.description : "",
 	);
+	const [errors, setErrors] = useState({
+		regionName: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			regionName: "",
+		};
+
+		// Validate Region Name
+		if (!regionName.trim()) {
+			newErrors.regionName = "Region name is required.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * handleSave function
@@ -57,6 +76,11 @@ export default function RegionModal({
 	 * - Closes the modal and resets the editing state.
 	 */
 	const handleSave = () => {
+		if (!validateForm()) {
+			log.debug("Region Form fails frontend validation");
+			return;
+		}
+
 		const updatedRegion = { name: regionName, description };
 		const requestUrl = `/regions/${selectedRegionID || ""}`;
 		const requestMethod = selectedRegionID ? http.put : http.post;
@@ -102,6 +126,8 @@ export default function RegionModal({
 						value={regionName}
 						onChange={(e) => setRegionName(e.target.value)}
 						margin="normal"
+						error={!!errors.regionName}
+						helperText={errors.regionName}
 					/>
 					<TextField
 						id="description"

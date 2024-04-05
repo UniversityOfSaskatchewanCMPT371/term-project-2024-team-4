@@ -27,7 +27,33 @@ export default function MaterialModal({
 	const [selectedArtifactTypeID, setSelectedArtifactTypeID] = useState(
 		selectedMaterial.name ? selectedMaterial.artifactType.id : "",
 	);
-	const [errors, setErrors] = useState({ selectedArtifactType: "" });
+	const [errors, setErrors] = useState({
+		materialName: "",
+		selectedArtifactTypeID: "",
+	});
+
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			materialName: "",
+			selectedArtifactTypeID: "",
+		};
+
+		// Validate name
+		if (!materialName.trim()) {
+			newErrors.materialName = "Material name is required.";
+			isValid = false;
+		}
+
+		// Validate Artifact Type ID
+		if (!selectedArtifactTypeID) {
+			newErrors.selectedArtifactTypeID = "Must select an Artifact Type";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 
 	/**
 	 * Handles the save action when the form is submitted.
@@ -36,13 +62,8 @@ export default function MaterialModal({
 		log.debug(
 			`Saving culture: ${materialName} with artifact type ID: ${selectedArtifactTypeID}`,
 		);
-		if (!selectedArtifactTypeID) {
-			setErrors({
-				selectedArtifactType: "Please select an artifact type to proceed.",
-			});
-			log.warn(
-				"Attempted to save material without selecting an artifact type.",
-			);
+		if (!validateForm()) {
+			log.debug("Region Form fails frontend validation");
 			return;
 		}
 		const updatedMaterial = {
@@ -95,7 +116,9 @@ export default function MaterialModal({
 						fullWidth
 						value={materialName}
 						onChange={(e) => setMaterialName(e.target.value)}
-						style={{ marginBottom: "15px" }}
+						style={{ marginBottom: "15px", marginTop: "15px" }}
+						error={!!errors.materialName}
+						helperText={errors.materialName}
 					/>
 					<TextField
 						id="description"
@@ -116,9 +139,9 @@ export default function MaterialModal({
 						SelectProps={{
 							native: true,
 						}}
-						helperText="Please select the artifact type this material belongs to"
 						style={{ marginBottom: "15px" }}
-						error={!!errors.selectedArtifactType}
+						error={!!errors.selectedArtifactTypeID}
+						helperText={errors.selectedArtifactTypeID}
 					>
 						<option value=""></option>
 						{artifactTypes.map((artifact) => (

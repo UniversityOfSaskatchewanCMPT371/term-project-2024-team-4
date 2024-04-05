@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const periodsHelper = require("../helperFiles/periodsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	periodValidationRules,
+} = require("../middleware/sanitize.js");
 
 /**
  * POST: Create a new Period
@@ -13,13 +17,19 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  *  Succesful: Returns newly created Period object
  * 	Failure: Returns error message based on what went wrong
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await periodsHelper.newPeriod(req);
-	if (response instanceof Error) {
-		return res.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	periodValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await periodsHelper.newPeriod(req);
+		if (response instanceof Error) {
+			return res.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * GET: Fetch ALL Periods
@@ -69,16 +79,22 @@ router.get("/:id", async (req, res) => {
  * 	Success: Returns the updated Period object
  * 	Failure: Returns an error message based on the issue
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await periodsHelper.updatePeriod(req);
-	if (response === "Period not found") {
-		return res.json({ message: "Period not found" });
-	}
-	if (response instanceof Error) {
-		return res.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	periodValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await periodsHelper.updatePeriod(req);
+		if (response === "Period not found") {
+			return res.json({ message: "Period not found" });
+		}
+		if (response instanceof Error) {
+			return res.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: delete a SINGLE existing period given an ID

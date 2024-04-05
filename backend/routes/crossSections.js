@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const router = express.Router();
 const crossSectionsHelper = require("../helperFiles/crossSectionsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const { validate, nameValidationRules } = require("../middleware/sanitize.js");
 
 /**
  * POST: Create a new CrossSection.
@@ -14,15 +15,21 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @post A new CrossSection entity is created in the database.
  * @return Returns the newly created CrossSection object.
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await crossSectionsHelper.newCrossSection(req);
-	if (response instanceof Error) {
-		return res
-			.status(response instanceof assert.AssertionError ? 400 : 500)
-			.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await crossSectionsHelper.newCrossSection(req);
+		if (response instanceof Error) {
+			return res
+				.status(response instanceof assert.AssertionError ? 400 : 500)
+				.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * GET: Fetch all CrossSections.
@@ -68,13 +75,19 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified CrossSection in the database.
  * @return Returns the updated CrossSection object or a message indicating the CrossSection was not found.
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await crossSectionsHelper.updateCrossSection(req);
-	if (response instanceof Error) {
-		return res.status(500).json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await crossSectionsHelper.updateCrossSection(req);
+		if (response instanceof Error) {
+			return res.status(500).json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: Remove a CrossSection.

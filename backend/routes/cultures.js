@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const router = express.Router();
 const culturesHelper = require("../helperFiles/culturesHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const { validate, nameValidationRules } = require("../middleware/sanitize.js");
 
 /**
  * POST: Creates a new Culture.
@@ -14,15 +15,21 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @post A new Culture entity associated with the specified Period is created in the database.
  * @return Returns the newly created Culture object or an error message if creation fails.
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await culturesHelper.newCulture(req);
-	if (response instanceof Error) {
-		return res
-			.status(response instanceof assert.AssertionError ? 404 : 400)
-			.json({ error: response.message });
-	}
-	return res.status(201).json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await culturesHelper.newCulture(req);
+		if (response instanceof Error) {
+			return res
+				.status(response instanceof assert.AssertionError ? 404 : 400)
+				.json({ error: response.message });
+		}
+		return res.status(201).json(response);
+	},
+);
 
 /**
  * GET: Fetches all Cultures.
@@ -68,13 +75,19 @@ router.get("/:id", async (req, res) => {
  * @post Updates and returns the specified Culture in the database.
  * @return Returns the updated Culture object or a message indicating the Culture or Period was not found.
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await culturesHelper.updateCulture(req);
-	if (response instanceof Error) {
-		return res.status(500).json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	nameValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await culturesHelper.updateCulture(req);
+		if (response instanceof Error) {
+			return res.status(500).json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: Removes a Culture by ID.

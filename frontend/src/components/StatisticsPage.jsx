@@ -37,7 +37,13 @@ function StatisticsPage() {
 		id: item.id,
 		site: item.site ? item.site.name : "Indeterminate",
 		location: item.location ? item.location : "Indeterminate",
+		period: item.culture
+			? item.culture.period
+				? item.culture.period.name
+				: "Indeterminate"
+			: "Indeterminate",
 		culture: item.culture ? item.culture.name : "Indeterminate",
+		artifactType: item.artifactType ? item.artifactType.id : "Indeterminate",
 		bladeShape: item.bladeShape ? item.bladeShape.name : "Indeterminate",
 		baseShape: item.baseShape ? item.baseShape.name : "Indeterminate",
 		haftingShape: item.haftingShape ? item.haftingShape.name : "Indeterminate",

@@ -3,6 +3,10 @@ const express = require("express");
 const router = express.Router();
 const artifactsHelper = require("../helperFiles/artifactsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	artifactValidationRules,
+} = require("../middleware/sanitize.js");
 
 /**
  * Creates a new Artifact in the database.
@@ -14,13 +18,19 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  * @post Creates a new Artifact entity in the database, returns it with a 201 status code upon successful creation, or provides an error response.
  * @return The newly created Artifact object if successful, otherwise an error object.
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await artifactsHelper.newArtifact(req);
-	if (response instanceof Error) {
-		return res.status(500).json({ error: response.message });
-	}
-	return res.status(201).json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	artifactValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await artifactsHelper.newArtifact(req);
+		if (response instanceof Error) {
+			return res.status(500).json({ error: response.message });
+		}
+		return res.status(201).json(response);
+	},
+);
 
 /**
  * Retrieves all artifacts from the database.
@@ -66,13 +76,19 @@ router.get("/:id", async (req, res) => {
  * @post Updates the specified Artifact entity in the database with the new provided data, and returns the updated Artifact. If no Artifact is found with the given ID, a 404 Not Found error is returned. On validation failure, a 400 Bad Request error is returned. On server errors, a 500 Internal Server Error is returned.
  * @return Returns the updated Artifact object if successful; otherwise, returns an error message.
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await artifactsHelper.updateArtifact(req);
-	if (response instanceof Error) {
-		return res.status(500).json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	artifactValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await artifactsHelper.updateArtifact(req);
+		if (response instanceof Error) {
+			return res.status(500).json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * Deletes a single Artifact identified by ID from the database.

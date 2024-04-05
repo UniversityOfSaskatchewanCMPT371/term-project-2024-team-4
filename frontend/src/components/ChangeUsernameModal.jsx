@@ -19,16 +19,46 @@ import DialogTitle from "@mui/material/DialogTitle";
  */
 // eslint-disable-next-line react/prop-types
 function ChangeUsernameModal({ modalVisible, closeModal }) {
-	const [userName, setNewUserName] = useState();
-	const [password, setConfirmPassword] = useState();
+	const [userName, setNewUserName] = useState("");
+	const [password, setConfirmPassword] = useState("");
 	// const [checkPassword, setCheckPassword] = useState();
+	const [errors, setErrors] = useState({
+		userName: "",
+	});
 
+	// validation rules
+	const validateForm = () => {
+		let isValid = true;
+		const newErrors = {
+			userName: "",
+		};
+
+		// validate new username chosen based on backend validation rules
+		if (!userName.trim()) {
+			newErrors.userName = "Username is required.";
+			isValid = false;
+		} else if (userName.length < 3 || userName.length > 15) {
+			newErrors.userName = "Username must be between 3 to 15 characters long.";
+			isValid = false;
+		} else if (!/^[a-zA-Z0-9!@#$%^&*(),.?]+$/.test(userName)) {
+			newErrors.userName = "Username contains invalid characters.";
+			isValid = false;
+		}
+
+		setErrors(newErrors);
+		return isValid;
+	};
 	/**
 	 * Submit username change request.
 	 * @param {object} event - Event object representing form submission.
 	 */
 	const handleSubmit = async (event) => {
 		event.preventDefault();
+
+		if (!validateForm()) {
+			log.debug("Change Username Modal fails frontend validation");
+			return;
+		}
 
 		try {
 			const response = await http.patch("/users/changeUsername", {
@@ -47,7 +77,7 @@ function ChangeUsernameModal({ modalVisible, closeModal }) {
 			}
 		} catch (error) {
 			if (error.response) {
-				if (error.response.status === 400 || error.response.status === 500) {
+				if (error.response.status === 422 || error.response.status === 500) {
 					alert("Password does not match");
 				} else {
 					alert("An error occurred. Please try again later.");
@@ -112,6 +142,8 @@ function ChangeUsernameModal({ modalVisible, closeModal }) {
 						fullWidth
 						variant="outlined"
 						onChange={userNameChanged}
+						error={!!errors.userName}
+						helperText={errors.userName}
 					/>
 					<DialogContentText marginTop={"1rem"}>
 						{" "}

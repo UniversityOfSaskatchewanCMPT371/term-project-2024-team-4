@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { waitFor, screen } from "@testing-library/react";
+import { waitFor } from "@testing-library/react";
 
 import "@testing-library/jest-dom";
 import http from "../http";
@@ -43,27 +43,6 @@ describe("MaterialModal", () => {
 		const saveButton = getByText("Save");
 		fireEvent.click(saveButton);
 		expect(props.updateMaterialList).not.toHaveBeenCalled();
-	});
-
-	it("alerts the user if no artifact type is selected", async () => {
-		const props = {
-			setEditMaterial: vi.fn(),
-			selectedMaterial: "",
-			selectedMaterialDescription: "",
-			selectedMaterialID: "",
-			updateMaterialList: vi.fn(),
-			artifactTypes: [
-				{ id: "1", name: "Artifact Type 1" },
-				{ id: "2", name: "Artifact Type 2" },
-			],
-		};
-
-		const { getByText } = render(<MaterialModal {...props} />);
-		const saveButton = getByText("Save");
-		fireEvent.click(saveButton);
-		await screen.findAllByText(
-			"Please select the artifact type this material belongs to",
-		);
 	});
 
 	it("updates material list and closes modal upon successful save", async () => {

@@ -2,6 +2,10 @@ const express = require("express");
 const router = express.Router();
 const materialsHelper = require("../helperFiles/materialsHelper.js");
 const authenticateAdmin = require("../middleware/authenticate.js");
+const {
+	validate,
+	nameDescValidationRules,
+} = require("../middleware/sanitize.js");
 
 /**
  * POST: Create a new Material
@@ -13,16 +17,22 @@ const authenticateAdmin = require("../middleware/authenticate.js");
  *  Succesful: Returns newly created Material object
  * 	Failure: Returns error message based on what went wrong
  */
-router.post("/", authenticateAdmin, async (req, res) => {
-	const response = await materialsHelper.newMaterial(req);
-	if (response === "ArtifactType not found") {
-		return res.json({ message: "ArtifactType not found" });
-	}
-	if (response instanceof Error) {
-		return res.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.post(
+	"/",
+	authenticateAdmin,
+	nameDescValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await materialsHelper.newMaterial(req);
+		if (response === "ArtifactType not found") {
+			return res.json({ message: "ArtifactType not found" });
+		}
+		if (response instanceof Error) {
+			return res.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * GET: Fetch ALL materials
@@ -74,19 +84,25 @@ router.get("/:id", async (req, res) => {
  * 	Succesful: Returns the updated Material object
  * 	Failure: Returns an error message relating to the issue
  */
-router.put("/:id", authenticateAdmin, async (req, res) => {
-	const response = await materialsHelper.updateMaterial(req);
-	if (response === "Material not found") {
-		return res.json({ message: "Material not found" });
-	}
-	if (response === "ArtifactType not found") {
-		return res.json({ message: "ArtifactType not found" });
-	}
-	if (response instanceof Error) {
-		return res.json({ error: response.message });
-	}
-	return res.json(response);
-});
+router.put(
+	"/:id",
+	authenticateAdmin,
+	nameDescValidationRules(),
+	validate,
+	async (req, res) => {
+		const response = await materialsHelper.updateMaterial(req);
+		if (response === "Material not found") {
+			return res.json({ message: "Material not found" });
+		}
+		if (response === "ArtifactType not found") {
+			return res.json({ message: "ArtifactType not found" });
+		}
+		if (response instanceof Error) {
+			return res.json({ error: response.message });
+		}
+		return res.json(response);
+	},
+);
 
 /**
  * DELETE: Delete a SINGLE material given the ID
