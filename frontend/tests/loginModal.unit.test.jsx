@@ -16,7 +16,7 @@ describe("LoginModal", () => {
 
 		expect(
 			screen.getByRole("heading", {
-				name: /admin/i,
+				name: /Login/i,
 			}),
 		).toBeInTheDocument();
 		expect(screen.getByPlaceholderText("Username")).toBeInTheDocument();

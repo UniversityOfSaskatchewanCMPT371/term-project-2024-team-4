@@ -14,7 +14,10 @@ import {
 	Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { useContext } from "react";
+import { UserContext } from "../context/userContext";
 
+import { sortData } from "../sortUtils.js";
 /**
  * Create styled Item component, based on Paper MUI component
  */
@@ -24,6 +27,7 @@ const Item = styled(Paper)(({ theme }) => ({
 	padding: theme.spacing(1),
 	textAlign: "center",
 	color: theme.palette.text.secondary,
+	minHeight: "700px !important",
 }));
 
 /**
@@ -35,12 +39,13 @@ const Item = styled(Paper)(({ theme }) => ({
  * @returns {JSX.Element} ProjectileList React component
  */
 // eslint-disable-next-line react/prop-types
-export default function ProjectileList({ query, siteId }) {
+export default function ProjectileList({ query, siteId, siteName, sortValue }) {
 	const [openAdd, setOpenAdd] = useState(false);
 	const [openView, setOpenView] = useState(false);
+	const [openEdit, setOpenEdit] = useState(false);
 	const [projectilePointId, setProjectilePointId] = useState(0);
 	const [data, setData] = useState([]);
-
+	const { user } = useContext(UserContext);
 	/**
 	 * Toggle add projectile modal visibility to true
 	 */
@@ -58,19 +63,26 @@ export default function ProjectileList({ query, siteId }) {
 		log.info("Card clicked! ID:", item.id);
 	};
 
+	/**
+	 * Fetch and update projectile points list/cards with latest list of projectile points
+	 * every state change of add the edit proejctile point modals
+	 */
 	useEffect(() => {
 		async function fetchprojectilePoints() {
 			try {
 				const response = await http.get("/projectilePoints");
 				log.info("Projectile points: ", response.data);
-				setData(response.data);
+
+				// Sort JSON
+				const sortedData = sortData(response.data, sortValue);
+				setData(sortedData);
 			} catch (error) {
 				log.error("Error fetching projectile points:", error);
 			}
 		}
 
 		fetchprojectilePoints();
-	}, [openAdd]);
+	}, [openAdd, openView, sortValue]);
 
 	// Filter projectile points to current selected site
 	const siteData = data?.filter((item) => item.site.id == siteId);
@@ -83,32 +95,52 @@ export default function ProjectileList({ query, siteId }) {
 
 	return (
 		<div>
-			<Item variant="outlined" sx={{ mt: "40px", minHeight: "500px" }}>
-				<Grid maxWidth="md" style={{ padding: 30 }}>
+			<Item variant="outlined" sx={{ mb: "40px" }}>
+				<Grid style={{ padding: 30 }}>
 					<Box display="flex">
 						<Grid container spacing={5}>
-							<Grid item xs={12} sm={6} md={3}>
-								<ButtonBase onClick={handleClick1}>
-									<Card sx={{ minWidth: 170, minHeight: 150 }}>
-										<CardContent style={{ textAlign: "center" }}>
-											<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
-											{/*<CreateArtifact style={{ fontSize: 80, color: "lightgrey" }} />*/}
-										</CardContent>
-									</Card>
-								</ButtonBase>
-							</Grid>
+							{user && (
+								<Grid item xs={12} sm={6} md={3}>
+									<ButtonBase onClick={handleClick1}>
+										<Card
+											sx={{
+												minWidth: "12rem",
+												minHeight: "12rem",
+												alignContent: "center",
+											}}
+										>
+											<CardContent style={{ textAlign: "center" }}>
+												<AddIcon style={{ fontSize: 80, color: "lightgrey" }} />
+												<Typography variant="body2">
+													Add Projectile Point
+												</Typography>
+												{/*<CreateArtifact style={{ fontSize: 80, color: "lightgrey" }} />*/}
+											</CardContent>
+										</Card>
+									</ButtonBase>
+								</Grid>
+							)}
 							{filteredData &&
 								filteredData.map((item) => (
-									<Grid item xs={12} sm={6} md={3} key={item.id}>
+									<Grid item xl={2} key={item.id}>
 										{/*This section is for displaying all the found artifacts*/}
 										<ButtonBase onClick={handleClick2(item)}>
-											<Card sx={{ minWidth: 170, minHeight: 150 }}>
+											<Card
+												sx={{
+													minWidth: "12rem",
+													minHeight: "12rem",
+													alignContent: "center",
+												}}
+											>
 												<CardContent>
 													<Typography variant="h5" component="h3">
-														{item.name}
+														{siteName + "-" + item.id}
 													</Typography>
 													<Typography variant="body2" component="p">
-														{item.description}
+														{/* Limit description characters to prevent text overflow */}
+														{item.description.length <= 15
+															? item.description
+															: item.description.substr(0, 15) + "..."}
 													</Typography>
 												</CardContent>
 											</Card>
@@ -119,17 +151,31 @@ export default function ProjectileList({ query, siteId }) {
 					</Box>
 				</Grid>
 			</Item>
-			<Typography>
-				{openAdd && <ProjectileModal setOpenAdd={setOpenAdd} />}
-			</Typography>
-			<Typography>
+			<div>
+				{openAdd && (
+					<ProjectileModal openAdd={openAdd} setOpenAdd={setOpenAdd} />
+				)}
+			</div>
+			<div>
 				{openView && (
 					<Projectile
-						setOpen={setOpenView}
+						setOpenView={setOpenView}
+						setOpenEdit={setOpenEdit}
+						projectilePointId={projectilePointId}
+						siteName={siteName}
+					/>
+				)}
+			</div>
+			<div>
+				{openEdit && (
+					<ProjectileModal
+						setOpenView={setOpenView}
+						openEdit={openEdit}
+						setOpenEdit={setOpenEdit}
 						projectilePointId={projectilePointId}
 					/>
 				)}
-			</Typography>
+			</div>
 		</div>
 	);
 }

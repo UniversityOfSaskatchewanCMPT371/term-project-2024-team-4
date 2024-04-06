@@ -86,10 +86,13 @@ function projectilePointPercentage(projectilePointArray) {
 			var checkHaftingShape = false;
 			var checkCrossSection = false;
 
-			if (!bladeShapeCountMap.has(currProjectile.bladeShape.name)) {
+			if (
+				currProjectile.bladeShape &&
+				!bladeShapeCountMap.has(currProjectile.bladeShape.name)
+			) {
 				bladeShapeCountMap.set(currProjectile.bladeShape.name, 1);
 				checkBladeShape = true;
-			} else if (checkBladeShape === false) {
+			} else if (currProjectile.bladeShape && checkBladeShape === false) {
 				//increase bladeshape count for given bladeshape, if it hasnt already been updated.
 				const newBladeShapeCount =
 					bladeShapeCountMap.get(currProjectile.bladeShape.name) + 1;
@@ -99,19 +102,25 @@ function projectilePointPercentage(projectilePointArray) {
 					newBladeShapeCount,
 				);
 			}
-			if (!baseShapeCountMap.has(currProjectile.baseShape.name)) {
+			if (
+				currProjectile.baseShape &&
+				!baseShapeCountMap.has(currProjectile.baseShape.name)
+			) {
 				baseShapeCountMap.set(currProjectile.baseShape.name, 1);
 				checkBaseShape = true;
-			} else if (checkBaseShape === false) {
+			} else if (currProjectile.baseShape && checkBaseShape === false) {
 				const newBaseShapeCount =
 					baseShapeCountMap.get(currProjectile.baseShape.name) + 1;
 				baseShapeCountMap.delete(currProjectile.baseShape.name);
 				baseShapeCountMap.set(currProjectile.baseShape.name, newBaseShapeCount);
 			}
-			if (!haftingShapeCountMap.has(currProjectile.haftingShape.name)) {
+			if (
+				currProjectile.haftingShape &&
+				!haftingShapeCountMap.has(currProjectile.haftingShape.name)
+			) {
 				haftingShapeCountMap.set(currProjectile.haftingShape.name, 1);
 				checkHaftingShape = true;
-			} else if (checkHaftingShape === false) {
+			} else if (currProjectile.haftingShape && checkHaftingShape === false) {
 				const newHaftingShapeCount =
 					haftingShapeCountMap.get(currProjectile.haftingShape.name) + 1;
 				haftingShapeCountMap.delete(currProjectile.haftingShape.name);
@@ -120,10 +129,13 @@ function projectilePointPercentage(projectilePointArray) {
 					newHaftingShapeCount,
 				);
 			}
-			if (!crossSectionCountMap.has(currProjectile.crossSection.name)) {
+			if (
+				currProjectile.crossSection &&
+				!crossSectionCountMap.has(currProjectile.crossSection.name)
+			) {
 				crossSectionCountMap.set(currProjectile.crossSection.name, 1);
 				checkCrossSection = true;
-			} else if (checkCrossSection === false) {
+			} else if (currProjectile.crossSection && checkCrossSection === false) {
 				const newCrossSectionCount =
 					crossSectionCountMap.get(currProjectile.crossSection.name) + 1;
 				crossSectionCountMap.delete(currProjectile.crossSection.name);
@@ -281,19 +293,34 @@ async function aggregateSiteStatistics(siteId) {
 				materialTypeArray.push(currentMaterial.name);
 			}
 		}
-		if (projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1) {
+		if (
+			currentArtifact.artifactType &&
+			projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1
+		) {
 			projectileTypeArray.push(currentArtifact.artifactType.id);
 		}
-		if (bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1) {
+		if (
+			currentArtifact.bladeShape &&
+			bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1
+		) {
 			bladeShapeArray.push(currentArtifact.bladeShape.name);
 		}
-		if (baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1) {
+		if (
+			currentArtifact.baseShape &&
+			baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1
+		) {
 			baseShapeArray.push(currentArtifact.baseShape.name);
 		}
-		if (haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1) {
+		if (
+			currentArtifact.haftingShape &&
+			haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1
+		) {
 			haftingShapeArray.push(currentArtifact.haftingShape.name);
 		}
-		if (crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1) {
+		if (
+			currentArtifact.crossSection &&
+			crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1
+		) {
 			crossSectionArray.push(currentArtifact.crossSection.name);
 		}
 	}
@@ -400,19 +427,34 @@ async function aggregateCatalogueStatistics(catalogueId) {
 					materialTypeArray.push(currentMaterial.name);
 				}
 			}
-			if (projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1) {
+			if (
+				currentArtifact.artifactType &&
+				projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1
+			) {
 				projectileTypeArray.push(currentArtifact.artifactType.id);
 			}
-			if (bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1) {
+			if (
+				currentArtifact.bladeShape &&
+				bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1
+			) {
 				bladeShapeArray.push(currentArtifact.bladeShape.name);
 			}
-			if (baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1) {
+			if (
+				currentArtifact.baseShape &&
+				baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1
+			) {
 				baseShapeArray.push(currentArtifact.baseShape.name);
 			}
-			if (haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1) {
+			if (
+				currentArtifact.haftingShape &&
+				haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1
+			) {
 				haftingShapeArray.push(currentArtifact.haftingShape.name);
 			}
-			if (crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1) {
+			if (
+				currentArtifact.crossSection &&
+				crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1
+			) {
 				crossSectionArray.push(currentArtifact.crossSection.name);
 			}
 		}
@@ -509,19 +551,34 @@ async function aggregatePointTypeStatistics(pointType) {
 				materialTypeArray.push(currentMaterial.name);
 			}
 		}
-		if (projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1) {
+		if (
+			currentArtifact.artifactType &&
+			projectileTypeArray.indexOf(currentArtifact.artifactType.id) == -1
+		) {
 			projectileTypeArray.push(currentArtifact.artifactType.id);
 		}
-		if (bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1) {
+		if (
+			currentArtifact.bladeShape &&
+			bladeShapeArray.indexOf(currentArtifact.bladeShape.name) == -1
+		) {
 			bladeShapeArray.push(currentArtifact.bladeShape.name);
 		}
-		if (baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1) {
+		if (
+			currentArtifact.baseShape &&
+			baseShapeArray.indexOf(currentArtifact.baseShape.name) == -1
+		) {
 			baseShapeArray.push(currentArtifact.baseShape.name);
 		}
-		if (haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1) {
+		if (
+			currentArtifact.haftingShape &&
+			haftingShapeArray.indexOf(currentArtifact.haftingShape.name) == -1
+		) {
 			haftingShapeArray.push(currentArtifact.haftingShape.name);
 		}
-		if (crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1) {
+		if (
+			currentArtifact.crossSection &&
+			crossSectionArray.indexOf(currentArtifact.crossSection.name) == -1
+		) {
 			crossSectionArray.push(currentArtifact.crossSection.name);
 		}
 	}

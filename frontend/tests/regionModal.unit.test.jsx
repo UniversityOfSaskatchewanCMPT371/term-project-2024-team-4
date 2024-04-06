@@ -13,6 +13,7 @@ vi.mock("../logger", () => ({
 describe("RegionModal", () => {
 	const mockUpdateRegionsList = vi.fn();
 	const mockSetEditRegion = vi.fn();
+	const mockSelectedRegion = vi.fn();
 
 	beforeEach(() => {
 		http.post.mockClear();
@@ -24,11 +25,11 @@ describe("RegionModal", () => {
 	it("renders correctly for adding a new region", () => {
 		render(
 			<RegionModal
-				setEditRegion={mockSetEditRegion}
+				selectedRegion={{ name: "", description: "" }}
 				updateRegionsList={mockUpdateRegionsList}
+				setEditRegion={mockSetEditRegion}
 			/>,
 		);
-
 		expect(screen.getByLabelText(/Region Name/)).toBeInTheDocument();
 		expect(screen.getByLabelText(/Description/)).toBeInTheDocument();
 		expect(screen.getByText(/Save/)).toBeInTheDocument();
@@ -48,8 +49,9 @@ describe("RegionModal", () => {
 
 		render(
 			<RegionModal
-				setEditRegion={mockSetEditRegion}
+				selectedRegion={{ name: "", description: "" }}
 				updateRegionsList={mockUpdateRegionsList}
+				setEditRegion={mockSetEditRegion}
 			/>,
 		);
 
@@ -71,7 +73,7 @@ describe("RegionModal", () => {
 
 	it("calls http.put on save when editing an existing region", async () => {
 		const existingRegionID = "existing-id";
-		const originalRegionName = "Original Region";
+		const originalRegion = { name: "Original Name", description: "" };
 		const originalRegionDescription = "Original description.";
 		const updatedRegionName = "Updated Region";
 		const updatedRegionDescription = "Updated description.";
@@ -88,10 +90,11 @@ describe("RegionModal", () => {
 		render(
 			<RegionModal
 				setEditRegion={mockSetEditRegion}
-				selectedRegion={originalRegionName}
+				selectedRegion={originalRegion}
 				selectedRegionDescription={originalRegionDescription}
 				selectedRegionID={existingRegionID}
 				updateRegionsList={mockUpdateRegionsList}
+				setSelectedRegion={mockSelectedRegion}
 			/>,
 		);
 
@@ -124,8 +127,6 @@ describe("RegionModal", () => {
 				}),
 			);
 		});
-
-		// Verify the modal was closed and the edit state was reset
 		expect(mockSetEditRegion).toHaveBeenCalledWith(false);
 	});
 });

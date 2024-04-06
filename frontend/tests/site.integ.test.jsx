@@ -10,7 +10,7 @@ test("SiteModal renders correctly with every field empty", async () => {
 	const { getByLabelText } = render(<SiteModal setOpen={() => {}} />);
 
 	// Assert that the input fields are empty
-	const siteNameInput = getByLabelText("Site Name");
+	const siteNameInput = getByLabelText("Site Name *");
 	const descriptionInput = getByLabelText("Site Description");
 	const locationInput = getByLabelText("Location");
 
@@ -24,19 +24,24 @@ test("SiteModal renders correctly", async () => {
 	const { getByLabelText } = render(<SiteModal setOpen={() => {}} />);
 
 	// Find input fields and buttons
-	const siteNameInput = getByLabelText("Site Name");
+	const siteNameInput = getByLabelText("Site Name *");
 	const descriptionInput = getByLabelText("Site Description");
 	const locationInput = getByLabelText("Location");
 
 	// input something without entering any data into database.
 	fireEvent.change(siteNameInput, { target: { value: "Test Site" } });
-	fireEvent.change(descriptionInput, { target: { value: "Test Description" } });
+	fireEvent.change(descriptionInput, {
+		target: { value: "Test Description" },
+	});
 	fireEvent.change(locationInput, { target: { value: "Test Location" } });
 });
 
 test("RegionModal renders correctly with every field empty", () => {
+	const selectedRegion = { name: "" };
 	// Render the RegionModal component
-	const { getByLabelText } = render(<RegionModal />);
+	const { getByLabelText } = render(
+		<RegionModal selectedRegion={selectedRegion} />,
+	);
 
 	// Find input fields
 	const regionInput = getByLabelText("Region Name");
@@ -110,16 +115,16 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 	};
 
 	// Render the component
-	render(<SiteModal setOpen={() => {}} />);
+	render(<SiteModal openAdd={true} />);
 
 	// Fill out the form fields with the site data
-	const nameInput = screen.getByLabelText("Site Name");
+	const nameInput = screen.getByLabelText("Site Name *");
 	const descriptionInput = screen.getByLabelText("Site Description");
 	const locationInput = screen.getByLabelText("Location");
 
-	userEvent.type(nameInput, siteData.name);
-	userEvent.type(descriptionInput, siteData.description);
-	userEvent.type(locationInput, siteData.location);
+	await userEvent.type(nameInput, siteData.name);
+	await userEvent.type(descriptionInput, siteData.description);
+	await userEvent.type(locationInput, siteData.location);
 
 	fireEvent.click(screen.getByText("Add"));
 
@@ -143,15 +148,18 @@ test("creates a new site through UI and verifies it is not saved (region is miss
 });
 
 test("RegionModal renders correctly and handles addition of a new region", async () => {
+	const selectedRegion = { name: "" };
 	// Render the RegionModal component
-	render(<RegionModal />);
+	render(<RegionModal selectedRegion={selectedRegion} />);
 
 	// Simulate user input by typing in the region name and description fields
 	const regionNameInput = screen.getByLabelText("Region Name");
 	fireEvent.change(regionNameInput, { target: { value: "Test Region" } });
 
 	const descriptionInput = screen.getByLabelText("Description");
-	fireEvent.change(descriptionInput, { target: { value: "Test Description" } });
+	fireEvent.change(descriptionInput, {
+		target: { value: "Test Description" },
+	});
 
 	// Click the save button
 	const saveButton = screen.getByText("Save");

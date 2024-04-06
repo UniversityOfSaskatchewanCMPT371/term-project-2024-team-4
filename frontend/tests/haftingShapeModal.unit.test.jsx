@@ -40,7 +40,21 @@ describe("HaftingShapeModal", () => {
 			/>,
 		);
 
-		expect(screen.getByLabelText(/Hafting Shape/i)).toBeInTheDocument();
+		expect(
+			screen.getByRole("heading", {
+				name: /add new hafting shape/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /cancel/i,
+			}),
+		).toBeInTheDocument();
+		expect(
+			screen.getByRole("button", {
+				name: /save/i,
+			}),
+		).toBeInTheDocument();
 	});
 
 	it("should call http.post on save when adding a new hafting shape", async () => {
@@ -59,9 +73,14 @@ describe("HaftingShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Hafting Shape/i), {
-			target: { value: newHaftingShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /hafting shape/i,
+			}),
+			{
+				target: { value: newHaftingShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>
@@ -88,9 +107,14 @@ describe("HaftingShapeModal", () => {
 			/>,
 		);
 
-		fireEvent.change(screen.getByLabelText(/Hafting Shape/i), {
-			target: { value: updatedHaftingShapeName },
-		});
+		fireEvent.change(
+			screen.getByRole("textbox", {
+				name: /hafting shape/i,
+			}),
+			{
+				target: { value: updatedHaftingShapeName },
+			},
+		);
 		fireEvent.click(screen.getByText(/Save/i));
 
 		await waitFor(() =>

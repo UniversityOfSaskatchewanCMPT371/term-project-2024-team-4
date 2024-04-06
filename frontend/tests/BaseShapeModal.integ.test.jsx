@@ -30,6 +30,7 @@ describe("BaseShapeModal", () => {
 			selectedBaseShape: "",
 			selectedBaseShapeID: "",
 			updateBaseShapesList: vi.fn(),
+			setSelectedBaseShape: vi.fn(),
 		};
 
 		const mockAxiosPost = vi
