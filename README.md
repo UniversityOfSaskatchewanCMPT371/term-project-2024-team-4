@@ -40,6 +40,7 @@ A web app that serves as a catalog management system tailored for anyone with pr
 - **[Dev Lead]**: Funmise Adebowale
 - **[Test Lead]**: Danielle Powell
 - **[Build Master]**: John Lecegues
+- **[Developer/Tester]**: Kelly Neuda
 - **[Developer/Tester]**: Jewel Magcawas
 - **[Developer/Tester]**: Adam Stanger
 - **[Developer/Tester]**: Jorden Whitenect
